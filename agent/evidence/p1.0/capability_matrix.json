@@ -1,0 +1,31 @@
+{
+  "release": "P1.0",
+  "generated_at": "2026-06-17",
+  "capabilities": [
+    {"name": "Runtime governance", "status": "proven"},
+    {"name": "Tool Bus v1", "status": "proven"},
+    {"name": "Approval / HITL", "status": "proven"},
+    {"name": "Sandbox profiles", "status": "proven"},
+    {"name": "Repository Agent Loop", "status": "proven"},
+    {"name": "Deterministic planner", "status": "proven"},
+    {"name": "LLM planning bridge", "status": "proven"},
+    {"name": "Model provider abstraction", "status": "proven"},
+    {"name": "Mock provider", "status": "proven"},
+    {"name": "Optional OpenAI provider", "status": "partial"},
+    {"name": "Optional Anthropic provider", "status": "partial"},
+    {"name": "Optional Ollama provider", "status": "partial"},
+    {"name": "Demo harness", "status": "proven"},
+    {"name": "Trace / evidence", "status": "proven"},
+    {"name": "Praxis memory seed", "status": "proven"},
+    {"name": "CLI commands", "status": "proven"},
+    {"name": "CI workflow", "status": "configured"},
+    {"name": "Coverage / lint / typecheck", "status": "proven"},
+    {"name": "Patch synthesis", "status": "partial"},
+    {"name": "Repair loop", "status": "partial"},
+    {"name": "Production sandbox", "status": "partial"},
+    {"name": "External tools / network", "status": "not_included"},
+    {"name": "UI", "status": "not_included"},
+    {"name": "Multi-agent orchestration", "status": "not_included"}
+  ],
+  "source_doc": "agent/releases/P1.0_CAPABILITY_MATRIX.md"
+}

@@ -1,0 +1,47 @@
+{
+  "scenario_id": "buggy_calculator",
+  "objective": "replace 'return a - b' with 'return a + b' in calculator.py",
+  "repo_id": "demo_buggy_calculator",
+  "initial_test_result": {
+    "command": [
+      "/home/hrvojeb/Desktop/GG/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "exit_code": 1,
+    "passed": false,
+    "timed_out": false
+  },
+  "plan_summary": "replace 'return a - b' with 'return a + b' in calculator.py",
+  "files_inspected": [
+    "calculator.py"
+  ],
+  "files_changed": [
+    "calculator.py"
+  ],
+  "final_test_result": {
+    "command": [
+      "/home/hrvojeb/Desktop/GG/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "exit_code": 0,
+    "passed": true,
+    "timed_out": false
+  },
+  "final_status": "succeeded",
+  "plan_verification": {
+    "plan_recorded": true,
+    "files_inspected_recorded": true,
+    "files_changed_within_bounds": true,
+    "tests_run_after_patch": true,
+    "approval_recorded": true,
+    "sandbox_profile_recorded": true,
+    "praxis_recorded": true,
+    "test_file_unchanged": true,
+    "violations": []
+  },
+  "limitations": []
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "tool": "patch_file",
+    "path": "calculator.py",
+    "risk_class": "R2",
+    "required": true,
+    "preview_required": true,
+    "confirmation_level": 1,
+    "reason": "R2 reversible write requires preview and approval",
+    "preview": {
+      "action_type": "patch_file",
+      "summary": "patch_file on calculator.py",
+      "affected_paths": [
+        "calculator.py"
+      ],
+      "before_summary": "def add(a, b):\n    return a - b\n",
+      "after_summary": "def add(a, b):\n    return a + b\n",
+      "diff_summary": "L2:     return a - b ->     return a + b",
+      "reversibility": "reversible with rollback",
+      "risk_explanation": "filesystem write inside workspace",
+      "command": [],
+      "timeout_seconds": null,
+      "working_directory": "",
+      "warnings": [
+        "patch will modify file contents"
+      ]
+    }
+  },
+  {
+    "receipt_id": "approval_rcpt_151893a33d87",
+    "request_id": "approval_85bebb58a912",
+    "decision": "auto_approved",
+    "risk_class": "R2",
+    "tool_name": "patch_file",
+    "approved_scope": [
+      "calculator.py"
+    ],
+    "reason": "auto-approved within configured envelope",
+    "decided_by": "auto_approver",
+    "trace_id": "approval_trace_21f8de3cff68",
+    "expires_at": null,
+    "preview_summary": "patch_file on calculator.py"
+  }
+]

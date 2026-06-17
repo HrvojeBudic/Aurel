@@ -1,0 +1,19 @@
+{
+  "experience_id": "experience_8d80256e676e",
+  "memory_candidates_created": [
+    "mem_cand_8238b425ccae",
+    "mem_cand_c5c76b9c6b3a"
+  ],
+  "procedure_candidates_created": [
+    "proc_cand_8ea30e700b67"
+  ],
+  "skill_candidates_created": [
+    "skill_cand_b412b8eed99f"
+  ],
+  "promotion_decisions": 2,
+  "limitations": [
+    "Candidates are not verified truth",
+    "No auto-promotion to canon or verified memory",
+    "Reflexes still require full runtime governance"
+  ]
+}

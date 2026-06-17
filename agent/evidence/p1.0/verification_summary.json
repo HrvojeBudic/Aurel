@@ -1,0 +1,72 @@
+{
+  "release": "P1.0",
+  "patch": "P1.0.1",
+  "verified_at": "2026-06-17",
+  "python_version": "3.12.3",
+  "python_311_verified": false,
+  "ci_executed": false,
+  "commands": [
+    {
+      "command": "python -m compileall src tests",
+      "exit_code": 0,
+      "status": "pass"
+    },
+    {
+      "command": "pytest -q",
+      "exit_code": 0,
+      "status": "pass",
+      "summary": "300 passed, 4 skipped"
+    },
+    {
+      "command": "ruff check src tests",
+      "exit_code": 0,
+      "status": "pass"
+    },
+    {
+      "command": "mypy src/agentic_runtime",
+      "exit_code": 0,
+      "status": "pass",
+      "summary": "37 source files"
+    },
+    {
+      "command": "pytest -q --cov=agentic_runtime --cov-fail-under=75",
+      "exit_code": 0,
+      "status": "pass",
+      "coverage_percent": 82.73
+    },
+    {
+      "command": "python -m agentic_runtime.cli alpha-seal",
+      "exit_code": 0,
+      "status": "pass",
+      "version": "0.2.0"
+    },
+    {
+      "command": "python -m agentic_runtime.cli alpha-seal --skip-coverage",
+      "exit_code": 0,
+      "status": "pass"
+    },
+    {
+      "command": "python -m agentic_runtime.cli alpha-seal --skip-tests --json",
+      "exit_code": 0,
+      "status": "pass"
+    },
+    {
+      "command": "python -m agentic_runtime.cli demo-harness buggy_calculator --apply --sandbox restricted_local",
+      "exit_code": 0,
+      "status": "pass",
+      "final_status": "succeeded"
+    },
+    {
+      "command": "python -m agentic_runtime.cli demo-harness buggy_calculator --apply",
+      "exit_code": 1,
+      "status": "partial",
+      "final_status": "failed",
+      "note": "auto-selected bubblewrap; independent final_test passed but agent final_status not succeeded"
+    }
+  ],
+  "apply_sandbox_resolver": {
+    "profile": "bubblewrap",
+    "available": true
+  },
+  "skipped_tests_reason": "requires_subprocess in restricted environments (4 skipped)"
+}

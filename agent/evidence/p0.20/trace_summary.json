@@ -1,0 +1,11 @@
+{
+  "run_id": "run_7ae4e0eec7b2",
+  "event_count": 34,
+  "kinds": [
+    "approval_receipt",
+    "budget_decision",
+    "memory_governance",
+    "praxis_event",
+    "state_transition"
+  ]
+}

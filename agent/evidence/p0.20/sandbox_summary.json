@@ -1,0 +1,16 @@
+{
+  "sandbox_profile": "restricted_local",
+  "backend_name": "UnsafeLocalSandbox",
+  "mode": "unsafe_local",
+  "workspace_root": "demo_buggy_calculator",
+  "network_allowed": false,
+  "secrets_allowed": false,
+  "write_allowed": true,
+  "exec_allowed": true,
+  "unsafe": false,
+  "limitations": [
+    "network denied by policy (unsafe local backend cannot enforce network isolation)",
+    "secrets denied by default"
+  ],
+  "violations": []
+}

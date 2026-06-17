@@ -1,0 +1,35 @@
+{
+  "release": "P1.0",
+  "generated_at": "2026-06-17",
+  "limitations": [
+    "LLM plans but does not synthesize patches yet",
+    "Patch synthesis remains deterministic and narrow",
+    "restricted_local is not a production security sandbox",
+    "Hard sandbox requires bubblewrap or docker availability",
+    "Real providers optional and unverified without credentials",
+    "CI must pass on clean checkout before public PASS claim",
+    "Python 3.11/3.12 targeted; Python 3.13 not guaranteed",
+    "No network, delete, or git push tools",
+    "No UI",
+    "No multi-agent orchestration",
+    "No memory canonization"
+  ],
+  "risks": [
+    {
+      "id": "bwrap_harness_divergence",
+      "severity": "medium",
+      "summary": "CLI --apply with auto bubblewrap may report harness failed while independent final_test passes"
+    },
+    {
+      "id": "ci_not_run",
+      "severity": "high",
+      "summary": "No baseline commit; GitHub Actions not executed at seal time"
+    },
+    {
+      "id": "python_311_unverified_local",
+      "severity": "low",
+      "summary": "Local verification used Python 3.12.3 only"
+    }
+  ],
+  "source_doc": "agent/releases/P1.0_LIMITATIONS_AND_RISKS.md"
+}

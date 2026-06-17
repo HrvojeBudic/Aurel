@@ -1,0 +1,20 @@
+{
+  "release": "P1.0",
+  "patch": "P1.0.1",
+  "decision": "PRE-SEAL",
+  "decided_at": "2026-06-17",
+  "rationale": [
+    "Local verification clean on Python 3.12.3: compileall, ruff, mypy, pytest (300 passed), alpha-seal, 82.73% coverage",
+    "GitHub Actions CI not executed (no baseline commit)",
+    "Python 3.11 not verified locally",
+    "Release artifacts created by P1.0.1 integrity patch",
+    "CLI demo-harness --apply with auto bubblewrap reports failed on verification host despite passing final_test"
+  ],
+  "upgrade_to_pass_requires": [
+    "Git baseline commit pushed",
+    "CI green on Python 3.11 and 3.12 matrix",
+    "Agent docs and release manifest updated to PASS"
+  ],
+  "next_task": "Baseline commit + CI verification, then P1.1 LLM Patch Synthesis Candidate",
+  "next_cycle_doc": "agent/releases/P1.0_NEXT_CYCLE_ROADMAP.md"
+}
