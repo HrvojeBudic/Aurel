@@ -23,7 +23,21 @@ from dataclasses import dataclass, field
 from typing import Callable, Optional, Protocol, runtime_checkable
 
 from .canonical_path import CanonicalPathResolver, PathResolutionError
-from .core_types import sha
+from .core_types import new_id, sha
+
+# Retained write snapshots per workspace backend. Oldest entries are evicted under pressure.
+DEFAULT_MAX_SNAPSHOTS = 64
+
+
+def max_snapshots_limit() -> int:
+    """Resolve snapshot retention cap (override via AGENTIC_MAX_SNAPSHOTS)."""
+    raw = os.environ.get("AGENTIC_MAX_SNAPSHOTS", "").strip()
+    if raw.isdigit():
+        return max(1, int(raw))
+    return DEFAULT_MAX_SNAPSHOTS
+
+
+MAX_SNAPSHOTS = DEFAULT_MAX_SNAPSHOTS
 
 DEFAULT_MAX_OUTPUT_BYTES = 256 * 1024
 DEFAULT_TIMEOUT_S = 10.0
@@ -77,11 +91,15 @@ class SandboxBackend(Protocol):
 
     def read_file(self, rel: str) -> str: ...
     def write_file(self, rel: str, content: str) -> None: ...
+    def delete_file(self, rel: str) -> None: ...
     def list_dir(self, rel: str = ".") -> list[str]: ...
     def run_shell(self, cmd: list[str], timeout: float = DEFAULT_TIMEOUT_S) -> ExecResult: ...
     def state_hash(self) -> str: ...
     def snapshot(self) -> str: ...
     def rollback(self, snapshot_id: str) -> None: ...
+    def read_snapshot_file(self, snapshot_id: str, rel: str) -> str: ...
+    def release_snapshot(self, snapshot_id: str) -> None: ...
+    def active_snapshot_count(self) -> int: ...
 
 
 # Backward-compatible alias used across the codebase.
@@ -241,6 +259,9 @@ class _WorkspaceBackend:
         with open(p, "w", encoding="utf-8") as f:
             f.write(content)
 
+    def delete_file(self, rel: str) -> None:
+        os.remove(self._abs(rel))
+
     def list_dir(self, rel: str = ".") -> list[str]:
         return sorted(os.listdir(self._abs(rel)))
 
@@ -251,8 +272,9 @@ class _WorkspaceBackend:
         snap_dir = tempfile.mkdtemp(prefix="ar_snap_")
         dst = os.path.join(snap_dir, "tree")
         shutil.copytree(self.root, dst)
-        sid = self.state_hash()
+        sid = new_id("snap")
         self._snapshots[sid] = dst
+        self._evict_snapshots_if_needed()
         return sid
 
     def rollback(self, snapshot_id: str) -> None:
@@ -262,6 +284,32 @@ class _WorkspaceBackend:
         shutil.rmtree(self.root)
         shutil.copytree(src, self.root)
         self._paths = CanonicalPathResolver(self.root)
+        self._release_snapshot(snapshot_id)
+
+    def read_snapshot_file(self, snapshot_id: str, rel: str) -> str:
+        src = self._snapshots.get(snapshot_id)
+        if not src:
+            raise KeyError(f"unknown snapshot {snapshot_id}")
+        path = os.path.join(src, rel)
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            return f.read()
+
+    def release_snapshot(self, snapshot_id: str) -> None:
+        self._release_snapshot(snapshot_id)
+
+    def active_snapshot_count(self) -> int:
+        return len(self._snapshots)
+
+    def _evict_snapshots_if_needed(self) -> None:
+        limit = max_snapshots_limit()
+        while len(self._snapshots) > limit:
+            old_id, _ = next(iter(self._snapshots.items()))
+            self._release_snapshot(old_id)
+
+    def _release_snapshot(self, snapshot_id: str) -> None:
+        path = self._snapshots.pop(snapshot_id, None)
+        if path:
+            shutil.rmtree(os.path.dirname(path), ignore_errors=True)
 
 
 # --------------------------------------------------------------------------- #

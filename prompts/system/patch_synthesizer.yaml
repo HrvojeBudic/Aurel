@@ -1,0 +1,48 @@
+id: patch_synthesizer
+version: 0.1.0
+owner: runtime-core
+status: draft
+purpose: patch proposal language
+description: Placeholder manifest for future patch synthesis prompt governance without implementation.
+allowed_model_profiles:
+  - coding
+  - local_fast
+allowed_tasks:
+  - coding
+  - patch_planning
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - objective
+    - bounded_context
+output_schema:
+  type: object
+  required:
+    - patch_summary
+    - proposed_patch
+    - tests
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - schema_conformance
+  - no_test_weakening
+template:
+  - Produce patch language only for later validation.
+  - Do not execute tools and do not claim file changes occurred.
+  - Runtime validators decide whether any patch may be applied.
+  - Objective {{ objective }}
+  - Bounded context {{ bounded_context }}
+  - Constraints {{ constraints }}

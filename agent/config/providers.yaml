@@ -1,0 +1,36 @@
+# Provider registry — secrets referenced by env var name only (P1.1)
+providers:
+  mock:
+    type: mock
+    description: Deterministic offline mock provider for tests and demos
+    residency: local
+    default_model: mock-deterministic
+
+  ollama:
+    type: ollama
+    description: Local Ollama inference (no API key required)
+    residency: local
+    base_url_env: AUREL_OLLAMA_BASE_URL
+    default_model_env: AUREL_OLLAMA_MODEL
+    default_base_url: http://localhost:11434
+    default_model: llama3.1
+
+  openai:
+    type: openai
+    description: OpenAI remote API (requires OPENAI_API_KEY)
+    residency: remote
+    api_key_env: OPENAI_API_KEY
+    base_url_env: AUREL_OPENAI_BASE_URL
+    default_model_env: AUREL_OPENAI_MODEL
+    default_base_url: https://api.openai.com/v1
+    default_model: gpt-4.1-mini
+
+  anthropic:
+    type: anthropic
+    description: Anthropic remote API (requires ANTHROPIC_API_KEY)
+    residency: remote
+    api_key_env: ANTHROPIC_API_KEY
+    base_url_env: AUREL_ANTHROPIC_BASE_URL
+    default_model_env: AUREL_ANTHROPIC_MODEL
+    default_base_url: https://api.anthropic.com
+    default_model: claude-3-5-haiku-latest

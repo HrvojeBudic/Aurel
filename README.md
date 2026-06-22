@@ -11,6 +11,20 @@ python -m agentic_runtime.demo
 python examples/demo.py
 ```
 
+The narrative demo walks the full governed pipeline: policy, HITL, sandbox, trace,
+tamper detection, authority denial, test-integrity protection, and skill maturation.
+
+**Skill / reflex outcome:** the maturation stage may produce a compiled skill if
+evidence gates are satisfied. If not, the demo prints a safe _no-skill_ outcome
+and exits 0 — this is a valid governed result, not an error. Human escalation is
+the correct path when evidence is insufficient for promotion.
+
+For a deterministic end-to-end coding demo (always succeeds), use the harness:
+
+```bash
+python -m agentic_runtime.cli demo-harness buggy_calculator
+```
+
 ## Layout
 
 ```
@@ -67,6 +81,24 @@ python -m compileall src
 pytest
 python -m agentic_runtime.cli verify
 python -m agentic_runtime.cli alpha-seal   # P1.0 readiness
+```
+
+### Cold-cache verification
+
+`cli verify` runs the whole suite with `-p no:cacheprovider` so a warm
+`.pytest_cache` can never mask cold-cache-only failures. To reproduce a true
+cold run manually (no `python` binary in some environments — use `python3`):
+
+```bash
+# clear all caches first
+find . -name __pycache__ -type d -prune -exec rm -rf {} +
+rm -rf .pytest_cache
+
+# full-tree cold run (mirrors `cli verify`)
+PYTHONPATH="src:." python3 -m pytest -q -p no:cacheprovider
+
+# fast drift check that skips the slow recursive smoke file
+AGENTIC_SKIP_RECURSIVE_SMOKE=1 PYTHONPATH="src:." python3 -m pytest -q -p no:cacheprovider
 ```
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for production sandbox setup.

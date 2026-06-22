@@ -1,0 +1,29 @@
+{
+  "report_id": "adr_mismatch",
+  "source_kind": "operator_contract",
+  "deltas": [
+    {
+      "delta_id": "adt_cli_1",
+      "delta_type": "RISK_CEILING_INCREASED",
+      "severity": "HIGH",
+      "source_kind": "operator_contract",
+      "field_path": "risk_ceiling",
+      "old_value": "low",
+      "new_value": "high",
+      "old_attestation_id": "srcatt_DIFFERENT",
+      "new_attestation_id": "srcatt_DIFFERENT2",
+      "requires_operator_consent": true,
+      "requires_evidence": false,
+      "reason": "mismatch",
+      "blockers": [],
+      "warnings": []
+    }
+  ],
+  "highest_severity": "HIGH",
+  "requires_operator_consent": true,
+  "requires_evidence": false,
+  "summary": "Mismatch delta report",
+  "safe_to_auto_accept": false,
+  "old_attestation_id": "srcatt_DIFFERENT",
+  "new_attestation_id": "srcatt_DIFFERENT2"
+}

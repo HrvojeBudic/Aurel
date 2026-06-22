@@ -321,9 +321,9 @@ class ToolRuntime(ToolBus):
                            "error_kind": res.error_kind})
 
         def run_tests(sb: SandboxBackend, args: dict) -> ObservationEnvelope:
-            command = args.get("command")
-            if command is None:
-                command = ["python3", args.get("test_file", "test.py")]
+            from .file_patch import resolve_run_tests_command
+
+            command = resolve_run_tests_command(args)
             timeout = args.get("timeout_seconds", args.get("timeout", 15))
             t0 = time.perf_counter()
             res = sb.run_shell(command, timeout=timeout)
@@ -376,13 +376,61 @@ class ToolRuntime(ToolBus):
                     "error_kind": res.error_kind,
                 })
 
+        def delete_file(sb: SandboxBackend, args: dict) -> ObservationEnvelope:
+            path = args["path"]
+            existed = True
+            try:
+                sb.read_file(path)
+            except OSError:
+                existed = False
+            if not existed:
+                return _obs_error("path_missing", f"cannot delete missing file: {path}")
+            sb.delete_file(path)
+            return ObservationEnvelope.make("", success=True,
+                artifacts={"path": path, "deleted": True})
+
+        def network_fetch(sb: SandboxBackend, args: dict) -> ObservationEnvelope:
+            import urllib.error
+            import urllib.request
+
+            from .core_types import sha
+
+            url = args["url"]
+            timeout = args.get("timeout_seconds", args.get("timeout", 10))
+            max_bytes = int(args.get("max_bytes", 65536))
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "agentic-runtime/0.2"})
+            t0 = time.perf_counter()
+            try:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    data = resp.read(max_bytes + 1)
+                    truncated = len(data) > max_bytes
+                    if truncated:
+                        data = data[:max_bytes]
+                    body = data.decode("utf-8", errors="replace")
+                    duration_ms = int((time.perf_counter() - t0) * 1000)
+                    return ObservationEnvelope.make("", success=True,
+                        stdout=body,
+                        artifacts={
+                            "url": url,
+                            "status": resp.status,
+                            "bytes": len(data),
+                            "truncated": truncated,
+                            "content_hash": sha(body),
+                            "duration_ms": duration_ms,
+                        })
+            except (urllib.error.URLError, TimeoutError, ValueError) as e:
+                return _obs_error("network_error", str(e))
+
         def patch_file(sb: SandboxBackend, args: dict) -> ObservationEnvelope:
             diff = args.get("patch") or args.get("unified_diff")
             if not diff:
                 return _obs_error("missing_patch", "patch_file requires patch or unified_diff")
             try:
                 original = sb.read_file(args["path"])
-                updated, summary = _apply_simple_unified_diff(original, diff)
+                from .file_patch import apply_simple_unified_diff
+
+                updated, summary = apply_simple_unified_diff(original, diff)
             except ValueError as e:
                 return ObservationEnvelope.make("", success=False,
                     stderr=str(e), artifacts={"path": args["path"],
@@ -468,6 +516,21 @@ class ToolRuntime(ToolBus):
             required_capabilities=["filesystem_write"],
             side_effect_type=ToolSideEffectType.FILESYSTEM_WRITE,
             verifier_requirement=ToolVerifierRequirement.EXIT_STATUS))
+        self.register(ToolSpec("delete_file", "Delete a file in the workspace",
+            {"path": "str"}, delete_file,
+            risk_level=ToolRiskLevel.HIGH,
+            required_capabilities=["filesystem_write"],
+            side_effect_type=ToolSideEffectType.FILESYSTEM_WRITE,
+            verifier_requirement=ToolVerifierRequirement.STATE_VERIFIER))
+        self.register(ToolSpec("network_fetch", "Fetch a URL over HTTP(S)",
+            {"url": "str", "timeout": "number?", "timeout_seconds": "int?",
+             "max_bytes": "int?"},
+            network_fetch,
+            risk_level=ToolRiskLevel.HIGH,
+            required_capabilities=["network_access"],
+            side_effect_type=ToolSideEffectType.NONE,
+            sandbox_requirement=ToolSandboxRequirement.HARD_ISOLATION_RECOMMENDED,
+            verifier_requirement=ToolVerifierRequirement.STATE_VERIFIER))
         self.register(ToolSpec(
             "mutate_protected_verification",
             "Approved mutation of a protected verification file (HIGH risk)",
@@ -551,52 +614,3 @@ def _search_text(
                     if len(matches) >= max_results:
                         return matches
     return matches
-
-
-def _apply_simple_unified_diff(original: str, diff: str) -> tuple[str, str]:
-    """Apply a small single-file unified diff.
-
-    This intentionally supports a conservative subset; invalid/mismatched hunks
-    return structured tool failure instead of guessing.
-    """
-    patch_lines = diff.splitlines(keepends=True)
-    if not any(line.startswith("@@") for line in patch_lines):
-        raise ValueError("invalid patch: missing hunk header")
-
-    src = original.splitlines(keepends=True)
-    out: list[str] = []
-    idx = 0
-    hunk_seen = False
-    added = removed = 0
-
-    for raw in patch_lines:
-        line = raw if raw.endswith("\n") else raw + "\n"
-        if line.startswith(("---", "+++")):
-            continue
-        if line.startswith("@@"):
-            hunk_seen = True
-            continue
-        if not hunk_seen:
-            continue
-        tag = line[:1]
-        body = line[1:]
-        if tag == " ":
-            if idx >= len(src) or src[idx] != body:
-                raise ValueError("invalid patch: context mismatch")
-            out.append(src[idx])
-            idx += 1
-        elif tag == "-":
-            if idx >= len(src) or src[idx] != body:
-                raise ValueError("invalid patch: removal mismatch")
-            idx += 1
-            removed += 1
-        elif tag == "+":
-            out.append(body)
-            added += 1
-        elif tag == "\\":
-            continue
-        else:
-            raise ValueError("invalid patch: unsupported hunk line")
-
-    out.extend(src[idx:])
-    return "".join(out), f"applied patch (+{added}/-{removed})"

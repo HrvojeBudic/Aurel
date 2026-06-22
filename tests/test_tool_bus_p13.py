@@ -118,10 +118,11 @@ def test_read_file_inside_workspace(tmp_path):
 
 def test_write_file_inside_workspace(tmp_path):
     kernel = _kernel(tmp_path)
+    card = _card()
     res = kernel.runtime.submit(
-        _cmd(_card(), "write_file",
+        _cmd(card, "write_file",
              {"path": "src/a.txt", "content": "hello", "create_dirs": True}),
-        _card(),
+        card,
     )
     assert res.ok
     assert kernel.sandbox.read_file("src/a.txt") == "hello"
@@ -129,9 +130,10 @@ def test_write_file_inside_workspace(tmp_path):
 
 def test_path_traversal_rejected(tmp_path):
     kernel = _kernel(tmp_path)
+    card = _card()
     res = kernel.runtime.submit(
-        _cmd(_card(), "read_file", {"path": "../secret.txt"}),
-        _card(),
+        _cmd(card, "read_file", {"path": "../secret.txt"}),
+        card,
     )
     assert not res.ok
     assert res.decision.verdict.value == "deny"
@@ -139,9 +141,10 @@ def test_path_traversal_rejected(tmp_path):
 
 def test_write_outside_root_rejected(tmp_path):
     kernel = _kernel(tmp_path)
+    card = _card()
     res = kernel.runtime.submit(
-        _cmd(_card(), "write_file", {"path": "/etc/passwd", "content": "no"}),
-        _card(),
+        _cmd(card, "write_file", {"path": "/etc/passwd", "content": "no"}),
+        card,
     )
     assert not res.ok
     assert res.decision.verdict.value == "deny"
@@ -162,9 +165,10 @@ def test_patch_file_applies_simple_fixture(tmp_path):
     kernel = _kernel(tmp_path)
     kernel.sandbox.write_file("src/a.txt", "hello\nworld\n")
     patch = "--- a/src/a.txt\n+++ b/src/a.txt\n@@\n hello\n-world\n+there\n"
+    card = _card()
     res = kernel.runtime.submit(
-        _cmd(_card(), "patch_file", {"path": "src/a.txt", "patch": patch}),
-        _card(),
+        _cmd(card, "patch_file", {"path": "src/a.txt", "patch": patch}),
+        card,
     )
     assert res.ok
     assert kernel.sandbox.read_file("src/a.txt") == "hello\nthere\n"
@@ -173,9 +177,10 @@ def test_patch_file_applies_simple_fixture(tmp_path):
 def test_patch_file_rejects_invalid_patch_cleanly(tmp_path):
     kernel = _kernel(tmp_path)
     kernel.sandbox.write_file("src/a.txt", "hello\n")
+    card = _card()
     res = kernel.runtime.submit(
-        _cmd(_card(), "patch_file", {"path": "src/a.txt", "patch": "not a diff"}),
-        _card(),
+        _cmd(card, "patch_file", {"path": "src/a.txt", "patch": "not a diff"}),
+        card,
     )
     assert not res.ok
     assert "invalid patch" in res.observation.stderr

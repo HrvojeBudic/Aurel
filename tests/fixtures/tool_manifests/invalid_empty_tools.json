@@ -1,0 +1,22 @@
+{
+  "plugin": {
+    "plugin_id": "empty.tools",
+    "name": "Empty Tools",
+    "version": "0.1.0",
+    "description": "No tools declared.",
+    "owner": "tests",
+    "origin": "local",
+    "trust_level": "medium",
+    "status": "active",
+    "tools": [],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": []
+}

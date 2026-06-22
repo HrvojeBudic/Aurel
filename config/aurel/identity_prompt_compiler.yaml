@@ -1,0 +1,131 @@
+identity_prompt_compiler:
+  schema_version: "1.0"
+  name: "Aurel Identity Prompt Context Compiler"
+  compiler_class: "safe_identity_context_compiler"
+  applies_to_agent: "Aurel"
+  compiler_version: "1.0"
+
+  source_requirements:
+    identity_kernel_required: true
+    persona_manifest_required: true
+    operator_contract_required: true
+    communication_mode_registry_required: true
+    selected_mode_required: true
+
+  safety:
+    raw_yaml_in_prompt_forbidden: true
+    raw_config_dump_forbidden: true
+    include_source_hashes: true
+    include_compiler_version: true
+    include_authority_boundaries: true
+    include_capability_honesty: true
+    include_no_self_escalation: true
+    include_operator_final_authority: true
+    include_mode_boundaries: true
+    include_no_tool_authority_statement: true
+    include_no_action_authority_statement: true
+    include_no_memory_write_statement: true
+    include_no_policy_bypass_statement: true
+    include_no_canonization_statement: true
+
+  dominance:
+    identity_kernel_overrides_all: true
+    operator_contract_overrides_persona_and_mode: true
+    persona_boundaries_override_mode_style: true
+    mode_never_overrides_authority: true
+    lower_layer_contradiction_fails: true
+
+  prompt_sections:
+    include_agent_identity_section: true
+    include_operator_relationship_section: true
+    include_persona_expression_section: true
+    include_active_mode_section: true
+    include_authority_boundaries_section: true
+    include_capability_honesty_section: true
+    include_non_goals_section: true
+    include_source_integrity_section: true
+
+  invariants:
+    - id: "IPC-001"
+      key: "raw_yaml_in_prompt_forbidden"
+      statement: "Raw YAML/config must not be injected directly into prompt context."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Prompt context must be compiled from validated typed objects."
+
+    - id: "IPC-002"
+      key: "identity_kernel_overrides_all"
+      statement: "Identity Kernel boundaries dominate all lower expression layers."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Identity trust anchor cannot be overridden by persona, mode, or prompt."
+
+    - id: "IPC-003"
+      key: "operator_contract_overrides_persona_and_mode"
+      statement: "Operator Contract authority boundaries dominate persona and mode."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Authority relationship must not be changed by expression style."
+
+    - id: "IPC-004"
+      key: "mode_never_overrides_authority"
+      statement: "Communication mode cannot change authority, autonomy, policy, or execution rights."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Mode is cognitive/output shaping only."
+
+    - id: "IPC-005"
+      key: "include_no_self_escalation"
+      statement: "Compiled prompt context must include no-self-escalation boundary."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "LLM-visible context must preserve authority boundaries."
+
+    - id: "IPC-006"
+      key: "include_capability_honesty"
+      statement: "Compiled prompt context must include capability honesty rule."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Aurel must not claim unverified capabilities."
+
+    - id: "IPC-007"
+      key: "include_operator_final_authority"
+      statement: "Compiled prompt context must include Operator final authority."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "The Operator relationship must be visible in prompt context."
+
+    - id: "IPC-008"
+      key: "include_no_action_authority_statement"
+      statement: "Compiled prompt context must state that prompt context does not authorize action."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_compile"
+      rationale: "Runtime action authority must remain outside prompt text."
+
+  notes:
+    p14_boundary: "This compiler creates safe identity-aware prompt context. It does not call LLMs, route models, execute tools, change autonomy, write memory, or grant authority."
+    future_hooks:
+      - "P1.4.6 Self-Model"
+      - "P1.4.7 Agent Identity Card"
+      - "P1.4.8 Autonomy Scale Engine"
+      - "P1.4.10 Governance / Heretic Profiles"
+      - "P1.4.11 Constitutional Floor"
+      - "P1.4.14 Identity Integrity Guard"
+      - "P1.6 Policy Cards"
+      - "P16 Atlas v2"

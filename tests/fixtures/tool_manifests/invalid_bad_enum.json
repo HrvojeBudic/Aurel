@@ -1,0 +1,49 @@
+{
+  "plugin": {
+    "plugin_id": "bad.enum",
+    "name": "Bad Enum",
+    "version": "0.1.0",
+    "description": "Invalid enum value.",
+    "owner": "tests",
+    "origin": "builtinn",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["bad.enum.tool"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "bad.enum.tool",
+      "plugin_id": "bad.enum",
+      "name": "Bad Enum Tool",
+      "description": "Valid tool with bad plugin origin above.",
+      "category": "code",
+      "capability_types": ["read"],
+      "input_schema": {"type": "object"},
+      "output_schema": {"type": "object"},
+      "side_effects": ["local_read"],
+      "risk_class": "R1",
+      "reversibility": "none",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": false,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": [],
+      "evidence_required": false,
+      "trace_level": "minimal",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true
+    }
+  ]
+}

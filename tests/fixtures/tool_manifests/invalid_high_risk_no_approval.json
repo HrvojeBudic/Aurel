@@ -1,0 +1,55 @@
+{
+  "plugin": {
+    "plugin_id": "risky.repo",
+    "name": "Risky Repo Tools",
+    "version": "0.1.0",
+    "description": "High risk without approval.",
+    "owner": "tests",
+    "origin": "local",
+    "trust_level": "medium",
+    "status": "active",
+    "tools": ["risky.repo_write"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "workspace_scoped",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "risky.repo_write",
+      "plugin_id": "risky.repo",
+      "name": "Repository Write",
+      "description": "Writes repository files.",
+      "category": "filesystem",
+      "capability_types": ["write"],
+      "input_schema": {"type": "object"},
+      "output_schema": {"type": "object"},
+      "side_effects": ["local_write"],
+      "risk_class": "R4",
+      "reversibility": "reversible",
+      "requires_approval": false,
+      "permissions_required": ["filesystem.write"],
+      "data_access": ["local_project"],
+      "execution_environment": "sandbox",
+      "dry_run_supported": true,
+      "simulation_supported": false,
+      "predicted_effect": {
+        "state_target": "file",
+        "expected_delta": "write",
+        "affected_objects": ["file.txt"],
+        "reversible": true,
+        "confidence_seed": "medium"
+      },
+      "failure_modes": [],
+      "evidence_required": false,
+      "trace_level": "minimal",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true
+    }
+  ]
+}

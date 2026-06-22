@@ -27,15 +27,29 @@ def test_path_traversal_write_denied(kernel, card):
     )
 
 
-def test_valid_in_scope_write_allowed(kernel, card):
+def test_valid_in_scope_write_allowed(write_kernel, card):
     card.authority.write_paths = ["src/"]
-    kernel.sandbox.write_file("src/app.py", "version = 1\n")
+    write_kernel.sandbox.write_file("src/app.py", "version = 1\n")
     cmd = make_cmd(card, "write_file", {
         "path": "src/app.py", "content": "version = 2\n"})
-    res = kernel.runtime.submit(cmd, card)
+    res = write_kernel.runtime.submit(cmd, card)
     assert res.decision.verdict.value == "allow"
     assert res.ok
-    assert kernel.sandbox.read_file("src/app.py") == "version = 2\n"
+    assert write_kernel.sandbox.read_file("src/app.py") == "version = 2\n"
+
+
+def test_empty_read_paths_without_write_paths_denies_read(kernel):
+    from agentic_runtime import AgentCard, AgentClass, AuthorityScope
+    from agentic_runtime.core_types import PolicyVerdict
+
+    card = AgentCard.make(
+        "t", AgentClass.EXECUTION, "m",
+        AuthorityScope(write_paths=[], read_paths=[], max_risk=RiskLevel.HIGH),
+        allowed_tools=["read_file"],
+    )
+    cmd = make_cmd(card, "read_file", {"path": "any.txt"})
+    decision = kernel.policy.evaluate(cmd, card)
+    assert decision.verdict is PolicyVerdict.DENY
 
 
 def test_run_tests_high_risk_without_hard_sandbox(kernel, card):
@@ -43,3 +57,21 @@ def test_run_tests_high_risk_without_hard_sandbox(kernel, card):
     decision = kernel.policy.evaluate(cmd, card)
     assert decision.risk is RiskLevel.HIGH
     assert not kernel.sandbox.is_hard_isolated
+
+
+def test_issuer_card_mismatch_denied(kernel, card):
+    """F-K01 regression: issuer on envelope must match submitting card."""
+    from agentic_runtime import AgentCard, AgentClass, AuthorityScope
+    from agentic_runtime.core_types import PolicyVerdict
+
+    other = AgentCard.make(
+        "other", AgentClass.EXECUTION, "m",
+        AuthorityScope(write_paths=[], read_paths=["*"], max_risk=RiskLevel.LOW),
+        allowed_tools=["read_file"],
+    )
+    cmd = make_cmd(other, "read_file", {"path": "README.md"})
+    assert cmd.issuer_card_id == other.id
+    assert cmd.issuer_card_id != card.id
+    res = kernel.runtime.submit(cmd, card)
+    assert res.decision.verdict is PolicyVerdict.DENY
+    assert "ISSUER_MISMATCH" in res.observation.stderr

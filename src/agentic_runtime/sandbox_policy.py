@@ -109,7 +109,7 @@ DEFAULT_CAPABILITY_MAP = SandboxCapabilityMap(
         "mutate_protected_verification",
     },
     exec_tools={"run_shell", "run_python", "run_tests"},
-    network_tools=set(),
+    network_tools={"network_fetch"},
 )
 
 
@@ -163,6 +163,7 @@ class SandboxDiagnostics:
     exec_allowed: bool
     read_allowed: bool
     unsafe: bool
+    policy_restricted: bool = False
     limitations: list[str] = field(default_factory=list)
     backend_available: bool = True
     hard_isolated: bool = False
@@ -354,6 +355,7 @@ def materialize_sandbox_backend(profile: SandboxProfile) -> SandboxBackend:
         return BubblewrapSandbox.create(root=root, max_output_bytes=profile.max_output_bytes)
     return UnsafeLocalSandbox(
         root=root,
+        cpu_seconds=int(profile.max_timeout_seconds),
         max_output_bytes=profile.max_output_bytes,
     )
 
@@ -424,24 +426,44 @@ class SandboxPolicy:
     def diagnostics(self, backend: SandboxBackend) -> SandboxDiagnostics:
         avail, _ = backend_availability(self.profile.profile_name)
         limits = list(self.profile.limitations)
-        if self.profile.unsafe:
+        actual_backend = getattr(backend, "_backend", backend)
+        backend_uses_unsafe_local = actual_backend.mode is SandboxMode.UNSAFE_LOCAL
+        hard_isolated = bool(getattr(actual_backend, "is_hard_isolated", False))
+        security_boundary = bool(getattr(actual_backend, "is_security_boundary", False))
+        policy_restricted = (
+            not self.profile.allow_network
+            or not self.profile.allow_env
+            or not self.profile.allow_secrets
+            or not self.profile.allow_write
+            or not self.profile.allow_exec
+            or bool(self.profile.disallowed_paths)
+            or "*" not in self.profile.allowed_paths
+        )
+        actual_unsafe = self.profile.unsafe or backend_uses_unsafe_local
+        if actual_unsafe and UnsafeLocalSandbox.UNSAFE_WARNING not in limits:
             limits = [UnsafeLocalSandbox.UNSAFE_WARNING, *limits]
-        if not self.profile.allow_network and backend.mode is SandboxMode.UNSAFE_LOCAL:
+        if backend_uses_unsafe_local and not self.profile.unsafe:
+            limits.append(
+                f"{self.profile.profile_name} is policy-restricted but uses UnsafeLocalSandbox; "
+                "not a hard sandbox boundary"
+            )
+        if not self.profile.allow_network and backend_uses_unsafe_local:
             limits.append("network not blocked by unsafe local backend")
         return SandboxDiagnostics(
             active_profile=self.profile.profile_name,
-            backend_name=type(backend).__name__,
+            backend_name=type(actual_backend).__name__,
             workspace_root=self.profile.workspace_root,
             network_allowed=self.profile.allow_network,
             secrets_allowed=self.profile.allow_secrets,
             write_allowed=self.profile.allow_write,
             exec_allowed=self.profile.allow_exec,
             read_allowed=self.profile.allow_read,
-            unsafe=self.profile.unsafe,
+            unsafe=actual_unsafe,
+            policy_restricted=policy_restricted,
             limitations=limits,
             backend_available=avail,
-            hard_isolated=bool(getattr(backend, "is_hard_isolated", False)),
-            security_boundary=bool(getattr(backend, "is_security_boundary", False)),
+            hard_isolated=hard_isolated,
+            security_boundary=security_boundary,
         )
 
     def check_path(self, path: str, action: str) -> SandboxDecision:
@@ -454,10 +476,11 @@ class SandboxPolicy:
         args: dict[str, Any],
     ) -> SandboxDecision:
         if tool_name in self.capabilities.network_tools:
-            return self._deny_tool(
-                tool_name, "network tools are not implemented",
-                attempted_action="network",
-            )
+            if not self.profile.allow_network:
+                return self._deny_tool(
+                    tool_name, "network denied by sandbox profile",
+                    attempted_action="network",
+                )
         if tool_name in self.capabilities.exec_tools and not self.profile.allow_exec:
             return self._deny_tool(tool_name, "execution denied by sandbox profile", "exec")
         if tool_name in self.capabilities.write_tools and not self.profile.allow_write:
@@ -486,7 +509,11 @@ class SandboxPolicy:
                     return decision
         return SandboxDecision(allowed=True, reason="ok")
 
-    def execution_context(self, backend: SandboxBackend, command_id: str = "") -> SandboxExecutionContext:
+    def execution_context(
+        self,
+        backend: SandboxBackend,
+        command_id: str = "",
+    ) -> SandboxExecutionContext:
         limits = self.profile.execution_limits
         return SandboxExecutionContext(
             sandbox=backend,
@@ -548,6 +575,10 @@ class ProfiledSandbox:
         self._guard(rel, "write")
         return self._backend.write_file(rel, content)
 
+    def delete_file(self, rel: str) -> None:
+        self._guard(rel, "write")
+        return self._backend.delete_file(rel)
+
     def list_dir(self, rel: str = ".") -> list[str]:
         self._guard(rel, "read")
         return self._backend.list_dir(rel)
@@ -568,3 +599,12 @@ class ProfiledSandbox:
 
     def rollback(self, snapshot_id: str) -> None:
         return self._backend.rollback(snapshot_id)
+
+    def read_snapshot_file(self, snapshot_id: str, rel: str) -> str:
+        return self._backend.read_snapshot_file(snapshot_id, rel)
+
+    def release_snapshot(self, snapshot_id: str) -> None:
+        return self._backend.release_snapshot(snapshot_id)
+
+    def active_snapshot_count(self) -> int:
+        return self._backend.active_snapshot_count()

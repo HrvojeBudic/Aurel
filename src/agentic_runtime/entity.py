@@ -257,15 +257,10 @@ class AgenticEntity:
             self._remember(MemoryRecord.make(
                 MemoryTier.EPISODIC,
                 f"FAILURE on {failed_step['tool']}: {self.state.open_errors[-1]}; "
-                f"will attempt a corrected approach", source=self.card.id,
+                f"retrying step", source=self.card.id,
                 confidence=0.4))
         except BudgetExceeded as e:
             self.state.open_errors.append(str(e))
-            self.state.budget_exceeded = True
-            return False
-        try:
-            self.runtime.budget.charge_llm()
-        except BudgetExceeded:
             self.state.budget_exceeded = True
             return False
         ok, _ = self._execute_step(intent, failed_step)

@@ -1,0 +1,157 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.filesystem",
+    "name": "Built-in Filesystem Tools",
+    "version": "0.1.0",
+    "description": "Declarative built-in filesystem read and draft-change capabilities. No file writes in P1.3.8.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.read_project_file", "builtin.write_file_draft"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "workspace_scoped",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime", "coding"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.read_project_file",
+      "plugin_id": "builtin.filesystem",
+      "name": "Read Project File",
+      "description": "Declarative read-only file reading inside allowed project scope. Metadata only — does not read files in P1.3.8.",
+      "category": "filesystem",
+      "capability_types": ["read", "retrieve"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"}
+        },
+        "required": ["path"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["local_read"],
+      "risk_class": "R1",
+      "reversibility": "none",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": false,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": ["path_not_found", "permission_denied", "encoding_error"],
+      "evidence_required": false,
+      "trace_level": "standard",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["perception"],
+      "state_delta_contract": {
+        "delta_type": "read_only_observation",
+        "affected_objects": ["file:path"],
+        "expected_delta": "file_content_observed",
+        "static_context": "file content",
+        "dynamic_delta": "none",
+        "observable_after_action": true,
+        "verification_hint": "Compare output hash against source file.",
+        "drift_risk": "none"
+      },
+      "simulation_profile": {
+        "dry_run_supported": false,
+        "simulation_supported": false,
+        "safe_preview_mode": "read_only_probe"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["perception"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "operator_attention_required": false
+      },
+      "learning_profile": {
+        "useful_for_evaluation": false,
+        "useful_for_training_data": false
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    },
+    {
+      "tool_id": "builtin.write_file_draft",
+      "plugin_id": "builtin.filesystem",
+      "name": "Write File Draft",
+      "description": "Declarative capability to prepare a proposed file change as draft/diff only. No file is written to disk in P1.3.8.",
+      "category": "filesystem",
+      "capability_types": ["write", "propose"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "content": {"type": "string"}
+        },
+        "required": ["path", "content"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["state_change"],
+      "risk_class": "R2",
+      "reversibility": "draft_only",
+      "requires_approval": false,
+      "permissions_required": ["filesystem.write"],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": true,
+      "simulation_supported": true,
+      "predicted_effect": {
+        "state_target": "file:path",
+        "expected_delta": "draft_diff_created",
+        "affected_objects": ["draft:path", "file:path"],
+        "reversible": true,
+        "confidence_seed": "medium"
+      },
+      "failure_modes": ["path_not_found", "invalid_diff", "encoding_error"],
+      "evidence_required": false,
+      "trace_level": "standard",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["action"],
+      "state_delta_contract": {
+        "delta_type": "local_state_change",
+        "affected_objects": ["draft:path", "file:path"],
+        "expected_delta": "draft_diff_created",
+        "static_context": "current file content",
+        "dynamic_delta": "proposed diff",
+        "observable_after_action": true,
+        "verification_hint": "Inspect generated diff before any write operation.",
+        "drift_risk": "low"
+      },
+      "simulation_profile": {
+        "dry_run_supported": true,
+        "dry_run_strategy": "diff_preview",
+        "simulation_supported": true,
+        "simulation_strategy": "draft_only",
+        "safe_preview_mode": "draft_only"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["action", "policy"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "reversibility_confidence": "draft_only",
+        "operator_attention_required": true
+      },
+      "learning_profile": {
+        "useful_for_evaluation": false,
+        "useful_for_training_data": false,
+        "can_generate_procedure_candidate": true,
+        "failure_should_be_remembered": true
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

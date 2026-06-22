@@ -1,0 +1,42 @@
+id: summarizer
+version: 0.1.0
+owner: runtime-core
+status: active
+purpose: trace-safe summarization
+description: Summarize bounded runtime material without storing raw prompts or secrets.
+allowed_model_profiles:
+  - summarization
+  - local_fast
+allowed_tasks:
+  - summarization
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - material
+output_schema:
+  type: object
+  required:
+    - summary
+    - limitations
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - no_secret_leakage
+  - bounded_summary
+template:
+  - Summarize the supplied material for trace safe operator review.
+  - Do not include secrets credentials tokens or raw prompt text.
+  - Material {{ material }}

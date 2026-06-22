@@ -8,6 +8,14 @@ The entity (`AgenticEntity`) plans and emits `CommandEnvelope` proposals.
 The runtime (`AgenticRuntime`) alone decides whether a command is permitted,
 how it executes, and how results are verified, traced, and remembered.
 
+## Canonical source of truth
+
+P1.5.10X establishes `AurelTraceLog` as the only canonical append-only hash-chained event source of truth.
+
+Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are projections over `AurelTraceLog`, not independent truth sources. If an event is not represented in `AurelTraceLog`, it is not canonical.
+
+`trace_id` is a stable run/workflow identity, not a content-address. `event_hash` is content-addressed from canonical event content. Future replay reports and causal graphs may introduce their own content-addressed hashes over canonical trace events.
+
 ## Module map
 
 | Module | Role |
@@ -15,6 +23,7 @@ how it executes, and how results are verified, traced, and remembered.
 | `entity.py` | Cognitive organism: plan → execute loop, state machine outcomes |
 | `runtime.py` | Governed command pipeline kernel |
 | `policy.py` | Capability / permission / authority gates + risk re-score |
+| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave; centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation; 10 behavioral contract enums, 15 frozen dataclasses, deterministic canonicalization; no runtime resolver yet |
 | `hitl.py` | Approval gates: auto, console, deny-all, preview-only |
 | `approval.py` | Approval contracts, risk classes, policy resolver, previews (P0.15) |
 | `budget.py` | Resource limits and budget ledger |
@@ -24,18 +33,108 @@ how it executes, and how results are verified, traced, and remembered.
 | `tool_contracts.py` | Input/output schema contracts (P0.10) |
 | `verifier.py` | Post-state verification + test integrity |
 | `trace.py` | Hash-chained audit ledger (in-memory + persistent) |
+| `contracts/` | Canonical trace/projection/evidence/verifier/context/capability contracts: `AurelTraceLog`, immutable `TraceEvent`, `TraceEventRef`, `TraceBindingRef`, `EvidenceRef`, `VerifierResult`, `ContextBindingRef`, `ContextAdequacyReport`, verified capability evidence invariants |
+| `golden_threads/` | P1.5.11A/B deterministic vertical contract harnesses; Golden Thread A proves Intent → ContextBindingRef → Policy → Lease → Stub Exec → Trace → Evidence → Verifier → ContextAdequacyReport → CapabilityEvidence without real execution |
 | `memory.py` | Multi-tier memory fabric |
 | `memory_governance.py` | Memory write governance + promotion (P0.9) |
 | `skills.py` | Skill compilation and reflex promotion |
 | `plan_validator.py` | Strict plan validation before execution |
-| `model_router.py` | Swappable model client routing (mock default) |
+| `model_router.py` | Swappable model client routing (mock default); P1.1 config bundle support |
+| `model_config.py` | Centralized provider/model profiles and runtime policy (P1.1) |
+| `secrets.py` | Env-only secret resolution and redaction boundary (P1.1) |
+| `prompt_system.py` | Prompt manifests, registry, policy validation, rendering, and trace-safe summaries (P1.2) |
+| `tool_manifest/` | Tool / plugin manifest domain models, validation, loader, registry, quarantine, invocation drafts, lifecycle events, research metadata (P1.3.0–P1.3.7) |
+| `evaluation/` | P1.5 Evaluation Mirror foundation: domains, subjects, scopes, criteria, run envelopes (P1.5.0) — **not** full P4 Evaluation Mirror |
+| `identity/` | P1.4 identity trust surface: kernel/persona/operator/modes/context/card/autonomy/claim-boundary/doctrine/source-attestation/authority-delta/operator-consent/lifecycle/trust-evidence/seal-readiness/exit-seal/identity-cli-surface modules; P1.4.20 provides final exit seal (SEALED_WITH_LIMITATIONS) |
+| `autonomy/` | P1.4 autonomy layer placeholder (P1.4.0) — **not** Autonomy Scale yet |
+| `governance/` | P1.4 constitutional floor / profiles placeholder (P1.4.0) |
+| `heretic/` | P1.4 heretic mode placeholder (P1.4.0) — cognitive freedom bounds only in docs |
+| `metacognition/` | P1.4 self-model / drift hooks placeholder (P1.4.0) |
+| `compliance/` | P1.4 regulatory registry placeholder (P1.4.0) |
 | `model_providers/` | Optional structured-plan providers (mock/openai/anthropic/ollama) |
 | `repo_agent.py` | Bounded repository task loop: context → deterministic/LLM plan → validation → patch → test → report |
 | `demo_harness.py` | P0.20 demo harness: scenarios, factory, runner, honest reports, evidence writer (P0.19/P0.20) |
 | `praxis.py` | Praxis memory metabolism seed: experience → candidates → promotion gates (P0.16) |
 | `state_machine.py` | Execution status transitions |
 | `status.py` | Lightweight runtime diagnostics |
-| `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`) |
+| `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
+
+
+## External doctrine assimilation (P1.4.11)
+
+External doctrine intake is a read-only identity governance layer. Doctrine records carry source identity, SHA-256 source hash, source type, assimilation status, roadmap mappings, claim boundaries, risk notes, and Operator acceptance. The layer maps doctrine to existing roadmap modules and routes implementation-sounding claims through P1.4.10. It does not execute tools, grant autonomy, change policy, override canon, or mark capabilities implemented by declaration.
+
+
+## Source attestation (P1.4.12)
+
+Source attestation is the identity integrity layer that binds raw source input to canonical typed meaning. It captures raw SHA-256, canonical typed SHA-256, source kind, validator metadata, validation status, rejected unknown fields, warnings, errors, and evidence references.
+
+Identity source loading now attaches attestations to `IdentitySourceBundle` for identity kernel, persona manifest, operator contract, communication modes, identity prompt compiler policy, self-model policy, and agent identity card config. External doctrine records can also produce `external_doctrine` attestations.
+
+Architectural law:
+
+- Raw hash is not canonical meaning.
+- Canonical typed hash is not raw source integrity.
+- Hash-based attestation is not truth, trust, capability, cryptographic signing, or tamper-proof storage.
+- Unknown governance/authority-shaped fields must be rejected and attested, not silently ignored.
+
+## Authority Delta Detector (P1.4.13)
+
+Authority delta detection is the semantic comparison layer that identifies authority-relevant changes between two attested canonical states. It does not grant consent or execute tools.
+
+The detector extracts authority surfaces from known source kinds (operator_contract, agent_identity_card_config, self_model_policy, external_doctrine, capability_claims, source_attestation), compares old and new surfaces, classifies each difference by authority meaning, and produces an `AuthorityDeltaReport` with severity, consent, and evidence requirements.
+
+**Core module:** `src/agentic_runtime/identity/authority_delta.py`
+
+Architectural law:
+
+- Valid source does not imply safe authority change.
+- Authority detection is not consent.
+- Detection does not execute actions or modify source.
+- High/critical deltas carry `requires_operator_consent: true`.
+- Claim/capability/doctrine status escalation carries `requires_evidence: true`.
+- Conservative tool heuristics err on the side of marking tools as dangerous.
+
+## Operator Consent Binding (P1.4.14)
+
+Operator consent binding is the formal layer that binds Operator approval to specific authority deltas. Consent is bound to exact delta IDs, source kind, and old/new attestation pairs — it is not global, not permanent by default, and not transferable.
+
+The binding layer exposes consent requests from delta reports, grants/denies with fail-closed validation, revocation of granted records, and binding validation that verifies status, attestation, delta coverage, risk acknowledgement, scope, and expiry constraints.
+
+**Core module:** `src/agentic_runtime/identity/operator_consent.py`
+
+Architectural law:
+
+- Consent is bound to exact delta IDs and attestation pairs.
+- Consent is not global — it does not cover any other authority delta.
+- Consent is not permanent by default — expiry is enforced.
+- Revoked or expired consent is permanently invalid.
+- HIGH/CRITICAL deltas require explicit risk acknowledgement.
+- Consent does not execute changes, modify source, or grant capabilities.
+- Consent validation exposes structured blockers (not just true/false).
+
+The consent layer is a primitive for P1.4.15 CLI surface and future governance automation. It does not implement approval workflows, policy cards, or capability promotion.
+
+### Runtime integration status (P1.4.15)
+
+**NOT YET WIRED.** Authority delta detection and operator consent binding are identity governance signals exposed via CLI and in-memory models. They do **not** gate `AgenticRuntime.submit()` today. Runtime commands proceed through policy → approval → sandbox without checking `validate_operator_consent_binding()`. Wiring consent enforcement into the command pipeline is deferred to P1.4.16+.
+
+## Identity Governance Command Surface (P1.4.15)
+
+The command surface is the unified CLI layer that exposes the entire identity governance stack through one namespace. It provides `identity status` and `identity verify` as read-only inspection endpoints with a standardized JSON output envelope `{ok, command, status, errors, warnings, result}`.
+
+The surface probes 6 subsystems (kernel, claims, doctrine, attestation, authority-delta, consent) via lightweight import checks and routes subcommands to their respective module CLI handlers.
+
+**Core module:** `src/agentic_runtime/identity/identity_cli_surface.py`
+
+Architectural law:
+
+- The surface is a command interface, not an interactive terminal agent.
+- Status and verify are read-only — no file writes, no tool execution, no consent grants.
+- JSON envelope is stable across all identity commands.
+- Human-readable output exposes blockers and suggested next commands.
+- Module boundaries are preserved — each subcommand routes to its owning module.
+- Governance failures are visible, not hidden.
 
 ## Command pipeline
 
@@ -110,3 +209,549 @@ about availability — no silent downgrade to unsafe mode.
 `LLMRepoPlanner` uses `ModelRouter.complete_structured()` with a repository-plan schema. Providers return JSON only: objective summary, files to inspect/modify, proposed non-executing steps, risk, expected tests, approval flag, assumptions, and optional refusal. `RepoPlanValidator` rejects invalid JSON, missing fields, disallowed paths, excessive file counts, and test-file modifications unless explicitly allowed. Invalid LLM output becomes `planning_failed` in `llm` mode or a recorded deterministic fallback in `hybrid` mode.
 
 The LLM never receives tool authority and never executes tools. Patch/test execution remains in `RepositoryAgentLoop → Runtime → Tool Bus → Approval → Sandbox → Verifier / Trace / Praxis`.
+
+## Prompt system (P1.2)
+
+Prompts live under the top-level `prompts/` directory as YAML manifests. `PromptRegistry` loads and validates manifests, optionally checks `allowed_model_profiles` against P1.1 `ModelConfigBundle`, and renders templates with explicit `{{ variable }}` placeholders. Missing variables fail closed. Prompt policies may not request secrets or authority expansion, and planning prompts may not request tool execution or file modification.
+
+Rendered prompts produce `PromptTraceSummary` records with prompt id, version, owner, purpose, allowed profiles/tasks, risk tier, template/rendered hashes, variables used, and `raw_prompt_stored: false`. Raw rendered prompt text is not persisted by default. CLI render output omits rendered previews; module summaries may carry bounded redacted previews for tests or future trace integration.
+
+## Tool / plugin manifest domain (P1.3.0)
+
+P1.3.0 adds typed backend models under `tool_manifest/` only — no registry loader, no execution path, no marketplace UI.
+
+| Model | Role |
+|-------|------|
+| `PluginManifest` | Package/source metadata declaring one or more tool ids, trust, policies, and compatibility |
+| `ToolManifest` | Declared identity and contract for a single tool (schemas, risk, side effects, trace level) |
+| `ToolCapability` | Runtime-normalized view of a valid `ToolManifest` — contracts and profiles, not a handler |
+| `ToolRegistryEntry` | Placeholder registry record with validation issues and optional normalized capability |
+| `ToolInvocationDraft` | Proposed tool use with purpose, payload, and predicted effect — **not execution** |
+| `PredictedEffect` | Seed for future planning / world-model layers |
+| `ValidationIssue` | Structured manifest validation finding |
+
+Architectural law (unchanged from the governed runtime):
+
+- **Tool access is not authority.** Listing or declaring a tool does not grant write/network/secret authority.
+- **Tool visibility is not execution right.** Seeing a manifest or capability does not permit invocation.
+- **Tool registration is not trust.** Registry entries record state; trust is evaluated separately.
+- **Tool manifest is not permission.** Policy, HITL, and sandbox still dispose any future execution.
+- **Tool invocation draft is not execution.** Drafts are proposals only; the existing `CommandEnvelope → Runtime → Tool Bus` pipeline remains the execution surface.
+
+Later phases (P1.3+) may add manifest loading, validation, quarantine, and draft-to-command bridging. P1.3.0 intentionally stops at serializable domain types with helpers such as `is_high_risk()`, `is_external()`, and `requires_human_approval()`.
+
+## Tool manifest validation (P1.3.1)
+
+`tool_manifest/validation.py` inspects `PluginManifest` and `ToolManifest` metadata and returns structured `ValidationIssue` lists. Validation is read-only — it does not mutate manifests, grant authority, register tools, or execute anything.
+
+| Function | Role |
+|----------|------|
+| `validate_plugin_manifest` | Identity + provenance/trust checks for plugins |
+| `validate_tool_manifest` | Full composed validation (optional plugin context) |
+| `validate_tool_risk_metadata` | Risk class ↔ side-effect/trace/evidence rules |
+| `validate_tool_permission_metadata` | Permissions + plugin secret/network policy requirements |
+| `validate_tool_side_effect_metadata` | Side-effect ↔ risk, data access, environment rules |
+| `validate_tool_provenance_metadata` | Plugin origin/trust/status vs tool risk |
+| `is_tool_manifest_valid` / `is_plugin_manifest_valid` | Convenience pass/fail (no blocking issues) |
+| `has_blocking_validation_issues` | True when any `error` or `critical` issue exists |
+| `validation_summary` | Counts by severity + stable issue codes |
+
+Key rules enforced:
+
+- **R0/R1** read-only tools cannot declare write/execute/network/secret side effects.
+- **R4/R5/R6** require approval; R5 requires evidence; R6 must be disabled; high-risk trace must be detailed/forensic.
+- **External/network/secret** tools require matching plugin policies and explicit permissions.
+- **State-changing** tools should declare `PredictedEffect` (warning at R2/R3, error at R4/R5).
+- **Generated/external/unknown** plugin origins are validated more strictly; unknown origin + enabled R3+ tool is critical.
+
+No manifest with blocking validation issues should become a `ToolCapability` in later registry phases. Validation does not replace runtime policy, HITL, or sandbox gates.
+
+## Manifest loader (P1.3.2)
+
+`tool_manifest/loader.py` reads local declarative manifest files (JSON primary; YAML via `yaml_minimal` when extension is `.yaml`/`.yml`).
+
+| Function / type | Role |
+|-----------------|------|
+| `load_manifest_file` | Read, hash, parse, validate one manifest file |
+| `load_manifest_directory` | Deterministic sorted directory scan; continues after bad files |
+| `parse_manifest_bundle` | Parse root `{plugin, tools}` dict into domain objects |
+| `validate_manifest_bundle` | P1.3.1 validation + bundle consistency rules |
+| `compute_manifest_hash` | SHA-256 over raw file bytes |
+| `determine_manifest_load_status` | Map issues → `loaded` / `loaded_with_warnings` / `invalid` |
+| `ManifestLoadResult` | Structured load outcome (path, hash, issues, status) |
+
+Loader law:
+
+- **Manifest loading is not registry activation.** Parsed manifests are not registered with Tool Bus.
+- **Manifest loading does not execute tools.** No handlers run; no side effects occur.
+- **Manifest loading does not grant authority.** Validation reports unsafe metadata only.
+
+See `TOOL_MANIFESTS.md` for file format and fixture examples.
+
+## Tool capability registry (P1.3.3)
+
+`tool_manifest/registry.py` builds a runtime-visible catalog of validated `ToolCapability` objects.
+
+| Type / function | Role |
+|-----------------|------|
+| `ToolRegistry` | In-memory catalog of `ToolRegistryEntry` records |
+| `ToolRegistryResult` | Structured outcome for register/disable/enable operations |
+| `ToolRegistryOperationStatus` | `registered`, `already_exists`, `rejected`, `disabled`, `enabled`, `not_found`, … |
+| `create_tool_capability_from_manifest` | Normalize `ToolManifest` + optional `PluginManifest` → `ToolCapability` |
+| `register_manifest_result` | Loader output → catalog entries (valid loads only) |
+| `register_bundle` / `register_tool_manifest` | Direct bundle/tool registration |
+| `list_active_tools` | Excludes disabled/invalid/quarantined/deprecated/experimental/R6 |
+| `get_capability_roles` | Derived role tags (metadata/query only) |
+
+Registry law:
+
+- **Registry visibility is not permission.** Listing a capability does not authorize execution.
+- **Registry does not execute tools.** No Tool Bus dispatch or handler invocation.
+- **Registration is not trust.** Validation issues are preserved on each entry.
+- High-risk helpers (`list_high_risk_tools`, `requires_approval`) expose approval-bound metadata only.
+
+Manifest loading (P1.3.2) and registry activation (P1.3.3) remain separate: load → validate → optionally register.
+
+## Quarantine and validation reports (P1.3.4)
+
+`tool_manifest/quarantine.py` adds structured safety-state handling on top of P1.3.1 validation.
+
+| Type / function | Role |
+|-----------------|------|
+| `ValidationReport` | Severity counts and blocking summary for issue lists |
+| `QuarantineDecision` | `should_quarantine`, `should_reject`, `should_disable`, reasons |
+| `QuarantineRecord` | Isolation record with issues, hash, source path, suggested action |
+| `QuarantineStore` | In-memory quarantine catalog |
+| `classify_validation_issues` | Build `ValidationReport` |
+| `decide_quarantine_for_plugin/tool/manifest_result` | Policy decisions without mutation |
+| `create_quarantine_record` | Materialize isolation record |
+| `registry_should_activate_entry` | Active-list gate used by `ToolRegistry` |
+
+Quarantine law:
+
+- **Quarantine is isolation, not deletion** — objects remain auditable with preserved evidence.
+- **Quarantine is not approval workflow** — no HITL or execution side effects.
+- **Registry must not expose quarantined tools as active** — integrated via `ToolRegistry.quarantine_store`.
+- **Warning-only paths keep warnings visible** on registry entries without automatic quarantine.
+
+## Tool invocation drafts (P1.3.5)
+
+`tool_manifest/invocation.py` prepares structured tool-use **proposals** from active registry capabilities.
+
+| Type / function | Role |
+|-----------------|------|
+| `ToolInvocationContext` | Who/why/source metadata for a draft request |
+| `ToolInputValidationResult` | Minimal JSON-schema input validation outcome |
+| `ToolInvocationDraft` | Intention object (payload, risk, evidence plan) — not execution |
+| `ToolInvocationDraftResult` | Structured create outcome with status and issues |
+| `validate_tool_input_payload` | Required fields, unexpected fields, primitive type checks |
+| `derive_approval_requirement` | Conservative approval flag from capability metadata |
+| `derive_evidence_plan` | Seed evidence capture guidance (not evidence itself) |
+| `create_tool_invocation_draft` | Registry → validate → draft; never invokes tools |
+| `is_tool_invocation_draft_policy_ready` | Structural readiness for a future policy gate |
+
+Draft law:
+
+- **Tool invocation draft is not execution** — no Tool Bus dispatch, network, or file mutation.
+- **Draft creation does not grant authority** — registry visibility and drafts are metadata only.
+- **`ready_for_policy` / policy-ready ≠ executable** — future policy/approval layers decide execution.
+- **High-risk drafts** carry `approval_required` and `requires_approval` status for downstream HITL.
+- **`predicted_effect` is preserved** for future world-model/planning layers, not autonomous selection.
+
+## Tool lifecycle trace events (P1.3.6)
+
+`tool_manifest/events.py` records serializable lifecycle transitions for manifest load, registry, quarantine, and invocation-draft stages.
+
+| Type / function | Role |
+|-----------------|------|
+| `ToolLifecycleEventType` | Event taxonomy (`manifest_loaded`, `tool_capability_registered`, …) |
+| `ToolLifecycleEvent` | Serializable lifecycle record with issues and metadata |
+| `ToolLifecycleEventRecorder` | In-memory event store with list/filter/get helpers |
+| `build_manifest_loaded_event` / `build_manifest_rejected_event` | Manifest loader outcomes |
+| `build_tool_registered_event` / `build_tool_rejected_event` | Registry outcomes |
+| `build_quarantine_record_created_event` | Quarantine isolation records (immune-system seed) |
+| `build_invocation_draft_event` | Draft create/block/reject/approval outcomes |
+
+Trace law:
+
+- **Trace event is not execution** — recording does not invoke tools or grant authority.
+- **Trace event is not verified evidence** — validated execution support comes later.
+- **Composable builders** — loader/registry/quarantine/draft modules are not auto-instrumented; callers opt in via `recorder.record(build_*_event(result))`.
+- **`predicted_effect` metadata** is preserved on draft/registry events for future world-model loops.
+- **Separate from P0.6 hash-chain ledger** — lifecycle events use a lightweight in-memory recorder, not `PersistentTraceLedger`.
+
+## Research-inspired tool metadata (P1.3.7)
+
+`tool_manifest/research_metadata.py` adds optional schema, derivation, and validation for world-model / simulation / governance / learning **readiness** metadata.
+
+| Type / function | Role |
+|-----------------|------|
+| `ToolRole` | Foundation-Agent loop role (perception, action, …) |
+| `StateDeltaContract` | Expected state delta seed for Action → Predicted → Observed loops |
+| `SimulationProfile` | Dry-run/simulation strategy declarations (not execution) |
+| `ToolSafetySurface` | Threat surfaces and externality classification |
+| `ToolLearningProfile` | Skill/procedure/evaluation hints (no learning) |
+| `derive_*` helpers | Conservative metadata seeds from manifest/capability |
+| `validate_tool_research_metadata` | Warnings/errors for high-risk missing explicit metadata |
+
+Research metadata is copied onto `ToolCapability`, `ToolInvocationDraftResult.research_metadata`, and lifecycle event metadata.
+
+## Built-in seed manifests (P1.3.8)
+
+`tool_manifest/builtin_manifests.py` and `tool_manifest/manifests/*.json` ship seven declarative built-in tool capabilities. See `TOOL_MANIFESTS.md` for the tool table and integration path.
+
+## P1.3 Tool Manifest Layer — sealed boundary (P1.3.9)
+
+P1.3 is a **declarative capability layer**. It is separate from the executable Tool Bus.
+
+| Layer | Module | Role |
+|-------|--------|------|
+| Declarative manifest | `tool_manifest/` | Parse, validate, quarantine, catalog, draft, trace |
+| Executable runtime | `tools.py`, `runtime.py` | `CommandEnvelope` → `AgenticRuntime.submit()` → `ToolRuntime.dispatch()` |
+
+Naming note (docs only):
+
+- `tools.py` `ToolRegistry` ≈ **ExecutionToolRegistry** (handler registry)
+- `tool_manifest/registry.py` `ToolRegistry` ≈ **ManifestToolCatalog** (capability metadata catalog)
+
+Boundary laws enforced by P1.3.9 seal tests:
+
+- **No bridge in P1.3** — `ToolInvocationDraft` does not become `CommandEnvelope`; no `runtime.submit` or `ToolRuntime` calls from `tool_manifest/`.
+- **Registry visibility is not permission** — active catalog entries do not authorize execution.
+- **Trace events are not verified evidence** — lifecycle recorder is separate from P0.6 hash-chain ledger.
+
+Future bridge (not implemented — planned at **P6 Governed Tool Bus Expansion**):
+
+```
+ManifestToolCatalog → ToolInvocationDraft → Authority/Policy → CommandEnvelope → runtime.submit → ToolRuntime → ObservedEffect → Trace/Evidence
+```
+
+Seal tests: `tests/test_p13_tool_manifest_layer_seal.py`
+
+## P1.4 Identity, Autonomy & Agent Trust Constitution (P1.4.0)
+
+P1.4.0 is a **scope-contract and preparation layer only**. Constitutional doctrine lives in:
+
+- `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`
+- `docs/P1.4_AGENT_TRUST_CONSTITUTION.md`
+- `docs/P1.4_RESEARCH_ALIGNMENT_NOTES.md`
+
+Boundary laws (P1.4):
+
+- **Identity is not policy.**
+- **Persona is not authority.**
+- **Communication mode is not permission.**
+- **Tool access is not tool authority** (extends P1.3 manifest boundary).
+- **Operator remains final authority; Aurel cannot self-escalate autonomy.**
+
+Stub packages under `identity/`, `autonomy/`, `governance/`, `heretic/`, `metacognition/`, `compliance/` have no runtime integration with `policy.py`, `runtime.py`, or execution paths in P1.4.0.
+
+Static patch map: `identity/p14_scope.py` (`P14_PATCHES`, `P14_SCOPE_IN`, `P14_SCOPE_OUT`, `P14_FORWARD_HOOKS`).
+
+Next implementation: **P1.4.2 Persona Manifest**.
+
+## P1.4.1 Identity Kernel
+
+Machine-readable trust anchor at `config/aurel/identity_kernel.yaml`:
+
+- `load_identity_kernel()` → `AurelIdentityKernel`
+- `validate_identity_kernel()` → fail-closed on critical invariant violations
+- `compute_identity_kernel_hash()` → deterministic SHA-256
+- CLI: `python -m agentic_runtime.cli identity kernel {show,validate,hash,attest}`
+
+Spec: `docs/P1.4.1_IDENTITY_KERNEL_SPEC.md`. Identity Kernel is **not** persona, autonomy, or tool authority.
+
+## P1.4.2 Persona Manifest
+
+Validated expression contract at `config/aurel/persona_manifest.yaml`:
+
+- `load_persona_manifest()` → `AurelPersonaManifest`
+- `validate_persona_manifest()` → fail-closed on critical boundary violations
+- `compute_persona_manifest_hash()` → deterministic SHA-256
+- `build_persona_safe_summary()` → prompt-safe preparation object (no raw YAML)
+- CLI: `python -m agentic_runtime.cli identity persona {show,validate,hash,attest,summary}`
+
+Spec: `docs/P1.4.2_PERSONA_MANIFEST_SPEC.md`. Persona is **not** authority, policy, autonomy, Operator Contract, or Identity Kernel. Next: **P1.4.3 Operator Relationship Contract**.
+
+## P1.4.16 Identity Test Battery
+
+The identity test battery is a **verification/test harness**, not a new governance engine. It sits above P1.4.13-14-15 (authority delta, consent, command surface) and below P1.4.17 (continuity capsule), wrapping all prior identity layers into a single battery with an aggregate PASSED/FAILED/DEGRADED/SKIPPED status.
+
+**Core modules:**
+- `src/agentic_runtime/identity/identity_test_battery.py` — battery engine (case model, scoring, aggregation, CLI entry point)
+- `src/agentic_runtime/identity/identity_test_battery_scenarios.py` — scenario runners (late imports to avoid circular dependencies)
+
+**Data flow:**
+```
+P1.4.13 AuthorityDelta → P1.4.14 Consent → P1.4.15 CommandSurface
+                                                     ↓
+                              P1.4.16 Battery wraps them all
+                              (26 cases, 7 categories, aggregate status)
+                                                     ↓
+                                         P1.4.17 Lifecycle → P1.4.18 TrustEvidence
+```
+
+**Architectural law:**
+
+- The battery is a test harness, not a governance engine — it verifies identity layers, it does not add new authority.
+- Battery status is computed from individual case results, never declared.
+- Late imports in scenario runners prevent import-time coupling between identity modules.
+- Aggregate status (PASSED/FAILED/DEGRADED/SKIPPED) provides a single go/no-go signal for CI and operator health checks.
+- Adversarial scenarios are included by default — the battery must not provide false confidence.
+- The battery does not mutate identity sources, grant consent, execute tools, or change runtime state.
+
+## P1.4.18 Trust Evidence Linkage
+
+The trust evidence linkage layer is a **classification and explanation layer**, not a permission or authority layer. It sits above P1.4.17 (Agent Lifecycle Eligibility State Machine) and below P1.4.19 (Identity Docs/Reports/State Update), linking evidence references from across the identity stack into a structured trust posture classification.
+
+**Core module:** `src/agentic_runtime/identity/trust_evidence.py`
+
+**Data flow:**
+```
+P1.4.17 Lifecycle → eligibility state
+                         ↓
+           P1.4.18 Trust Evidence Linkage
+           ← source attestations (P1.4.12)
+           ← test battery (P1.4.16)
+           ← consent records (P1.4.14)
+           ← authority deltas (P1.4.13)
+           ← lifecycle decisions (P1.4.17)
+                         ↓
+           Trust Evidence Bundle → posture resolution
+                         ↓
+              P1.4.19 Docs/Reports/State Update
+```
+
+**Domain models:**
+
+| Type | Role |
+|------|------|
+| `TrustEvidenceKind` | Enum classifying evidence source type (SOURCE_ATTESTATION, TEST_BATTERY, CONSENT, AUTHORITY_DELTA, LIFECYCLE) |
+| `TrustEvidenceStatus` | Enum for evidence resolution status (PRESENT, MISSING, INVALID, EXPIRED, REVOKED) |
+| `TrustPosture` | Enum for categorical trust classification (UNTRUSTED through BLOCKED) |
+| `TrustEvidenceRef` | Reference to a specific evidence artifact with kind, status, and attestation id |
+| `TrustEvidenceRequirement` | Expected evidence requirement derived from lifecycle state |
+| `TrustEvidenceLink` | Binding between a requirement and its resolved evidence ref |
+| `TrustEvidenceBundle` | Complete set of evidence links assembled for posture evaluation |
+| `TrustEvidenceLinkageReport` | Structured report with posture, evidence links, and human-readable explanation |
+
+**Engine functions:**
+- `default_trust_evidence_requirements_for_lifecycle()` — derive required evidence kinds from lifecycle state
+- `build_trust_evidence_bundle()` — assemble evidence links from 5 helper builders
+- `validate_trust_evidence_bundle()` — structural integrity and reference consistency checks
+- `resolve_trust_posture()` — classify categorical posture from bundle (no numeric score)
+
+**Helper builders:**
+- `evidence_ref_from_source_attestation` — source attestation → evidence ref
+- `from_test_battery_report` — battery aggregate status → evidence ref
+- `from_consent_record` — consent record → evidence ref
+- `from_authority_delta_report` — delta report → evidence ref
+- `from_lifecycle_decision` — lifecycle state/transition → evidence ref
+
+**Architectural law:**
+
+- Trust posture is strictly categorical — no numeric trust score, percentage, or aggregate rating.
+- Evidence linkage is not truth validation — hashes prove integrity, not correctness.
+- Trust evidence bundle validation is read-only — no authority grants, tool execution, lifecycle mutation, or truth assessment.
+- The linkage report explains WHY an identity has its current posture by cross-referencing evidence from across the P1.4 stack.
+- P1.4.18 does not grant authority, execute tools, mutate lifecycle, calculate numeric score, or validate truth.
+- 10 invariants (INV-P1418-01 through INV-P1418-10) enforce these laws at validation time.
+
+## P1.4.19 Seal Readiness Consolidation Layer
+
+The seal readiness layer is a **consolidation and audit layer**, not a new governance layer. It sits above P1.4.18 (Trust Evidence Linkage) and below P1.4.20 (P1.4 Identity & Autonomy Exit Seal), providing structured P1.4 inventory for exit seal verification.
+
+**Core module:** `src/agentic_runtime/identity/p14_seal_readiness.py`
+
+**Data flow:**
+```
+P1.4.18 Trust Evidence → categorical posture
+                               ↓
+              P1.4.19 Seal Readiness Consolidation
+              ← identity module map (all P1.4 modules)
+              ← CLI groups (18 total)
+              ← invariants (15 P14 + 10 P1419)
+              ← known limitations (15 total)
+              ← P1.4.20 checklist (22 items)
+                               ↓
+              P1.4.20 Exit Seal Verification
+```
+
+**Domain models:**
+
+| Type | Role |
+|------|------|
+| `P14ModuleStatus` | Status record for each P1.4 module (implemented/stub/placeholder) |
+| `P14SealReadinessReport` | Structured seal readiness report with module map, CLI groups, invariants, limitations, checklist |
+
+**Pre-built constants:**
+- `P14_CLI_GROUPS` — 18 CLI command groups indexed for P1.4.20 verification
+- `P14_INVARIANTS` — 15 P1.4 scope contract invariants
+- `P1419_INVARIANTS` — 10 consolidation/audit-specific invariants
+- `P14_KNOWN_LIMITATIONS` — 15 catalogued known limitations
+- `P1420_SEAL_CHECKLIST` — 22 items for P1.4.20 exit seal verification
+
+**CLI:** `identity seal-readiness --json`
+
+**Architectural law:**
+
+- P1.4.19 is consolidation, not new governance — it adds no authority, permission, or tool changes.
+- P1.4.19 prepares P1.4.20 and does not replace it — the seal-readiness report identifies what must be verified, not performs the seal.
+- All indexes (`P14_CLI_GROUPS`, `P14_INVARIANTS`, `P1419_INVARIANTS`, `P14_KNOWN_LIMITATIONS`, `P1420_SEAL_CHECKLIST`) are canonical for P1.4.20 verification.
+- P1.4.19 does not overclaim autonomy, claim production readiness, claim ABOS/AETHER implementation, grant authority, or mutate state.
+
+## P1.4.20 P1.4 Identity & Autonomy Exit Seal
+
+The exit seal is the **final P1.4 boundary verification layer**. It validates — does not add governance. It runs 56 seal checks across 5 categories and produces a seal result that is honest about what P1.4 has and hasn't achieved.
+
+**Core module:** `src/agentic_runtime/identity/p14_exit_seal.py`
+
+**Data flow:**
+```
+P1.4.19 Seal Readiness → structured P1.4 inventory
+                               ↓
+              P1.4.20 Exit Seal Verification
+              ← import/object checks (P1.4 modules load correctly)
+              ← CLI checks (p14-seal commands accessible)
+              ← governance invariants (P14_INVARIANTS, P1419_INVARIANTS)
+              ← adversarial checks (edge cases, boundary violations)
+              ← docs consistency (agent/*.md, docs/*.md synced)
+                               ↓
+              Seal Result: SEALED_WITH_LIMITATIONS
+                               ↓
+              P1.5.0 Evaluation Mirror Foundation
+```
+
+**Seal check registry:** 56 checks across 5 categories — `identity p14-seal run/list-checks/run-check`
+
+**CLI:** `identity p14-seal run/list-checks/run-check --json` — read-only, no mutation, no authority grant, no consent grant
+
+**Architectural law:**
+
+- P1.4.20 is the final boundary seal for P1.4 — it validates, it does not add governance.
+- SEALED_WITH_LIMITATIONS is the honest outcome — limitations are explicit and documented.
+- The seal is read-only by construction — repeated calls produce identical output, no side effects.
+- P1.5.0 Evaluation Mirror Foundation is the next phase.
+- The seal does not execute tools, grant consent, mutate identity sources, or change runtime state.
+- 15 known limitations carry forward from P1.4.19.
+
+**Seal result for P1.4 foundation: SEALED_WITH_LIMITATIONS.** P1.4.20 is the final P1.4 patch.
+
+## P1.4.17 Agent Lifecycle Eligibility State Machine
+
+The lifecycle state machine is an **eligibility layer**, not a permission layer. It sits above P1.4.16 (Identity Test Battery) and below P1.4.18 (Trust Evidence Linkage), determining which agentic lanes an agent is eligible for based on its current lifecycle state.
+
+**Core module:** `src/agentic_runtime/identity/agent_lifecycle.py`
+
+**Data flow:**
+```
+P1.4.16 Battery → aggregate PASSED/FAILED status
+                         ↓
+           P1.4.17 Lifecycle ← reads battery status
+           (eligibility, not permission)
+                         ↓
+       P1.4.18 Trust Evidence Linkage
+```
+
+**Lifecycle states (8):**
+
+| State | Meaning | Lane Eligibility |
+|-------|---------|-----------------|
+| DRAFT | Under construction | Read-only lanes |
+| ACTIVE | Operational | Gated lane set |
+| SUSPENDED | Temporarily paused | Read-only lanes |
+| RESTRICTED | Reason-sensitive limits | Varies by reason |
+| MAINTENANCE | Under operator maintenance | Read-only lanes |
+| DEPRECATED | Scheduled for removal | Read-only lanes |
+| ARCHIVED | Retired, read-only history | Read-only lanes |
+| REVOKED | Terminal revocation | No lanes |
+
+**Lane model:** Each state maps eligible/blocked lanes + required gates across 9 lanes. Replaces per-agent tool boolean flags with structured lane eligibility.
+
+**Architectural law:**
+
+- Lifecycle determines lane eligibility, not permission — Policy, HITL, and Operator Consent remain the permission authorities.
+- Lifecycle state changes are Operator-initiated; the recommendation engine only reads governance signals.
+- REVOKED is terminal and irreversible — no lanes, no transitions out, hard-fail-closed.
+- DRAFT→ACTIVE is denied — an agent must pass through structured activation, not self-promote.
+- SUSPENDED→ACTIVE is denied — reactivation requires explicit Operator approval.
+- RESTRICTED is reason-sensitive — lane blocking depends on the transition reason, not a blanket.
+- ACTIVE is gated — explicit lane eligibility, not unlimited access.
+- All validation and recommendation is read-only — no mutation of identity sources, no consent grants, no tool execution.
+- 17 invariants (INV-P1417-01 through INV-P1417-17) enforce these laws at validation time.
+
+## Roadmap v3.2 — System Architecture (P1.5.0)
+
+### Aurel Core vs independent Hub tools
+
+```
+Aurel Core     — sovereign intelligence, governance, orchestration, memory, evidence, fusion
+HQ             — Aurel-native command center
+A-Hub          — independent ABOS / business / agency operating tool (AgencyHub)
+S-Hub          — independent knowledge / source / artifact / media studio (StudioHub)
+L-Hub          — independent model / agent / LoRA / dataset / flow laboratory (LabHub)
+IDE            — independent engineering / coding / terminal / repo tool
+```
+
+A-Hub, S-Hub, L-Hub, and IDE are **independent tools** with their own native LLM/runtime layers. Aurel can coordinate, govern, audit, receive handoffs, request evidence, and promote memory/dataset/skill/canon when authorized. Users can also use Hub tools without Aurel.
+
+**Hub memory does not automatically become Aurel Core memory.**
+
+| Memory domain | Scope |
+|---------------|-------|
+| Aurel Core Memory | Sovereign agent memory, governed writes, promotion gates |
+| ABOS Corporate Memory | A-Hub business/agency context |
+| Studio Source / Artifact Memory | S-Hub knowledge and media artifacts |
+| Lab Learning / Dataset Memory | L-Hub model training and dataset candidates |
+| IDE Engineering Trace Memory | IDE coding sessions and repo traces |
+
+### Model foundation doctrine
+
+**Sovereign open-weight lanes (foundation):** Mistral, DeepSeek, GLM, Llama families.
+
+**External API escalation lanes (optional):** Codex, GPT/GPT-5.5, Claude/Opus, Gemini, OpenRouter, other external APIs. External API lanes are **not** Aurel's identity foundation.
+
+### Dual auto-modeling doctrine (future)
+
+- **Model-of-Models** — which model is good for which job
+- **Model-of-Work** — how a type of work should flow through Aurel/Core/Hub systems
+- Fusion runtime should eventually use both (not implemented in P1.5.0)
+
+### P1.5 vs P4 Evaluation Mirror distinction
+
+| Layer | Scope |
+|-------|-------|
+| **P1.5** | Minimal verified capability evidence foundation — domains, subjects, scopes, criteria, run envelopes |
+| **P4** | Full Evaluation Mirror across Aurel Core, Hub outputs, model lanes, memory, context packs, artifacts, IDE patches, dataset candidates |
+
+P1.5.0 does **not** implement scoring engines, benchmark runners, Model-of-Models, Model-of-Work, or Hub-native evaluation.
+
+## P1.5.0 Evaluation Mirror Foundation Gate
+
+**Core module:** `src/agentic_runtime/evaluation/evaluation_foundation.py`
+
+**Core law:** No capability claim may become VERIFIED without evaluation evidence.
+
+**Data flow:**
+```
+P1.4.20 Seal (SEALED_WITH_LIMITATIONS)
+         ↓
+P1.5.0 Evaluation Foundation
+  ← EvaluationDomain / EvaluationSubjectType (closed-world)
+  ← EvaluationSubject (typed, evidence-ref-bound)
+  ← EvaluationScope (domain-scoped, non-goals explicit)
+  ← EvaluationCriterion (required, evidence_required)
+  ← EvaluationRunEnvelope (auditable run prep — does NOT verify capability)
+         ↓
+P1.5.1 Evaluation Object Model (next)
+```
+
+**CLI:** `evaluation foundation status/scope --json` — read-only, no capability verification, no claim/lifecycle/trust mutation.
+
+**Architectural law:**
+
+- P1.5.0 starts only after P1.4.20 seal.
+- EvaluationRunEnvelope prepares an auditable run — it does not itself verify capability.
+- P1.5.0 is foundation, not full P4 Evaluation Mirror.
+- Roadmap v3.2 is a macro update, not a reset. P22–P24 are added but not started.
+- P1.5.1 Evaluation Object Model is the next coding module.

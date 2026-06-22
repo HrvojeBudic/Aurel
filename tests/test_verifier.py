@@ -5,7 +5,8 @@ from agentic_runtime.test_integrity import MUTATE_PROTECTED_TOOL, PROTECTED_FILE
 from tests.conftest import make_cmd
 
 
-def test_test_weakening_denied(kernel, card):
+def test_test_weakening_denied(write_kernel, card):
+    kernel = write_kernel
     card.authority.write_paths = ["src/", "test_app.py"]
     kernel.sandbox.write_file("test_app.py", "assert calc.add(1,1)==2\n")
     kernel.verifier.test_integrity.snapshot()
@@ -24,7 +25,8 @@ def test_test_weakening_denied(kernel, card):
     assert kernel.sandbox.read_file("test_app.py") == "assert calc.add(1,1)==2\n"
 
 
-def test_run_tests_escape_attempt_fails(kernel, card):
+def test_run_tests_escape_attempt_fails(write_kernel, card):
+    kernel = write_kernel
     card.authority.write_paths = ["src/", "test_escape.py"]
     kernel.sandbox.write_file("src/app.py", "x = 1\n")
     malicious_test = (
@@ -39,7 +41,8 @@ def test_run_tests_escape_attempt_fails(kernel, card):
     assert "unexpected" in res.verifier.reason.lower() or not res.ok
 
 
-def test_failed_verifier_causes_rollback(kernel, card):
+def test_failed_verifier_causes_rollback(write_kernel, card):
+    kernel = write_kernel
     card.authority.write_paths = ["src/", "test_rb.py"]
     kernel.sandbox.write_file("test_rb.py", "assert True\n")
     kernel.verifier.test_integrity.snapshot()

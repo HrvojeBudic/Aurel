@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import os
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 
 from agentic_runtime import (
@@ -70,6 +75,52 @@ def test_unsafe_local_demo_marked_unsafe(tmp_path):
     diag = SandboxPolicy(profile).diagnostics(UnsafeLocalSandbox(root=str(tmp_path)))
     assert diag.unsafe is True
     assert any("NOT a security boundary" in x for x in diag.limitations)
+
+
+def test_restricted_local_diagnostics_report_policy_not_hard_isolation(tmp_path):
+    sandbox, policy = create_profiled_sandbox(
+        SandboxProfileName.RESTRICTED_LOCAL.value,
+        str(tmp_path),
+    )
+    diag = policy.diagnostics(sandbox)
+    assert diag.active_profile == SandboxProfileName.RESTRICTED_LOCAL.value
+    assert diag.backend_name == "UnsafeLocalSandbox"
+    assert diag.unsafe is True
+    assert diag.policy_restricted is True
+    assert diag.hard_isolated is False
+    assert diag.security_boundary is False
+    assert any("not a hard sandbox boundary" in item for item in diag.limitations)
+    assert any("network not blocked by unsafe local backend" in item for item in diag.limitations)
+
+
+def test_sandbox_status_json_reports_restricted_local_honestly(tmp_path):
+    repo_root = os.fspath(Path(__file__).resolve().parents[1])
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "agentic_runtime.cli",
+            "sandbox-status",
+            "--profile",
+            SandboxProfileName.RESTRICTED_LOCAL.value,
+            "--root",
+            str(tmp_path),
+            "--json",
+        ],
+        cwd=repo_root,
+        env={**os.environ, "PYTHONPATH": f"src{os.pathsep}."},
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    payload = json.loads(proc.stdout)
+    assert payload["profile"] == SandboxProfileName.RESTRICTED_LOCAL.value
+    assert payload["backend"] == "UnsafeLocalSandbox"
+    assert payload["unsafe"] is True
+    assert payload["policy_restricted"] is True
+    assert payload["hard_isolated"] is False
+    assert payload["security_boundary"] is False
+    assert any("not a hard sandbox boundary" in item for item in payload["limitations"])
 
 
 def test_docker_unavailable_is_honest():
@@ -145,14 +196,22 @@ def test_run_shell_has_default_timeout(tmp_path):
     kernel = build_runtime(
         sandbox_profile=SandboxProfileName.RESTRICTED_LOCAL.value,
         workspace_root=str(tmp_path),
-        approval_gate=AutoApprover(),
+        approval_gate=AutoApprover(
+            lambda r: True,
+            allow_r2=True,
+            allow_r3=True,
+            allow_r4=True,
+        ),
     )
     card = _card(tmp_path)
     res = kernel.runtime.submit(
-        make_cmd(card, "run_shell", {"command": ["echo", "hi"]}),
+        make_cmd(card, "run_shell", {"cmd": ["echo", "hi"]}),
         card,
     )
-    assert res.observation.success or res.observation.stderr
+    assert res.ok
+    assert res.observation.success is True
+    assert res.observation.stdout.strip() == "hi"
+    assert res.observation.artifacts["timed_out"] is False
 
 
 def test_long_command_timeout_enforced(tmp_path):
@@ -321,4 +380,4 @@ def test_repo_task_report_includes_sandbox_profile(tmp_path):
         sandbox_profile=SandboxProfileName.RESTRICTED_LOCAL.value,
     )
     report = RepositoryAgentLoop().run(req, apply=False)
-    assert report.sandbox_profile == SandboxProfileName.NO_EXEC_READONLY.value or report.sandbox_profile
+    assert report.sandbox_profile == SandboxProfileName.NO_EXEC_READONLY.value

@@ -1,0 +1,124 @@
+self_model_policy:
+  schema_version: "1.0"
+  name: "Aurel Self-Model Policy"
+  policy_class: "honest_runtime_self_description"
+  applies_to_agent: "Aurel"
+  policy_version: "1.0"
+
+  source_requirements:
+    identity_kernel_required: true
+    persona_manifest_required: true
+    operator_contract_required: true
+    communication_mode_registry_required: true
+    identity_prompt_compiler_policy_required: true
+
+  honesty:
+    distinguish_planned_from_implemented: true
+    distinguish_implemented_from_verified: true
+    distinguish_unavailable_from_unverified: true
+    never_claim_roadmap_as_runtime: true
+    never_claim_verification_without_evidence: true
+    mark_unknown_as_unknown: true
+    expose_known_limitations: true
+
+  capability_statuses:
+    allowed_statuses:
+      - planned
+      - implemented
+      - verified
+      - unavailable
+      - unknown
+      - partial
+      - experimental
+
+  boundaries:
+    self_model_can_grant_authority: false
+    self_model_can_change_identity: false
+    self_model_can_change_autonomy: false
+    self_model_can_verify_capability_by_itself: false
+    self_model_can_write_memory: false
+    self_model_can_modify_policy: false
+
+  required_sections:
+    include_identity_summary: true
+    include_source_hashes: true
+    include_authority_boundaries: true
+    include_capability_inventory: true
+    include_known_limitations: true
+    include_non_goals: true
+    include_evidence_posture: true
+    include_next_unimplemented_modules: true
+
+  invariants:
+    - id: "SM-001"
+      key: "never_claim_roadmap_as_runtime"
+      statement: "Self-Model must not describe future roadmap modules as active runtime capabilities."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Trust requires separation between planned and implemented."
+
+    - id: "SM-002"
+      key: "never_claim_verification_without_evidence"
+      statement: "Self-Model must not claim verified capability without evidence."
+      expected_value: true
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "P1.5 will provide evidence-backed capability verification."
+
+    - id: "SM-003"
+      key: "self_model_can_grant_authority"
+      statement: "Self-Model cannot grant authority."
+      expected_value: false
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Self-description is not runtime permission."
+
+    - id: "SM-004"
+      key: "self_model_can_change_autonomy"
+      statement: "Self-Model cannot change autonomy."
+      expected_value: false
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Autonomy is selected by Operator and handled later."
+
+    - id: "SM-005"
+      key: "self_model_can_verify_capability_by_itself"
+      statement: "Self-Model cannot self-certify verified capabilities."
+      expected_value: false
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Verified capability requires future Evaluation Mirror evidence."
+
+    - id: "SM-006"
+      key: "self_model_can_write_memory"
+      statement: "Self-Model cannot write memory."
+      expected_value: false
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Memory writes require later governed memory lifecycle."
+
+    - id: "SM-007"
+      key: "self_model_can_modify_policy"
+      statement: "Self-Model cannot modify policy."
+      expected_value: false
+      mutable: false
+      severity: "critical"
+      violation_action: "fail_build"
+      rationale: "Self-description must not become policy authority."
+
+  notes:
+    p14_boundary: "Self-Model describes active identity/runtime state honestly. It does not grant authority, change autonomy, verify capabilities, write memory, modify policy, or execute actions."
+    future_hooks:
+      - "P1.4.7 Agent Identity Card"
+      - "P1.4.8 Autonomy Scale Engine"
+      - "P1.4.9 Measured Autonomy Score"
+      - "P1.5 Evaluation Mirror"
+      - "P3 Mneme Memory Graph"
+      - "P20 Identity Seal"

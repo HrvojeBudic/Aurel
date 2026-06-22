@@ -231,3 +231,25 @@ def test_verifier_failure_is_persisted(tmp_path):
     last = _last_event(_read_jsonl(run_dir / "events.jsonl"), "state_transition")
     assert last["event_type"] == "state_transition"
     assert not last["payload"]["verifier_result"]["passed"]
+
+
+def test_persistent_praxis_event_round_trip(tmp_path):
+    """F-S01 regression: PersistentTraceLedger.append_praxis_event must not raise."""
+    from agentic_runtime.core_types import PraxisEventRecord
+    from agentic_runtime.trace import PersistentTraceLedger
+
+    ledger = PersistentTraceLedger(base_dir=str(tmp_path / ".traces"), run_id="run_praxis")
+    rec = PraxisEventRecord.make(
+        run_id="run_praxis",
+        agent_id="agent_test",
+        event_type="experience_captured",
+        subject_id="subj_1",
+        summary="persistent praxis round-trip",
+    )
+    out = ledger.append_praxis_event(rec)
+    assert out.entry_hash
+    assert len(ledger) == 1
+
+    run_dir = tmp_path / ".traces" / "runs" / "run_praxis"
+    events = _read_jsonl(run_dir / "events.jsonl")
+    assert any(e.get("event_type") == "praxis_event" for e in events)

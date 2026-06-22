@@ -1,0 +1,49 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.model",
+    "name": "Built-in Model Tools",
+    "version": "0.1.0",
+    "description": "Safe built-in model inspection helpers.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.model_status"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.model_status",
+      "plugin_id": "builtin.model",
+      "name": "Model Status",
+      "description": "Reads configured model profile metadata.",
+      "category": "model",
+      "capability_types": ["read", "observe"],
+      "input_schema": {"type": "object"},
+      "output_schema": {"type": "object"},
+      "side_effects": ["none"],
+      "risk_class": "R0",
+      "reversibility": "none",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["none"],
+      "execution_environment": "runtime",
+      "dry_run_supported": true,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": [],
+      "evidence_required": false,
+      "trace_level": "minimal",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true
+    }
+  ]
+}

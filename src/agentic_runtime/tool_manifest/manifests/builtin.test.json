@@ -1,0 +1,96 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.test",
+    "name": "Built-in Test Tools",
+    "version": "0.1.0",
+    "description": "Declarative built-in test execution planning capabilities. No tests run in P1.3.8.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.run_tests_draft"],
+    "required_permissions": ["process.execution"],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "workspace_scoped",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime", "coding"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.run_tests_draft",
+      "plugin_id": "builtin.test",
+      "name": "Run Tests Draft",
+      "description": "Declarative capability for test execution planning. Manifest only — no test command executes in P1.3.8.",
+      "category": "test",
+      "capability_types": ["execute", "verify"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "test_target": {"type": "string"}
+        },
+        "required": ["test_target"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["process_execution"],
+      "risk_class": "R3",
+      "reversibility": "unknown",
+      "requires_approval": true,
+      "permissions_required": ["process.execution"],
+      "data_access": ["local_project"],
+      "execution_environment": "sandbox",
+      "dry_run_supported": true,
+      "simulation_supported": true,
+      "predicted_effect": {
+        "state_target": "test_environment",
+        "expected_delta": "test_result_report_created",
+        "affected_objects": ["test_environment", "test_report"],
+        "reversible": false,
+        "confidence_seed": "medium"
+      },
+      "failure_modes": ["command_not_found", "sandbox_unavailable", "timeout"],
+      "evidence_required": true,
+      "trace_level": "detailed",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["verification"],
+      "state_delta_contract": {
+        "delta_type": "environment_state_change",
+        "affected_objects": ["test_environment", "test_report"],
+        "expected_delta": "test_result_report_created",
+        "static_context": "repository test configuration",
+        "dynamic_delta": "test result report",
+        "observable_after_action": true,
+        "verification_hint": "Capture command envelope, exit code, and test summary after future execution.",
+        "drift_risk": "medium"
+      },
+      "simulation_profile": {
+        "dry_run_supported": true,
+        "dry_run_strategy": "command_preview",
+        "simulation_supported": true,
+        "simulation_strategy": "sandbox_run",
+        "resettable_environment_required": true,
+        "safe_preview_mode": "command_preview"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["action", "environment"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "reversibility_confidence": "unknown",
+        "operator_attention_required": true
+      },
+      "learning_profile": {
+        "useful_for_evaluation": true,
+        "useful_for_training_data": true,
+        "failure_should_be_remembered": true,
+        "success_should_be_remembered": true
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

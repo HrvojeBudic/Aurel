@@ -204,14 +204,23 @@ def main() -> None:
             print(f"  run {run_no}: status={rep['status']}")
 
     banner("RESULT")
-    sk = kernel.skills.all()[0]
-    print(f"  final skill: '{sk.name}'  state={sk.state.value}  "
-          f"uses={sk.success_count}  rate={sk.success_rate:.2f}")
-    print(f"  reflex reached: {sk.state == CS.REFLEX}")
-    print("  -> once REFLEX, planning reuses the cached verified plan with NO")
-    print("     model call, but STILL runs policy + sandbox + verify every time.")
-    print(f"\n  trace intact: {kernel.trace.verify_chain()[0]}  "
-          f"memory: {kernel.memory.stats()}  skills: {kernel.skills.stats()}")
+    skills = kernel.skills.all()
+    if not skills:
+        print("  No compiled skills — evidence gates were not satisfied.")
+        print("  This is a safe governed outcome, not a runtime error.")
+        print("  Escalation / human review is the correct governed path when")
+        print("  the runtime cannot promote a skill without sufficient evidence.")
+        print(f"\n  trace intact: {kernel.trace.verify_chain()[0]}  "
+              f"memory: {kernel.memory.stats()}  skills: {kernel.skills.stats()}")
+    else:
+        sk = skills[0]
+        print(f"  final skill: '{sk.name}'  state={sk.state.value}  "
+              f"uses={sk.success_count}  rate={sk.success_rate:.2f}")
+        print(f"  reflex reached: {sk.state == CS.REFLEX}")
+        print("  -> once REFLEX, planning reuses the cached verified plan with NO")
+        print("     model call, but STILL runs policy + sandbox + verify every time.")
+        print(f"\n  trace intact: {kernel.trace.verify_chain()[0]}  "
+              f"memory: {kernel.memory.stats()}  skills: {kernel.skills.stats()}")
 
 
 if __name__ == "__main__":

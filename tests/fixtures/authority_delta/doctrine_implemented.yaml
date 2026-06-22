@@ -1,0 +1,10 @@
+assimilation_status: IMPLEMENTED
+implementation_status: IMPLEMENTED
+mapped_roadmap_modules:
+  - P1.4.13
+  - P1.4.14
+operator_accepted: true
+claim_boundaries:
+  - "boundary_p1414"
+risk_notes:
+  - "operator accepted"

@@ -18,6 +18,185 @@ pytest -q
 python -m agentic_runtime.cli verify
 ```
 
+## Verifying P1.6.0 + P1.6.1 + P1.6.2 Policy Cards & Behavioral Contracts
+
+P1.6.0 establishes first-class policy card foundation objects. P1.6.1 adds centralized Policy Card Schema v1. P1.6.2 adds Behavioral Contract Schema v1 with 24 enums, 15 frozen dataclasses, and deterministic hashing.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py -q
+ruff check src/agentic_runtime/policy_cards/
+mypy src/agentic_runtime/policy_cards/
+```
+
+P1.6.0 test categories (59 tests):
+
+- Valid card creation (minimal and full cards)
+- Deterministic serialization (same card → same JSON → same hash)
+- Closed-world unknown field rejection (arbitrary and dangerous)
+- Dangerous metadata key rejection (authority, bypass, egress, sandbox, etc.)
+- Invalid enum rejection (kind, status, scope_type)
+- Missing required field rejection (identity, kind, status, scope, description)
+- Source hash separation (raw ≠ canonical)
+
+P1.6.1 test categories (61 tests):
+
+- Schema version acceptance ("1.0" passes)
+- Unsupported schema version rejection ("999.0", "0.0", "experimental", empty, null)
+- Missing/empty/blank schema version rejection
+- Required fields tuple present and non-empty
+- Optional fields accepted (risk_binding, authority_binding, source, metadata)
+- Forbidden fields rejected (authority_grant, policy_bypass, grant_authority, etc.)
+- Unknown field rejection (random field, multiple unknowns)
+- Dangerous metadata rejection (operator_not_required, evidence_bypass, delegation_grant, network_access)
+- Safe metadata acceptance (owner_note, source_reference, review_hint)
+- Schema export determinism (same output twice)
+- Schema export content verification (all categories present)
+- Canonical fields stable (same card → same hash)
+- Schema version helpers (is_supported, validate_schema_version)
+- Runtime-future field rejection (resolver, enforcement, conditions)
+- Schema constants sanity (types, disjoint sets, JSON valid)
+
+## Verifying P1.5.10X
+
+P1.5.10X establishes canonical AurelTraceLog integrity. AurelTraceLog is the only source of truth; Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are projections over AurelTraceLog.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/contracts -q
+PYTHONPATH=src:. pytest tests/contracts tests/test_trace.py tests/test_trace_persistence_p06.py -q
+PYTHONPATH=src:. pytest -q
+ruff check .
+mypy .
+```
+
+Focused contract coverage:
+
+- append-only `AurelTraceLog`
+- immutable `TraceEvent` records
+- deterministic payload and event hashing
+- genesis and previous-event hash chain integrity
+- chain verification failure reporting
+- `TraceEventRef` and `TraceBindingRef`
+- non-canonical projection records
+
+## Verifying P1.5.11A
+
+P1.5.11A proves Golden Thread A: Intent → Context → Policy → Lease → Stub Exec → Trace → Evidence → Verifier → CapabilityEvidence. Verified capability evidence requires canonical trace, evidence, verifier pass, verifier limitations, and capability limitations.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/contracts/test_evidence_ref_invariants.py tests/contracts/test_verifier_result_invariants.py tests/contracts/test_capability_evidence_invariants.py tests/golden_threads/test_thread_a_governed_evidence.py -q
+PYTHONPATH=src:. pytest tests/contracts tests/golden_threads -q
+PYTHONPATH=src:. pytest -q
+ruff check src/agentic_runtime/contracts src/agentic_runtime/golden_threads tests/contracts tests/golden_threads
+mypy src/agentic_runtime/contracts src/agentic_runtime/golden_threads
+```
+
+Focused contract coverage:
+
+- trace-bound `EvidenceRef`
+- `VerifierResult` pass/evidence/limitations/confidence invariants
+- verified `CapabilityEvidenceRecord` factory and validation
+- direct verified construction blocked
+- failed verifier cannot create verified capability evidence
+- operator feedback stub cannot auto-promote capability evidence
+- canonical `AurelTraceLog` event and hash-chain verification in Golden Thread A
+
+## Verifying P1.5.11B
+
+P1.5.11B upgrades capability evidence with trace/context binding. Verified capability evidence now requires canonical trace, matching source event hash, evidence refs, verifier pass, limitations, evidence strength `strong|verified`, and safe/adequate context.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/contracts/test_capability_evidence_invariants.py tests/contracts/test_capability_context_binding.py tests/contracts/test_context_adequacy_report.py tests/contracts/test_evidence_strength_level.py tests/golden_threads/test_thread_a_governed_evidence.py -q
+PYTHONPATH=src:. pytest tests/contracts tests/golden_threads -q
+PYTHONPATH=src:. pytest -q
+ruff check src/agentic_runtime/contracts src/agentic_runtime/golden_threads tests/contracts tests/golden_threads
+mypy src/agentic_runtime/contracts src/agentic_runtime/golden_threads
+```
+
+Focused contract coverage:
+
+- `ContextBindingRef`
+- `ContextAdequacyReport`
+- `EvidenceStrengthLevel`
+- source_event_hash required and matched to `TraceEventRef.event_hash`
+- unsafe/insufficient context blocks verification
+- partial context requires context limitation
+- adequacy score cannot override unsafe status
+- weak/moderate/none evidence strength cannot verify capability
+- projection-only sources cannot verify capability
+- Golden Thread A includes context binding and context adequacy
+
+## Verifying P1.5.13
+
+P1.5.13 normalizes all verifier outputs through 6 stub verifier normalizers. Every VerifierResult now requires verifier_kind, limitations, reason, confidence in range, evidence_refs for pass status, and source_trace_event_ref. Golden Thread A uses normalized verifier results via EvidenceIntegrityVerifierStub.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/evaluation/test_verifier_normalization.py tests/golden_threads/test_thread_a_verifier_normalization.py tests/contracts/test_verifier_result_invariants.py -v
+PYTHONPATH=src:. pytest tests/evaluation/test_evaluation_case_extraction.py -v  # P1.5.12 still works
+ruff check src/agentic_runtime/contracts/verifier.py src/agentic_runtime/evaluation/verifier_normalization.py src/agentic_runtime/golden_threads/thread_a.py
+mypy src/agentic_runtime/contracts/verifier.py src/agentic_runtime/evaluation/verifier_normalization.py
+```
+
+Focused contract coverage:
+
+- `VerifierKind` enum (6 kinds)
+- `VerifierNormalizationReport` dataclass
+- `VerifierResult` v2 with verifier_kind, normalized_from, created_at
+- 6 stub verifier normalizers: deterministic, operator review, policy check, LLM judge stub, context adequacy, evidence integrity
+- Invariant tests: non-empty limitations, evidence_refs for pass, reason non-empty, confidence 0.0–1.0, source_trace_event_ref required
+- Golden Thread A test: normalized verifier result, normalization report, verifier_kind populated
+
+**Next:** P1.5.14 — Evaluation Mirror Runtime Hook
+
+## Verifying P1.5.14
+
+P1.5.14 creates the first runtime-callable Evaluation Mirror boundary. 5 new contracts (EvaluationTargetRef, EvaluationRequest, EvaluationRun, EvaluationEvent, EvaluationRunResult) with strict validation, plus `run_evaluation()` runtime hook that validates targets against AurelTraceLog, emits evaluation trace events, and returns deterministic results. Golden Thread A calls the hook after P1.5.12 extraction and P1.5.13 normalization. Anti-promotion structure enforced across all contracts.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/evaluation/test_evaluation_runtime_hook.py tests/evaluation/test_evaluation_runtime_invariants.py tests/golden_threads/test_thread_a_evaluation_runtime.py -v
+ruff check src/agentic_runtime/contracts/evaluation_runtime.py src/agentic_runtime/evaluation/runtime_hook.py src/agentic_runtime/golden_threads/thread_a.py
+mypy src/agentic_runtime/contracts/evaluation_runtime.py src/agentic_runtime/evaluation/runtime_hook.py src/agentic_runtime/golden_threads/thread_a.py
+```
+
+Focused test coverage:
+
+- 25 runtime hook tests: happy path, target validation, terminal status, anti-promotion, multiple evaluation modes, event binding
+- 18 invariant tests: contract validation (empty fields, mismatched hash, serialization, anti-promotion structure)
+- 6 Golden Thread A tests: evaluation runtime result fields, P1.5.12/P1.5.13 still work, events in trace log
+
+**Next:** To be specified by operator.
+
+## Verifying P1.5.12
+
+P1.5.12 introduces EvaluationCase and RegressionCandidate extraction from trace-bound CapabilityEvidenceRecord. Golden Thread A now produces a candidate EvaluationCase. Extracted evaluation/regression records remain candidate-only.
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/evaluation/test_evaluation_case_extraction.py tests/golden_threads/test_thread_a_extracts_evaluation_case.py tests/golden_threads/test_thread_a_governed_evidence.py -v
+PYTHONPATH=src:. pytest tests/contracts tests/golden_threads -q
+ruff check src/agentic_runtime/contracts/evaluation_cases.py src/agentic_runtime/evaluation/extraction.py src/agentic_runtime/golden_threads/thread_a.py
+mypy src/agentic_runtime/contracts/evaluation_cases.py src/agentic_runtime/evaluation/extraction.py
+```
+
+Focused contract coverage:
+
+- `FailureMode`, `EvaluationCaseKind`, `EvaluationCaseStatus`, `ExtractionStatus`
+- `EvaluationCase` with invariant validation (positive/regression/review kinds)
+- `RegressionCandidate` with invariant validation
+- `EvaluationCaseExtractionReport` with auditable status
+- Extraction routing: review > regression > positive
+- Positive case requires VERIFIED capability, PASS verifier, trace, matching hash, evidence, limitations, safe context
+- Regression candidate from failed/unsafe/weak/unverifiable outcomes
+- Review case from needs_review/inconclusive/partial context outcomes
+- Candidate-only: nothing auto-accepted, no memory/skill/reflex/capability promotion
+- Golden Thread A end-to-end still passes
+- 46 tests across extraction, golden thread, serialization, and candidate-only guards
+
 ## Demo smoke test
 
 ```bash
@@ -298,3 +477,783 @@ PYTHONPATH=src python -m agentic_runtime.cli repo-task "objective" --planner llm
 ```
 
 Expected focused P0.21 result: `18 passed`. Offline tests use `MockProvider`; API keys are not required.
+
+## Verifying P1.1
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_model_config_p11.py -q
+PYTHONPATH=src:. pytest tests/test_model_providers_p12.py -q
+PYTHONPATH=src:. pytest tests/test_repo_planner_p021.py -q
+PYTHONPATH=src:. pytest -q
+```
+
+CLI smoke examples:
+
+```bash
+python -m agentic_runtime.cli config validate
+python -m agentic_runtime.cli models list
+python -m agentic_runtime.cli providers status
+```
+
+Expected focused P1.1 result: `21 passed`. Config defaults use mock provider; no API keys required.
+
+Report: `agent/reports/P1.1_MODEL_CONFIGURATION_SECRET_BOUNDARY_REPORT.md`
+
+
+## Verifying P1.2
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_prompt_system_p12.py -q
+PYTHONPATH=src:. pytest tests/test_model_config_p11.py -q
+PYTHONPATH=src:. pytest tests/test_repo_planner_p021.py -q
+PYTHONPATH=src:. pytest -q
+PYTHONPATH=src:. python -m agentic_runtime.cli prompts validate
+PYTHONPATH=src:. python -m agentic_runtime.cli prompts list
+PYTHONPATH=src:. python -m agentic_runtime.cli prompts show repo_planner
+PYTHONPATH=src:. python -m agentic_runtime.cli prompts render repo_planner --var objective="test" --dry-run
+PYTHONPATH=src:. python -m agentic_runtime.cli alpha-seal --skip-coverage
+```
+
+Expected focused P1.2 result: `26 passed`. Prompt tests and CLI smoke use mock/local config and require no API keys.
+
+## Verifying P1.2.1
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_public_entrypoints_p121.py -v
+PYTHONPATH=src:. pytest tests/test_prompt_system_p12.py tests/test_model_config_p11.py -q
+PYTHONPATH=src:. pytest tests/test_repo_planner_p021.py tests/test_demo_harness_p19.py -q
+PYTHONPATH=src:. pytest -q
+PYTHONPATH=src:. python -m agentic_runtime.demo
+PYTHONPATH=src:. python examples/demo.py
+PYTHONPATH=src:. python -m agentic_runtime.cli verify
+PYTHONPATH=src:. python -m agentic_runtime.cli alpha-seal --skip-coverage
+ruff check src tests
+mypy src/agentic_runtime --ignore-missing-imports
+```
+
+Expected public entrypoint results:
+- `python -m agentic_runtime.demo` exits 0, prints safe no-skill message (evidence gates not satisfied)
+- `examples/demo.py` exits 0, same output
+- `cli verify` exits 0 (runs full pytest suite)
+- `cli alpha-seal --skip-coverage` exits 0 (runs pytest + compileall + docs)
+- Focused smoke tests: `8 passed`
+- ruff: clean; mypy: no errors in model_router.py
+
+## Verifying P1.3
+
+```bash
+PYTHONPATH=src:. pytest tests/test_tool_manifest_p130.py -q
+PYTHONPATH=src:. pytest tests/test_tool_manifest_validation_p131.py -q
+PYTHONPATH=src:. pytest tests/test_tool_manifest_loader_p132.py -q
+PYTHONPATH=src:. pytest tests/test_tool_registry_p133.py -q
+PYTHONPATH=src:. pytest tests/test_tool_quarantine_p134.py -q
+PYTHONPATH=src:. pytest tests/test_tool_invocation_draft_p135.py -q
+PYTHONPATH=src:. pytest tests/test_tool_lifecycle_events_p136.py -q
+PYTHONPATH=src:. pytest tests/test_tool_research_metadata_p137.py -q
+PYTHONPATH=src:. pytest tests/test_builtin_tool_manifests_p138.py -q
+```
+
+Expected: all P1.3 unit/integration tests pass (~280 tests across phase files).
+
+## Verifying P1.3.9 seal
+
+```bash
+PYTHONPATH=src:. pytest tests/test_p13_tool_manifest_layer_seal.py -q
+```
+
+Expected: `58 passed`.
+
+Governance hotfix cross-references (canonical tests, also smoke-checked in seal file):
+
+- Prompt risk_tier: `tests/test_prompt_system_p12.py`
+- YAML no truncation / fail loud: `tests/test_model_config_p11.py`
+- restricted_local honesty: `tests/test_sandbox_p17.py`
+- run_shell R4: `tests/test_hitl_p15.py::test_policy_r4_warning_for_run_shell`
+- run_shell contract: `tests/test_tool_contract_p10.py`
+
+## Verifying P1.4.0
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_p14_scope_contract_docs.py -q
+ruff check src tests
+mypy src/agentic_runtime
+```
+
+Expected: doc existence tests pass; `P14_PATCHES` contains P1.4.0–P1.4.20; required constitutional phrases present in `docs/P1.4_*.md`.
+
+Constitutional docs:
+
+- `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`
+- `docs/P1.4_AGENT_TRUST_CONSTITUTION.md`
+- `docs/P1.4_RESEARCH_ALIGNMENT_NOTES.md`
+
+## Verifying P1.4.1
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_identity_kernel.py tests/test_identity_kernel_hash.py tests/test_identity_kernel_cli.py -q
+python -m agentic_runtime.cli identity kernel validate
+python -m agentic_runtime.cli identity kernel show --json
+ruff check src tests
+mypy src/agentic_runtime
+```
+
+Expected: 27 identity kernel tests pass; CLI validate exits 0; show JSON includes 64-char `kernel_hash`.
+
+## Verifying P1.4.2
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_persona_manifest.py tests/test_persona_manifest_hash.py tests/test_persona_manifest_cli.py -q
+python -m agentic_runtime.cli identity persona validate
+python -m agentic_runtime.cli identity persona show --json
+python -m agentic_runtime.cli identity persona summary --json
+ruff check src tests
+mypy src/agentic_runtime
+```
+
+Expected: 36 persona manifest tests pass; CLI validate exits 0; show JSON includes 64-char `persona_hash`; summary JSON includes authority boundaries and capability honesty rules with no raw YAML.
+
+## Verifying P1.4.7-MG (Agent Identity Card merge gate)
+
+```bash
+python3 -m compileall src tests
+PYTHONPATH=src:. pytest tests/test_p147_mg_agent_identity_card.py \
+  tests/test_agent_identity_card.py tests/test_agent_identity_card_hash.py \
+  tests/test_agent_identity_card_cli.py tests/test_self_model.py -q
+python3 -m agentic_runtime.cli identity card validate --json
+python3 -m agentic_runtime.cli identity card show --json
+ruff check .
+mypy src
+```
+
+Expected: MG seal tests pass; `agent_identity_card` capability is `implemented` / `P1.4.7`; custom `self_model_policy_path` affects final card validation; CLI default config dir matches `default_config_dir()`; card CLI validate/show exit 0.
+
+## Verifying P1.4.8 (Autonomy Scale Engine)
+
+```bash
+# Seal / unit / CLI autonomy tests
+PYTHONPATH=src:. python3 -m pytest tests/test_autonomy_scale_engine.py -q
+# Expected: 40 passed
+
+# CLI smoke
+python3 -m agentic_runtime.cli identity autonomy evaluate \
+  --action-category answer --action-name test \
+  --risk-tier R1_LOW --reversibility-tier R1_FULLY_REVERSIBLE --json
+# Expected: A0_ANSWER_ONLY, allowed=true
+
+python3 -m agentic_runtime.cli identity autonomy evaluate \
+  --action-category unknown --action-name test \
+  --risk-tier R1_LOW --reversibility-tier R1_FULLY_REVERSIBLE --json
+# Expected: A7_DENIED, allowed=false, blocker=unknown_action_category
+
+python3 -m agentic_runtime.cli identity autonomy evaluate \
+  --action-category high_risk --action-name risky_op \
+  --risk-tier R3_HIGH --reversibility-tier R1_FULLY_REVERSIBLE --json
+# Expected: A6_APPROVAL_GATED_HIGH_RISK, requires_human_approval=true
+```
+
+Expected: 40 autonomy tests pass; A0–A7 correctly mapped per action category; unknown/ambiguous values fail closed; A7 = denied, not highest autonomy; no global autonomy score; planned capabilities cannot authorize.
+
+## Verifying P1.4.9 (Measured Autonomy Score)
+
+```bash
+# Unit / seal / classification / CLI / persistence tests
+PYTHONPATH=src:. python3 -m pytest tests/test_measured_autonomy_score.py -q
+# Expected: 45 passed
+
+# CLI measurement
+python3 -m agentic_runtime.cli identity autonomy measure --minimum-decisions 0 --json
+# Expected: INSUFFICIENT_EVIDENCE class
+
+python3 -m agentic_runtime.cli identity autonomy measure \
+  --evaluate-and-record --action-category answer \
+  --action-name test --risk-tier R1_LOW \
+  --reversibility-tier R1_FULLY_REVERSIBLE --minimum-decisions 1 --json
+# Expected: score with total_decisions=1
+
+python3 -m agentic_runtime.cli identity autonomy measure --json | python3 -c "import json,sys; d=json.load(sys.stdin); assert 'global_score' not in d['score']; assert d['score']['autonomy_class'] in ('INSUFFICIENT_EVIDENCE','DENIED_OR_UNTRUSTED')"
+# Expected: no global autonomy percentage, valid class
+```
+
+Expected: 45 tests pass; INSUFFICIENT_EVIDENCE when below minimum; A7 never ranked as highest verified; planned/roadmap capabilities not counted; no global autonomy percentage; JSON output is stable; measurement doesn't change permissions or execute tools.
+
+## Verifying P1.4.10 (Capability Claim Boundary Engine)
+
+```bash
+# Unit / seal / registry / engine / CLI / boundary tests
+PYTHONPATH=src:. python3 -m pytest tests/test_capability_claim_boundary.py -q
+# Expected: 51 passed
+
+# CLI evaluate
+python3 -m agentic_runtime.cli identity claims evaluate \
+  --claim "Aurel can read files" --json
+# Expected: evidence-gated evaluation, DENIED without sufficient evidence
+
+# CLI list
+python3 -m agentic_runtime.cli identity claims list
+# Expected: 14 pre-registered claims listed
+
+# CLI show
+python3 -m agentic_runtime.cli identity claims show --claim-id CC-001 --json
+# Expected: claim details with evidence requirements
+
+# CLI validate (all registry claims)
+python3 -m agentic_runtime.cli identity claims validate
+# Expected: all 14 claims pass registry validation
+
+# CLI rewrite
+python3 -m agentic_runtime.cli identity claims rewrite \
+  --claim "Aurel is autonomous" --json
+# Expected: FORBIDDEN — global autonomy not allowed; safe rewrite preserves truth
+```
+
+Expected: 51 tests pass; anti-hype firewall blocks roadmap-as-evidence; global autonomy claims are FORBIDDEN; safe rewrites never introduce marketing spin; fail-closed on unknown claims and missing evidence.
+
+## Verifying P1.4.11 (External Doctrine Assimilation Registry)
+
+```bash
+# Unit / mapping / CLI / seal tests
+PYTHONPATH=src:. python3 -m pytest   tests/test_external_doctrine_registry.py   tests/test_doctrine_cli.py   tests/test_doctrine_seal.py -q
+# Expected: 33 passed
+
+# CLI smoke
+python3 -m agentic_runtime.cli identity doctrine --help
+python3 -m agentic_runtime.cli identity doctrine validate
+python3 -m agentic_runtime.cli identity doctrine list --json
+python3 -m agentic_runtime.cli identity doctrine show agentic_os_asymmetric_teardown --json
+python3 -m agentic_runtime.cli identity doctrine impact agentic_os_asymmetric_teardown --json
+```
+
+Expected: 3 seeded doctrine inputs validate; every seed has source hash, roadmap mapping, claim boundaries, and risk notes; roadmap influence is not implementation; rejected doctrine cannot create roadmap impact; implemented status requires capability evidence; doctrine claim boundaries route through P1.4.10.
+
+
+## Verifying P1.4.12
+
+```bash
+.venv/bin/python -m compileall src tests
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/identity -q
+PYTHONPATH=src:. .venv/bin/python -m pytest -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity attestation --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity attestation validate --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity attestation list --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity attestation show operator_contract --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity attestation verify-bundle --json
+.venv/bin/python -m ruff check .
+.venv/bin/python -m mypy src
+```
+
+Expected P1.4.13 local result: compileall passed; focused identity suite `58 passed` (core + seal + CLI); ruff passed; mypy passed (117 source files with no issues). Full suite `1321 passed, 2 skipped`.
+
+### P1.4.13 Authority Delta Detector
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_authority_delta.py tests/identity/test_authority_delta_seal.py tests/identity/test_authority_delta_cli.py -v
+# Expected: 58 passed (27 core + 14 seal + 9 CLI + 8 helpers)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity authority-delta --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity authority-delta compare \
+  --old tests/fixtures/authority_delta/operator_contract_low_risk.yaml \
+  --new tests/fixtures/authority_delta/operator_contract_high_risk.yaml \
+  --source-kind operator_contract --json
+# Expected: safe_to_auto_accept=false, requires_operator_consent=true, highest_severity=CRITICAL, 25 deltas, 0 UNKNOWN_AUTHORITY_CHANGE
+```
+
+**Core test categories:**
+- Risk ceiling detection (increase/decrease/critical)
+- Authority scope expansion/reduction
+- Tool permission / write scope / external effect detection
+- Human oversight weakening/strengthening
+- Claim/doctrine/capability status escalation
+- Delta report JSON serialization
+- Attestation reference linkage
+- Severity ordering and summary helpers
+
+**Seal invariants:**
+- INV-P1413-01 through INV-P1413-10 (all pass)
+
+### P1.4.14 Operator Consent Binding
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_operator_consent.py tests/identity/test_operator_consent_seal.py tests/identity/test_operator_consent_cli.py -v
+# Expected: 55 passed (27 core + 14 seal + 10 CLI + 4 fixtures)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity consent --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity consent request \
+  --delta-report tests/fixtures/consent/delta_report.json --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity consent grant \
+  --request tests/fixtures/consent/consent_request.json --operator-id op1 --ack-risk --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity consent validate \
+  --record tests/fixtures/consent/consent_record.json \
+  --delta-report tests/fixtures/consent/delta_report.json --json
+```
+
+**Expected P1.4.15 local result:** compileall passed; focused identity suite `53 passed`; ruff passed; mypy passed. Full suite `1429 passed, 2 skipped`.
+
+**Core test categories:**
+- Consent request building from delta report
+- Grant consent (with/without risk acknowledgement, HIGH/CRITICAL enforcement)
+- Deny consent
+- Revoke consent (only granted records)
+- Validate consent binding (accept matching, reject attestation/delta/scope mismatch)
+- Expiry validation
+- Scope enforcement (SINGLE_DELTA, DELTA_REPORT, SOURCE_UPDATE, SESSION_LIMITED unsupported)
+- Consent not transferable, not global, not capability verification
+- JSON serialization stability
+
+**Seal invariants:**
+- INV-P1414-01 through INV-P1414-10 (all pass)
+
+### P1.4.15 Identity Governance Command Surface
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_identity_cli_surface.py tests/identity/test_identity_cli_routing.py tests/identity/test_identity_cli_seal.py -v
+# Expected: 53 passed (21 core/envelope + 23 routing + 9 seal)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity verify --json
+```
+
+**Expected P1.4.15 local result:** compileall passed; focused identity suite `53 passed`; ruff passed; mypy passed. Full suite `1429 passed, 2 skipped`.
+
+**Core test categories:**
+- Envelope: ok/command/status/errors/warnings/result contract, deterministic serialization
+- Status: subsystem probing, read-only, human-readable output with blockers
+- Verify: non-destructive validator checks, no side effects
+- Routing: all 10 subcommand groups accessible under identity namespace
+- Read-only: status/verify output stable, no consent artifacts, no source mutation
+
+**Seal invariants:**
+- INV-P1415-01 through INV-P1415-10 (all pass)
+
+### P1.4.16 Identity Test Battery
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_identity_test_battery.py tests/identity/test_identity_test_battery_seal.py -v
+# Expected: 31 passed (18 core + 13 seal)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity test-battery --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity test-battery list
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity test-battery run --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity test-battery run-case kernel-001 --json
+```
+
+**Expected P1.4.16 local result:** compileall passed; focused battery suite `31 passed`; ruff passed; mypy passed. Full suite `1460 passed, 2 skipped`.
+
+**Core test categories:**
+- Battery engine: case model, scoring (OK/FAIL/SKIP), aggregate status (PASSED/FAILED/DEGRADED/SKIPPED)
+- 7 scenario categories: kernel, persona, operator_contract, communication_modes, identity_context, self_model, identity_card
+- 26 test cases total, each independently scorable
+- Adversarial scenarios included by default, CLI toggleable via `--scenarios`
+- Late imports in scenario runner dispatch to avoid circular imports
+- Two-file architecture: battery engine (`identity_test_battery.py`) + scenario runners (`identity_test_battery_scenarios.py`)
+
+**Test file summary:**
+- `tests/identity/test_identity_test_battery.py` — 18 core tests (engine, scoring, aggregation, CLI)
+- `tests/identity/test_identity_test_battery_seal.py` — 13 integrated/seal tests (full battery run, adversarial, CLI integration)
+- Full suite: **1460 passed, 2 skipped** (zero regressions)
+
+**Seal invariants:**
+- INV-P1416-01 through INV-P1416-10 (all pass)
+
+### P1.4.19 Identity Docs / Reports / State Update
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_p1419_anti_overclaim.py -v
+# Expected: 29 passed (8 anti-overclaim + 6 seal readiness + 2 CLI + 7 invariant/checklist coverage + 6 module index completeness)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity seal-readiness --json
+```
+
+**Expected P1.4.19 local result:** compileall passed; focused anti-overclaim suite `29 passed`; ruff passed; mypy passed. Full identity suite `384 passed`.
+
+**Core test categories:**
+- Doc existence (all agent/*.md files present)
+- Anti-overclaim (8 tests): no new governance semantics, no autonomy overclaim, no production readiness claim, no ABOS/AETHER implementation claim, no authority grant, no state mutation, no P1.4.20 replacement, no capability expansion
+- Seal readiness (6 tests): P14SealReadinessReport construction, module status, CLI group index, invariant index, limitation index, checklist coverage
+- CLI (2 tests): `identity seal-readiness --json` output shape, exit codes
+- Invariant/checklist coverage (7 tests): 15 P14_INVARIANTS exit, 10 P1419_INVARIANTS exit, 22 P1420_SEAL_CHECKLIST items exit, all invariants satisfied
+- Module index completeness: 18 CLI groups, identity module inventory
+
+**Test file summary:**
+- `tests/identity/test_p1419_anti_overclaim.py` — 29 tests total
+- Identity suite total: **384 passed** (zero regressions from P1.4.18's 355)
+- P1.4.19 adds no new governance semantics, overclaims, or authority
+
+**Seal invariants:**
+- P14_INVARIANTS (15): P1.4.0–P1.4.20 scope contract invariants (all pass)
+- P1419_INVARIANTS (10): consolidation/audit-specific invariants (all pass)
+- P1420_SEAL_CHECKLIST (22): exit seal readiness checklist items (all covered)
+
+### P1.4.18 Trust Evidence Linkage
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_trust_evidence.py tests/identity/test_trust_evidence_seal.py -v
+# Expected: 57 passed (34 core + 23 seal/CLI)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity trust-evidence --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity trust-evidence requirements --lifecycle-state ACTIVE --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity trust-evidence build --lifecycle-state ACTIVE --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity trust-evidence validate --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity trust-evidence explain --json
+```
+
+**Expected P1.4.18 local result:** compileall passed; focused trust evidence suite `57 passed` (34 core + 23 seal/CLI); ruff passed; mypy passed. Full identity suite `355 passed`.
+
+**Core test categories:**
+- TrustEvidenceKind, TrustEvidenceStatus, TrustPosture, TrustEvidenceRef domain model construction and serialization
+- TrustEvidenceRequirement resolution from lifecycle state
+- TrustEvidenceBundle build with 5 helper builders (source attestation, test battery, consent, authority delta, lifecycle)
+- TrustEvidenceBundle validation (structural integrity, reference consistency)
+- TrustEvidenceLinkageReport generation with posture explanation
+- Categorical posture resolution (no numeric score)
+- Human-readable and JSON formatters
+- CLI: `identity trust-evidence requirements/build/validate/explain`
+
+**Test file summary:**
+- `tests/identity/test_trust_evidence.py` — 34 core tests (domain, requirements, bundle build, validation, posture resolution, serialization)
+- `tests/identity/test_trust_evidence_seal.py` — 23 seal/CLI tests
+- Identity suite total: **355 passed** (zero regressions)
+
+**Seal invariants:**
+- INV-P1418-01 through INV-P1418-10 (all pass)
+
+### P1.4.17 Agent Lifecycle Eligibility State Machine
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_agent_lifecycle.py tests/identity/test_agent_lifecycle_seal.py -v
+# Expected: 60 passed (38 core + 22 seal/CLI)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle show --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle profile --state ACTIVE --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle validate-transition --from DRAFT --to ACTIVE --reason OPERATOR_INITIATED --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle transitions --state ACTIVE --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity lifecycle recommend --json
+```
+
+**Expected P1.4.17 local result:** compileall passed; focused lifecycle suite `60 passed`; ruff passed; mypy passed. Full suite `1520 passed, 2 skipped`.
+
+**Core test categories:**
+- Lifecycle state transitions: DRAFT, ACTIVE, SUSPENDED, RESTRICTED, MAINTENANCE, DEPRECATED, ARCHIVED, REVOKED
+- 24 reason codes for state changes
+- 9-lane eligibility model (eligible/blocked lanes + required gates)
+- Terminal REVOKED: no transitions out
+- DRAFT→ACTIVE denied, SUSPENDED→ACTIVE denied
+- RESTRICTED is reason-sensitive
+- Recommendation engine: read-only, reads governance signals, does not apply
+- Lifecycle does not grant authority — lane eligibility only
+
+**Test file summary:**
+- `tests/identity/test_agent_lifecycle.py` — 38 core tests (states, transitions, lanes, invariants)
+- `tests/identity/test_agent_lifecycle_seal.py` — 22 seal/CLI tests
+- Full suite: **1520 passed, 2 skipped** (zero regressions from P1.4.16's 1460)
+
+**Seal invariants:**
+- INV-P1417-01 through INV-P1417-17 (all pass)
+
+### P1.4.20 P1.4 Identity & Autonomy Exit Seal
+
+**Solo:**
+```bash
+PYTHONPATH=src:. pytest tests/identity/test_p14_exit_seal.py -v
+# Expected: 28 passed (core + governance + adversarial + CLI + docs)
+```
+
+**CLI smoke:**
+```bash
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity p14-seal --help
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity p14-seal run --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity p14-seal list-checks --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli identity p14-seal run-check import_objects --json
+```
+
+**Expected P1.4.20 local result:** compileall passed; focused exit seal suite `28 passed`; ruff passed; mypy passed. Identity total **412 passed**.
+
+**Core test categories:**
+- Import/object seal checks — all P1.4 identity modules load and export correct objects
+- CLI seal checks — `identity p14-seal run/list-checks/run-check` commands accessible and functional
+- Governance invariant checks — all P1.4 invariants (P14_INVARIANTS, P1419_INVARIANTS) verified
+- Adversarial checks — edge cases, boundary violations, invalid inputs tested
+- Docs consistency checks — agent/*.md and docs/*.md synchronized with code
+- Seal is read-only — no mutation, no authority grant, no consent grant
+- Seal result: SEALED_WITH_LIMITATIONS — honest; P1.5/P1.6/P1.8/P6/P7 not yet implemented
+
+**Test file summary:**
+- `tests/identity/test_p14_exit_seal.py` — 28 tests total (core + governance + adversarial + CLI + docs)
+- Identity suite total: **412 passed** (from P1.4.19's 384 + 28 new)
+
+**Seal result:** SEALED_WITH_LIMITATIONS — 15 known limitations carried forward from P1.4.19.
+P1.4 is sealed. P1.5.0 Evaluation Mirror Foundation Gate is next.
+
+### P1.5.0 Evaluation Mirror Foundation Gate + Roadmap v3.2 Alignment
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/ -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation foundation status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation foundation scope --domain AUREL_CORE --json
+```
+
+**Expected P1.5.0 local result:** compileall passed; evaluation suite `33+ passed`; ruff passed; mypy passed. Identity total **412 passed** (no regressions).
+
+**P1.5 Evaluation Mirror foundation tests:**
+- evaluation object model is closed-world (EvaluationDomain, EvaluationSubjectType enums)
+- evaluation subjects are typed and evidence-ref-bound
+- evaluation criteria are explicit (required, evidence_required)
+- evaluation run envelopes are evidence-bound
+- evaluation run envelope does not verify capability by itself
+- claim verification requires evaluation evidence later (P1.5.1+)
+- roadmap docs aligned with v3.2
+- docs do not reset P1–P2
+- docs do not prematurely start P22–P24
+
+**Test file summary:**
+- `tests/evaluation/test_evaluation_foundation.py` — 16 core tests
+- `tests/evaluation/test_p150_roadmap_alignment.py` — 10 roadmap alignment tests
+- `tests/evaluation/test_p150_scope_guards.py` — 7 anti-scope-creep tests
+
+**Core test categories:**
+- Core evaluation (16): domain/subject closed-world, scope defaults, envelope build/validate, serialization, foundation report
+- Roadmap alignment (10): P1.5.0 current, P1.5.1 next, P1–P2 stable, HQ/A-Hub/S-Hub/L-Hub/IDE, architecture doctrines, v3.2 not reset
+- Anti-scope-creep (7): no full P4 claim, no P22–P24 early start, no Hub runtime, no Model-of-Models/Work, no LoRA, envelope does not verify capability
+
+**Next:** P1.5.8 — Benchmark Hygiene Guard.
+
+### P1.5.8 Benchmark Hygiene Guard + Sparse Hygiene Readiness
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_benchmark_hygiene.py tests/evaluation/test_benchmark_fixture_boundary.py tests/evaluation/test_benchmark_hygiene_decision.py tests/evaluation/test_benchmark_hygiene_binding_downgrade.py tests/evaluation/test_benchmark_hygiene_serialization.py tests/evaluation/test_p158_sparse_hygiene_readiness.py tests/evaluation/test_p158_scope_guards.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation hygiene status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation hygiene examples --json
+```
+
+**Expected P1.5.8 local result:** focused hygiene suite **66 passed**; evaluation suite **529 passed**; identity suite **412 passed**; canonical full suite with `PYTHONPATH=src:.` **2163 passed, 2 skipped**.
+
+**Test file summary:**
+- `tests/evaluation/test_benchmark_hygiene.py` — core enums, policy, assessment status tests
+- `tests/evaluation/test_benchmark_fixture_boundary.py` — boundary validation and contamination classification tests
+- `tests/evaluation/test_benchmark_hygiene_decision.py` — decision support caps and blockers
+- `tests/evaluation/test_benchmark_hygiene_binding_downgrade.py` — binding downgrade/preservation tests
+- `tests/evaluation/test_benchmark_hygiene_serialization.py` — JSON serialization tests
+- `tests/evaluation/test_p158_sparse_hygiene_readiness.py` — sparse hygiene risk readiness tests
+- `tests/evaluation/test_p158_scope_guards.py` — anti-scope-creep tests
+
+**Next:** P1.5.9 — Adversarial Evaluation Cases.
+
+### P1.5.9 Adversarial Evaluation Cases + Sparse Trap Readiness
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_adversarial_cases.py tests/evaluation/test_adversarial_case_registry.py tests/evaluation/test_adversarial_case_resolution.py tests/evaluation/test_adversarial_case_serialization.py tests/evaluation/test_p159_sparse_adversarial_cases.py tests/evaluation/test_p159_scope_guards.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation adversarial status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation adversarial examples --json
+```
+
+**Expected P1.5.9 local result:** focused adversarial suite **76 passed**; evaluation suite **605 passed**; identity suite **412 passed**; canonical full suite with `PYTHONPATH=src:.` **2239 passed, 2 skipped**.
+
+**Test file summary:**
+- `tests/evaluation/test_adversarial_cases.py` — core enums, validation, trap semantics, serialization
+- `tests/evaluation/test_adversarial_case_registry.py` — registration, listing, registry validation
+- `tests/evaluation/test_adversarial_case_resolution.py` — subject/domain/criteria resolution
+- `tests/evaluation/test_adversarial_case_serialization.py` — JSON serialization
+- `tests/evaluation/test_p159_sparse_adversarial_cases.py` — default set + sparse readiness
+- `tests/evaluation/test_p159_scope_guards.py` — anti-scope-creep tests
+
+**Next:** P1.5.10 — Baseline Comparison Model.
+
+### P1.5.10 Baseline Comparison Model + Sparse Comparison Readiness
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_baseline_comparison.py tests/evaluation/test_baseline_reference.py tests/evaluation/test_baseline_comparison_policy.py tests/evaluation/test_baseline_comparison_serialization.py tests/evaluation/test_p1510_sparse_baseline_comparison.py tests/evaluation/test_p1510_scope_guards.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation baseline status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation baseline examples --json
+```
+
+**Expected P1.5.10 local result:** focused baseline suite **69 passed**; evaluation suite **674 passed**; identity suite **412 passed**; canonical full suite with `PYTHONPATH=src:.` **2308 passed, 2 skipped**.
+
+**Test file summary:**
+- `tests/evaluation/test_baseline_comparison.py` — result/adversarial/hygiene comparison and resolver tests
+- `tests/evaluation/test_baseline_reference.py` — baseline reference validation tests
+- `tests/evaluation/test_baseline_comparison_policy.py` — policy and input validation tests
+- `tests/evaluation/test_baseline_comparison_serialization.py` — JSON serialization tests
+- `tests/evaluation/test_p1510_sparse_baseline_comparison.py` — sparse dimension readiness tests
+- `tests/evaluation/test_p1510_scope_guards.py` — anti-scope-creep tests
+
+**Next:** P1.5.12 — Evaluation Case Extraction Seed → P1.5.13 — Verifier Normalization with Limitations.
+
+### P1.5.7 Evidence-to-Claim Binding
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_evidence_claim_binding*.py tests/evaluation/test_p157_*.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation binding status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation binding examples --json
+```
+
+**Expected P1.5.7 local result:** evaluation suite **463 passed**.
+
+**Test file summary:**
+- `tests/evaluation/test_evidence_claim_binding.py` — 31 core binding + validation + serialization tests
+- `tests/evaluation/test_evidence_claim_binding_policy.py` — 7 policy tests
+- `tests/evaluation/test_evidence_claim_binding_aggregation.py` — 11 aggregation tests
+- `tests/evaluation/test_evidence_claim_binding_serialization.py` — 7 serialization tests
+- `tests/evaluation/test_p157_sparse_binding_readiness.py` — 8 sparse binding readiness tests
+- `tests/evaluation/test_p157_scope_guards.py` — 12 anti-scope-creep tests
+
+**Next:** P1.5.8 — Benchmark Hygiene Guard.
+
+### P1.5.6 Result Classification Engine
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_result_classification*.py tests/evaluation/test_criterion_classification*.py tests/evaluation/test_p156_*.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation classify status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation classify examples --json
+```
+
+**Expected P1.5.6 local result:** evaluation suite **387 passed**; full suite **2013 passed, 2 skipped** (8 pre-existing CLI failures unrelated).
+
+**Test file summary:**
+- `tests/evaluation/test_result_classification.py` — 29 core classification + validation + result aggregation + criterion tests
+- `tests/evaluation/test_criterion_classification.py` — 8 standalone criterion classification tests
+- `tests/evaluation/test_result_classification_to_evaluation_result.py` — 8 conversion tests
+- `tests/evaluation/test_result_classification_serialization.py` — 7 serialization tests
+- `tests/evaluation/test_p156_sparse_classification_readiness.py` — 12 sparse classification readiness tests
+- `tests/evaluation/test_p156_scope_guards.py` — 10 anti-scope-creep tests
+
+**Next:** P1.5.7 — Evidence-to-Claim Binding.
+
+### P1.5.5 Evaluation Run Envelope
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_evaluation_run_envelope*.py tests/evaluation/test_p155_*.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation runs status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation runs examples --json
+```
+
+**Expected P1.5.5 local result:** evaluation suite **313 passed**; identity **412 passed** (no regressions).
+
+**Test file summary:**
+- `tests/evaluation/test_evaluation_run_envelope.py` — 15 core object + evidence + envelope builder tests
+- `tests/evaluation/test_evaluation_run_envelope_validation.py` — 12 validation tests
+- `tests/evaluation/test_evaluation_run_evidence_requirements.py` — 4 evidence derivation tests
+- `tests/evaluation/test_evaluation_run_envelope_serialization.py` — 7 serialization tests
+- `tests/evaluation/test_p155_sparse_run_readiness.py` — 6 sparse run readiness tests
+- `tests/evaluation/test_p155_scope_guards.py` — 10 anti-scope-creep tests
+
+**Next:** P1.5.6 — Result Classification Engine.
+
+### P1.5.4 Evaluation Criteria Schema
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_evaluation_criteria*.py tests/evaluation/test_p154_*.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation criteria status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation criteria examples --json
+```
+
+**Expected P1.5.4 local result:** evaluation suite **259 passed**; identity **412 passed** (no regressions).
+
+**Test file summary:**
+- `tests/evaluation/test_evaluation_criteria_schema.py` — 22 core object + validation tests
+- `tests/evaluation/test_evaluation_criteria_resolution.py` — 10 criteria resolution tests
+- `tests/evaluation/test_evaluation_criteria_serialization.py` — 10 serialization tests
+- `tests/evaluation/test_p154_sparse_criteria_readiness.py` — 13 sparse criteria readiness tests
+- `tests/evaluation/test_p154_scope_guards.py` — 9 anti-scope-creep tests
+
+**Next:** P1.5.6 — Result Classification Engine.
+
+### P1.5.3 Evaluation Subject Registry
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_evaluation_subject_registry*.py tests/evaluation/test_p153_*.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation subjects status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation subjects examples --json
+```
+
+**Expected P1.5.3 local result:** evaluation suite **195 passed**; identity **412 passed** (no regressions).
+
+**Test file summary:**
+- `tests/evaluation/test_evaluation_subject_registry.py` — 15 core object + validation tests
+- `tests/evaluation/test_evaluation_subject_registration.py` — 15 registration decision tests
+- `tests/evaluation/test_evaluation_subject_registry_serialization.py` — 17 serialization + resolve/list/registry validation tests
+- `tests/evaluation/test_p153_sparse_cognition_readiness.py` — 16 sparse cognition readiness tests
+- `tests/evaluation/test_p153_scope_guards.py` — 12 anti-scope-creep tests
+
+**Next:** P1.5.4 — Evaluation Criteria Schema.
+
+### P1.5.2 Capability Evidence Record
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_capability_evidence*.py tests/evaluation/test_p152_scope_guards.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation capability-evidence status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation capability-evidence examples --json
+```
+
+**Expected P1.5.2 local result:** evaluation suite **120 passed**; identity **412 passed** (no regressions).
+
+**Test file summary:**
+- `tests/evaluation/test_capability_evidence.py` — 11 core object tests
+- `tests/evaluation/test_capability_evidence_mapping.py` — 10 mapping tests
+- `tests/evaluation/test_capability_evidence_aggregation.py` — 10 aggregation tests
+- `tests/evaluation/test_capability_evidence_serialization.py` — 10 serialization/link tests
+- `tests/evaluation/test_p152_scope_guards.py` — 5 anti-scope-creep tests
+
+**Next:** P1.5.4 — Evaluation Criteria Schema.
+
+### P1.5.1 Evaluation Object Model
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m pytest tests/evaluation/test_evaluation_objects.py tests/evaluation/test_evaluation_object_resolution.py tests/evaluation/test_evaluation_object_serialization.py tests/evaluation/test_p151_scope_guards.py -q
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation objects status --json
+PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation objects examples --json
+```
+
+**Expected P1.5.1 local result:** compileall passed; object model suite `40+ passed`; ruff passed; mypy passed. Evaluation total **74+ passed**. Identity total **412 passed** (no regressions).
+
+**P1.5.1 object model tests:**
+- closed-world enums (status, outcome, verdict, confidence, evidence quality, failure mode)
+- criterion result validation (SUPPORTED requires evidence, BLOCKED requires blockers, FAILED requires failure modes)
+- evaluation result validation (COMPLETED requires criteria, ERROR requires error failure mode)
+- resolution rules (no criteria → insufficient, all passed → supported, blocked → blocked, conflicted → conflicted, required failure → rejected)
+- categorical aggregation (blocked dominates, conflicted blocks supported, no numeric scoring)
+- PASS does not imply VERIFIED; result object does not verify capability
+
+**Test file summary:**
+- `tests/evaluation/test_evaluation_objects.py` — 19 core object tests
+- `tests/evaluation/test_evaluation_object_resolution.py` — 14 resolution/aggregation tests
+- `tests/evaluation/test_evaluation_object_serialization.py` — 4 serialization tests
+- `tests/evaluation/test_p151_scope_guards.py` — 5 anti-scope-creep tests
+- `tests/evaluation/test_p15_integrated_seal.py` — 22 integrated seal tests (full seal, trace integrity, candidate boundary, anti-overclaim, seal contract validation, serialization)
+- `tests/evaluation/test_p15_integrated_invariants.py` — 17 invariant tests (no-promotion, verification gate, structural safety)
+
+**P1.5 is sealed. Next: P1.6.0 Policy Cards & Behavioral Contracts.**

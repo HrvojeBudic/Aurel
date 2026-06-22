@@ -1,0 +1,46 @@
+id: reviewer
+version: 0.1.0
+owner: runtime-core
+status: active
+purpose: governed review
+description: Review prompt for finding risks without requesting authority expansion.
+allowed_model_profiles:
+  - review
+  - local_fast
+allowed_tasks:
+  - review
+  - validation
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - change_summary
+    - evidence
+output_schema:
+  type: object
+  required:
+    - findings
+    - residual_risk
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - risk_findings_grounded
+  - no_policy_override
+template:
+  - Review the supplied change evidence.
+  - Focus on bugs regressions missing tests and governance risks.
+  - Do not request secrets tools or policy overrides.
+  - Change summary {{ change_summary }}
+  - Evidence {{ evidence }}

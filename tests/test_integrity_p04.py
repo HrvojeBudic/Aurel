@@ -13,45 +13,45 @@ from agentic_runtime.test_integrity import (
 from tests.conftest import make_cmd
 
 
-def test_source_mutation_allowed_when_authorized(kernel, card):
+def test_source_mutation_allowed_when_authorized(write_kernel, card):
     card.authority.write_paths = ["src/"]
-    kernel.sandbox.write_file("src/app.py", "v1\n")
-    kernel.verifier.test_integrity.snapshot()
+    write_kernel.sandbox.write_file("src/app.py", "v1\n")
+    write_kernel.verifier.test_integrity.snapshot()
     cmd = make_cmd(card, "write_file", {
         "path": "src/app.py", "content": "v2\n"})
-    res = kernel.runtime.submit(cmd, card)
+    res = write_kernel.runtime.submit(cmd, card)
     assert res.ok
-    assert kernel.sandbox.read_file("src/app.py") == "v2\n"
+    assert write_kernel.sandbox.read_file("src/app.py") == "v2\n"
 
 
-def test_protected_test_mutation_denied_by_policy(kernel, card):
+def test_protected_test_mutation_denied_by_policy(write_kernel, card):
     card.authority.write_paths = ["tests/"]
-    kernel.sandbox.write_file("tests/test_app.py", "assert True\n")
+    write_kernel.sandbox.write_file("tests/test_app.py", "assert True\n")
     cmd = make_cmd(card, "write_file", {
         "path": "tests/test_app.py", "content": "assert False\n"})
-    res = kernel.runtime.submit(cmd, card)
+    res = write_kernel.runtime.submit(cmd, card)
     assert res.decision.verdict.value == "deny"
     assert MUTATE_PROTECTED_TOOL in res.decision.reasons[0]
 
 
-def test_golden_fixture_mutation_denied(kernel, card):
+def test_golden_fixture_mutation_denied(write_kernel, card):
     card.authority.write_paths = ["fixtures/golden/"]
-    kernel.sandbox.write_file("fixtures/golden/out.json", '{"a":1}\n')
-    kernel.verifier.test_integrity.snapshot()
+    write_kernel.sandbox.write_file("fixtures/golden/out.json", '{"a":1}\n')
+    write_kernel.verifier.test_integrity.snapshot()
     cmd = make_cmd(card, "write_file", {
         "path": "fixtures/golden/out.json", "content": '{"a":999}\n'})
-    res = kernel.runtime.submit(cmd, card)
+    res = write_kernel.runtime.submit(cmd, card)
     assert not res.ok
     assert res.decision.verdict.value == "deny" or res.verifier.code == PROTECTED_FILE_MUTATION
 
 
-def test_added_protected_test_detected(kernel, card):
+def test_added_protected_test_detected(write_kernel, card):
     card.authority.write_paths = ["src/"]
-    kernel.sandbox.write_file("src/app.py", "x\n")
-    kernel.verifier.test_integrity.snapshot()
-    ti = kernel.verifier.test_integrity
+    write_kernel.sandbox.write_file("src/app.py", "x\n")
+    write_kernel.verifier.test_integrity.snapshot()
+    ti = write_kernel.verifier.test_integrity
     before = ti.capture()
-    kernel.sandbox.write_file("tests/test_new.py", "assert True\n")
+    write_kernel.sandbox.write_file("tests/test_new.py", "assert True\n")
     from agentic_runtime.core_types import ObservationEnvelope
     cmd = make_cmd(card, "read_file", {"path": "src/app.py"})
     obs = ObservationEnvelope.make(cmd.id, success=True)
@@ -61,17 +61,17 @@ def test_added_protected_test_detected(kernel, card):
     assert "tests/test_new.py" in result.evidence["added_files"]
 
 
-def test_deleted_protected_test_detected(kernel, card):
+def test_deleted_protected_test_detected(write_kernel, card):
     card.authority.write_paths = ["src/"]
-    kernel.sandbox.write_file("test_del.py", "assert True\n")
-    kernel.verifier.test_integrity.snapshot()
-    before = kernel.verifier.test_integrity.capture()
+    write_kernel.sandbox.write_file("test_del.py", "assert True\n")
+    write_kernel.verifier.test_integrity.snapshot()
+    before = write_kernel.verifier.test_integrity.capture()
     import os
-    os.remove(f"{kernel.sandbox.root}/test_del.py")
+    os.remove(f"{write_kernel.sandbox.root}/test_del.py")
     from agentic_runtime.core_types import ObservationEnvelope
     cmd = make_cmd(card, "read_file", {"path": "src/app.py"})
     obs = ObservationEnvelope.make(cmd.id, success=True)
-    result = kernel.verifier.test_integrity.verify(cmd, obs, card, before=before)
+    result = write_kernel.verifier.test_integrity.verify(cmd, obs, card, before=before)
     assert not result.passed
     assert "test_del.py" in result.evidence["deleted_files"]
 
@@ -105,14 +105,14 @@ def test_approved_protected_mutation_via_dedicated_pathway(tmp_path):
     assert kernel.sandbox.read_file("tests/test_ok.py") == "assert True\n"
 
 
-def test_source_fix_with_unchanged_tests_passes(kernel, card):
+def test_source_fix_with_unchanged_tests_passes(write_kernel, card):
     card.authority.write_paths = ["src/", "tests/"]
-    kernel.sandbox.write_file("src/app.py", "def f(): return 0\n")
-    kernel.sandbox.write_file("tests/test_app.py", "from src.app import f\nassert f()==0\n")
-    kernel.verifier.test_integrity.snapshot()
+    write_kernel.sandbox.write_file("src/app.py", "def f(): return 0\n")
+    write_kernel.sandbox.write_file("tests/test_app.py", "from src.app import f\nassert f()==0\n")
+    write_kernel.verifier.test_integrity.snapshot()
     cmd = make_cmd(card, "write_file", {
         "path": "src/app.py", "content": "def f(): return 1\n"})
-    res = kernel.runtime.submit(cmd, card)
+    res = write_kernel.runtime.submit(cmd, card)
     assert res.ok
     assert res.verifier.code != PROTECTED_FILE_MUTATION
 

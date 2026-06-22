@@ -1,0 +1,55 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.repo",
+    "name": "Built-in Repository Tools",
+    "version": "0.1.0",
+    "description": "Safe built-in repository inspection tools.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.repo_scan"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime", "coding"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.repo_scan",
+      "plugin_id": "builtin.repo",
+      "name": "Repository Scan",
+      "description": "Scans repository structure without modifying files.",
+      "category": "code",
+      "capability_types": ["read", "analyze"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "root_path": {"type": "string"}
+        },
+        "required": ["root_path"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["local_read"],
+      "risk_class": "R1",
+      "reversibility": "none",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": false,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": ["path_not_found", "permission_denied"],
+      "evidence_required": false,
+      "trace_level": "minimal",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true
+    }
+  ]
+}

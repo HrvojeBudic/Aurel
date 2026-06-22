@@ -1,0 +1,6 @@
+claim_status: VERIFIED
+allowed_status: VERIFIED
+required_evidence_level: extensive
+current_evidence_level: extensive
+safe_claim_text: "test claim verified"
+blockers: []

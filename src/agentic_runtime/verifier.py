@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Callable, Optional
 
 from .core_types import CommandEnvelope, ObservationEnvelope, VerifierResult
+from .file_patch import apply_simple_unified_diff, resolve_run_tests_command
 from .sandbox import SandboxBackend
 from .test_integrity import (
     FileIntegritySnapshot,
@@ -16,7 +17,10 @@ from .test_integrity import (
     _WRITE_TOOLS_AFFECTING_INTEGRITY,
 )
 
-VerifierFn = Callable[[SandboxBackend, CommandEnvelope, ObservationEnvelope], VerifierResult]
+VerifierFn = Callable[
+    [SandboxBackend, CommandEnvelope, ObservationEnvelope, Optional[str]],
+    VerifierResult,
+]
 
 
 class StateVerifier:
@@ -42,6 +46,7 @@ class StateVerifier:
         obs: ObservationEnvelope,
         card=None,
         integrity_before: Optional[FileIntegritySnapshot] = None,
+        write_snapshot_id: Optional[str] = None,
     ) -> VerifierResult:
         fn = self._verifiers.get(cmd.tool)
         if fn is None:
@@ -51,7 +56,7 @@ class StateVerifier:
                 evidence={"caveat": "unverified"})
         else:
             try:
-                result = fn(self.sandbox, cmd, obs)
+                result = fn(self.sandbox, cmd, obs, write_snapshot_id)
             except Exception as e:
                 return VerifierResult(False, f"{cmd.tool}_verifier",
                                       reason=f"verifier error: {e}")
@@ -67,22 +72,42 @@ class StateVerifier:
         return result
 
     def _register_builtins(self) -> None:
-        def verify_edit(sb: SandboxBackend, cmd, obs) -> VerifierResult:
+        def verify_edit(sb: SandboxBackend, cmd, obs, snap_id=None) -> VerifierResult:
             path = cmd.args["path"]
+            old, new = cmd.args["find"], cmd.args["replace"]
             try:
-                content = sb.read_file(path)
+                actual = sb.read_file(path)
             except OSError as e:
                 return VerifierResult(False, "edit_file_verifier",
                                       reason=f"cannot read {path}: {e}")
-            new = cmd.args["replace"]
-            ok = new in content
+            if not snap_id:
+                return VerifierResult(
+                    False, "edit_file_verifier",
+                    reason="edit_file verifier missing pre-write snapshot")
+            try:
+                original = sb.read_snapshot_file(snap_id, path)
+            except (KeyError, OSError) as e:
+                return VerifierResult(False, "edit_file_verifier",
+                                      reason=f"cannot read pre-edit state for {path}: {e}")
+            if old not in original:
+                ok = False
+                reason = "find string was not present in pre-edit file state"
+            elif original.count(old) > 1:
+                ok = False
+                reason = "find string appeared multiple times; single replacement is ambiguous"
+            else:
+                expected = original.replace(old, new, 1)
+                ok = actual == expected
+                reason = (
+                    "edit matches single find/replace on pre-edit state"
+                    if ok else "edit diverges from expected find/replace result"
+                )
             return VerifierResult(
                 passed=ok, verifier="edit_file_verifier",
-                evidence={"path": path, "replacement_present": ok},
-                reason="replacement confirmed in real file state" if ok
-                       else "claimed edit NOT present in real file")
+                evidence={"path": path, "exact_match": ok},
+                reason=reason)
 
-        def verify_write(sb: SandboxBackend, cmd, obs) -> VerifierResult:
+        def verify_write(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
             path = cmd.args["path"]
             try:
                 content = sb.read_file(path)
@@ -95,22 +120,37 @@ class StateVerifier:
                 reason="file content matches written bytes" if ok
                        else "file content diverges from claim")
 
-        def verify_patch(sb: SandboxBackend, cmd, obs) -> VerifierResult:
+        def verify_patch(sb: SandboxBackend, cmd, obs, snap_id=None) -> VerifierResult:
             path = cmd.args["path"]
-            try:
-                sb.read_file(path)
-            except OSError as e:
+            diff = cmd.args.get("patch") or cmd.args.get("unified_diff")
+            if not diff:
                 return VerifierResult(False, "patch_file_verifier",
-                                      reason=f"cannot read patched file {path}: {e}")
-            applied = bool(obs.artifacts.get("applied"))
+                                      reason="patch_file missing patch/unified_diff")
+            if not obs.artifacts.get("applied"):
+                return VerifierResult(
+                    False, "patch_file_verifier",
+                    evidence={"path": path, "applied": False,
+                              "summary": obs.artifacts.get("summary", "")},
+                    reason="patch_file did not report an applied patch")
+            if not snap_id:
+                return VerifierResult(
+                    False, "patch_file_verifier",
+                    reason="patch_file verifier missing pre-write snapshot")
+            try:
+                original = sb.read_snapshot_file(snap_id, path)
+                expected, summary = apply_simple_unified_diff(original, diff)
+                actual = sb.read_file(path)
+            except (OSError, KeyError, ValueError) as e:
+                return VerifierResult(False, "patch_file_verifier",
+                                      reason=f"cannot verify patched file {path}: {e}")
+            ok = actual == expected
             return VerifierResult(
-                applied, "patch_file_verifier",
-                evidence={"path": path, "applied": applied,
-                          "summary": obs.artifacts.get("summary", "")},
-                reason="patch_file reported applied patch" if applied
-                       else "patch_file did not report an applied patch")
+                ok, "patch_file_verifier",
+                evidence={"path": path, "exact_match": ok, "summary": summary},
+                reason="patched file matches independently recomputed state" if ok
+                       else "patched file diverges from expected post-patch state")
 
-        def verify_mutate_protected(sb: SandboxBackend, cmd, obs) -> VerifierResult:
+        def verify_mutate_protected(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
             path = cmd.args["path"]
             try:
                 content = sb.read_file(path)
@@ -123,9 +163,53 @@ class StateVerifier:
                 reason="protected file updated via approved pathway" if ok
                        else "protected file content diverges from claim")
 
-        def verify_tests(sb: SandboxBackend, cmd, obs) -> VerifierResult:
-            res = sb.run_shell(["python3", cmd.args.get("test_file", "test.py")],
-                               timeout=cmd.args.get("timeout", 15))
+        def verify_delete(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
+            path = cmd.args["path"]
+            try:
+                sb.read_file(path)
+            except OSError:
+                return VerifierResult(
+                    True, "delete_file_verifier",
+                    evidence={"path": path, "absent": True},
+                    reason="file absent in real file state after delete")
+            return VerifierResult(
+                False, "delete_file_verifier",
+                evidence={"path": path, "absent": False},
+                reason="file still present after claimed delete")
+
+        def verify_network_fetch(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
+            import urllib.error
+            import urllib.request
+
+            from .core_types import sha
+
+            url = cmd.args["url"]
+            timeout = cmd.args.get("timeout_seconds", cmd.args.get("timeout", 10))
+            max_bytes = int(cmd.args.get("max_bytes", 65536))
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "agentic-runtime/0.2"})
+            try:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    data = resp.read(max_bytes + 1)
+                    if len(data) > max_bytes:
+                        data = data[:max_bytes]
+                    body = data.decode("utf-8", errors="replace")
+            except (urllib.error.URLError, TimeoutError, ValueError) as e:
+                return VerifierResult(
+                    False, "network_fetch_verifier",
+                    reason=f"independent fetch failed: {e}")
+            ok = sha(body) == sha(obs.stdout)
+            return VerifierResult(
+                ok, "network_fetch_verifier",
+                evidence={"url": url, "content_hash_match": ok,
+                          "reexec_status": resp.status},
+                reason="independent fetch content matches observation" if ok
+                       else "fetched content diverges from tool observation")
+
+        def verify_tests(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
+            command = resolve_run_tests_command(cmd.args)
+            timeout = cmd.args.get("timeout_seconds", cmd.args.get("timeout", 15))
+            res = sb.run_shell(command, timeout=timeout)
             ok = res.success
             combined = dict(obs.artifacts.get("fs_diff", {}))
             combined.update(res.fs_diff)
@@ -134,17 +218,21 @@ class StateVerifier:
                 return VerifierResult(
                     False, "run_tests_verifier",
                     evidence={"unexpected_fs_changes": unexpected,
-                              "reexec_exit": res.exit_code},
+                              "reexec_exit": res.exit_code,
+                              "reexec_command": command},
                     reason=f"run_tests modified unexpected files: {unexpected}")
             return VerifierResult(ok, "run_tests_verifier",
                 evidence={"reexec_exit": res.exit_code,
-                          "agent_claimed_exit": obs.exit_code},
+                          "agent_claimed_exit": obs.exit_code,
+                          "reexec_command": command},
                 reason="independent test re-run passed" if ok
                        else "independent test re-run failed")
 
         self.register("edit_file", verify_edit)
         self.register("write_file", verify_write)
         self.register("patch_file", verify_patch)
+        self.register("delete_file", verify_delete)
+        self.register("network_fetch", verify_network_fetch)
         self.register("mutate_protected_verification", verify_mutate_protected)
         self.register("run_tests", verify_tests)
 

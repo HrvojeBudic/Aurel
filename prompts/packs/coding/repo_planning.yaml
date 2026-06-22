@@ -1,0 +1,44 @@
+id: coding_repo_planning
+version: 0.1.0
+owner: coding-pack
+status: active
+purpose: coding repo planning
+description: Coding pack prompt for proposal-only repository planning.
+allowed_model_profiles:
+  - planning
+  - coding
+allowed_tasks:
+  - repo_planning
+  - coding
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - objective
+    - files
+output_schema:
+  type: object
+  required:
+    - plan
+    - tests
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - no_execution_claims
+template:
+  - Propose a coding plan for the bounded files.
+  - Runtime validators will decide whether proposed work is allowed.
+  - Objective {{ objective }}
+  - Files {{ files }}

@@ -1,0 +1,78 @@
+{
+  "plugin": {
+    "plugin_id": "research.demo",
+    "name": "Research Metadata Demo",
+    "version": "0.1.0",
+    "description": "Demonstrates P1.3.7 research metadata fields.",
+    "owner": "tests",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["research.read"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "research.read",
+      "plugin_id": "research.demo",
+      "name": "Research Read",
+      "description": "Read tool with explicit research metadata.",
+      "category": "filesystem",
+      "capability_types": ["read", "analyze"],
+      "input_schema": {"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]},
+      "output_schema": {"type": "object"},
+      "side_effects": ["local_read"],
+      "risk_class": "R1",
+      "reversibility": "none",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": false,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": [],
+      "evidence_required": false,
+      "trace_level": "minimal",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["perception"],
+      "state_delta_contract": {
+        "delta_type": "read_only_observation",
+        "affected_objects": ["file"],
+        "expected_delta": null,
+        "static_context": "File contents before read.",
+        "dynamic_delta": null,
+        "observable_after_action": true,
+        "verification_hint": "Compare output hash.",
+        "drift_risk": "none"
+      },
+      "simulation_profile": {
+        "dry_run_supported": false,
+        "simulation_supported": false,
+        "safe_preview_mode": "read_only_probe"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["perception"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "operator_attention_required": false
+      },
+      "learning_profile": {
+        "useful_for_evaluation": false,
+        "useful_for_training_data": false
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

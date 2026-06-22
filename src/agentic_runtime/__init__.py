@@ -271,6 +271,7 @@ def build_runtime(
     workspace_root: Optional[str] = None,
     allow_unsafe: bool = False,
     approval_gate: Optional[ApprovalGate] = None,
+    approval_policy: Optional[ApprovalPolicy] = None,
     model_clients: Optional[dict] = None,
     budget: Optional[BudgetLedger] = None,
     trace_backend: str = "memory",
@@ -301,11 +302,15 @@ def build_runtime(
             if not isinstance(sandbox, ProfiledSandbox):
                 sandbox = ProfiledSandbox(sandbox, sandbox_policy)
         else:
-            sandbox = UnsafeLocalSandbox(root=workspace_root)
-            profile = get_sandbox_profile(
-                SandboxProfileName.UNSAFE_LOCAL_DEMO.value, sandbox.root)
-            sandbox_policy = SandboxPolicy(profile)
-            sandbox = ProfiledSandbox(sandbox, sandbox_policy)
+            profile_name = (
+                SandboxProfileName.UNSAFE_LOCAL_DEMO.value
+                if allow_unsafe
+                else SandboxProfileName.RESTRICTED_LOCAL.value
+            )
+            sandbox, sandbox_policy = create_profiled_sandbox(
+                profile_name,
+                workspace_root or ".",
+            )
     else:
         if isinstance(sandbox, ProfiledSandbox):
             sandbox_policy = sandbox.policy
@@ -347,8 +352,12 @@ def build_runtime(
         router.configure_default()
 
     approval_gate = approval_gate or AutoApprover()
-    runtime = AgenticRuntime(tools, policy, verifier, trace, memory,
-                             approval_gate, budget, contracts=contracts,
-                             sandbox_policy=sandbox_policy)
+    runtime = AgenticRuntime(
+        tools, policy, verifier, trace, memory,
+        approval_gate, budget,
+        contracts=contracts,
+        approval_policy=approval_policy or ApprovalPolicy(),
+        sandbox_policy=sandbox_policy,
+    )
     return Kernel(sandbox, tools, policy, verifier, trace, memory, budget,
                   router, skills, runtime, sandbox_policy=sandbox_policy)

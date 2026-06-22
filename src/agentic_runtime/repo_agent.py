@@ -470,9 +470,16 @@ class RepoPlanValidator:
 
 
 class LLMRepoPlanner:
-    def __init__(self, router=None, validator: Optional[RepoPlanValidator] = None) -> None:
+    def __init__(
+        self,
+        router=None,
+        validator: Optional[RepoPlanValidator] = None,
+        prompt_registry=None,
+    ) -> None:
         self.router = router
         self.validator = validator or RepoPlanValidator()
+        self.prompt_registry = prompt_registry
+        self.last_prompt_trace_summary = None
 
     def create_plan(self, request: RepoTaskRequest, context: RepoContext) -> RepoTaskPlan:
         try:
@@ -516,11 +523,6 @@ class LLMRepoPlanner:
         return self.validator.validate_plan(plan, request)
 
     def _build_prompt(self, request: RepoTaskRequest, context: RepoContext) -> tuple[str, str]:
-        system = (
-            "You produce bounded repository task plans only. You never execute tools. "
-            "All writes/tests must later go through Runtime, Tool Bus, Approval, Sandbox, Verifier, Trace, and Praxis. "
-            "Return JSON only for the supplied schema. Do not weaken tests. Do not include secrets."
-        )
         repo_summary = {
             "metadata": context.metadata,
             "top_level_entries": context.top_level_entries[:40],
@@ -539,21 +541,39 @@ class LLMRepoPlanner:
             ],
             "symbol_matches": context.symbol_matches[:10],
         }
-        user = json.dumps({
+        governance_rules = [
+            "Entity proposes. Runtime disposes.",
+            "LLM plan must not execute tools or include patches.",
+            "No browser, network, git commit, or git push tools.",
+            "Do not modify tests unless explicitly allowed.",
+            "Return JSON only.",
+        ]
+        payload = {
             "objective": _safe_prompt_text(request.objective, 1000),
             "repo_context_summary": repo_summary,
             "allowed_paths": request.allowed_paths,
             "disallowed_paths": request.disallowed_paths,
             "max_files_changed": request.max_files_changed,
             "test_command": request.test_command,
-            "governance_rules": [
-                "Entity proposes. Runtime disposes.",
-                "LLM plan must not execute tools or include patches.",
-                "No browser, network, git commit, or git push tools.",
-                "Do not modify tests unless explicitly allowed.",
-                "Return JSON only.",
-            ],
-        }, indent=2)
+            "governance_rules": governance_rules,
+        }
+        user = json.dumps(payload, indent=2)
+        system = (
+            "You produce bounded repository task plans only. You never execute tools. "
+            "All writes/tests must later go through Runtime, Tool Bus, Approval, Sandbox, Verifier, Trace, and Praxis. "
+            "Return JSON only for the supplied schema. Do not weaken tests. Do not include secrets."
+        )
+        if self.prompt_registry is not None:
+            rendered = self.prompt_registry.render(
+                "repo_planner",
+                {
+                    "objective": payload["objective"],
+                    "repo_context": json.dumps(repo_summary, indent=2),
+                    "governance_rules": "; ".join(governance_rules),
+                },
+            )
+            self.last_prompt_trace_summary = rendered.trace_summary
+            system = rendered.rendered_prompt
         return system, user
 
 
@@ -837,7 +857,7 @@ def _finalize_report(kernel, report: CodeTaskReport) -> CodeTaskReport:
 
 def _process_praxis(kernel, report: CodeTaskReport) -> "PraxisReport":
     global _PRAXIS_METABOLISM
-    from .praxis import PraxisMetabolism, PraxisReport
+    from .praxis import PraxisMetabolism
 
     if _PRAXIS_METABOLISM is None:
         _PRAXIS_METABOLISM = PraxisMetabolism()

@@ -1,0 +1,44 @@
+id: coding_patch_review
+version: 0.1.0
+owner: coding-pack
+status: active
+purpose: patch review
+description: Coding pack review prompt for patch proposals and test implications.
+allowed_model_profiles:
+  - review
+  - coding
+allowed_tasks:
+  - review
+  - patch_review
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - patch_summary
+    - tests
+output_schema:
+  type: object
+  required:
+    - findings
+    - required_tests
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - no_test_weakening
+template:
+  - Review the patch proposal and stated tests.
+  - Identify risks without asking to change policy.
+  - Patch summary {{ patch_summary }}
+  - Tests {{ tests }}

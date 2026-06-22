@@ -1,0 +1,42 @@
+id: research_source_summary
+version: 0.1.0
+owner: research-pack
+status: active
+purpose: source summary
+description: Research pack prompt for bounded source summarization.
+allowed_model_profiles:
+  - summarization
+  - local_fast
+allowed_tasks:
+  - summarization
+  - research_summary
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - source_excerpt
+output_schema:
+  type: object
+  required:
+    - claims
+    - limitations
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - source_grounding
+template:
+  - Summarize only the supplied source excerpt.
+  - Separate claims from limitations.
+  - Source excerpt {{ source_excerpt }}

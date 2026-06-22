@@ -851,8 +851,7 @@ def _approval_receipt_event(
 def _praxis_event(
     run_id: str,
     sequence: int,
-    rec:     PraxisEventRecord,
-    SandboxViolationRecord,
+    rec: PraxisEventRecord,
 ) -> TraceEvent:
     event = {
         "event_id": rec.id,

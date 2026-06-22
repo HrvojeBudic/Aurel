@@ -5,7 +5,7 @@ Reports which sandbox backend is active and which governance subsystems are wire
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from . import __version__
 
@@ -38,13 +38,16 @@ def runtime_status(kernel=None, *, build_if_none: bool = True) -> dict[str, Any]
     return {
         "version": __version__,
         "sandbox": {
-            "backend": type(sandbox).__name__,
+            "backend": sandbox_diag.backend_name if sandbox_diag else type(sandbox).__name__,
+            "backend_wrapper": type(sandbox).__name__,
             "mode": mode_label,
             "hard_isolated": bool(getattr(sandbox, "is_hard_isolated", False)),
             "security_boundary": bool(getattr(sandbox, "is_security_boundary", False)),
             "root": getattr(sandbox, "root", ""),
             "profile": sandbox_diag.active_profile if sandbox_diag else "",
             "unsafe": sandbox_diag.unsafe if sandbox_diag else False,
+            "policy_restricted": sandbox_diag.policy_restricted if sandbox_diag else False,
+            "backend_available": sandbox_diag.backend_available if sandbox_diag else True,
             "read_allowed": sandbox_diag.read_allowed if sandbox_diag else True,
             "write_allowed": sandbox_diag.write_allowed if sandbox_diag else True,
             "exec_allowed": sandbox_diag.exec_allowed if sandbox_diag else True,
@@ -85,6 +88,7 @@ def format_status(status: dict[str, Any]) -> str:
         f"sandbox: {sb['backend']} ({sb['mode']})"
         f"  profile={sb.get('profile', '') or 'n/a'}"
         f"  unsafe={sb.get('unsafe', False)}"
+        f"  policy_restricted={sb.get('policy_restricted', False)}"
         f"  hard_isolated={sb['hard_isolated']}"
         f"  security_boundary={sb['security_boundary']}",
         f"policy_engine: {'yes' if sub['policy_engine'] else 'no'}",

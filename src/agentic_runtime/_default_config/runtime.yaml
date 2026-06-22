@@ -1,0 +1,9 @@
+# Runtime model policy — safe defaults (P1.1)
+local_only: true
+allow_remote_models: false
+allow_unconfigured_providers: false
+require_secret_redaction: true
+trace_model_calls: true
+trace_prompt_summaries_only: true
+store_raw_prompts: false
+store_raw_provider_responses: false

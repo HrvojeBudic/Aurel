@@ -1,0 +1,86 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.model",
+    "name": "Built-in Model Tools",
+    "version": "0.1.0",
+    "description": "Declarative built-in local/mock-safe model completion capabilities. No model calls in P1.3.8.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.model_complete_structured"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.model_complete_structured",
+      "plugin_id": "builtin.model",
+      "name": "Model Complete Structured",
+      "description": "Declarative local/mock-safe structured model completion capability. Metadata only — does not call cloud or local model providers in P1.3.8.",
+      "category": "model",
+      "capability_types": ["analyze", "transform", "propose"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "prompt": {"type": "string"},
+          "schema": {"type": "object"}
+        },
+        "required": ["prompt", "schema"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["none"],
+      "risk_class": "R2",
+      "reversibility": "reversible",
+      "requires_approval": false,
+      "permissions_required": [],
+      "data_access": ["local_project"],
+      "execution_environment": "model_provider",
+      "dry_run_supported": true,
+      "simulation_supported": false,
+      "predicted_effect": null,
+      "failure_modes": ["schema_validation_failed", "provider_unavailable"],
+      "evidence_required": false,
+      "trace_level": "standard",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["cognition"],
+      "state_delta_contract": {
+        "delta_type": "read_only_observation",
+        "affected_objects": ["model_output"],
+        "expected_delta": "structured_completion_proposed",
+        "static_context": "input prompt and schema",
+        "dynamic_delta": "structured output proposal",
+        "observable_after_action": true,
+        "verification_hint": "Validate output against requested schema.",
+        "drift_risk": "low"
+      },
+      "simulation_profile": {
+        "dry_run_supported": true,
+        "dry_run_strategy": "manual_review",
+        "simulation_supported": false,
+        "safe_preview_mode": "manual_review"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["cognition", "policy", "provenance"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "operator_attention_required": false
+      },
+      "learning_profile": {
+        "useful_for_evaluation": true,
+        "useful_for_training_data": false
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

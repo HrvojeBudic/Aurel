@@ -1,0 +1,31 @@
+{
+  "report_id": "adr_test_cli",
+  "source_kind": "operator_contract",
+  "deltas": [
+    {
+      "delta_id": "adt_cli_1",
+      "delta_type": "RISK_CEILING_INCREASED",
+      "severity": "HIGH",
+      "source_kind": "operator_contract",
+      "field_path": "risk_ceiling",
+      "old_value": "low",
+      "new_value": "high",
+      "old_attestation_id": "srcatt_old_cli",
+      "new_attestation_id": "srcatt_new_cli",
+      "requires_operator_consent": true,
+      "requires_evidence": false,
+      "reason": "risk ceiling increased",
+      "blockers": [
+        "operator_consent_required"
+      ],
+      "warnings": []
+    }
+  ],
+  "highest_severity": "HIGH",
+  "requires_operator_consent": true,
+  "requires_evidence": false,
+  "summary": "CLI test delta report",
+  "safe_to_auto_accept": false,
+  "old_attestation_id": "srcatt_old_cli",
+  "new_attestation_id": "srcatt_new_cli"
+}

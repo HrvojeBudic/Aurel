@@ -55,13 +55,28 @@ def bounded_test_approver(predicate=None, **kwargs):
     return AutoApprover(predicate, **defaults)
 
 
-@pytest.fixture
-def kernel():
+def _unsafe_runtime(approval_gate):
     return build_runtime(
         sandbox=UnsafeLocalSandbox(),
-        approval_gate=bounded_test_approver(
+        approval_gate=approval_gate,
+    )
+
+
+@pytest.fixture
+def kernel():
+    """Narrow approver: only R0/R1 auto-approved (HITL paths stay realistic)."""
+    return _unsafe_runtime(bounded_test_approver())
+
+
+@pytest.fixture
+def write_kernel():
+    """Unsafe sandbox with explicit approval for common write/exec test tools."""
+    return _unsafe_runtime(
+        bounded_test_approver(
             lambda r: (
-                r.command.tool in {"run_tests", "edit_file", "write_file", "patch_file"}
+                r.command.tool in {
+                    "run_tests", "edit_file", "write_file", "patch_file", "delete_file",
+                }
                 or r.risk_class in {ApprovalRiskClass.R0, ApprovalRiskClass.R1}
             ),
         ),

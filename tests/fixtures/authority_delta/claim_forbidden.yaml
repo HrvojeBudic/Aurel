@@ -1,0 +1,7 @@
+claim_status: FORBIDDEN
+allowed_status: FORBIDDEN
+required_evidence_level: none
+current_evidence_level: none
+safe_claim_text: "test claim forbidden"
+blockers:
+  - "no evidence"

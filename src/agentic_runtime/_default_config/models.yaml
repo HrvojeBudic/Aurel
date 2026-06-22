@@ -1,0 +1,42 @@
+# Model profiles — map tasks to provider + model (P1.1)
+profiles:
+  local_fast:
+    provider: mock
+    model: mock-deterministic
+    purpose: local_fast
+    allowed_tasks:
+      - fast
+      - general
+      - local_fast
+
+  planning:
+    provider: mock
+    model: mock-deterministic
+    purpose: planning
+    allowed_tasks:
+      - planning
+      - repo_planning
+      - balanced
+
+  coding:
+    provider: mock
+    model: mock-deterministic
+    purpose: coding
+    allowed_tasks:
+      - coding
+      - patch_planning
+
+  review:
+    provider: mock
+    model: mock-deterministic
+    purpose: review
+    allowed_tasks:
+      - review
+      - validation
+
+  summarization:
+    provider: mock
+    model: mock-deterministic
+    purpose: summarization
+    allowed_tasks:
+      - summarization

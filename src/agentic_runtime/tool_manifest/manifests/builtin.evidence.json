@@ -1,0 +1,93 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.evidence",
+    "name": "Built-in Evidence Tools",
+    "version": "0.1.0",
+    "description": "Declarative built-in evidence record capabilities. No evidence is written in P1.3.8.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.create_evidence_record"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "workspace_scoped",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.create_evidence_record",
+      "plugin_id": "builtin.evidence",
+      "name": "Create Evidence Record",
+      "description": "Declarative capability to create an evidence record in the future. Metadata only — does not write evidence in P1.3.8.",
+      "category": "evaluation",
+      "capability_types": ["write", "verify"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "source_trace_id": {"type": "string"},
+          "summary": {"type": "string"}
+        },
+        "required": ["source_trace_id", "summary"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["state_change"],
+      "risk_class": "R2",
+      "reversibility": "reversible",
+      "requires_approval": false,
+      "permissions_required": ["state.write"],
+      "data_access": ["local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": true,
+      "simulation_supported": false,
+      "predicted_effect": {
+        "state_target": "evidence_record",
+        "expected_delta": "evidence_record_created",
+        "affected_objects": ["evidence_record"],
+        "reversible": true,
+        "confidence_seed": "medium"
+      },
+      "failure_modes": ["invalid_trace_reference", "validation_failed"],
+      "evidence_required": true,
+      "trace_level": "standard",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["verification", "memory", "governance"],
+      "state_delta_contract": {
+        "delta_type": "governance_state_change",
+        "affected_objects": ["evidence_record"],
+        "expected_delta": "evidence_record_created",
+        "static_context": "source trace and validation context",
+        "dynamic_delta": "evidence record draft",
+        "observable_after_action": true,
+        "verification_hint": "Confirm evidence record exists and links to source trace.",
+        "drift_risk": "low"
+      },
+      "simulation_profile": {
+        "dry_run_supported": true,
+        "dry_run_strategy": "draft_only",
+        "simulation_supported": false,
+        "safe_preview_mode": "manual_review"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["memory", "policy", "provenance"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "reversibility_confidence": "reversible",
+        "operator_attention_required": false
+      },
+      "learning_profile": {
+        "useful_for_evaluation": true,
+        "useful_for_training_data": true
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

@@ -40,7 +40,7 @@ from .core_types import (AgentCard, ApprovalReceiptRecord, CommandEnvelope,
                          RiskLevel, SandboxViolationRecord, StateTransitionRecord,
                          ToolContractViolationRecord, TruthStatus,
                          VerifierResult, new_id)
-from .hitl import ApprovalGate, ApprovalRequest
+from .hitl import ApprovalGate
 from .memory import MemoryFabric
 from .memory_governance import MemoryWriteRequest
 from .policy import PolicyEngine, PolicyDecision
@@ -97,6 +97,9 @@ class AgenticRuntime:
 
     def submit(self, cmd: CommandEnvelope, card: AgentCard) -> CommandResult:
         pre_policy_hash = self.tools.sandbox.state_hash()
+
+        if cmd.issuer_card_id != card.id:
+            return self._issuer_mismatch_blocked(pre_policy_hash, cmd, card)
 
         # ---- 0. TOOL CONTRACT — INPUT (before policy/budget/execution) -- #
         contract, gate = self.contracts.resolve_for_execution(
@@ -229,12 +232,11 @@ class AgenticRuntime:
                 self.budget.charge_time(obs.duration_s)
                 self.budget.account_post_execution(cmd.tool, cmd.args, obs)
             except BudgetExceeded as e:
+                rollback_err = ""
                 if is_write:
-                    try:
-                        self.tools.sandbox.rollback(snap_id)
-                    except (KeyError, NotImplementedError):
-                        pass
-                self._budget_blocked(before_hash, cmd, e, obs=obs)
+                    _rolled, rollback_err = self._attempt_write_rollback(snap_id)
+                self._budget_blocked(
+                    before_hash, cmd, e, obs=obs, rollback_error=rollback_err or None)
                 raise
 
             after_hash = self.tools.sandbox.state_hash()
@@ -249,18 +251,22 @@ class AgenticRuntime:
                     evidence={"contract_code": output_check.code,
                               "arg": output_check.arg, **output_check.details})
             else:
-                vres = self.verifier.verify(cmd, obs, card,
-                                            integrity_before=integrity_before)
+                vres = self.verifier.verify(
+                    cmd, obs, card,
+                    integrity_before=integrity_before,
+                    write_snapshot_id=snap_id if is_write else None,
+                )
 
             # ---- 7. ROLLBACK on failed write -------------------------- #
             rolled_back = False
             if is_write and not vres.passed:
-                try:
-                    self.tools.sandbox.rollback(snap_id)
+                rolled_back, rollback_err = self._attempt_write_rollback(snap_id)
+                if rolled_back:
                     after_hash = self.tools.sandbox.state_hash()
-                    rolled_back = True
-                except (KeyError, NotImplementedError):
-                    pass
+                elif rollback_err:
+                    vres = self._verifier_with_rollback_failure(vres, rollback_err)
+            elif is_write and vres.passed:
+                self.tools.sandbox.release_snapshot(snap_id)
 
         # ---- 8. TRACE (hash-chained) ---------------------------------- #
         if not output_check.ok:
@@ -270,33 +276,15 @@ class AgenticRuntime:
         )
 
         # ---- 9. MEMORY (governed: provenance + trace; P0.9) ----------- #
-        summary = (f"{cmd.tool}({_short(cmd.args)}) -> "
-                   f"{'ok' if obs.success else 'fail'}; "
-                   f"verified={vres.passed} ({vres.reason})")
-        self.budget.charge_memory_write()
-        self.memory.request_write(MemoryWriteRequest(
-            content=summary,
-            proposed_truth_state=MemoryTruthState.RAW,
-            writer_kind="runtime",
-            created_by=cmd.issuer_card_id,
-            source_run_id=self.trace.run_id,
-            source_command_id=cmd.id,
-            source_trace_ids=[rec.id],
-        ))
-        self.budget.charge_memory_write()
-        self.memory.request_write(MemoryWriteRequest(
-            content=summary,
-            proposed_truth_state=MemoryTruthState.EPISODIC,
-            writer_kind="runtime",
-            created_by=cmd.issuer_card_id,
-            source_run_id=self.trace.run_id,
-            source_command_id=cmd.id,
-            source_trace_ids=[rec.id],
-            confidence=0.9 if vres.passed else 0.3,
-            run_succeeded=vres.passed,
-            truth_status=TruthStatus.VERIFIED if vres.passed else TruthStatus.CONTRADICTED,
-            links=[rec.id],
-        ))
+        try:
+            self._record_command_memory(cmd, obs, vres, rec)
+        except BudgetExceeded as e:
+            return self._post_trace_budget_blocked(
+                cmd, decision, obs, vres, rec, e,
+                rolled_back=rolled_back,
+                approval_decision=approval_decision,
+                approval_receipt=approval_receipt,
+            )
 
         return CommandResult(
             obs, vres, decision, transition=rec,
@@ -400,6 +388,26 @@ class AgenticRuntime:
             cmd, decision.verdict, obs, vres, before_hash, before_hash)
         return CommandResult(obs, vres, decision, transition=rec)
 
+    def _issuer_mismatch_blocked(
+        self,
+        before_hash: str,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+    ) -> CommandResult:
+        """Reject when command issuer identity does not match the submitting card."""
+        msg = (
+            f"ISSUER_MISMATCH: cmd.issuer_card_id ({cmd.issuer_card_id}) "
+            f"!= card.id ({card.id})"
+        )
+        obs = ObservationEnvelope.make(cmd.id, success=False, stderr=msg)
+        vres = VerifierResult(
+            False, "policy", reason="issuer_mismatch", code="ISSUER_MISMATCH")
+        decision = PolicyDecision(
+            PolicyVerdict.DENY, RiskLevel.CRITICAL, [msg])
+        rec = self._append_transition(
+            cmd, decision.verdict, obs, vres, before_hash, before_hash)
+        return CommandResult(obs, vres, decision, transition=rec)
+
     def _sandbox_blocked(
         self,
         before_hash: str,
@@ -467,12 +475,101 @@ class AgenticRuntime:
                 details=check.details,
             ))
 
+    def _record_command_memory(
+        self,
+        cmd: CommandEnvelope,
+        obs: ObservationEnvelope,
+        vres: VerifierResult,
+        rec: StateTransitionRecord,
+    ) -> None:
+        summary = (f"{cmd.tool}({_short(cmd.args)}) -> "
+                   f"{'ok' if obs.success else 'fail'}; "
+                   f"verified={vres.passed} ({vres.reason})")
+        self.budget.charge_memory_write()
+        self.memory.request_write(MemoryWriteRequest(
+            content=summary,
+            proposed_truth_state=MemoryTruthState.RAW,
+            writer_kind="runtime",
+            created_by=cmd.issuer_card_id,
+            source_run_id=self.trace.run_id,
+            source_command_id=cmd.id,
+            source_trace_ids=[rec.id],
+        ))
+        self.budget.charge_memory_write()
+        self.memory.request_write(MemoryWriteRequest(
+            content=summary,
+            proposed_truth_state=MemoryTruthState.EPISODIC,
+            writer_kind="runtime",
+            created_by=cmd.issuer_card_id,
+            source_run_id=self.trace.run_id,
+            source_command_id=cmd.id,
+            source_trace_ids=[rec.id],
+            confidence=0.9 if vres.passed else 0.3,
+            run_succeeded=vres.passed,
+            truth_status=TruthStatus.VERIFIED if vres.passed else TruthStatus.CONTRADICTED,
+            links=[rec.id],
+        ))
+
+    def _post_trace_budget_blocked(
+        self,
+        cmd: CommandEnvelope,
+        decision: PolicyDecision,
+        obs: ObservationEnvelope,
+        vres: VerifierResult,
+        rec: StateTransitionRecord,
+        err: BudgetExceeded,
+        *,
+        rolled_back: bool,
+        approval_decision: ApprovalDecision | None,
+        approval_receipt: ApprovalReceipt | None,
+    ) -> CommandResult:
+        budget_vres = VerifierResult(
+            False,
+            "budget",
+            reason=f"post-execution budget exceeded: {err}",
+            code="BUDGET_EXCEEDED",
+            evidence={"phase": "memory_write", "executed": True},
+        )
+        _ = rec
+        return CommandResult(
+            obs,
+            budget_vres,
+            decision,
+            transition=rec,
+            rolled_back=rolled_back,
+            approval_decision=approval_decision,
+            approval_receipt=approval_receipt,
+        )
+
+    def _attempt_write_rollback(self, snap_id: str) -> tuple[bool, str]:
+        try:
+            self.tools.sandbox.rollback(snap_id)
+            return True, ""
+        except (KeyError, NotImplementedError, OSError) as e:
+            return False, str(e)
+
+    @staticmethod
+    def _verifier_with_rollback_failure(
+        vres: VerifierResult,
+        rollback_err: str,
+    ) -> VerifierResult:
+        evidence = dict(vres.evidence or {})
+        evidence["rollback_error"] = rollback_err
+        return VerifierResult(
+            False,
+            vres.verifier,
+            reason=f"{vres.reason}; rollback failed: {rollback_err}",
+            code="ROLLBACK_FAILED",
+            evidence=evidence,
+        )
+
     def _budget_blocked(
         self,
         before_hash: str,
         cmd: CommandEnvelope,
         err: BudgetExceeded,
         obs: ObservationEnvelope | None = None,
+        rollback_error: str | None = None,
     ) -> None:
         reason = str(err)
         observation = obs or ObservationEnvelope.make(
@@ -483,6 +580,8 @@ class AgenticRuntime:
         )
         observation.success = False
         observation.stderr = f"BUDGET EXCEEDED: {reason}"
+        if rollback_error:
+            observation.artifacts["rollback_error"] = rollback_error
         vres = VerifierResult(
             False,
             "budget",

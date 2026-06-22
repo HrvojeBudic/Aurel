@@ -1,0 +1,97 @@
+{
+  "plugin": {
+    "plugin_id": "builtin.memory",
+    "name": "Built-in Memory Tools",
+    "version": "0.1.0",
+    "description": "Declarative built-in memory candidate capabilities. Candidate creation is not memory promotion or canonization.",
+    "owner": "aurel",
+    "origin": "builtin",
+    "trust_level": "high",
+    "status": "active",
+    "tools": ["builtin.create_memory_candidate"],
+    "required_permissions": [],
+    "data_residency": "local",
+    "network_policy": "none",
+    "filesystem_policy": "read_only",
+    "secret_policy": "forbidden",
+    "runtime_surfaces": ["runtime"],
+    "compatibility": {},
+    "integrity_hash": null
+  },
+  "tools": [
+    {
+      "tool_id": "builtin.create_memory_candidate",
+      "plugin_id": "builtin.memory",
+      "name": "Create Memory Candidate",
+      "description": "Declarative capability to create a memory candidate for later review. Does not promote or canonize memory in P1.3.8.",
+      "category": "memory",
+      "capability_types": ["propose", "transform"],
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "summary": {"type": "string"},
+          "source_trace_id": {"type": "string"}
+        },
+        "required": ["summary", "source_trace_id"]
+      },
+      "output_schema": {"type": "object"},
+      "side_effects": ["state_change"],
+      "risk_class": "R2",
+      "reversibility": "reversible",
+      "requires_approval": false,
+      "permissions_required": ["state.write"],
+      "data_access": ["memory", "local_project"],
+      "execution_environment": "runtime",
+      "dry_run_supported": true,
+      "simulation_supported": false,
+      "predicted_effect": {
+        "state_target": "memory_candidate",
+        "expected_delta": "memory_candidate_created",
+        "affected_objects": ["memory_candidate"],
+        "reversible": true,
+        "confidence_seed": "medium"
+      },
+      "failure_modes": ["invalid_trace_reference", "validation_failed"],
+      "evidence_required": true,
+      "trace_level": "standard",
+      "timeout_policy": null,
+      "rate_limit_policy": null,
+      "enabled": true,
+      "tool_roles": ["memory", "cognition"],
+      "state_delta_contract": {
+        "delta_type": "memory_state_change",
+        "affected_objects": ["memory_candidate"],
+        "expected_delta": "memory_candidate_created",
+        "static_context": "source interaction or trace",
+        "dynamic_delta": "candidate memory object",
+        "observable_after_action": true,
+        "verification_hint": "Candidate must remain reviewable and not promoted automatically.",
+        "drift_risk": "medium"
+      },
+      "simulation_profile": {
+        "dry_run_supported": true,
+        "dry_run_strategy": "draft_only",
+        "simulation_supported": false,
+        "safe_preview_mode": "manual_review"
+      },
+      "safety_surface": {
+        "threat_surfaces": ["memory", "provenance"],
+        "sensitive_data_touchpoints": [],
+        "externality_level": "local_only",
+        "reversibility_confidence": "reversible",
+        "operator_attention_required": false
+      },
+      "learning_profile": {
+        "useful_for_evaluation": false,
+        "useful_for_training_data": true,
+        "can_generate_procedure_candidate": false,
+        "failure_should_be_remembered": true,
+        "success_should_be_remembered": true,
+        "operator_review_hint": "Memory promotion requires later review/policy flow."
+      },
+      "prediction_required": false,
+      "prediction_observable": true,
+      "predicted_effect_quality": "seed"
+    }
+  ]
+}

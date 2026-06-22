@@ -178,13 +178,23 @@ class PolicyEngine:
                 risk = RiskLevel.HIGH
                 reasons.append("approved protected verification mutation")
         if target_path and reads:
-            allowed_read = auth.read_paths or auth.write_paths
-            if allowed_read and resolver is not None:
-                if not resolver.is_covered_by_prefixes(target_path, allowed_read):
-                    canonical = resolver.resolve(target_path).relative
-                    return PolicyDecision(
-                        PolicyVerdict.DENY, RiskLevel.CRITICAL,
-                        [f"authority: no read authority over '{canonical}'"])
+            if resolver is None:
+                return PolicyDecision(
+                    PolicyVerdict.DENY, RiskLevel.CRITICAL,
+                    [f"authority: no path resolver; cannot authorize read of '{target_path}'"])
+            if auth.read_paths:
+                allowed_read = auth.read_paths
+            elif auth.write_paths:
+                allowed_read = auth.write_paths
+            else:
+                return PolicyDecision(
+                    PolicyVerdict.DENY, RiskLevel.CRITICAL,
+                    ["authority: no read authority configured (read_paths and write_paths empty)"])
+            if not resolver.is_covered_by_prefixes(target_path, allowed_read):
+                canonical = resolver.resolve(target_path).relative
+                return PolicyDecision(
+                    PolicyVerdict.DENY, RiskLevel.CRITICAL,
+                    [f"authority: no read authority over '{canonical}'"])
 
         if cmd.tool == "network_fetch" and not auth.allow_network:
             return PolicyDecision(PolicyVerdict.DENY, RiskLevel.CRITICAL,

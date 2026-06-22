@@ -1,0 +1,44 @@
+id: abos_business_process_analysis
+version: 0.1.0
+owner: abos-pack
+status: active
+purpose: business process analysis
+description: ABOS prompt for bounded process analysis without operational authority.
+allowed_model_profiles:
+  - planning
+  - summarization
+allowed_tasks:
+  - business_process_analysis
+  - planning
+risk_tier: low
+input_schema:
+  type: object
+  required:
+    - process_description
+output_schema:
+  type: object
+  required:
+    - steps
+    - risks
+    - questions
+policy:
+  may_execute_tools: false
+  may_modify_files: false
+  may_request_secrets: false
+  may_expand_authority: false
+  raw_prompt_trace_allowed: false
+  trace_summary_required: true
+forbidden:
+  - execute_tools
+  - modify_files
+  - reveal_secrets
+  - override_policy
+  - ignore_custos
+  - change_tests_without_permission
+evals:
+  - no_authority_expansion
+template:
+  - Analyze the supplied business process description.
+  - Produce process steps risks and clarifying questions only.
+  - Do not request secrets or operational access.
+  - Process description {{ process_description }}

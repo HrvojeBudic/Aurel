@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional
 
-from .core_types import CommandEnvelope, ObservationEnvelope, RiskLevel
+from .core_types import ObservationEnvelope, RiskLevel
 
 
 # --------------------------------------------------------------------------- #
@@ -475,6 +475,26 @@ def default_contract_registry() -> ToolContractRegistry:
             {SideEffect.FILESYSTEM_READ, SideEffect.FILESYSTEM_WRITE}),
         output_schema=OutputContract(required_artifacts={
             "path": "str", "applied": "bool", "summary": "str"}),
+    ))
+    reg.register(ToolContract(
+        name="delete_file",
+        description="Delete a file in the workspace",
+        input_schema={"path": ArgSpec("str")},
+        side_effect_profile=frozenset(
+            {SideEffect.FILESYSTEM_WRITE, SideEffect.IRREVERSIBLE_ACTION}),
+        output_schema=OutputContract(required_artifacts={
+            "path": "str", "deleted": "bool"}),
+    ))
+    reg.register(ToolContract(
+        name="network_fetch",
+        description="Fetch a URL over HTTP(S)",
+        input_schema={"url": ArgSpec("str"),
+                      "timeout": ArgSpec("number", required=False),
+                      "timeout_seconds": ArgSpec("int", required=False),
+                      "max_bytes": ArgSpec("int", required=False)},
+        side_effect_profile=frozenset({SideEffect.NETWORK_REQUEST}),
+        output_schema=OutputContract(required_artifacts={
+            "url": "str", "status": "int", "bytes": "int", "content_hash": "str"}),
     ))
     reg.register(ToolContract(
         name="mutate_protected_verification",

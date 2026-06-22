@@ -142,6 +142,18 @@ def test_list_str_type_and_size(reg, iv):
     assert not bad.ok and bad.code == "wrong_arg_type"
 
 
+def test_run_shell_contract_keeps_documented_command_shapes(reg, iv):
+    command_str = iv.validate(reg.get("run_shell"), {"command": "echo hi"})
+    assert command_str.ok
+
+    cmd_list = iv.validate(reg.get("run_shell"), {"cmd": ["echo", "hi"]})
+    assert cmd_list.ok
+
+    command_list = iv.validate(reg.get("run_shell"), {"command": ["echo", "hi"]})
+    assert not command_list.ok
+    assert command_list.code == "wrong_arg_type"
+
+
 def test_side_effect_profile_present_on_all_contracts(reg):
     for name in reg.names:
         c = reg.get(name)
