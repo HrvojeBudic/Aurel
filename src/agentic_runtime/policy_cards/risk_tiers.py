@@ -188,7 +188,8 @@ def _coerce_enum(
 ) -> _EnumT:
     if not isinstance(raw, str) or raw not in valid_values:
         raise RiskTierPolicyCardValidationError(
-            f"{field_name} must be one of: {', '.join(sorted(valid_values))}"
+            f"{field_name} value {raw!r} must be one of: "
+            f"{', '.join(sorted(valid_values))}"
         )
     return enum_type(raw)  # type: ignore[call-arg]
 
