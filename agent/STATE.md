@@ -1,6 +1,6 @@
 # Repository State
 
-_Last updated: 2026-06-22 (P1.6.2 — Behavioral Contract Schema)_
+_Last updated: 2026-06-22 (P1.6.3 - Risk Tier Policy Card Model)_
 
 ## What works
 
@@ -63,7 +63,7 @@ _Last updated: 2026-06-22 (P1.6.2 — Behavioral Contract Schema)_
   - Validation refactored to use schema definitions (no scattered inline lists)
   - Runtime-future reserved fields rejected (resolver, enforcement, conditions, etc.)
   - 61 new tests (120 total policy card tests); no resolver/enforcement/CLI yet
-  - **P1.6.2 Behavioral Contract Schema (IN PROGRESS)**:
+  - **P1.6.2 Behavioral Contract Schema (COMPLETE)**:
   - `src/agentic_runtime/policy_cards/contracts.py` — 24 enums + 15 frozen dataclasses for behavioral contracts
   - `src/agentic_runtime/policy_cards/contract_schema.py` — centralized Behavioral Contract Schema v1
   - BehavioralContract models: identity, subject, scope, obligations, prohibitions, preconditions, postconditions, evidence requirements, escalation rules
@@ -72,6 +72,18 @@ _Last updated: 2026-06-22 (P1.6.2 — Behavioral Contract Schema)_
   - Behavioral contract error hierarchy (6 classes) extending PolicyCardError
   - ~44 new public exports; 96 new tests
   - No runtime enforcement, no resolver, no CLI
+  - **P1.6.3 Risk Tier Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/risk_tiers.py` - R0-R6 typed risk-tier model, validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/risk_tier_schema.py` - Risk Tier Policy Card Schema v1, required fields, dangerous metadata keys, default definitions, action-class mapping seeds
+  - RiskTierPolicyCard exists and remains compatible with generic `PolicyCard(kind="risk_tier")`
+  - Default R0-R6 tier definitions exist with reversibility, oversight, evidence expectations, and semantic default flags
+  - R5 requires trace, evidence, approval, irreversible reversibility, and explicit Operator confirmation
+  - R6 is denied/non-permissive and cannot allow execution, external egress, memory write, or tool write
+  - Reversible and compensatable remain distinct
+  - Closed-world dict loading rejects unknown top-level/nested fields and dangerous metadata
+  - Deterministic canonical serialization and SHA-256 canonical hash are available
+  - 36 new focused tests; P1.6.0-P1.6.3 focused suite passes
+  - No runtime risk classifier, no policy resolver, and no runtime enforcement yet
 
 ## What works
 

@@ -8,9 +8,10 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | P1.6.2 — Behavioral Contract Schema |
-| **Last completed** | P1.6.1 — Policy Card Schema |
-| **Next** | P1.6.3 — Risk-Tier Policy Cards |
+| **Current active** | P1.6.4 - Human Oversight Policy Card Model |
+| **Last completed** | P1.6.3 - Risk Tier Policy Card Model |
+| **Previous** | P1.6.2 - Behavioral Contract Schema |
+| **Next** | P1.6.4 - Human Oversight Policy Card Model |
 
 **P1.5 complete** — Evaluation Mirror & Verified Capability Evidence Foundation (**SEALED** — 18 invariants, Golden Thread A, memory candidate bridge, integrated seal). **P1.5 is sealed.**
 
@@ -85,6 +86,7 @@ P2.0.0–P2.0.20   Phase 2 lock
 
 | Phase         | Focus                                                                                                                              |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| P1.6.3        | Risk Tier Policy Card Model - **COMPLETE**, R0-R6 semantics, strict R5/R6 validation, deterministic hash-ready typed card, 36 tests |
 | P1.4.20       | P1.4 Identity & Autonomy Exit Seal — **SEALED_WITH_LIMITATIONS**, 56 seal checks across 5 categories (import/object, CLI, governance invariants, adversarial, docs consistency), CLI `identity p14-seal run/list-checks/run-check`, 28 new tests, 412 identity total |
 | P1.4.19       | Identity Docs / Reports / State Update — consolidation/audit gate, seal-readiness CLI, 18 CLI groups, 15 P1.4 invariants, 10 P1.4.19 invariants, 15 known limitations, 22-item P1.4.20 exit seal checklist, 29 new tests, 384 identity total |
 | P1.4.18       | Trust Evidence Linkage — categorical trust posture, evidence bundle, linkage report, 57 new tests, 355 identity total        |

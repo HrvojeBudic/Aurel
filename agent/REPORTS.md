@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.3 Risk Tier Policy Card Model](reports/P1.6.3_RISK_TIER_POLICY_CARD_MODEL_REPORT.md) | 2026-06-22 | Risk Tier Policy Card Model v1: R0-R6 semantics, R5/R6 safety validation, deterministic hashing, 36 tests |
 | [P1.6.2 Behavioral Contract Schema](reports/P1.6.2_BEHAVIORAL_CONTRACT_SCHEMA_REPORT.md) | 2026-06-22 | Behavioral Contract Schema v1: 24 enums, 15 frozen dataclasses, closed-world validation, deterministic hashing, 96 tests |
 | [P1.6.1 Policy Card Schema](reports/P1.6.1_POLICY_CARD_SCHEMA_REPORT.md) | 2026-06-22 | Centralized schema v1, field classifications, schema-driven validation, deterministic export |
 | [P1.6.0 Policy Card Foundation](reports/P1.6.0_POLICY_CARD_FOUNDATION_REPORT.md) | 2026-06-22 | First-class policy card models, closed-world validation, deterministic hashing — foundation only |

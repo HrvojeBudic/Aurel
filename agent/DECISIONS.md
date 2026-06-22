@@ -1,5 +1,35 @@
 # Decisions Log
 
+## 2026-06-22 - P1.6.3 Risk Tier Policy Card Model
+
+### DEC-P163-01: RiskTierPolicyCard defines risk semantics, not runtime classification
+**Decision:** `RiskTierPolicyCard` defines R0-R6 semantics, reversibility, oversight, evidence expectations, and action-class mapping seeds. It does not classify arbitrary runtime actions.
+**Why:** Classification belongs to a later risk classifier/resolver layer.
+
+### DEC-P163-02: Risk tiers are closed-world R0-R6
+**Decision:** Required tiers are exactly R0, R1, R2, R3, R4, R5, and R6. Missing, duplicate, or unknown tiers fail validation.
+**Why:** Future governance consumers need a deterministic and stable risk vocabulary.
+
+### DEC-P163-03: R5 requires explicit Operator confirmation
+**Decision:** R5 must require trace, evidence, approval, explicit Operator confirmation, irreversible reversibility, and explicit Operator oversight.
+**Why:** Serious irreversible or externally consequential actions must not be made weak by policy-card data.
+
+### DEC-P163-04: R6 is denied and non-permissive
+**Decision:** R6 must use denied oversight and denied reversibility and cannot allow execution, external egress, memory write, or tool write.
+**Why:** Forbidden actions must remain forbidden in the semantic model.
+
+### DEC-P163-05: Reversible and compensatable are distinct
+**Decision:** `reversible` and `compensatable` are separate `ReversibilityLevel` values.
+**Why:** Actions such as sending email are not reversible even if later compensation is possible.
+
+### DEC-P163-06: Risk tier cards cannot grant authority or bypass contracts
+**Decision:** Risk tier cards cannot grant authority, bypass generic policy cards, or replace behavioral contracts. Dangerous metadata keys and authority-shaped fields are rejected.
+**Why:** Metadata and declarative risk semantics must not become a shadow control plane.
+
+### DEC-P163-07: Runtime resolver, classifier, and P25 hardening are deferred
+**Decision:** P1.6.3 does not implement a runtime risk classifier, policy runtime resolver, conflict detector, simulation mode, trace hook, CLI, report generator, enforcement engine, human oversight cards, or P25 hardening.
+**Why:** P1.6.3 is the semantic model layer only.
+
 ## 2026-06-22 — P1.6.2 Behavioral Contract Schema
 
 ### DEC-P162-01: Behavioral contracts do not grant authority

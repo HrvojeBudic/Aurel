@@ -23,7 +23,7 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `entity.py` | Cognitive organism: plan → execute loop, state machine outcomes |
 | `runtime.py` | Governed command pipeline kernel |
 | `policy.py` | Capability / permission / authority gates + risk re-score |
-| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave; centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation; 10 behavioral contract enums, 15 frozen dataclasses, deterministic canonicalization; no runtime resolver yet |
+| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1, P1.6.3 Risk Tier Policy Card Model v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave, Risk Tier Policy Cards define R0-R6 risk semantics; centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation; no runtime resolver/classifier/enforcement yet |
 | `hitl.py` | Approval gates: auto, console, deny-all, preview-only |
 | `approval.py` | Approval contracts, risk classes, policy resolver, previews (P0.15) |
 | `budget.py` | Resource limits and budget ledger |
@@ -59,6 +59,12 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `status.py` | Lightweight runtime diagnostics |
 | `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
 
+
+## Risk Tier Policy Cards (P1.6.3)
+
+Risk Tier Policy Cards are AurelCore governance substrate objects. They define stable R0-R6 risk semantics, reversibility expectations, oversight expectations, evidence expectations, and action-class mapping seeds. They are not a runtime risk classifier and do not grant authority, resolve policy, pause workflows, write traces, select sandboxes, route models, write memory, or enforce execution.
+
+Future consumers may include Custos policy resolution, AurelRuntime preflight, AurelFlow approval pauses, AurelExec execution gates, AurelTrace evidence depth, AurelData/Object Plane locality decisions, Mneme memory write policy, Noesis risk-aware planning, Mundus simulation, Atlas model routing, Civitas subagent governance, AgencyHub/ABOS process governance, and P25 hardening. P1.6.3 only defines the deterministic, hash-ready semantic vocabulary those consumers can later use.
 
 ## External doctrine assimilation (P1.4.11)
 

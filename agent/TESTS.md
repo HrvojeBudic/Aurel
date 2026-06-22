@@ -18,13 +18,13 @@ pytest -q
 python -m agentic_runtime.cli verify
 ```
 
-## Verifying P1.6.0 + P1.6.1 + P1.6.2 Policy Cards & Behavioral Contracts
+## Verifying P1.6.0 + P1.6.1 + P1.6.2 + P1.6.3 Policy Cards & Behavioral Contracts
 
-P1.6.0 establishes first-class policy card foundation objects. P1.6.1 adds centralized Policy Card Schema v1. P1.6.2 adds Behavioral Contract Schema v1 with 24 enums, 15 frozen dataclasses, and deterministic hashing.
+P1.6.0 establishes first-class policy card foundation objects. P1.6.1 adds centralized Policy Card Schema v1. P1.6.2 adds Behavioral Contract Schema v1 with 24 enums, 15 frozen dataclasses, and deterministic hashing. P1.6.3 adds Risk Tier Policy Card Model v1 with R0-R6 definitions, R5/R6 safety validation, action-class mapping seeds, and deterministic hashing.
 
 ```bash
 python3 -m compileall src tests
-PYTHONPATH=src:. pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py -q
+PYTHONPATH=src:. pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py tests/test_risk_tier_policy_cards_p163.py -q
 ruff check src/agentic_runtime/policy_cards/
 mypy src/agentic_runtime/policy_cards/
 ```
@@ -56,6 +56,22 @@ P1.6.1 test categories (61 tests):
 - Schema version helpers (is_supported, validate_schema_version)
 - Runtime-future field rejection (resolver, enforcement, conditions)
 - Schema constants sanity (types, disjoint sets, JSON valid)
+
+P1.6.3 test categories (36 tests):
+
+- Default RiskTierPolicyCard validates and hashes
+- Required R0-R6 tier coverage
+- Invalid, missing, and duplicate tier rejection
+- R5 explicit Operator confirmation, trace, evidence, and approval requirements
+- R6 denied/non-permissive checks for execution, external egress, memory write, and tool write
+- Reversibility and oversight consistency checks
+- Action class mapping validation and invalid action-class rejection
+- Generic PolicyCard compatibility with kind risk_tier
+- Closed-world unknown top-level and nested definition field rejection
+- Dangerous metadata rejection and safe metadata acceptance
+- Deterministic serialization and hash stability
+- Schema export determinism and schema version helpers
+- Explicit assertion that no runtime resolver, classifier, simulation, trace hook, or enforcement API is implemented
 
 ## Verifying P1.5.10X
 
