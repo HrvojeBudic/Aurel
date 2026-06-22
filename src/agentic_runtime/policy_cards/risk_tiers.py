@@ -191,7 +191,7 @@ def _coerce_enum(
             f"{field_name} value {raw!r} must be one of: "
             f"{', '.join(sorted(valid_values))}"
         )
-    return enum_type(raw)  # type: ignore[call-arg]
+    return enum_type(raw)
 
 
 def _require_bool(raw: object, field_name: str) -> bool:
