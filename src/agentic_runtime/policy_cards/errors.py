@@ -59,3 +59,32 @@ class BehavioralContractUnknownFieldError(BehavioralContractValidationError):
 
 class BehavioralContractUnsafeFieldError(BehavioralContractValidationError):
     """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Risk Tier Policy Card errors (P1.6.3)
+# ---------------------------------------------------------------------------
+
+
+class RiskTierPolicyCardError(PolicyCardError):
+    """Base error for all risk tier policy card operations."""
+
+
+class RiskTierPolicyCardValidationError(RiskTierPolicyCardError):
+    """Raised when a risk tier policy card fails structured validation."""
+
+
+class RiskTierPolicyCardSerializationError(RiskTierPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class RiskTierPolicyCardHashError(RiskTierPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class RiskTierPolicyCardUnknownFieldError(RiskTierPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class RiskTierPolicyCardUnsafeFieldError(RiskTierPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""

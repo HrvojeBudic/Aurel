@@ -39,6 +39,26 @@ from .contract_schema import (
     is_supported_behavioral_contract_schema_version,
     validate_behavioral_contract_schema_version,
 )
+from .risk_tier_schema import (
+    DEFAULT_RISK_ACTION_CLASS_MAPPINGS,
+    DEFAULT_RISK_TIER_DEFINITIONS,
+    REQUIRED_RISK_TIERS,
+    RISK_TIER_ACTION_MAPPING_OPTIONAL_FIELDS,
+    RISK_TIER_ACTION_MAPPING_REQUIRED_FIELDS,
+    RISK_TIER_CANONICAL_FIELDS,
+    RISK_TIER_DANGEROUS_FIELD_NAMES,
+    RISK_TIER_DANGEROUS_METADATA_KEYS,
+    RISK_TIER_DEFINITION_REQUIRED_FIELDS,
+    RISK_TIER_FORBIDDEN_FIELDS,
+    RISK_TIER_OPTIONAL_FIELDS,
+    RISK_TIER_POLICY_CARD_SCHEMA_VERSION,
+    RISK_TIER_REQUIRED_FIELDS,
+    SUPPORTED_RISK_TIER_POLICY_CARD_SCHEMA_VERSIONS,
+    export_risk_tier_policy_schema,
+    get_risk_tier_policy_schema,
+    is_supported_risk_tier_policy_schema_version,
+    validate_risk_tier_policy_schema_version,
+)
 from .contracts import (
     BehavioralContract,
     BehavioralContractEscalationAction,
@@ -82,6 +102,12 @@ from .errors import (
     PolicyCardUnknownFieldError,
     PolicyCardUnsafeFieldError,
     PolicyCardValidationError,
+    RiskTierPolicyCardError,
+    RiskTierPolicyCardHashError,
+    RiskTierPolicyCardSerializationError,
+    RiskTierPolicyCardUnknownFieldError,
+    RiskTierPolicyCardUnsafeFieldError,
+    RiskTierPolicyCardValidationError,
 )
 from .hashing import compute_policy_card_hash
 from .models import (
@@ -96,6 +122,25 @@ from .models import (
     PolicyCardStatus,
     PolicyCardValidationIssue,
     PolicyCardValidationResult,
+)
+from .risk_tiers import (
+    EvidenceExpectation,
+    OversightLevel,
+    ReversibilityLevel,
+    RiskActionClass,
+    RiskActionClassMapping,
+    RiskTier,
+    RiskTierDefinition,
+    RiskTierPolicyCard,
+    RiskTierValidationIssue,
+    RiskTierValidationResult,
+    compute_risk_tier_policy_card_hash,
+    create_default_risk_tier_policy_card,
+    load_risk_tier_policy_card_from_dict,
+    risk_tier_policy_card_to_canonical_dict,
+    serialize_risk_tier_policy_card_canonical,
+    validate_risk_tier_policy_card,
+    validate_risk_tier_policy_card_dict,
 )
 from .schema import (
     POLICY_CARD_CANONICAL_FIELDS,
@@ -224,4 +269,52 @@ __all__ = [
     "BehavioralContractHashError",
     "BehavioralContractUnknownFieldError",
     "BehavioralContractUnsafeFieldError",
+    # - Risk Tier Policy Card enums -
+    "RiskTier",
+    "ReversibilityLevel",
+    "OversightLevel",
+    "EvidenceExpectation",
+    "RiskActionClass",
+    # - Risk Tier Policy Card models -
+    "RiskTierDefinition",
+    "RiskActionClassMapping",
+    "RiskTierPolicyCard",
+    "RiskTierValidationIssue",
+    "RiskTierValidationResult",
+    # - Risk Tier Policy Card schema -
+    "RISK_TIER_POLICY_CARD_SCHEMA_VERSION",
+    "SUPPORTED_RISK_TIER_POLICY_CARD_SCHEMA_VERSIONS",
+    "REQUIRED_RISK_TIERS",
+    "RISK_TIER_REQUIRED_FIELDS",
+    "RISK_TIER_OPTIONAL_FIELDS",
+    "RISK_TIER_FORBIDDEN_FIELDS",
+    "RISK_TIER_CANONICAL_FIELDS",
+    "RISK_TIER_DEFINITION_REQUIRED_FIELDS",
+    "RISK_TIER_ACTION_MAPPING_REQUIRED_FIELDS",
+    "RISK_TIER_ACTION_MAPPING_OPTIONAL_FIELDS",
+    "RISK_TIER_DANGEROUS_FIELD_NAMES",
+    "RISK_TIER_DANGEROUS_METADATA_KEYS",
+    "DEFAULT_RISK_TIER_DEFINITIONS",
+    "DEFAULT_RISK_ACTION_CLASS_MAPPINGS",
+    "export_risk_tier_policy_schema",
+    "get_risk_tier_policy_schema",
+    "is_supported_risk_tier_policy_schema_version",
+    "validate_risk_tier_policy_schema_version",
+    # - Risk Tier Policy Card validation -
+    "create_default_risk_tier_policy_card",
+    "validate_risk_tier_policy_card",
+    "validate_risk_tier_policy_card_dict",
+    "load_risk_tier_policy_card_from_dict",
+    # - Risk Tier Policy Card serialization -
+    "risk_tier_policy_card_to_canonical_dict",
+    "serialize_risk_tier_policy_card_canonical",
+    # - Risk Tier Policy Card hashing -
+    "compute_risk_tier_policy_card_hash",
+    # - Risk Tier Policy Card errors -
+    "RiskTierPolicyCardError",
+    "RiskTierPolicyCardValidationError",
+    "RiskTierPolicyCardSerializationError",
+    "RiskTierPolicyCardHashError",
+    "RiskTierPolicyCardUnknownFieldError",
+    "RiskTierPolicyCardUnsafeFieldError",
 ]
