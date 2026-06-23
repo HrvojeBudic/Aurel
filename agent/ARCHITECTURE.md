@@ -23,7 +23,7 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `entity.py` | Cognitive organism: plan → execute loop, state machine outcomes |
 | `runtime.py` | Governed command pipeline kernel |
 | `policy.py` | Capability / permission / authority gates + risk re-score |
-| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1, P1.6.3 Risk Tier Policy Card Model v1, P1.6.4 Human Oversight Policy Card Model v1, P1.6.5 Data Residency Policy Card Model v1, P1.6.6 Tool Permission Policy Card Model v1, P1.6.7 Memory Write Policy Card Model v1, P1.6.8 Prompt Policy Card Model v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave, Risk Tier Policy Cards define R0-R6 risk semantics, Human Oversight Policy Cards define human/operator oversight semantics, Data Residency Policy Cards define data locality/egress/exposure semantics, Tool Permission Policy Cards define deny-by-default tool permission semantics, Memory Write Policy Cards define deny-by-default memory write semantics (zones, write types, decisions, verification statuses, retention classes, requirements), Prompt Policy Cards define strict prompt trust/instruction-boundary semantics (sources, trust levels, roles, decisions, injection-risk vocabulary, boundary requirements); centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation. **P1.6.9 Sandbox Policy Card Model v1** adds backend/filesystem/egress/command-class sandbox semantics with a resolver-ready `evaluate_sandbox_policy_decision()`. **P1.6.10 Custos v0 Policy Runtime Resolver (shadow mode)** (`resolution_context.py`, `resolution_result.py`, `resolver.py`) interprets these cards into a single deterministic `ResolvedPolicySet` with `WOULD_*` shadow outcomes via strictest-wins MVP aggregation — it does NOT enforce, does NOT modify `AgenticRuntime.submit()`, and runs SHADOW-only. Still no runtime enforcement/approval-workflow/egress-guard/tool-gateway/memory-engine/prompt-compiler/registry-binding |
+| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1, P1.6.3 Risk Tier Policy Card Model v1, P1.6.4 Human Oversight Policy Card Model v1, P1.6.5 Data Residency Policy Card Model v1, P1.6.6 Tool Permission Policy Card Model v1, P1.6.7 Memory Write Policy Card Model v1, P1.6.8 Prompt Policy Card Model v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave, Risk Tier Policy Cards define R0-R6 risk semantics, Human Oversight Policy Cards define human/operator oversight semantics, Data Residency Policy Cards define data locality/egress/exposure semantics, Tool Permission Policy Cards define deny-by-default tool permission semantics, Memory Write Policy Cards define deny-by-default memory write semantics (zones, write types, decisions, verification statuses, retention classes, requirements), Prompt Policy Cards define strict prompt trust/instruction-boundary semantics (sources, trust levels, roles, decisions, injection-risk vocabulary, boundary requirements); centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation. **P1.6.9 Sandbox Policy Card Model v1** adds backend/filesystem/egress/command-class sandbox semantics with a resolver-ready `evaluate_sandbox_policy_decision()`. **P1.6.10 Custos v0 Policy Runtime Resolver (shadow mode)** (`resolution_context.py`, `resolution_result.py`, `resolver.py`) interprets these cards into a single deterministic `ResolvedPolicySet` with `WOULD_*` shadow outcomes via strictest-wins MVP aggregation — it does NOT enforce, does NOT modify `AgenticRuntime.submit()`, and runs SHADOW-only. **P1.6.11 Policy Resolution Context & Registry Binding** (`registry.py`, `context_binding.py`, `risk_mapping.py`) adds deterministic explicit registry selection, context assembly, conservative risk mapping, and resolver-from-registry invocation. Still no runtime enforcement/approval-workflow/egress-guard/tool-gateway/memory-engine/prompt-compiler/enforcement-adapter |
 | `hitl.py` | Approval gates: auto, console, deny-all, preview-only |
 | `approval.py` | Approval contracts, risk classes, policy resolver, previews (P0.15) |
 | `budget.py` | Resource limits and budget ledger |
@@ -83,7 +83,7 @@ Layer distinction (do not collapse):
   shadow judgment. They never enforce.
 - The resolver interprets cards; it does not compile prompts, run sandboxes, write
   memory, or call tools.
-- Enforcement, registry binding, and Policy Conflict Algebra are later phases.
+- Enforcement and Policy Conflict Algebra are later phases; registry/context binding is the P1.6.11 bridge.
 
 Non-negotiable law for this phase: **the resolver does not modify
 `AgenticRuntime.submit()` and enforces nothing.** "Entity proposes, runtime disposes" —
@@ -93,9 +93,33 @@ enforce. Shadow outcomes are `WOULD_ALLOW`, `WOULD_WARN`, `WOULD_REQUIRE_APPROVA
 resolution is conservative (`WARN`), never a silent allow.
 
 Future consumers: Custos runtime governance, AurelRuntime preflight, AurelFlow approval
-pauses, AurelExec execution gates, AurelTrace decision evidence, P1.6.11 registry
-binding, P1.6.12 enforcement adapter, and P25/P29 hardening. P1.6.10 only produces the
+pauses, AurelExec execution gates, AurelTrace decision evidence, P1.6.12 enforcement adapter, and P25/P29 hardening. P1.6.10 only produces the
 deterministic shadow judgment those consumers will later act on.
+
+## Policy Resolution Context & Registry Binding (P1.6.11)
+
+P1.6.11 is the deterministic bridge between stored/explicit policy-card lists and Custos v0 judgment. It does not enforce.
+
+Conceptual flow:
+
+```
+explicit policy card instances/lists
+  -> PolicyCardRegistry              (dedupe, ordering, family/scope lookup, applicability)
+  -> PolicyResolutionContext         (closed-world runtime-like metadata binding)
+  -> applicable cards                (transparent reason codes)
+  -> resolve_policy_cards_from_registry()
+  -> ResolvedPolicySet               (SHADOW, WOULD_* only)
+```
+
+Architectural boundaries:
+
+- The registry is in-memory and explicit; it performs no filesystem discovery and uses no database.
+- Context binding consumes plain dicts or lightweight objects and imports no runtime classes.
+- Risk mapping is a conservative seed, not full risk-vocabulary unification.
+- Registry applicability selects candidate lawbook cards; resolver adapters still produce judgments.
+- `AgenticRuntime.submit()` remains untouched; no command blocking, approval activation, or sandbox runtime bridge exists in P1.6.11.
+
+Next planned: P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection.
 
 ## Risk Tier Policy Cards (P1.6.3)
 
@@ -296,6 +320,30 @@ Reflex eligibility checks document that runtime governance remains mandatory.
 before Tool Bus handlers run. `ProfiledSandbox` enforces filesystem boundaries
 (traversal, secrets, workspace root). Docker/Bubblewrap profiles are honest
 about availability — no silent downgrade to unsafe mode.
+
+## Sandbox layer disambiguation (P1.6.10H)
+
+Four distinct sandbox layers exist. They must not be confused:
+
+1. **Runtime sandbox policy** (`sandbox_policy.py`)
+   - Currently enforced runtime sandbox policy / runtime gate.
+   - Owns `SandboxPolicy`, `ProfiledSandbox`, profile templates, path/tool gating.
+
+2. **Sandbox backend** (`sandbox.py`)
+   - Execution backend / local sandbox abstraction.
+   - `UnsafeLocalSandbox` (NOT a security boundary), `BubblewrapSandbox`, `DockerSandbox`.
+   - `create_sandbox()` safety gate (`allow_unsafe=True` required for UNSAFE_LOCAL).
+
+3. **Sandbox policy card** (`policy_cards/sandbox.py`)
+   - P1.6.9 semantic policy-card model.
+   - Resolver-ready, NOT runtime-enforced yet.
+   - `SandboxPolicyCard`, `evaluate_sandbox_policy_decision()`, `SandboxPolicyDecision`.
+
+4. **Custos v0 resolver** (`policy_cards/resolver.py` + `resolution_context.py` + `resolution_result.py`)
+   - P1.6.10 shadow-only resolver.
+   - Produces `WOULD_*` decisions. Does NOT block runtime behavior.
+
+**P1.6.9 sandbox policy cards and P1.6.10 resolver do not yet enforce runtime sandbox behavior. Runtime enforcement still flows through the P0 runtime policy and sandbox layers.**
 
 ## LLM repository planning (P0.21)
 

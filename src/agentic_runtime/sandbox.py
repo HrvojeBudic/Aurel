@@ -290,7 +290,13 @@ class _WorkspaceBackend:
         src = self._snapshots.get(snapshot_id)
         if not src:
             raise KeyError(f"unknown snapshot {snapshot_id}")
-        path = os.path.join(src, rel)
+        try:
+            resolved = CanonicalPathResolver(src).resolve(rel)
+            path = resolved.absolute
+        except PathResolutionError as e:
+            raise PermissionError(
+                f"snapshot path rejected: {e}"
+            ) from e
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             return f.read()
 

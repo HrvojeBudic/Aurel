@@ -1,0 +1,96 @@
+{
+  "session_id": "p1610h-hotfix-2026-06-23",
+  "initialized_at": "2026-06-23T02:20:00Z",
+  "last_updated": "2026-06-23T02:25:00Z",
+  "supervisor": "Live Coding Supervisor Composer",
+  "current_goals": [
+    "P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix",
+    "git truth = docs truth = runtime truth = coverage truth = security truth"
+  ],
+  "roadmap_context": {
+    "last_completed": "P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode",
+    "current_active": "P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix",
+    "next_planned": "P1.6.11 — Policy Resolution Context & Registry Binding"
+  },
+  "approved_architecture_decisions": [
+    "Four sandbox layers must remain disambiguated (runtime policy, backend, policy card, Custos resolver)",
+    "P1.6.10 resolver is shadow-only; does NOT enforce runtime behavior",
+    "CanonicalPathResolver is the single source of truth for workspace path resolution",
+    "create_sandbox(allow_unsafe=True) gate required for UnsafeLocalSandbox instantiation",
+    "Coverage must measure src/agentic_runtime with --cov-fail-under=75 via project venv",
+    "Bare python3/pytest/ruff/mypy are non-authoritative",
+    "P1.6.11 work must NOT commingle with P1.6.10H hotfix until hotfix is sealed"
+  ],
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "timestamp": "2026-06-23T02:20:00Z",
+      "changes_reviewed": [
+        "src/agentic_runtime/sandbox.py — read_snapshot_file CanonicalPathResolver routing",
+        "src/agentic_runtime/sandbox_policy.py — materialize_sandbox_backend create_sandbox gate",
+        "src/agentic_runtime/policy_cards/resolver.py — type: ignore removal",
+        "tests/test_snapshot_security_p1610h.py — 13 test functions (new)",
+        "agent/{ACTIVE_TASK,ARCHITECTURE,DECISIONS,REPORTS,ROADMAP,STATE,TESTS}.md — docs",
+        "tests/fixtures/consent/*.json — timestamp drift (unrelated)"
+      ],
+      "aggregate_verdict": "NEEDS_FIXES",
+      "aggregate_score": 7.1,
+      "blocking_issues": 0,
+      "critical_issues": 2,
+      "verification": {
+        "p1610h_tests": "12 passed, 1 skipped",
+        "full_suite": "3356 passed, 1 failed, 3 skipped",
+        "coverage": "79.08% (gate 75% PASS)",
+        "ruff": "PASS",
+        "mypy_changed_files": "PASS",
+        "failed_test": "tests/test_public_entrypoints_p121.py::test_cli_verify_exits_zero (180s timeout; full suite ~348s)",
+        "full_suite_duration_s": 348.19
+      }
+    }
+  ],
+  "approved_files": [],
+  "pending_reviews": [
+    "Revert consent fixture timestamp churn",
+    "Resolve cli verify nested-timeout failure or document as known limitation",
+    "Align doc test counts (9 vs 12/13)",
+    "Optional: add symlink-escape test for read_snapshot_file",
+    "SCOPE ALERT: untracked P1.6.11 files detected — must not ship with P1.6.10H hotfix"
+  ],
+  "scope_alerts": [
+    {
+      "severity": "HIGH",
+      "message": "Untracked P1.6.11 modules appeared while P1.6.10H hotfix is still NEEDS_FIXES",
+      "files": [
+        "src/agentic_runtime/policy_cards/registry.py",
+        "src/agentic_runtime/policy_cards/context_binding.py",
+        "src/agentic_runtime/policy_cards/risk_mapping.py",
+        "src/agentic_runtime/policy_cards/errors.py (P1.6.11 error classes appended)"
+      ],
+      "action": "Isolate P1.6.11 work to separate branch/commit; do not mix with hotfix"
+    }
+  ],
+  "session_score": 7.1,
+  "critical_decisions_log": [
+    {
+      "decision": "Core security fix (snapshot path traversal) is architecturally correct",
+      "rationale": "Reuses CanonicalPathResolver consistent with read_file/write_file/delete_file",
+      "verdict": "APPROVE"
+    },
+    {
+      "decision": "Consent fixture changes are out-of-scope noise",
+      "rationale": "Timestamp-only diffs unrelated to P1.6.10H; pollute git truth",
+      "verdict": "NEEDS_FIXES — revert"
+    },
+    {
+      "decision": "Full validation claim is not yet truthful",
+      "rationale": "test_cli_verify_exits_zero times out at 180s while nested verify runs ~348s suite",
+      "verdict": "NEEDS_FIXES"
+    },
+    {
+      "decision": "P1.6.11 files must not commingle with hotfix",
+      "rationale": "ACTIVE_TASK explicitly scopes P1.6.11 as non-scope for P1.6.10H",
+      "verdict": "BLOCK if submitted together"
+    }
+  ],
+  "quality_trend": "improving_core_security_sloppy_periphery"
+}

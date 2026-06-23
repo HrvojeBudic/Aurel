@@ -24,6 +24,7 @@ from .sandbox import (
     SandboxMode,
     SandboxUnavailableError,
     UnsafeLocalSandbox,
+    create_sandbox,
 )
 
 if TYPE_CHECKING:
@@ -353,8 +354,10 @@ def materialize_sandbox_backend(profile: SandboxProfile) -> SandboxBackend:
         return DockerSandbox.create(root=root, max_output_bytes=profile.max_output_bytes)
     if profile.profile_name == SandboxProfileName.BUBBLEWRAP.value:
         return BubblewrapSandbox.create(root=root, max_output_bytes=profile.max_output_bytes)
-    return UnsafeLocalSandbox(
+    return create_sandbox(
+        SandboxMode.UNSAFE_LOCAL,
         root=root,
+        allow_unsafe=True,
         cpu_seconds=int(profile.max_timeout_seconds),
         max_output_bytes=profile.max_output_bytes,
     )

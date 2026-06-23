@@ -1,12 +1,68 @@
 # Repository State
 
-_Last updated: 2026-06-23 (P1.6.10 - Custos v0 Policy Runtime Resolver / Shadow Mode)_
+_Last updated: 2026-06-23 (P1.6.11 — Policy Resolution Context & Registry Binding)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode (and P1.6.9 — Sandbox Policy Card Model)
-- Current active: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode
-- Next planned: P1.6.11 — Policy Resolution Context & Registry Binding
+- Last completed: P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix
+- Current active: **P1.6.11 — Policy Resolution Context & Registry Binding**
+- Next planned: P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection
+
+**P1.6.11 is the current active feature phase.**
+P1.6.10H is last completed and sealed runtime/security/coverage/documentation truth before registry binding.
+
+### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
+
+Security fixes:
+- **Snapshot path traversal**: `_WorkspaceBackend.read_snapshot_file` now routes through `CanonicalPathResolver` (already used by `read_file`, `write_file`, `delete_file`). Parent traversal (`../`), absolute paths, and symlink escapes are rejected. 9 security tests in `tests/test_snapshot_security_p1610h.py`.
+- **Unsafe/restricted_local honesty**: `materialize_sandbox_backend` now routes non-hard backends through `create_sandbox(allow_unsafe=True)` instead of silently instantiating `UnsafeLocalSandbox`. The `allow_unsafe=True` gate makes the safety trade-off explicit. 3 honesty tests.
+
+Coverage truth:
+- Canonical coverage command: `.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75`
+- Coverage measures `src/agentic_runtime` (real runtime source) — not the `agentic_runtime` package namespace.
+
+Local state:
+- `.git/info/exclude` cleaned — `.composer/` and `.strategic-composer/` directories excluded from git tracking.
+
+Documentation:
+- Canonical validation commands updated (venv requirement, coverage path, fail-under gate).
+- Sandbox layer disambiguation: four layers clearly distinguished (runtime sandbox policy, sandbox backend, sandbox policy card, Custos v0 resolver).
+- All agent docs updated for P1.6.10H phase.
+
+### P1.6.11 Policy Resolution Context & Registry Binding (ACTIVE — shadow binding only)
+
+- `policy_cards/registry.py`: `PolicyCardRegistry` accepts explicit typed card instances/lists, detects duplicate card IDs deterministically, deduplicates identical duplicates, rejects same ID with different canonical hash, returns stable family/scope lookups, applicability explanations, source hashes, canonical dict, and canonical hash. No database, no filesystem discovery, no runtime imports.
+- `policy_cards/context_binding.py`: `build_policy_resolution_context()`, `normalize_resolution_context()`, and `context_from_*_like()` helpers convert runtime-like dicts/lightweight objects into deterministic `PolicyResolutionContext`. Dict inputs are closed-world; list/set-like fields are sorted; metadata is JSON-safe and non-authoritative.
+- `policy_cards/risk_mapping.py`: minimal risk-vocabulary bridge maps known runtime/approval/policy/identity values to P1.6 `RiskTier`. Unknown present values map conservatively to R5 with explicit reason codes; invalid value types fail closed.
+- `policy_cards/resolver.py`: `resolve_policy_cards_from_registry()` and `PolicyRuntimeResolver.resolve_from_registry()` feed registry-selected applicable cards into the existing Custos v0 resolver. Output remains `ResolvedPolicySet` in SHADOW mode with `WOULD_*` actions.
+- `tests/test_policy_registry_binding_p1611.py`: 22 focused tests for registry construction, duplicate handling, family/scope lookup, applicability, context binding, risk mapping, resolver integration, exports, and non-enforcement guarantees.
+
+**P1.6.11 binds policy-card discovery and context assembly to the Custos v0 resolver, but it does not enforce resolver outcomes through `AgenticRuntime.submit()`.** No command blocking, approval activation, sandbox runtime bridge, or active runtime policy-card enforcement is implemented.
+
+### Sandbox Layer Disambiguation
+
+Four distinct sandbox layers exist. They must not be confused:
+
+1. **Runtime sandbox policy** (`sandbox_policy.py`)
+   - Currently enforced runtime sandbox policy / runtime gate.
+   - Owns `SandboxPolicy`, `ProfiledSandbox`, profile templates, path/tool gating.
+
+2. **Sandbox backend** (`sandbox.py`)
+   - Execution backend / local sandbox abstraction.
+   - `UnsafeLocalSandbox` (NOT a security boundary), `BubblewrapSandbox`, `DockerSandbox`.
+   - `create_sandbox()` safety gate (`allow_unsafe=True` required for UNSAFE_LOCAL).
+
+3. **Sandbox policy card** (`policy_cards/sandbox.py`)
+   - P1.6.9 semantic policy-card model.
+   - Resolver-ready — NOT runtime-enforced yet.
+   - `SandboxPolicyCard`, `evaluate_sandbox_policy_decision()`, `SandboxPolicyDecision`.
+
+4. **Custos v0 resolver** (`policy_cards/resolver.py` + `resolution_context.py` + `resolution_result.py`)
+   - P1.6.10 shadow-only resolver.
+   - Produces `WOULD_*` decisions.
+   - Does NOT block runtime behavior.
+
+**P1.6.9 sandbox policy cards and P1.6.10 resolver do not yet enforce runtime sandbox behavior. Runtime enforcement still flows through the P0 runtime policy and sandbox layers.**
 
 ### P1.6.10 Custos v0 Policy Runtime Resolver (COMPLETE — shadow mode only)
 
@@ -15,7 +71,7 @@ _Last updated: 2026-06-23 (P1.6.10 - Custos v0 Policy Runtime Resolver / Shadow 
 - `policy_cards/resolver.py`: seven family adapters (risk tier, human oversight, data residency, tool permission, memory write, prompt, sandbox), strictest-wins MVP aggregation, `resolve_policy_cards()`, `PolicyRuntimeResolver`, `aggregate_family_decisions()`.
 - Resolver accepts explicit cards, determines applicable cards minimally, emits per-family decisions, SHADOW only, WOULD_* effective actions, strictest-wins works, no-card / no-applicable-card behavior is conservative WARN (never silent allow); result carries reason codes, applicable card IDs, source hashes, context hash; deterministic serialization + hashes.
 - **`AgenticRuntime.submit()` is NOT modified; nothing is enforced.** Custos interprets policy cards; it does not yet dispose. 5 resolver error classes added. 51 new tests in `tests/test_policy_resolver_p1610.py`.
-- Limitations: MVP adapters (not full semantics), no Policy Conflict Algebra, no registry binding (P1.6.11), explicit card loading only. Full-suite/coverage/`mypy src/agentic_runtime` should be confirmed before commit.
+- Limitations: MVP adapters (not full semantics), no Policy Conflict Algebra, registry/context binding is implemented in P1.6.11, and active runtime enforcement remains deferred to P1.6.12+.
 
 ### P1.6.9 Sandbox Policy Card (COMPLETE)
 

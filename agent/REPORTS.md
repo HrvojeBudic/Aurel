@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.11 Policy Resolution Context & Registry Binding](reports/P1.6.11_POLICY_RESOLUTION_CONTEXT_REGISTRY_BINDING_REPORT.md) | 2026-06-23 | Deterministic explicit PolicyCardRegistry, context binding helpers, conservative risk mapping seed, applicability filtering, registry-to-Custos resolver path, SHADOW-only no enforcement |
 | [P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode](reports/P1.6.10_CUSTOS_V0_POLICY_RUNTIME_RESOLVER_SHADOW_MODE_REPORT.md) | 2026-06-23 | First step from policy vocabulary to adjudication: PolicyResolutionContext + ResolvedPolicySet + 7 family adapters + strictest-wins MVP, shadow-mode WOULD_* outcomes, deterministic hashes, no `submit()` change, no enforcement, 51 tests |
 | [P1.6.9 Sandbox Policy Card Model](reports/P1.6.9_SANDBOX_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Sandbox Policy Card Model v1: 6 enums, backend/filesystem/egress/command rules, risk-tier sandbox mappings, resolver-ready `evaluate_sandbox_policy_decision()`, deny-by-default, secrets-path detection — semantics only, no real sandbox execution |
 | [P1.6.8S Repository Reality & Policy Card Stabilization Seal](reports/P1.6.8S_REPOSITORY_REALITY_AND_POLICY_CARD_STABILIZATION_SEAL.md) | 2026-06-23 | Governance integrity seal after P1.6.8: git/docs/test/lint reality reconciled, CLI subprocess helper added, ruff/mypy/full-suite/coverage pass, P1.6.9 remains next |
@@ -74,3 +75,7 @@
 | [P1.5.9 Adversarial Evaluation Cases](reports/P1.5.9_ADVERSARIAL_EVALUATION_CASES.md) | 2026-06-21 | **READY** — adversarial case schemas, registry, sparse trap readiness, 15 default cases, 76 new tests. |
 | [P1.5.8 Benchmark Hygiene Guard](reports/P1.5.8_BENCHMARK_HYGIENE_GUARD.md) | 2026-06-21 | **READY** — benchmark/context hygiene guard, sparse hygiene readiness, binding downgrade helper, 66 new tests. |
 | [Analysis 2026-06-21 — Post-P1.4.14 Fix Plan](reports/ANALYSIS_2026-06-21_POST_P1414_FIX_PLAN.md) | 2026-06-21 | Doc sync (ACTIVE_TASK, STATE, P1.5.7 naming) — **COMPLETE** |
+
+- **P1.6.10H_RUNTIME_SECURITY_COVERAGE_GOVERNANCE_TRUTH_HOTFIX_REPORT.md** — Runtime Security, Coverage & Governance Truth Hotfix: snapshot path traversal fix, unsafe/restricted_local honesty, canonical validation commands, coverage truth, sandbox layer disambiguation, local composer state exclusion. 12 new security + honesty tests. Full report at `agent/reports/P1.6.10H_RUNTIME_SECURITY_COVERAGE_GOVERNANCE_TRUTH_HOTFIX_REPORT.md`.
+
+- **P1.6.11_POLICY_RESOLUTION_CONTEXT_REGISTRY_BINDING_REPORT.md** — Policy Resolution Context & Registry Binding: explicit deterministic registry, context binding helpers, risk mapping seed, applicability filtering, resolver-from-registry integration, shadow-only guarantee. Full report at `agent/reports/P1.6.11_POLICY_RESOLUTION_CONTEXT_REGISTRY_BINDING_REPORT.md`.

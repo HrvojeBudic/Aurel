@@ -8,12 +8,16 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode |
-| **Last completed** | P1.6.9 — Sandbox Policy Card Model |
-| **Previous** | P1.6.8S — Repository Reality & Policy Card Stabilization Seal |
-| **Next planned** | P1.6.11 — Policy Resolution Context & Registry Binding |
+| **Current active** | **P1.6.11 — Policy Resolution Context & Registry Binding** |
+| **Last completed** | P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix |
+| **Previous** | P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode |
+| **Next planned** | P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection |
 
-**P1.6.10 complete (shadow mode)** — Custos v0 Policy Runtime Resolver: the first step from policy vocabulary toward policy adjudication. New `resolution_context.py` (`PolicyResolutionContext`, `EnforcementMode`), `resolution_result.py` (`PolicyFamily`, `FamilyDecision`, `ShadowAction`, `PolicyFamilyDecision`, `ResolvedPolicySet`), and `resolver.py` (seven family adapters + strictest-wins MVP aggregation + `resolve_policy_cards` / `PolicyRuntimeResolver`). Deterministic canonical serialization + SHA-256 hashing for context and result. Shadow-mode only (`WOULD_ALLOW/WARN/REQUIRE_APPROVAL/DENY`), conservative no-applicable-card behavior (never silent allow), closed-world context loading, fail-closed on non-SHADOW modes. **Does not modify `AgenticRuntime.submit()` and enforces nothing** — Custos learns to judge before it is allowed to dispose. 51 new tests. Next: P1.6.11 registry binding.
+**P1.6.11 active** — Policy Resolution Context & Registry Binding: deterministic explicit `PolicyCardRegistry`, context binding helpers, conservative risk mapping seed, applicability filtering, and registry-to-Custos resolver invocation. Output remains SHADOW-only `WOULD_*`; no runtime enforcement and no `AgenticRuntime.submit()` behavior change. Next planned: P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection.
+
+**P1.6.10H complete** — Runtime Security, Coverage & Governance Truth Hotfix sealed runtime/security/coverage/documentation truth before registry binding. See `agent/reports/P1.6.10H_RUNTIME_SECURITY_COVERAGE_GOVERNANCE_TRUTH_HOTFIX_REPORT.md`.
+
+**P1.6.10H complete (hotfix)** — Runtime Security, Coverage & Governance Truth Hotfix: snapshot path traversal fix, unsafe/restricted_local honesty (allow_unsafe gate in materialize_sandbox_backend), canonical validation commands (venv requirement), coverage truth (src/agentic_runtime target), sandbox layer disambiguation, local composer state exclusion. 12 new security + honesty tests.
 
 **P1.6.9 complete** — Sandbox Policy Card Model: 6 enums (SandboxBackend, FilesystemScope, EgressPolicy, CommandClass, SandboxCommandDecision, ApprovalRequirement), backend/filesystem/egress/command-class rules, risk-tier sandbox mappings, approval policy, and a resolver-ready `evaluate_sandbox_policy_decision()` producing `SandboxPolicyDecision` (consumed by P1.6.10). Deny-by-default posture, secrets-path/escape detection, deterministic serialization + hash — semantics only, no real sandbox execution, no Docker/Bubblewrap hard dependency.
 
@@ -59,7 +63,7 @@ Canonical P1.4 detail: `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`, `docs/P1
 
 ## Roadmap v3.2 doctrine
 
-**Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. Current active work is P1.6.8S; next planned feature work is P1.6.9.
+**Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. Current active work is P1.6.11; next planned feature work is P1.6.12.
 
 - **P1–P2 remain stable** — completed foundation is not reset.
 - **P3–P21 are refined, not reset.**

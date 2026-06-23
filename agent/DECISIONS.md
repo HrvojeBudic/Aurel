@@ -1,5 +1,28 @@
 # Decisions Log
 
+## 2026-06-23 - P1.6.11 Policy Resolution Context & Registry Binding
+
+### DEC-P1611-01: Registry is explicit, deterministic, and in-memory
+**Decision:** `PolicyCardRegistry` accepts explicit typed card instances/lists, deduplicates identical duplicate IDs, rejects duplicate IDs with different canonical hashes, and exposes stable canonical dict/hash output. It does not discover files or use a database.
+**Why:** P1.6.11 binds known policy-card storage/lists to resolution without creating hidden policy sources or nondeterministic discovery.
+
+### DEC-P1611-02: Context binding is closed-world and runtime-free
+**Decision:** Runtime-like metadata is normalized through `build_policy_resolution_context()` and `context_from_*_like()` helpers. Dict inputs reject unknown fields, list/set-like fields are sorted, metadata is JSON-safe, and no runtime class import is required.
+**Why:** P1.6.12 needs a stable projection surface, but P1.6.11 must not modify or invoke runtime behavior.
+
+### DEC-P1611-03: Risk mapping is a conservative seed, not full enum unification
+**Decision:** Known runtime, approval, policy-card, and identity risk values map explicitly into `RiskTier`. Unknown present values map conservatively to R5 with an explicit reason code; invalid value types fail closed.
+**Why:** The Composer review identified risk-vocabulary drift, but full risk architecture migration is out of scope.
+
+### DEC-P1611-04: Applicability filtering selects lawbook candidates, not outcomes
+**Decision:** Registry applicability uses deterministic family/scope/context signals and transparent reason codes. Insufficient context skips cards; no applicable cards still resolves conservatively through Custos.
+**Why:** P1.6.11 finds and binds relevant cards. The resolver remains responsible for judgment, and enforcement remains deferred.
+
+### DEC-P1611-05: Registry integration remains SHADOW-only
+**Decision:** `resolve_policy_cards_from_registry()` and `PolicyRuntimeResolver.resolve_from_registry()` feed applicable registry cards into the existing resolver. They produce `ResolvedPolicySet` with `WOULD_*` outcomes and do not touch `AgenticRuntime.submit()`.
+**Why:** P1.6.11 prepares the deterministic context/lawbook bridge for P1.6.12 without implementing runtime enforcement.
+
+
 ## 2026-06-23 - P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode
 
 ### DEC-P1610-01: Shadow mode only; submit() untouched
@@ -1033,3 +1056,43 @@ duplicate card IDs (ambiguity) fail-closed. No filesystem discovery or registry.
 ### Next phase is P1.5.0 Evaluation Mirror Foundation
 **Decision:** P1.4 is sealed. P1.5.0 Evaluation Mirror Foundation is the next phase, per the P1.4 scope contract forward hooks.
 **Why:** P1.5 introduces reflection and evaluation infrastructure that builds on the sealed P1.4 foundation. Sequencing is explicit: the identity trust surface must be sealed before Aurel can evaluate itself.
+
+## 2026-06-23 - P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix
+
+### DEC-P1610H-01: Snapshot path traversal fix via CanonicalPathResolver
+
+`_WorkspaceBackend.read_snapshot_file` previously used a raw `os.path.join(src, rel)`
+for resolution, bypassing the `CanonicalPathResolver` already used by `read_file`,
+`write_file`, and `delete_file`. The fix routes snapshot reads through a fresh
+`CanonicalPathResolver` rooted at the snapshot source directory, rejecting parent
+traversal (`../`), absolute paths, and symlink escapes. The resolver is lightweight
+and already battle-tested on the other FS ops — no new dependency, no broad refactor.
+
+### DEC-P1610H-02: Unsafe backend honesty via allow_unsafe gate in materialize_sandbox_backend
+
+`materialize_sandbox_backend` previously instantiated `UnsafeLocalSandbox` directly
+for non-Docker/non-Bubblewrap profiles, bypassing the `create_sandbox(allow_unsafe=True)`
+safety gate. The fix routes non-hard backends through `create_sandbox(SandboxMode.UNSAFE_LOCAL,
+root=root, allow_unsafe=True, ...)`. This makes the safety trade-off explicit and honest —
+`restricted_local` still uses `UnsafeLocalSandbox` (not hard isolated) but now declares
+`allow_unsafe=True` at the factory level. No behavior change; truth-only fix.
+
+### DEC-P1610H-03: Canonical venv commands
+
+All validation commands now reference `.venv/bin/python`. Bare `python3`, `pytest`,
+`ruff`, and `mypy` are explicitly documented as non-authoritative. This prevents
+environment confusion between the system Python and the project venv.
+
+### DEC-P1610H-04: Coverage path correction
+
+Coverage must measure `src/agentic_runtime` (the real runtime source under the `src/`
+layout), not the `agentic_runtime` package namespace. The canonical command is:
+`.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75`
+
+### DEC-P1610H-05: Sandbox layer disambiguation
+
+Four distinct sandbox layers are now documented: runtime sandbox policy (P0 enforced),
+sandbox backend (execution abstraction), sandbox policy card (P1.6.9 semantic model),
+and Custos v0 resolver (P1.6.10 shadow-only). The key truth: P1.6.9 cards and P1.6.10
+resolver do not yet enforce runtime behavior. Runtime enforcement still flows through
+the P0 runtime policy and sandbox layers.

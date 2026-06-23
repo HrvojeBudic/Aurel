@@ -510,13 +510,37 @@ from .resolver import (
     evaluate_sandbox_policy,
     evaluate_tool_permission_policy,
     resolve_policy_cards,
+    resolve_policy_cards_from_registry,
 )
 from .errors import (
+    PolicyCardRegistryError,
+    PolicyCardRegistryValidationError,
+    PolicyContextBindingError,
     PolicyResolutionAdapterError,
     PolicyResolutionContextError,
     PolicyResolutionError,
     PolicyResolutionSerializationError,
     PolicyResolutionValidationError,
+    PolicyRiskMappingError,
+)
+from .risk_mapping import (
+    RiskMappingResult,
+    map_approval_risk_to_policy_tier,
+    map_identity_risk_to_policy_tier,
+    map_runtime_risk_to_policy_tier,
+    normalize_risk_tier,
+)
+from .context_binding import (
+    BINDING_KNOWN_FIELDS,
+    build_policy_resolution_context,
+    context_from_command_like,
+    context_from_runtime_request_like,
+    context_from_tool_invocation_like,
+    normalize_resolution_context,
+)
+from .registry import (
+    PolicyCardApplicability,
+    PolicyCardRegistry,
 )
 
 __all__ = [
@@ -997,6 +1021,20 @@ __all__ = [
     "SandboxPolicyCardHashError",
     "SandboxPolicyCardUnknownFieldError",
     "SandboxPolicyCardUnsafeFieldError",
+    # - Policy Resolution Registry & Binding (P1.6.11) -
+    "RiskMappingResult",
+    "normalize_risk_tier",
+    "map_runtime_risk_to_policy_tier",
+    "map_approval_risk_to_policy_tier",
+    "map_identity_risk_to_policy_tier",
+    "BINDING_KNOWN_FIELDS",
+    "build_policy_resolution_context",
+    "normalize_resolution_context",
+    "context_from_command_like",
+    "context_from_tool_invocation_like",
+    "context_from_runtime_request_like",
+    "PolicyCardApplicability",
+    "PolicyCardRegistry",
     # ─ Custos v0 Policy Runtime Resolver — context (P1.6.10) ─
     "EnforcementMode",
     "PolicyResolutionContext",
@@ -1021,6 +1059,7 @@ __all__ = [
     # ─ Custos v0 Policy Runtime Resolver — resolver ─
     "PolicyRuntimeResolver",
     "resolve_policy_cards",
+    "resolve_policy_cards_from_registry",
     "aggregate_family_decisions",
     "evaluate_risk_tier_policy",
     "evaluate_human_oversight_policy",
@@ -1035,4 +1074,8 @@ __all__ = [
     "PolicyResolutionContextError",
     "PolicyResolutionSerializationError",
     "PolicyResolutionAdapterError",
+    "PolicyCardRegistryError",
+    "PolicyCardRegistryValidationError",
+    "PolicyContextBindingError",
+    "PolicyRiskMappingError",
 ]

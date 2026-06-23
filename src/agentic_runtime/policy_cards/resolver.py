@@ -124,7 +124,7 @@ def _card_id(card: object) -> str:
 
 def _safe_hash(fn: Callable[[object], str], card: object) -> str | None:
     try:
-        return fn(card)  # type: ignore[arg-type]
+        return fn(card)
     except Exception:
         return None
 
@@ -938,8 +938,27 @@ def resolve_policy_cards(
     return resolution.with_canonical_hash()
 
 
+def resolve_policy_cards_from_registry(
+    context: PolicyResolutionContext,
+    registry: object,
+    mode: EnforcementMode = EnforcementMode.SHADOW,
+) -> ResolvedPolicySet:
+    """Resolve cards selected by a PolicyCardRegistry in SHADOW mode.
+
+    P1.6.11 binds deterministic registry applicability to the existing Custos v0
+    resolver. The registry supplies explicit applicable cards; the resolver still
+    produces WOULD_* shadow outcomes only.
+    """
+    if not hasattr(registry, "get_applicable"):
+        raise PolicyResolutionValidationError(
+            "registry must provide get_applicable(context)"
+        )
+    applicable_cards = registry.get_applicable(context)
+    return resolve_policy_cards(context, applicable_cards, mode)
+
+
 class PolicyRuntimeResolver:
-    """Custos v0 resolver facade. Shadow mode only in P1.6.10."""
+    """Custos v0 resolver facade. Shadow mode only in P1.6.10/P1.6.11."""
 
     def __init__(self, mode: EnforcementMode = EnforcementMode.SHADOW) -> None:
         if mode != EnforcementMode.SHADOW:
@@ -954,3 +973,10 @@ class PolicyRuntimeResolver:
         cards: Sequence[object],
     ) -> ResolvedPolicySet:
         return resolve_policy_cards(context, cards, self.mode)
+
+    def resolve_from_registry(
+        self,
+        context: PolicyResolutionContext,
+        registry: object,
+    ) -> ResolvedPolicySet:
+        return resolve_policy_cards_from_registry(context, registry, self.mode)

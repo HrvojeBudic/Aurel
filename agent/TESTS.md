@@ -2,21 +2,57 @@
 
 ## Canonical commands
 
-From repository root:
+From repository root, using the project venv (`.venv/bin/python`).
+
+**Bare `python3`, `pytest`, `ruff`, and `mypy` are NOT authoritative.**
+**System `/usr/bin/python3` is NOT authoritative.**
+**Validation MUST run through the project venv or an equivalent activated environment.**
 
 ```bash
 # Compile check
-python3 -m compileall src tests
+.venv/bin/python -m compileall src tests
 
-# Test suite (preferred)
-PYTHONPATH=src:. pytest -q
+# Test suite (full)
+.venv/bin/python -m pytest -q --tb=line
 
-# Equivalent when pyproject pythonpath is active (editable install or pytest from root)
-pytest -q
+# Lint (ruff)
+.venv/bin/python -m ruff check src tests
+
+# Type check (mypy)
+.venv/bin/python -m mypy src/agentic_runtime
+
+# Coverage (must measure src/agentic_runtime)
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+```
+
+**Why venv is required:** The project uses a virtualenv at `.venv/`. Running
+commands through `.venv/bin/python` ensures that all dev dependencies (pytest,
+ruff, mypy, pytest-cov) are available, and that coverage instruments the
+correct package path.
+
+**Coverage target:** Coverage must measure `src/agentic_runtime` (the real
+runtime source), must pass with `--cov-fail-under=75`, and must not exclude
+large modules just to pass.
 
 # Via CLI wrapper
 python -m agentic_runtime.cli verify
 ```
+
+## P1.6.11 Verification (Policy Resolution Context & Registry Binding)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_registry_binding_p1611.py -q
+.venv/bin/python -m pytest tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_sandbox_policy_cards_p169.py tests/test_prompt_policy_cards_p168.py tests/test_memory_write_policy_cards_p167.py tests/test_tool_permission_policy_cards_p166.py tests/test_data_residency_policy_cards_p165.py tests/test_human_oversight_policy_cards_p164.py tests/test_risk_tier_policy_cards_p163.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+```
+
+P1.6.11 focused coverage (`tests/test_policy_registry_binding_p1611.py`) covers registry construction, duplicate handling, family/scope lookup, deterministic applicability filtering, context binding, risk mapping, registry-to-resolver integration, shadow-only/non-enforcement guarantees, and public exports.
+
+P1.6.11 local results: compileall **PASS**; focused P1.6.11 suite **22 passed in 0.21s**; P1.6.9/P1.6.10/P1.6.11 focused regression **471 passed in 0.93s**; ruff **PASS**; mypy **PASS** (`Success: no issues found in 191 source files`); full pytest **3379 passed, 3 skipped in 204.21s**; coverage **3379 passed, 3 skipped in 226.66s**, total coverage **79.40%**, fail-under 75 passed.
 
 ## P1.6.10 Verification (Custos v0 Policy Runtime Resolver — Shadow Mode)
 

@@ -295,3 +295,24 @@ class PolicyResolutionSerializationError(PolicyResolutionError):
 
 class PolicyResolutionAdapterError(PolicyResolutionError):
     """Raised when a policy family adapter encounters an unrecoverable error."""
+
+
+# ---------------------------------------------------------------------------
+# Policy resolution registry/binding errors (P1.6.11)
+# ---------------------------------------------------------------------------
+
+
+class PolicyCardRegistryError(PolicyCardError):
+    """Base error for policy-card registry operations."""
+
+
+class PolicyCardRegistryValidationError(PolicyCardRegistryError):
+    """Raised when registry input fails deterministic validation."""
+
+
+class PolicyContextBindingError(PolicyResolutionContextError):
+    """Raised when runtime-like metadata cannot bind to a resolution context."""
+
+
+class PolicyRiskMappingError(PolicyResolutionError):
+    """Raised when a risk vocabulary value cannot be translated safely."""
