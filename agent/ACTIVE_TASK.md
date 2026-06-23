@@ -7,7 +7,7 @@
 - Last completed: P1.6.8 — Prompt Policy Card Model
 - Current stabilization: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
 - Next planned: P1.6.9 — Sandbox Policy Card Model
-- Last verified against commit: pending final commit for P1.6.8S
+- Last verified against commit: 3f65647f356eccac8b057592f894c9294bd01f5c
 
 ## Objective
 
