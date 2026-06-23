@@ -18,6 +18,34 @@ pytest -q
 python -m agentic_runtime.cli verify
 ```
 
+## P1.6.8S Verification
+
+Last verified against commit: pending final commit for P1.6.8S
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_prompt_policy_cards_p168.py -q --tb=line
+.venv/bin/python -m pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py tests/test_risk_tier_policy_cards_p163.py tests/test_human_oversight_policy_cards_p164.py tests/test_data_residency_policy_cards_p165.py tests/test_tool_permission_policy_cards_p166.py tests/test_memory_write_policy_cards_p167.py tests/test_prompt_policy_cards_p168.py -q --tb=line
+.venv/bin/python -m pytest tests/test_autonomy_scale_engine.py tests/test_measured_autonomy_score.py -q --tb=line
+.venv/bin/ruff check src tests
+.venv/bin/mypy src/agentic_runtime
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest --cov=src/agentic_runtime --cov-report=term-missing -q --tb=no
+```
+
+P1.6.8S local results: compileall **PASS**; P1.6.8 focused suite **74 passed**; P1.6.0-P1.6.8 focused policy-card suite **540 passed**; autonomy CLI subprocess suite **85 passed**; ruff **PASS**; mypy **PASS**; full pytest **3220 passed, 2 skipped**; coverage command **3220 passed, 2 skipped**, total coverage **79.27%**.
+
+Bare `python3 -m agentic_runtime.cli` subprocess calls were removed from autonomy/measured-autonomy tests and centralized through `tests/cli_helpers.py`. Remaining `python3` uses in tests are sandbox/repo-agent payload commands, not CLI module subprocess imports.
+
+## Optional Security Tooling
+
+The dev extra seeds optional security tools only; these are not hard CI gates in P1.6.8S.
+
+```bash
+bandit -r src/agentic_runtime
+pip-audit
+```
+
 ## Verifying P1.6.0 + P1.6.1 + P1.6.2 + P1.6.3 Policy Cards & Behavioral Contracts
 
 P1.6.0 establishes first-class policy card foundation objects. P1.6.1 adds centralized Policy Card Schema v1. P1.6.2 adds Behavioral Contract Schema v1 with 24 enums, 15 frozen dataclasses, and deterministic hashing. P1.6.3 adds Risk Tier Policy Card Model v1 with R0-R6 definitions, R5/R6 safety validation, action-class mapping seeds, and deterministic hashing.
@@ -72,6 +100,126 @@ P1.6.3 test categories (36 tests):
 - Deterministic serialization and hash stability
 - Schema export determinism and schema version helpers
 - Explicit assertion that no runtime resolver, classifier, simulation, trace hook, or enforcement API is implemented
+
+P1.6.4 test categories (68 tests):
+
+- Default HumanOversightPolicyCard validates and hashes
+- Required R0-R6 oversight mappings
+- Invalid, missing, and duplicate tier mapping rejection
+- R4 requires approval_required or stricter (level and action)
+- R5 requires explicit_confirmation_required (level, mode, action)
+- R5 requires strong confirmation requirement fields (requires_explicit_confirmation, preview_required, evidence_required, operator_identity_required)
+- R5 requires operator-required reviewer
+- R6 must deny (level, mode, action)
+- R6 cannot be approvable/confirmable
+- Invalid oversight levels, modes, triggers, actions rejected
+- Valid escalation rules accepted
+- Dangerous metadata keys rejected (auto_approve, operator_not_required, etc.)
+- Safe metadata accepted
+- Generic PolicyCard compatibility with kind human_oversight
+- Closed-world unknown top-level and nested field rejection
+- Deterministic serialization and hash stability
+- Schema export determinism and schema version helpers
+- Explicit assertion that no runtime approval engine is implemented
+
+P1.6.5 test categories (48 tests):
+
+- Default DataResidencyPolicyCard validates with all 20 data classes
+- Required data classes present (credentials, personal_data, sensitive_personal_data, etc.)
+- All 20 data classes in default (including evaluation_record, tool_output, policy_record, etc.)
+- Invalid data class / invalid zone rejected
+- Missing required data class rejected
+- Duplicate data class rejected
+- local_only zero-outbound: no egress, no external model, no external API, no web search
+- credentials no-egress, encryption required, audit trace required, no external model
+- sensitive_personal_data must be local_only, no egress, no external model
+- memory_record must be local_only, no egress
+- trace_record must be local_only, no egress
+- forbidden non-permissive: no egress, no external model
+- Dangerous metadata keys rejected (allow_secret_egress, bypass_residency, etc.)
+- Safe metadata accepted (owner_note, created_by, etc.)
+- PolicyCard compatibility (kind="data_residency" required)
+- Closed-world validation — unknown top-level and nested fields rejected
+- Deterministic serialization — two default cards produce identical canonical JSON
+- Hash stability — identical cards produce identical SHA-256 hashes; metadata changes produce different hashes
+- Schema export determinism and schema version helpers
+- Explicit assertion that no runtime enforcement methods exist
+
+P1.6.6 test categories (38 tests):
+
+- Default ToolPermissionPolicyCard validates with deny-by-default posture
+- Default decision must be deny; permissive defaults rejected
+- Unknown tool category denied
+- Credential access denied by default
+- External API/network egress not simple allow
+- Shell command requires sandbox/approval/risk; sandboxed shell passes
+- Execute/delete/config-write require governance
+- Data residency compatibility — protected data classes rejected for external exposure
+- Invalid tool category/permission type/permission decision rejected
+- Broad allow-all matcher rejected
+- Dangerous metadata keys rejected (allow_all_tools, bypass_tool_policy, shell_unrestricted, operator_not_required)
+- Safe metadata accepted
+- PolicyCard compatibility (kind="tool_permission" required)
+- Closed-world validation — unknown top-level and nested fields rejected
+- Deterministic serialization
+- Hash stability
+- Schema export deterministic
+- No runtime enforcement methods on card
+- Error hierarchy verified
+
+P1.6.7 test categories (60 tests, `tests/test_memory_write_policy_cards_p167.py`):
+
+- Default MemoryWritePolicyCard validates; default rules equal `DEFAULT_MEMORY_WRITE_RULES`
+- Default decision must be deny; permissive defaults (allow, candidate_only, canonicalize_allowed) rejected
+- No silent canonical write — canon_memory + allow rejected
+- Canon memory requires source/evidence/trace references + operator review + explicit confirmation + conflict check; full requirements pass
+- Policy memory protected — policy_memory + allow rejected; missing governance/review rejected
+- Verified skill memory requires evaluation/verification/evidence/trace
+- Skill candidate cannot be verified/canonized by default
+- Operator profile protected — operator_profile + allow rejected; missing consent/review/provenance rejected
+- Scratchpad ephemeral allowed; working memory session-scoped allowed
+- Credentials cannot be durable memory — credentials in semantic/operator memory rejected
+- Sensitive personal data strict — weak binding rejected; strict (evidence + provenance + residency check + review) passes
+- Invalid memory zone rejected (global_brain, shadow_canon, unbounded_memory)
+- Invalid memory write type rejected (auto_truth, secret_authority, self_upgrade)
+- Invalid memory decision rejected (auto_canonize, always_remember, force_store)
+- Invalid verification status / retention class rejected
+- Dangerous metadata keys rejected (auto_canonize, bypass_memory_policy, remember_everything, consent_not_required, store_credentials)
+- Safe metadata accepted (owner_note, created_by)
+- PolicyCard compatibility (kind="memory_write" required)
+- Closed-world validation — unknown/forbidden top-level and unknown nested rule fields rejected
+- Deterministic serialization; canonical-dict round-trip preserves hash
+- Hash stability; metadata changes produce different hashes
+- Schema export deterministic; schema version helpers; protected-zone/strict-class constants
+- No runtime enforcement methods on card; empty memory rules rejected; error hierarchy verified
+
+P1.6.8 test categories (74 tests, `tests/test_prompt_policy_cards_p168.py`):
+
+- Default PromptPolicyCard validates; default rules equal `DEFAULT_PROMPT_HANDLING_RULES`
+- Default decision must be deny; permissive defaults (allow, context_only) rejected
+- Unknown source cannot be trusted (trusted_system/trusted_developer/operator_authorized/repo_canonical/verified_template)
+- External web content cannot be instruction authority
+- Email content cannot be instruction authority
+- Tool output cannot command (TOOL_OUTPUT_AS_INSTRUCTION)
+- Retrieved memory cannot command
+- Untrusted/external/tool-output/retrieved prompts cannot request tools
+- Untrusted/external/tool-output/retrieved prompts cannot write memory
+- Untrusted/external/tool-output/retrieved prompts cannot modify policy
+- Untrusted/external/tool-output/retrieved prompts cannot modify identity
+- High/critical injection risk (rule-level and signal-level) cannot pair with allow + instruction authority
+- Trusted system/developer/operator classes validate under strict governance
+- Invalid source type rejected (shadow_system, fake_operator, super_admin_prompt)
+- Invalid trust level rejected (self_trusted, external_admin, auto_trusted)
+- Invalid prompt role rejected (authority_grant, secret_exfiltration, policy_override)
+- Invalid decision rejected (obey_always, ignore_policy, force_tool_call); invalid injection risk rejected
+- Dangerous metadata keys rejected (bypass_prompt_policy, reveal_system_prompt, grant_tool_access, external_as_instruction, trust_unknown_source)
+- Safe metadata accepted (owner_note, created_by)
+- PolicyCard compatibility (kind="prompt" required)
+- Closed-world validation — unknown/forbidden top-level and unknown nested rule fields rejected
+- Deterministic serialization; canonical-dict round-trip preserves hash
+- Hash stability; metadata changes produce different hashes
+- Schema export deterministic; schema version helpers; source-category constants
+- Boundary requirement loading; no runtime enforcement methods on card; empty prompt rules rejected; error hierarchy verified
 
 ## Verifying P1.5.10X
 
@@ -1127,7 +1275,7 @@ PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation baseline exa
 - `tests/evaluation/test_p1510_sparse_baseline_comparison.py` — sparse dimension readiness tests
 - `tests/evaluation/test_p1510_scope_guards.py` — anti-scope-creep tests
 
-**Next:** P1.5.12 — Evaluation Case Extraction Seed → P1.5.13 — Verifier Normalization with Limitations.
+**Historical note:** P1.5.12 and P1.5.13 were later completed; current work is P1.6.8S and next planned feature is P1.6.9.
 
 ### P1.5.7 Evidence-to-Claim Binding
 

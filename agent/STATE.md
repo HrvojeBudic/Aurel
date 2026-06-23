@@ -1,6 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-22 (P1.6.3 - Risk Tier Policy Card Model)_
+_Last updated: 2026-06-23 (P1.6.8S - Repository Reality & Policy Card Stabilization Seal)_
+
+## Current Roadmap Pointer
+
+- Last completed: P1.6.8 — Prompt Policy Card Model
+- Current stabilization: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
+- Next planned: P1.6.9 — Sandbox Policy Card Model
+- Last verified against commit: pending final commit for P1.6.8S
 
 ## What works
 
@@ -84,6 +91,74 @@ _Last updated: 2026-06-22 (P1.6.3 - Risk Tier Policy Card Model)_
   - Deterministic canonical serialization and SHA-256 canonical hash are available
   - 36 new focused tests; P1.6.0-P1.6.3 focused suite passes
   - No runtime risk classifier, no policy resolver, and no runtime enforcement yet
+  - **P1.6.4 Human Oversight Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/human_oversight.py` - 5 enums (HumanOversightLevel/Mode/Trigger/Action, OversightEvidenceType), 7 frozen dataclasses (ConfirmationRequirement, ReviewerRequirement, OversightEvidenceRequirement, RiskTierOversightMapping, HumanOversightEscalationRule, HumanOversightPolicyCard), validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/human_oversight_schema.py` - Human Oversight Policy Card Schema v1, required/optional/forbidden/canonical fields, dangerous metadata keys, default R0-R6 oversight mappings, default escalation rules
+  - HumanOversightPolicyCard exists and remains compatible with generic `PolicyCard(kind="human_oversight")`
+  - Default R0-R6 oversight mappings exist: R0-R1 none, R2 notify_only, R3 review_recommended, R4 approval_required, R5 explicit_confirmation_required (with strong confirmation and reviewer requirements), R6 deny
+  - R4 must be approval_required or stricter; R5 must be explicit_confirmation_required with strong confirmation requirement; R6 must be deny and not approvable
+  - Closed-world dict loading rejects unknown top-level/nested fields and dangerous metadata (auto_approve, operator_not_required, bypass_policy, etc.)
+  - Deterministic canonical serialization and SHA-256 canonical hash are available
+  - 68 new focused tests; P1.6.0-P1.6.4 focused suite passes (320 tests)
+  - No runtime approval engine, no policy resolver, no enforcement, no CLI/report yet
+  - **P1.6.5 Data Residency Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/data_residency.py` - 6 enums (DataResidencyZone 7 values, DataClass 20 values, ProcessingLocation 7 values, RedactionRequirementType 9 values, StorageRequirementType 6 values, DataExposurePermission 8 values), 8 frozen dataclasses (RedactionRequirement, StorageRequirement, DataEgressRule, DataExposureRule, DataResidencyRule, DataResidencyPolicyCard, DataResidencyValidationIssue, DataResidencyValidationResult), validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/data_residency_schema.py` - Data Residency Policy Card Schema v1, 10 required data classes, 6 strict local-only data classes, required/optional/forbidden/canonical field tuples, sub-object field tuples, dangerous metadata keys (17), schema export functions
+  - DataResidencyPolicyCard exists and remains compatible with generic `PolicyCard(kind="data_residency")`
+  - Strict safety rules enforced at card validation: local_only zero-outbound (no egress/external-model/API/web), credentials no-egress + encryption + audit required, sensitive_personal_data/memory_record/trace_record local-only + no-egress, forbidden zone non-permissive
+  - Default factory produces 20 data class rules with strict defaults: all classes local-only except public; credentials/sensitive_personal_data with redaction/storage/encryption requirements
+  - Closed-world dict loading rejects unknown fields and dangerous metadata keys (allow_secret_egress, bypass_residency, skip_encryption, etc.)
+  - Deterministic canonical serialization (sorted key stable) and SHA-256 hash
+  - 48 new focused tests; P1.6.0-P1.6.5 focused suite passes (368 tests)
+  - No runtime egress enforcement, model routing, data classification, redaction/encryption execution, or conflict resolution yet
+  - **P1.6.6 Tool Permission Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/tool_permissions.py` - 5 enums (ToolCategory 17 values, ToolPermissionType 26 values, ToolPermissionDecision 8 values, ToolScopeType 12 values, ToolMatchMode 5 values), 6 frozen dataclasses (ToolIdentityMatcher, ToolPermissionCondition, ToolPermissionRule, ToolPermissionPolicyCard, ToolPermissionValidationIssue, ToolPermissionValidationResult), validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/tool_permission_schema.py` - Tool Permission Policy Card Schema v1, required/optional/forbidden/canonical field tuples, sub-object field tuples, dangerous metadata keys (17), dangerous/high-risk permission types, default deny categories, schema export functions
+  - ToolPermissionPolicyCard exists and remains compatible with generic `PolicyCard(kind="tool_permission")`
+  - Strict deny-by-default posture: default_decision must be deny, unknown categories must deny, credential access denied, shell command requires sandbox/approval, network/egress governed, execute/delete/config-write require governance
+  - Data residency compatibility: protected data classes (credentials, operator_private, sensitive_personal_data, memory_record, trace_record, source_code) cannot be exposed through external tools
+  - Default factory produces 18 rules: unknown deny, credential deny, shell sandbox, egress deny/governed, filesystem read/write/delete governed, memory read/write governed, model local-only, email explicit confirmation, artifact export governed, config write approved, network governed, browser governed, GitHub/database governed
+  - Closed-world dict loading rejects unknown fields and dangerous metadata keys (allow_all_tools, bypass_tool_policy, shell_unrestricted, etc.)
+  - Deterministic canonical serialization and SHA-256 hash
+  - 38 new focused tests; P1.6.0-P1.6.6 focused suite passes (406 tests)
+  - No Tool Gateway enforcement, registry resolver, sandbox execution, network blocking, filesystem/path enforcement, credential system, memory write enforcement, model routing, or runtime permission engine yet
+  - **P1.6.7 Memory Write Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/memory_write.py` - 6 enums (MemoryZone 14 values, MemoryWriteType 18 values, MemoryWriteDecision 10 values, MemoryVerificationStatus 8 values, MemoryRetentionClass 6 values, MemoryWriteRequirementType 13 values), 5 frozen dataclasses (MemoryWriteRequirement, MemoryWriteRule, MemoryWritePolicyCard, MemoryWriteValidationIssue, MemoryWriteValidationResult), validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/memory_write_schema.py` - Memory Write Policy Card Schema v1, required/optional/forbidden/canonical field tuples, sub-object field tuples, dangerous metadata keys (19), PROTECTED_MEMORY_ZONES, STRICT_MEMORY_DATA_CLASSES, DEFAULT_MEMORY_WRITE_RULES (14 rules), schema export functions
+  - MemoryWritePolicyCard exists and remains compatible with generic `PolicyCard(kind="memory_write")`
+  - Memory zone / write type / decision / verification status / retention class vocabulary exists
+  - Conservative deny-by-default posture: default_decision must be deny/forbidden
+  - No silent canonical memory writes: canon_memory cannot be plain allow and requires source/evidence/trace references + operator review + explicit confirmation + conflict check
+  - Policy memory protection: policy_memory requires policy authority + source/evidence/trace + operator review or explicit confirmation
+  - Verified skill memory requires evaluation result + verification + evidence/trace references
+  - Skill candidate memory cannot be verified/canonized by default (candidate ≠ verified ≠ canon)
+  - Operator profile protection: requires user consent or operator review + source/provenance, trace when durable
+  - Credentials cannot become durable memory by default; sensitive_personal_data writes are strict (evidence + provenance + residency check + review)
+  - Scratchpad ephemeral and working memory session-scoped writes permitted with low friction
+  - Closed-world dict loading rejects unknown fields and dangerous metadata keys (auto_canonize, bypass_memory_policy, remember_everything, consent_not_required, store_credentials, etc.)
+  - Deterministic canonical serialization (sorted key stable) and SHA-256 hash
+  - 60 new focused tests; P1.6.0-P1.6.7 focused suite passes (466 tests)
+  - No Mneme storage engine, memory writing, retrieval, ranking, consolidation, memory graph, canon promotion engine, skill promotion engine, Verification Court, operator consent workflow, memory conflict detector, policy runtime resolver, or runtime enforcement yet
+  - **P1.6.8 Prompt Policy Card Model (COMPLETE)**:
+  - `src/agentic_runtime/policy_cards/prompt_policy.py` - 7 enums (PromptSourceType 19 values, PromptTrustLevel 10 values, PromptRole 16 values, PromptPolicyDecision 10 values, PromptInjectionRisk 5 values, PromptInjectionPattern 15 values, PromptBoundaryRequirementType 14 values), 5 frozen dataclasses (PromptBoundaryRequirement, PromptInjectionSignal, PromptHandlingRule, PromptPolicyCard, PromptPolicyValidationIssue, PromptPolicyValidationResult), validation, loading, serialization, hashing, default factory
+  - `src/agentic_runtime/policy_cards/prompt_policy_schema.py` - Prompt Policy Card Schema v1, required/optional/forbidden/canonical field tuples, sub-object field tuples, dangerous metadata keys (21), TRUSTED/UNTRUSTED/EXTERNAL/PROTECTED prompt source sets, DEFAULT_PROMPT_HANDLING_RULES (15 rules), schema export functions
+  - PromptPolicyCard exists and remains compatible with generic `PolicyCard(kind="prompt")`
+  - Prompt source / trust level / role / decision / injection-risk vocabulary exists
+  - Strict deny-by-default posture: default_decision must be deny/forbidden
+  - Core law enforced — untrusted content may inform but never command: unknown source cannot be trusted; external content (web/email/file/code/external_api/retrieved_document/tool_output/unknown) cannot be instruction authority; tool output is data/context, not command; retrieved memory is context, not automatic authority
+  - Untrusted/external/tool-output/retrieved trust levels cannot request tools, write memory, modify policy, or modify identity
+  - High/critical injection risk cannot pair with allow + instruction authority
+  - Closed-world dict loading rejects unknown fields and dangerous metadata keys (bypass_prompt_policy, reveal_system_prompt, grant_tool_access, external_as_instruction, trust_unknown_source, etc.)
+  - Deterministic canonical serialization (sorted key stable) and SHA-256 hash
+  - 74 new focused tests; P1.6.0-P1.6.8 focused suite passes (540 tests)
+  - No prompt compiler, prompt assembly engine, instruction-hierarchy runtime enforcement, prompt injection detector, jailbreak detector, tool-call runtime blocking, memory write enforcement, identity compiler change, policy resolver, or runtime enforcement yet
+  - **P1.6.8S Repository Reality & Policy Card Stabilization Seal (COMPLETE)**:
+  - Git/docs/test/lint reality reconciled after P1.6.8 and before P1.6.9
+  - Legitimate P1.6.4-P1.6.8 policy-card source, test, and report artifacts identified for final staging
+  - Bare-python CLI subprocess tests replaced with shared `tests/cli_helpers.py` helper using active interpreter and `PYTHONPATH=src:.`
+  - Ruff, mypy, full pytest, and coverage validation pass locally
+  - Accidental root pager/help artifact removed; `.composer/` left as unrelated local tool state
+  - Deferred structural debt recorded for identity CLI splitting, shared policy-card base, mypy tightening, security scan gates, and slow-test marker hardening
 
 ## What works
 
@@ -313,8 +388,7 @@ _Last updated: 2026-06-22 (P1.6.3 - Risk Tier Policy Card Model)_
   - Roadmap v3.2 alignment: Aurel Core vs Hub tools, HQ/A-Hub/S-Hub/L-Hub/IDE taxonomy, memory boundaries, open-weight model doctrine
   - **Execution discipline:** Do not jump to P22–P24. Finish P1.5–P1.9, then lock P2.0, then continue P3+.
   - P1.4.20 verified complete (SEALED_WITH_LIMITATIONS) before implementation
-  - **Current active module: P1.5.12**
-  - **Next module: P1.5.12 — Evaluation Case Extraction Seed**
+  - Historical P1.5.0 pointer superseded; later P1.5 modules advanced through P1.5.19 and current work is P1.6.8S.
 - P1.5.10 Baseline Comparison Model + Sparse Comparison Readiness (**COMPLETE**):
   - `src/agentic_runtime/evaluation/baseline_comparison.py` — baseline comparison model
   - enums: `BaselineReferenceKind`, `BaselineStatus`, `ComparisonDimension`, `ComparisonSignal`, `ComparisonConfidence`
@@ -355,7 +429,7 @@ _Last updated: 2026-06-22 (P1.6.3 - Risk Tier Policy Card Model)_
   - Projection-only source cannot verify capability evidence
   - No full AurelBrain, AurelContextPacket, AurelFlow, AurelExec, tool/model/shell execution, full Ledger migration, full Mneme lifecycle, CapabilityClaimRegistry, or EvaluationCase extraction introduced
   - Report: `docs/roadmap/P1.5.11B_CAPABILITY_EVIDENCE_TRACE_CONTEXT_BINDING.md`
-  - Next module: P1.5.12 — Evaluation Case Extraction Seed
+  - Historical next module was P1.5.12; current work is P1.6.8S and next planned feature is P1.6.9.
 - P1.5.9 Adversarial Evaluation Cases + Sparse Trap Readiness (**COMPLETE**):
   - `src/agentic_runtime/evaluation/adversarial_cases.py` — adversarial case definitions and registry
   - enums: `AdversarialCaseType`, `AdversarialCaseStatus`, `AdversarialCaseSeverity`, `AdversarialAttackSurface`, `AdversarialExpectedOutcome`

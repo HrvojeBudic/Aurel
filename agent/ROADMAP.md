@@ -8,12 +8,20 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | P1.6.4 - Human Oversight Policy Card Model |
-| **Last completed** | P1.6.3 - Risk Tier Policy Card Model |
-| **Previous** | P1.6.2 - Behavioral Contract Schema |
-| **Next** | P1.6.4 - Human Oversight Policy Card Model |
+| **Current active** | P1.6.8S — Repository Reality & Policy Card Stabilization Seal |
+| **Last completed** | P1.6.8 — Prompt Policy Card Model |
+| **Previous** | P1.6.7 — Memory Write Policy Card Model |
+| **Next planned** | P1.6.9 — Sandbox Policy Card Model |
 
-**P1.5 complete** — Evaluation Mirror & Verified Capability Evidence Foundation (**SEALED** — 18 invariants, Golden Thread A, memory candidate bridge, integrated seal). **P1.5 is sealed.**
+**P1.6.8S stabilization complete** — Repository Reality & Policy Card Stabilization Seal: reconciles git/docs/test/lint reality after P1.6.8, preserves legitimate P1.6.4-P1.6.8 policy-card artifacts for final staging, fixes bare-python CLI subprocess tests through a shared helper, clears ruff/mypy/full-suite/coverage validation, records deferred structural debt, and keeps P1.6.9 as the next feature phase. No Sandbox Policy Card behavior is implemented here.
+
+**P1.6.8 complete** — Prompt Policy Card Model: 7 enums (PromptSourceType 19 values, PromptTrustLevel 10 values, PromptRole 16 values, PromptPolicyDecision 10 values, PromptInjectionRisk 5 values, PromptInjectionPattern 15 values, PromptBoundaryRequirementType 14 values), 5 frozen dataclasses, strict deny-by-default posture, unknown-source-untrusted, external-content-not-instruction, tool-output-is-data, retrieved-memory-is-context, untrusted-cannot request-tools/write-memory/modify-policy/modify-identity, high/critical injection-risk cannot pair with permissive instruction authority, closed-world validation, deterministic serialization + hash, 15-rule strict default — semantics only, no prompt compiler / assembly engine / instruction-hierarchy enforcement / injection detector / jailbreak detector / resolver / runtime enforcement.
+
+**P1.6.7 complete** — Memory Write Policy Card Model: 6 enums (MemoryZone 14 values, MemoryWriteType 18 values, MemoryWriteDecision 10 values, MemoryVerificationStatus 8 values, MemoryRetentionClass 6 values, MemoryWriteRequirementType 13 values), 5 frozen dataclasses, deny-by-default posture, no silent canon/policy/operator-profile writes, verified-skill verification requirement, skill-candidate-not-verified guard, credentials-not-durable, sensitive-data strictness, closed-world validation, deterministic serialization + hash, 14-rule conservative default — semantics only, no Mneme storage / retrieval / consolidation / canon promotion / skill promotion / Verification Court / resolver / runtime enforcement.
+
+**P1.6.6 complete** — Tool Permission Policy Card Model: 5 enums (ToolCategory 17 values, ToolPermissionType 26 values, ToolPermissionDecision 8 values, ToolScopeType 12 values, ToolMatchMode 5 values), 6 frozen dataclasses, deny-by-default posture, credential access denial, shell command governance, dangerous permission safety validation, data residency compatibility, closed-world validation, deterministic serialization + hash — semantics only, no Tool Gateway / registry resolver / sandbox execution / runtime enforcement.
+
+**P1.6.5 complete** — Data Residency Policy Card Model: 6 enums (Zone, Class, Location, RedactionType, StorageType, ExposurePermission), 20 data classes with strict local-first defaults, credentials no-egress safety, sensitive_personal_data/memory/trace local-only enforcement, forbidden zone non-permissive, closed-world validation, deterministic serialization + hash — semantics only, no runtime egress/resolution/redaction.
 
 **P1.4.20 complete** — P1.4 Identity & Autonomy Exit Seal (**SEALED_WITH_LIMITATIONS** — 56 seal checks, 5 categories, 28 new tests, 412 identity total). **P1.4 is sealed.**
 
@@ -47,7 +55,7 @@ Canonical P1.4 detail: `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`, `docs/P1
 
 ## Roadmap v3.2 doctrine
 
-**P1.5.11B Capability Evidence ↔ Trace / Context Binding — IMPLEMENTED. P1.5.12 Evaluation Case Extraction Seed — NEXT.**
+**Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. Current active work is P1.6.8S; next planned feature work is P1.6.9.
 
 - **P1–P2 remain stable** — completed foundation is not reset.
 - **P3–P21 are refined, not reset.**
@@ -86,6 +94,7 @@ P2.0.0–P2.0.20   Phase 2 lock
 
 | Phase         | Focus                                                                                                                              |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| P1.6.4        | Human Oversight Policy Card Model - **COMPLETE**, oversight levels, approval/confirmation semantics, R0-R6 oversight mappings, strict R4/R5/R6 safety validation, 68 tests |
 | P1.6.3        | Risk Tier Policy Card Model - **COMPLETE**, R0-R6 semantics, strict R5/R6 validation, deterministic hash-ready typed card, 36 tests |
 | P1.4.20       | P1.4 Identity & Autonomy Exit Seal — **SEALED_WITH_LIMITATIONS**, 56 seal checks across 5 categories (import/object, CLI, governance invariants, adversarial, docs consistency), CLI `identity p14-seal run/list-checks/run-check`, 28 new tests, 412 identity total |
 | P1.4.19       | Identity Docs / Reports / State Update — consolidation/audit gate, seal-readiness CLI, 18 CLI groups, 15 P1.4 invariants, 10 P1.4.19 invariants, 15 known limitations, 22-item P1.4.20 exit seal checklist, 29 new tests, 384 identity total |

@@ -45,7 +45,7 @@ class TestSerialization:
         schema = example_criteria_schema()
         item = schema.criteria[0]
         d = criteria_schema_item_to_dict(item)
-        s = json.dumps(d)
+        json.dumps(d)
         assert "criterion_id" in d
         assert "kind" in d
         assert d["kind"] in ("GROUNDEDNESS", object())

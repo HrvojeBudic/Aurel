@@ -2,6 +2,12 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.8S Repository Reality & Policy Card Stabilization Seal](reports/P1.6.8S_REPOSITORY_REALITY_AND_POLICY_CARD_STABILIZATION_SEAL.md) | 2026-06-23 | Governance integrity seal after P1.6.8: git/docs/test/lint reality reconciled, CLI subprocess helper added, ruff/mypy/full-suite/coverage pass, P1.6.9 remains next |
+| [P1.6.8 Prompt Policy Card Model](reports/P1.6.8_PROMPT_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Prompt Policy Card Model v1: 7 enums, 5 frozen dataclasses, strict deny-by-default, untrusted-cannot-command, tool-output-is-data, retrieved-memory-is-context, injection-risk vocabulary, 74 tests |
+| [P1.6.7 Memory Write Policy Card Model](reports/P1.6.7_MEMORY_WRITE_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Memory Write Policy Card Model v1: 6 enums, 5 frozen dataclasses, deny-by-default, no silent canon/policy writes, verified-skill verification, credentials-not-durable, 60 tests |
+| [P1.6.6 Tool Permission Policy Card Model](reports/P1.6.6_TOOL_PERMISSION_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Tool Permission Policy Card Model v1: 5 enums, 6 frozen dataclasses, deny-by-default, credential denial, shell governance, data residency compatibility, 38 tests |
+| [P1.6.5 Data Residency Policy Card Model](reports/P1.6.5_DATA_RESIDENCY_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Data Residency Policy Card Model v1: 6 enums, 8 frozen dataclasses, 20 data classes, strict local-first defaults, credentials no-egress, 48 tests |
+| [P1.6.4 Human Oversight Policy Card Model](reports/P1.6.4_HUMAN_OVERSIGHT_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Human Oversight Policy Card Model v1: 5 enums, 7 frozen dataclasses, deterministic hashing, strict R4/R5/R6 safety validation, 68 tests |
 | [P1.6.3 Risk Tier Policy Card Model](reports/P1.6.3_RISK_TIER_POLICY_CARD_MODEL_REPORT.md) | 2026-06-22 | Risk Tier Policy Card Model v1: R0-R6 semantics, R5/R6 safety validation, deterministic hashing, 36 tests |
 | [P1.6.2 Behavioral Contract Schema](reports/P1.6.2_BEHAVIORAL_CONTRACT_SCHEMA_REPORT.md) | 2026-06-22 | Behavioral Contract Schema v1: 24 enums, 15 frozen dataclasses, closed-world validation, deterministic hashing, 96 tests |
 | [P1.6.1 Policy Card Schema](reports/P1.6.1_POLICY_CARD_SCHEMA_REPORT.md) | 2026-06-22 | Centralized schema v1, field classifications, schema-driven validation, deterministic export |

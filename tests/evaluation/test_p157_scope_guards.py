@@ -82,7 +82,6 @@ def test_p157_does_not_call_llm_or_tools():
 def test_p157_does_not_introduce_numeric_score():
     evidence = _make_evidence()
     binding = bind_evidence_to_claim(binding_id="b1", claim_id="claim_001", evidence=evidence)
-    s = str(binding)
     # Categorical support/conflict levels, not numeric
     assert binding.support_level.value in ("NONE", "WEAK", "MODERATE", "STRONG", "UNKNOWN")
     assert binding.conflict_level.value in ("NONE", "LOW", "MEDIUM", "HIGH", "CRITICAL", "UNKNOWN")

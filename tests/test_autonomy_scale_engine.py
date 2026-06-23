@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests.cli_helpers import run_cli
 
 from agentic_runtime.identity.autonomy_scale_engine import (
     ActionCategory,
@@ -493,17 +494,13 @@ def test_validate_valid_context_passes(identity_card, operator_contract, capabil
 
 
 def test_autonomy_cli_outputs_json_decision():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "evaluate",
-            "--action-category", "answer",
-            "--action-name", "cli_test_answer",
-            "--risk-tier", "R1_LOW",
-            "--reversibility-tier", "R1_FULLY_REVERSIBLE",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "evaluate",
+        "--action-category", "answer",
+        "--action-name", "cli_test_answer",
+        "--risk-tier", "R1_LOW",
+        "--reversibility-tier", "R1_FULLY_REVERSIBLE",
+        "--json",
     )
     assert result.returncode == 0
     data = json.loads(result.stdout)
@@ -512,17 +509,13 @@ def test_autonomy_cli_outputs_json_decision():
 
 
 def test_autonomy_cli_denies_unknown_risk_tier():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "evaluate",
-            "--action-category", "draft",
-            "--action-name", "cli_test_draft",
-            "--risk-tier", "",
-            "--reversibility-tier", "R1_FULLY_REVERSIBLE",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "evaluate",
+        "--action-category", "draft",
+        "--action-name", "cli_test_draft",
+        "--risk-tier", "",
+        "--reversibility-tier", "R1_FULLY_REVERSIBLE",
+        "--json",
     )
     data = json.loads(result.stdout)
     assert data["autonomy_level"] == "A7_DENIED"
@@ -530,16 +523,12 @@ def test_autonomy_cli_denies_unknown_risk_tier():
 
 
 def test_autonomy_cli_human_output_contains_level_reason_and_blockers():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "evaluate",
-            "--action-category", "unknown",
-            "--action-name", "cli_test_unknown",
-            "--risk-tier", "R1_LOW",
-            "--reversibility-tier", "R1_FULLY_REVERSIBLE",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "evaluate",
+        "--action-category", "unknown",
+        "--action-name", "cli_test_unknown",
+        "--risk-tier", "R1_LOW",
+        "--reversibility-tier", "R1_FULLY_REVERSIBLE",
     )
     assert "DENIED" in result.stdout
     assert "A7_DENIED" in result.stdout

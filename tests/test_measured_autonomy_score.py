@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests.cli_helpers import run_cli
 
 from agentic_runtime.identity.autonomy_scale_engine import (
     ActionCategory,
@@ -31,9 +32,6 @@ from agentic_runtime.identity.autonomy_measurement import (
     measured_autonomy_report_to_dict,
     measured_autonomy_score_to_dict,
 )
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -477,14 +475,10 @@ def test_load_nonexistent_file():
 
 
 def test_measured_autonomy_cli_outputs_json():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "measure",
-            "--minimum-decisions", "0",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "measure",
+        "--minimum-decisions", "0",
+        "--json",
     )
     data = json.loads(result.stdout)
     assert "score" in data
@@ -492,15 +486,11 @@ def test_measured_autonomy_cli_outputs_json():
 
 
 def test_measured_autonomy_cli_handles_no_records():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "measure",
-            "--records-path", "/tmp/nonexistent_p149_test.jsonl",
-            "--minimum-decisions", "0",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "measure",
+        "--records-path", "/tmp/nonexistent_p149_test.jsonl",
+        "--minimum-decisions", "0",
+        "--json",
     )
     data = json.loads(result.stdout)
     # No records → insufficient evidence
@@ -510,27 +500,19 @@ def test_measured_autonomy_cli_handles_no_records():
 
 
 def test_measured_autonomy_cli_respects_minimum_decisions():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "measure",
-            "--minimum-decisions", "5",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "measure",
+        "--minimum-decisions", "5",
+        "--json",
     )
     data = json.loads(result.stdout)
     assert data["score"]["autonomy_class"] == "INSUFFICIENT_EVIDENCE"
 
 
 def test_measured_autonomy_cli_human_output_contains_class_counts_and_blockers():
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "measure",
-            "--minimum-decisions", "0",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "measure",
+        "--minimum-decisions", "0",
     )
     assert "Measured Autonomy" in result.stdout
     assert "Class:" in result.stdout
@@ -539,20 +521,16 @@ def test_measured_autonomy_cli_human_output_contains_class_counts_and_blockers()
 
 def test_measured_autonomy_cli_evaluate_and_record(tmp_path):
     records_path = tmp_path / "test_eval.jsonl"
-    result = subprocess.run(
-        [
-            "python3", "-m", "agentic_runtime.cli", "identity", "autonomy", "measure",
-            "--records-path", str(records_path),
-            "--evaluate-and-record",
-            "--action-category", "answer",
-            "--action-name", "cli_eval_test",
-            "--risk-tier", "R1_LOW",
-            "--reversibility-tier", "R1_FULLY_REVERSIBLE",
-            "--minimum-decisions", "1",
-            "--json",
-        ],
-        capture_output=True, text=True, timeout=30,
-        cwd=REPO_ROOT,
+    result = run_cli(
+        "identity", "autonomy", "measure",
+        "--records-path", str(records_path),
+        "--evaluate-and-record",
+        "--action-category", "answer",
+        "--action-name", "cli_eval_test",
+        "--risk-tier", "R1_LOW",
+        "--reversibility-tier", "R1_FULLY_REVERSIBLE",
+        "--minimum-decisions", "1",
+        "--json",
     )
     data = json.loads(result.stdout)
     sc = data["score"]

@@ -205,8 +205,9 @@ def test_bridge_report_does_not_create_skills_reflexes_policies() -> None:
     )
     reason_lower = result.reason.lower()
     for forbidden in ("skill", "reflex", "policy", "canon"):
-        assert forbidden not in reason_lower, f"'{
-            forbidden}' must not appear in bridge report reason: {result.reason}"
+        assert forbidden not in reason_lower, (
+            f"'{forbidden}' must not appear in bridge report reason: {result.reason}"
+        )
 
 
 # ---------------------------------------------------------------------------

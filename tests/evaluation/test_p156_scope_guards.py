@@ -151,7 +151,6 @@ def test_p156_does_not_introduce_numeric_score():
     assert "score =" not in src or "numeric" not in src.lower()
     # No numeric scores in any model
     d = make_supported_decision()
-    s = str(d)
     # ConfidenceClass is categorical, not numeric
     assert d.confidence.value in ("NONE", "LOW", "MODERATE", "HIGH")
 

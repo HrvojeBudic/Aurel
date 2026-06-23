@@ -88,3 +88,148 @@ class RiskTierPolicyCardUnknownFieldError(RiskTierPolicyCardValidationError):
 
 class RiskTierPolicyCardUnsafeFieldError(RiskTierPolicyCardValidationError):
     """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Human Oversight Policy Card errors (P1.6.4)
+# ---------------------------------------------------------------------------
+
+
+class HumanOversightPolicyCardError(PolicyCardError):
+    """Base error for all human oversight policy card operations."""
+
+
+class HumanOversightPolicyCardValidationError(HumanOversightPolicyCardError):
+    """Raised when a human oversight policy card fails structured validation."""
+
+
+class HumanOversightPolicyCardSerializationError(HumanOversightPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class HumanOversightPolicyCardHashError(HumanOversightPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class HumanOversightPolicyCardUnknownFieldError(HumanOversightPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class HumanOversightPolicyCardUnsafeFieldError(HumanOversightPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Data Residency Policy Card errors (P1.6.5)
+# ---------------------------------------------------------------------------
+
+
+class DataResidencyPolicyCardError(PolicyCardError):
+    """Base error for all data residency policy card operations."""
+
+
+class DataResidencyPolicyCardValidationError(DataResidencyPolicyCardError):
+    """Raised when a data residency policy card fails structured validation."""
+
+
+class DataResidencyPolicyCardSerializationError(DataResidencyPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class DataResidencyPolicyCardHashError(DataResidencyPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class DataResidencyPolicyCardUnknownFieldError(DataResidencyPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class DataResidencyPolicyCardUnsafeFieldError(DataResidencyPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Tool Permission Policy Card errors (P1.6.6)
+# ---------------------------------------------------------------------------
+
+
+class ToolPermissionPolicyCardError(PolicyCardError):
+    """Base error for all tool permission policy card operations."""
+
+
+class ToolPermissionPolicyCardValidationError(ToolPermissionPolicyCardError):
+    """Raised when a tool permission policy card fails structured validation."""
+
+
+class ToolPermissionPolicyCardSerializationError(ToolPermissionPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class ToolPermissionPolicyCardHashError(ToolPermissionPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class ToolPermissionPolicyCardUnknownFieldError(ToolPermissionPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class ToolPermissionPolicyCardUnsafeFieldError(ToolPermissionPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Memory Write Policy Card errors (P1.6.7)
+# ---------------------------------------------------------------------------
+
+
+class MemoryWritePolicyCardError(PolicyCardError):
+    """Base error for all memory write policy card operations."""
+
+
+class MemoryWritePolicyCardValidationError(MemoryWritePolicyCardError):
+    """Raised when a memory write policy card fails structured validation."""
+
+
+class MemoryWritePolicyCardSerializationError(MemoryWritePolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class MemoryWritePolicyCardHashError(MemoryWritePolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class MemoryWritePolicyCardUnknownFieldError(MemoryWritePolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class MemoryWritePolicyCardUnsafeFieldError(MemoryWritePolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Prompt Policy Card errors (P1.6.8)
+# ---------------------------------------------------------------------------
+
+
+class PromptPolicyCardError(PolicyCardError):
+    """Base error for all prompt policy card operations."""
+
+
+class PromptPolicyCardValidationError(PromptPolicyCardError):
+    """Raised when a prompt policy card fails structured validation."""
+
+
+class PromptPolicyCardSerializationError(PromptPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class PromptPolicyCardHashError(PromptPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class PromptPolicyCardUnknownFieldError(PromptPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class PromptPolicyCardUnsafeFieldError(PromptPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""

@@ -1,5 +1,193 @@
 # Decisions Log
 
+## 2026-06-23 - P1.6.8S Repository Reality & Policy Card Stabilization Seal
+
+### DEC-P168S-01: Repository truth must match documentation truth
+**Decision:** P1.6.8S treats tracked files, tests, lint, validation commands, and agent docs as part of governance truth. A policy-card phase is not sealed if its files remain untracked or its docs overclaim validation.
+**Why:** Aurel cannot claim governed, sealed, traceable behavior while repository state and documentation disagree.
+
+### DEC-P168S-02: CLI subprocess tests must use the active interpreter
+**Decision:** CLI subprocess tests should use a shared helper that invokes `sys.executable -m agentic_runtime.cli` from the repository root with `PYTHONPATH=src:.`.
+**Why:** Bare `python3 -m agentic_runtime.cli` can select the wrong interpreter and fail imports even when the runtime is valid in the active environment.
+
+### DEC-P168S-03: P1.6.8S does not implement P1.6.9
+**Decision:** Sandbox Policy Card behavior remains out of scope. P1.6.8S only stabilizes repository reality after Prompt Policy Card Model completion.
+**Why:** Interstitial seals should reduce drift without smuggling in the next feature phase.
+
+### DEC-P168S-04: Structural debt is recorded, not refactored
+**Decision:** The large identity CLI command module, duplicated policy-card boilerplate, broad mypy disables, optional-only security scans, and slow-test marker discipline are documented as deferred debt.
+**Why:** Broad refactors would increase risk in a stabilization patch and should happen in dedicated hardening phases.
+
+## 2026-06-23 - P1.6.4 Human Oversight Policy Card Model
+
+### DEC-P164-01: HumanOversightPolicyCard defines oversight semantics, not approval execution
+**Decision:** `HumanOversightPolicyCard` defines oversight levels, approval/confirmation expectations, R0-R6 oversight mappings, escalation seeds, and evidence requirements. It does not approve actions, pause workflows, or execute approval behavior.
+**Why:** Oversight semantics and approval runtime are separate concerns. The runtime resolver, approval workbench, and enforcement belong to later tasks.
+
+### DEC-P164-02: Human oversight cards cannot grant authority
+**Decision:** Human oversight cards cannot grant authority, bypass risk tier policy, or bypass behavioral contracts. Dangerous metadata keys like `auto_approve`, `operator_not_required`, `skip_approval`, and `bypass_policy` are rejected.
+**Why:** Metadata and declarative oversight semantics must not become a shadow control plane.
+
+### DEC-P164-03: approval_required and explicit_confirmation_required are distinct
+**Decision:** `HumanOversightLevel.APPROVAL_REQUIRED` and `HumanOversightLevel.EXPLICIT_CONFIRMATION_REQUIRED` are separate levels. R5 must use `explicit_confirmation_required`, not `approval_required`.
+**Why:** R5 represents serious/irreversible actions requiring explicit Operator confirmation, not just approval. Collapsing these would weaken the safety model.
+
+### DEC-P164-04: R4 requires approval or stricter
+**Decision:** R4 must have `oversight_level = approval_required` or stricter and `action = request_approval` or stricter. `none`, `notify_only`, and `review_recommended` are rejected for R4.
+**Why:** High-impact compensatable actions require human approval as a floor.
+
+### DEC-P164-05: R5 requires explicit Operator confirmation with strong requirements
+**Decision:** R5 must have `oversight_level = explicit_confirmation_required`, `oversight_mode = explicit_confirmation`, `action = request_explicit_confirmation`, plus `confirmation_requirement` with `requires_explicit_confirmation`, `preview_required`, `evidence_required`, `operator_identity_required` all true, and `reviewer_requirement` with `operator_required` true.
+**Why:** Serious irreversible actions must not be made weak. Every confirmation safety flag must be enforced at the semantic level.
+
+### DEC-P164-06: R6 is denied and not approvable
+**Decision:** R6 must have `oversight_level = deny`, `oversight_mode = deny`, `action = deny_action`. Any approvable level (approval_required, explicit_confirmation_required, etc.) is rejected for R6.
+**Why:** Denied/forbidden actions must remain denied in the semantic model. No oversight card should make R6 contingently executable.
+
+### DEC-P164-07: Runtime approval engine is not implemented in P1.6.4
+**Decision:** P1.6.4 does not implement a runtime approval engine, policy resolver, enforcement engine, Approval Workbench UI, governance board workflow, or P25 hardening.
+**Why:** P1.6.4 is the semantic model layer only. Approval execution and enforcement are separate concerns.
+
+### DEC-P164-08: Human oversight cards use container pattern with generic PolicyCard
+**Decision:** `HumanOversightPolicyCard` contains a generic `PolicyCard` with `kind="human_oversight"`, matching the `RiskTierPolicyCard` pattern. No inheritance from `PolicyCard`.
+**Why:** Consistent with P1.6.3 design. The generic PolicyCard provides identity/status/scope foundations; the typed card adds domain-specific semantics.
+
+## 2026-06-23 - P1.6.5 Data Residency Policy Card Model
+
+### DEC-P165-01: DataResidencyPolicyCard defines data locality semantics, not runtime egress enforcement
+**Decision:** `DataResidencyPolicyCard` defines residency zones, data classes, processing locations, egress/exposure/redaction/storage rules. It does not enforce egress, route models, classify data, perform redaction, or encrypt at runtime.
+**Why:** Data locality semantics and runtime egress enforcement are separate concerns. The runtime egress guard, model router, classification engine, and redaction/encryption executors belong to later tasks.
+
+### DEC-P165-02: local_only means zero outbound by definition
+**Decision:** Any data class with `residency_zone = local_only` cannot allow egress, external model access, external API access, or web search. Only `local_device` and `local_network` processing locations are permitted.
+**Why:** `local_only` must be strict from the start. Permitting any external path under `local_only` would make the zone meaningless.
+
+### DEC-P165-03: credentials must never externalize by default
+**Decision:** The default credentials rule requires `local_only` zone, `egress_allowed = False`, `requires_encryption = True`, `requires_audit_trace = True`, and forbids external model/api/web exposure.
+**Why:** Credentials are the most sensitive data class. Any externalization path is dangerous.
+
+### DEC-P165-04: sensitive_personal_data, memory_record, trace_record are strict local_only
+**Decision:** These three data classes are forced `local_only` with no egress by default. Any attempt to set a different zone or allow egress fails validation.
+**Why:** These classes represent the highest personal/sensitive boundary. Externalization must be explicitly opted into, not default.
+
+### DEC-P165-05: 20 data classes provide comprehensive coverage
+**Decision:** 20 distinct `DataClass` enum values cover public through identity records, with 10 required classes that must always be present in any valid card.
+**Why:** Fine-grained classification enables future consumers (egress guard, model router, memory policy, trace policy) to make precise decisions per data type.
+
+### DEC-P165-06: Forbidden zone is fully non-permissive
+**Decision:** `residency_zone = forbidden` cannot allow egress, external model, external API, web search, or any processing location other than `forbidden`. Any permissive setting on a forbidden rule fails validation.
+**Why:** Forbidden means forbidden. No loopholes.
+
+### DEC-P165-07: Runtime egress guard is not implemented in P1.6.5
+**Decision:** P1.6.5 does not implement a runtime egress guard, model router, classification engine, redaction executor, encryption executor, or conflict resolver.
+**Why:** P1.6.5 is the semantic model layer only. Egress enforcement and execution are separate concerns.
+
+### DEC-P165-08: Data residency cards use container pattern with generic PolicyCard
+**Decision:** `DataResidencyPolicyCard` contains a generic `PolicyCard` with `kind="data_residency"`, matching the `RiskTierPolicyCard` and `HumanOversightPolicyCard` patterns. No inheritance from `PolicyCard`.
+**Why:** Consistent with P1.6.3/P1.6.4 design. The generic PolicyCard provides identity/status/scope foundations; the typed card adds domain-specific semantics.
+
+## 2026-06-23 - P1.6.8 Prompt Policy Card Model
+
+### DEC-P168-01: PromptPolicyCard defines prompt trust/authority semantics, not runtime prompt enforcement
+**Decision:** `PromptPolicyCard` defines prompt sources, trust levels, roles, handling decisions, injection-risk vocabulary, and boundary requirements. It does not compile prompts, assemble context, enforce instruction hierarchy, detect prompt injection/jailbreaks, or block tools/memory at runtime.
+**Why:** Prompt-handling semantics and runtime prompt machinery are separate concerns. The Prompt Compiler, injection detector, and policy resolver belong to later tasks.
+
+### DEC-P168-02: Prompt policy cards cannot grant authority or compile prompts
+**Decision:** A prompt policy card never grants authority merely by existing and never compiles or assembles a prompt. `allow` means "may enter prompt assembly under policy," not "obey."
+**Why:** Consistent with the policy-card law — policy is a governed object, not a control-plane actor. Prompt authority is never inferred from text content alone.
+
+### DEC-P168-03: Default prompt posture is strict / deny-by-default
+**Decision:** `default_decision` must be `deny` (or `forbidden`). Permissive defaults (allow, context_only, etc.) fail validation.
+**Why:** The instruction hierarchy and untrusted-content boundary must hold by default. No unknown prompt source can become trusted.
+
+### DEC-P168-04: Untrusted content may inform but never command
+**Decision:** Unknown sources cannot carry trusted trust levels. External content (web/email/file/code/external_api/retrieved_document/tool_output/unknown) cannot be instruction authority. Tool output is data/context, not command. Retrieved memory is context, not automatic authority.
+**Why:** This is the core Aurel prompt law — protection against prompt injection, authority spoofing, and instruction-hierarchy collapse.
+
+### DEC-P168-05: Untrusted content cannot request tools, write memory, or modify policy/identity
+**Decision:** For trust levels external_untrusted, tool_output_untrusted, unknown_untrusted, and retrieved_context, any of allowed_to_request_tools / allowed_to_write_memory / allowed_to_modify_policy / allowed_to_modify_identity set to true fails validation.
+**Why:** Tool escalation, memory poisoning, policy override, and identity drift are existential prompt-injection risks.
+
+### DEC-P168-06: Injection-risk vocabulary is policy-only, not a detector
+**Decision:** `PromptInjectionRisk` and `PromptInjectionPattern` define vocabulary and validation semantics only. High/critical effective injection risk cannot pair with allow + instruction authority, but no runtime detection is implemented.
+**Why:** P1.6.8 defines injection-risk policy language; the detector is a future task.
+
+### DEC-P168-07: Prompt compiler, injection detector, resolver, and P25/P29 hardening are not implemented in P1.6.8
+**Decision:** P1.6.8 does not implement a prompt compiler, prompt assembly engine, instruction-hierarchy enforcer, prompt injection detector, jailbreak detector, tool-call runtime blocking, memory write enforcement, identity compiler change, policy runtime resolver, policy conflict detector, simulation mode, trace hook, CLI, report generator, or P25/P29 hardening.
+**Why:** P1.6.8 is the semantic model layer only. Enforcement and detection are separate concerns.
+
+### DEC-P168-08: Prompt policy cards use container pattern with generic PolicyCard
+**Decision:** `PromptPolicyCard` contains a generic `PolicyCard` with `kind="prompt"`, matching all previous typed policy card patterns. No inheritance from `PolicyCard`. Risk tiers/oversight are referenced as strings to avoid cross-module coupling.
+**Why:** Consistent with P1.6.3–P1.6.7 design. The generic PolicyCard provides identity/status/scope foundations; the typed card adds domain-specific semantics.
+
+## 2026-06-23 - P1.6.7 Memory Write Policy Card Model
+
+### DEC-P167-01: MemoryWritePolicyCard defines memory write semantics, not memory storage
+**Decision:** `MemoryWritePolicyCard` defines memory zones, write types, decisions, verification statuses, retention classes, and write requirements. It does not store, write, retrieve, rank, consolidate, graph, promote, canonize, or enforce memory at runtime, and it does not implement Mneme.
+**Why:** Memory write semantics and runtime memory storage are separate concerns. Mneme, the Evaluation Mirror, the Verification Court, Praxis, and the policy runtime resolver belong to later tasks.
+
+### DEC-P167-02: Memory write cards cannot grant authority or write memory by themselves
+**Decision:** A memory write card never grants authority merely by existing and never performs a memory write. It only describes the policy a future resolver/Mneme will evaluate.
+**Why:** Consistent with the policy-card law — policy is a governed object, not a control-plane actor.
+
+### DEC-P167-03: Default memory posture is conservative / deny-by-default
+**Decision:** `default_decision` must be `deny` (or `forbidden`). Permissive defaults (allow, candidate_only, canonicalize_allowed, requires_evidence-only, ephemeral_only) fail validation.
+**Why:** Raw experience does not become capability directly. No silent durable memory.
+
+### DEC-P167-04: Candidate memory is not verified memory; verified memory is not canon
+**Decision:** `skill_candidate_memory` cannot carry `verified`/`canonized` status by default. `verified_skill_memory` requires evaluation result + verification + evidence/trace references. `canon_memory` requires its own highest-scrutiny gates separate from verification.
+**Why:** The maturation ladder (Trace → Evaluation → Candidate → Verification → Skill → Specialist → Reflex; and verified → canon) must not be skipped.
+
+### DEC-P167-05: No silent canonical or policy memory writes
+**Decision:** `canon_memory` cannot be plain `allow`; it requires source/evidence/trace references plus operator review, explicit confirmation, and conflict check. `policy_memory` cannot be plain `allow`; it requires policy authority + source/evidence/trace + operator review or explicit confirmation. Both require evidence/provenance/trace binding.
+**Why:** Canon pollution and policy-memory drift are existential governance risks.
+
+### DEC-P167-06: Operator profile memory is protected; credentials cannot become durable memory
+**Decision:** `operator_profile` writes require user consent or operator review plus source/provenance (and trace when durable). `credentials` may never appear in a rule's `allowed_data_classes`. `sensitive_personal_data` durable writes require evidence + provenance + residency check + review.
+**Why:** Operator-profile pollution and sensitive-data memory leakage must be impossible by default; consent workflow is deferred but its requirement is encoded now.
+
+### DEC-P167-07: Runtime Mneme write enforcement, resolver, and P25/P29 hardening are not implemented in P1.6.7
+**Decision:** P1.6.7 does not implement a memory storage/retrieval/consolidation engine, memory graph, canon/skill promotion engine, Verification Court, operator consent workflow, memory conflict detector, policy runtime resolver, policy conflict detector, simulation mode, trace hook, CLI, report generator, or P25/P29 hardening.
+**Why:** P1.6.7 is the semantic model layer only. Enforcement and execution are separate concerns.
+
+### DEC-P167-08: Memory write cards use container pattern with generic PolicyCard
+**Decision:** `MemoryWritePolicyCard` contains a generic `PolicyCard` with `kind="memory_write"`, matching all previous typed policy card patterns. No inheritance from `PolicyCard`. Risk tiers and data classes are referenced as strings to avoid cross-module coupling.
+**Why:** Consistent with P1.6.3–P1.6.6 design. The generic PolicyCard provides identity/status/scope foundations; the typed card adds domain-specific semantics.
+
+## 2026-06-23 - P1.6.6 Tool Permission Policy Card Model
+
+### DEC-P166-01: ToolPermissionPolicyCard defines permission semantics, not runtime Tool Gateway enforcement
+**Decision:** `ToolPermissionPolicyCard` defines tool categories, permission types, decisions, matchers, and safety rules. It does not enforce permissions, execute tools, resolve tool registries, or run sandboxes at runtime.
+**Why:** Tool permission semantics and runtime enforcement are separate concerns. The Tool Gateway, registry resolver, and sandbox executor belong to later tasks.
+
+### DEC-P166-02: Default posture is deny-by-default / least privilege
+**Decision:** Default decision must be `deny`. Any other default (allow, conditional) fails validation. Unknown tool categories must deny.
+**Why:** Least privilege must be the default. Permission must be explicitly granted through permission rules.
+
+### DEC-P166-03: Credential access denied by default, cannot be overridden by metadata
+**Decision:** `credential_access` must be deny by default. Any rule with `credential_access` and a non-deny decision fails validation. Metadata keys like `credential_access_allowed` are dangerous and rejected.
+**Why:** Credentials are the most sensitive capability. No tool permission card should externalize credentials.
+
+### DEC-P166-04: Shell command requires sandbox/approval/risk constraints
+**Decision:** Shell command cannot be simple allow. Valid decisions require sandbox_required, approval_required, explicit_confirmation_required, or conditional with risk_ceiling and sandbox_required=True.
+**Why:** Unrestricted shell access is the most dangerous tool capability.
+
+### DEC-P166-05: Network/external egress is denied or strongly governed by default
+**Decision:** Network and external_egress permission types cannot be simple allow. Must use deny, approval_required, or conditional with constraints.
+**Why:** External egress moves data outside the trust boundary. Must be explicitly governed.
+
+### DEC-P166-06: Protected data classes cannot be exposed through external tools
+**Decision:** Rules allowing external/network/model/browser access must not include credentials, operator_private, sensitive_personal_data, memory_record, trace_record, or source_code in allowed_data_classes, and must include them in forbidden_data_classes.
+**Why:** Data residency semantics (P1.6.5) and tool permission semantics must agree on the safety boundary.
+
+### DEC-P166-07: Runtime Tool Gateway is not implemented in P1.6.6
+**Decision:** P1.6.6 does not implement a Tool Gateway, registry resolver, sandbox executor, network blocker, filesystem enforcer, credential system, memory write enforcer, or model router.
+**Why:** P1.6.6 is the semantic model layer only. Enforcement and execution are separate concerns.
+
+### DEC-P166-08: Tool permission cards use container pattern with generic PolicyCard
+**Decision:** `ToolPermissionPolicyCard` contains a generic `PolicyCard` with `kind="tool_permission"`, matching all previous typed policy card patterns. No inheritance from `PolicyCard`.
+**Why:** Consistent with P1.6.3/P1.6.4/P1.6.5 design. The generic PolicyCard provides identity/status/scope foundations; the typed card adds domain-specific semantics.
+
 ## 2026-06-22 - P1.6.3 Risk Tier Policy Card Model
 
 ### DEC-P163-01: RiskTierPolicyCard defines risk semantics, not runtime classification

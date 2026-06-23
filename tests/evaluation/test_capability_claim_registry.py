@@ -256,33 +256,33 @@ class TestGoldenThreadAIntegration:
 
     def test_golden_thread_a_claim_has_scope(self) -> None:
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim is not None
         assert harness.claim.scope.task_type != ""
         assert harness.claim.scope.required_verifier_kinds
 
     def test_golden_thread_a_claim_has_known_limits(self) -> None:
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim is not None
         assert len(harness.claim.known_limits) > 0
 
     def test_golden_thread_a_claim_has_evidence_links(self) -> None:
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim is not None
         assert len(harness.claim.evidence_links) > 0
 
     def test_golden_thread_a_claim_report_exists(self) -> None:
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim_report is not None
         assert harness.claim_report.status == CapabilityClaimStatus.CONTEXT_VERIFIED
         assert harness.claim_report.limitations
 
     def test_golden_thread_a_claim_report_warns_context_bound(self) -> None:
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim_report is not None
         assert harness.claim_report.warnings
         warning_text = " ".join(harness.claim_report.warnings)
@@ -359,7 +359,7 @@ class TestClaimReport:
             claim_text=claim.claim_text,
             scope_summary="Task: test_task",
             evidence_summary="Evidence from trace_ref.",
-            limitations=tuple(l.description for l in claim.known_limits),
+            limitations=tuple(limit.description for limit in claim.known_limits),
             warnings=("Status is context_verified — not universal.",),
             created_at=_TIMESTAMP,
         )

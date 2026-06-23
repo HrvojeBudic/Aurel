@@ -71,7 +71,8 @@ class TestScopeGuards:
         )
         decision = register_evaluation_subject(req)
         # No claim status fields in decision
-        d = decision.__dict__ if hasattr(decision, '__dict__') else {}
+        decision_dict = decision.__dict__ if hasattr(decision, "__dict__") else {}
+        assert "claim_status" not in decision_dict
         assert "claim_status" not in str(type(decision))
 
     def test_p153_does_not_implement_hub_runtime(self):

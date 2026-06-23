@@ -344,7 +344,7 @@ class TestGoldenThreadAPath:
     def test_golden_thread_a_produces_context_verified(self) -> None:
         from agentic_runtime.golden_threads.thread_a import GoldenThreadAHarness
         harness = GoldenThreadAHarness()
-        result = harness.run_demo()
+        harness.run_demo()
         assert harness.claim_candidate is not None
         assert harness.claim_candidate.proposed_status == CapabilityClaimStatus.CONTEXT_VERIFIED
         assert harness.claim is not None

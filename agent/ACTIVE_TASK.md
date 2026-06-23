@@ -1,70 +1,51 @@
-# Active Task: P1.6.3 - Risk Tier Policy Card Model (Complete)
+# Active Task: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
+
+**Status:** COMPLETE
+
+## Roadmap Position
+
+- Last completed: P1.6.8 — Prompt Policy Card Model
+- Current stabilization: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
+- Next planned: P1.6.9 — Sandbox Policy Card Model
+- Last verified against commit: pending final commit for P1.6.8S
 
 ## Objective
 
-Add the first specific typed policy card model: `RiskTierPolicyCard`. It defines Aurel risk-tier semantics for R0-R6, reversibility levels, oversight expectations, evidence expectations, and seed action-class mappings. It is declarative, closed-world, deterministic, and hash-ready.
+Seal repository reality after P1.6.8 and before P1.6.9. This patch aligns git state, policy-card implementation truth, CLI subprocess tests, linting, validation results, and agent documentation. It does not add Sandbox Policy Card behavior.
 
-## Status
+## Scope Completed
 
-**Complete** - 2026-06-22
+- Classified tracked, modified, and untracked repository state.
+- Preserved legitimate P1.6.4-P1.6.8 source, test, and report artifacts for final staging.
+- Removed the accidental root-level pager/help artifact named `ive identity, evaluation, contracts, and policy card infrastructure`.
+- Verified P1.6.8 Prompt Policy Card implementation, schema, errors, exports, closed-world validation, canonical serialization, deterministic hash readiness, and tests.
+- Added shared CLI subprocess helper `tests/cli_helpers.py`.
+- Refactored autonomy and measured-autonomy CLI tests off bare `python3 -m agentic_runtime.cli`.
+- Fixed all ruff findings in `src` and `tests`.
+- Reconciled docs to show P1.6.8 complete, P1.6.8S as the stabilization seal, and P1.6.9 next.
+- Added optional dev security tooling seeds (`bandit`, `pip-audit`) without making them hard gates.
 
-P1.6.3 is implemented with 36 focused tests. P1.6.0-P1.6.3 focused tests pass together.
-
-## Scope
-
-### In scope
-
-- `RiskTier` enum with R0-R6.
-- `ReversibilityLevel`, `OversightLevel`, and `EvidenceExpectation` vocabularies.
-- `RiskTierDefinition`, `RiskActionClass`, `RiskActionClassMapping`, and `RiskTierPolicyCard`.
-- Risk Tier Policy Card Schema v1 (`risk_tier_schema.py`) with required, optional, forbidden, and canonical fields; dangerous metadata keys; default tier definitions; and default action-class mapping seeds.
-- Closed-world `load_risk_tier_policy_card_from_dict()` and `validate_risk_tier_policy_card_dict()`.
-- Structured `validate_risk_tier_policy_card()`.
-- Deterministic `risk_tier_policy_card_to_canonical_dict()` and `serialize_risk_tier_policy_card_canonical()`.
-- SHA-256 `compute_risk_tier_policy_card_hash()`.
-- Safe `create_default_risk_tier_policy_card()`.
-- Strict R5 and R6 safety validation.
-- Public exports from `agentic_runtime.policy_cards`.
-
-### Non-scope
-
-- No policy runtime resolver.
-- No automatic risk classifier.
-- No runtime risk inference.
-- No enforcement engine.
-- No human oversight cards.
-- No tool permission, sandbox, model routing, memory write, or execution enforcement.
-- No policy conflict detector.
-- No policy simulation mode.
-- No policy violation trace hook.
-- No CLI or report generator.
-- No P25 hardening.
-
-## Acceptance Criteria
-
-- Default risk tier policy card validates successfully.
-- R0, R1, R2, R3, R4, R5, and R6 are all required.
-- Missing, duplicate, or unknown tiers fail validation.
-- R5 requires trace, evidence, approval, explicit Operator confirmation, irreversible reversibility, and explicit Operator oversight.
-- R6 is denied and non-permissive: no execution, external egress, memory write, or tool write.
-- Reversible and compensatable remain distinct.
-- Dangerous metadata keys fail validation; safe metadata is accepted.
-- Unknown top-level and nested risk-tier fields fail closed.
-- Generic `PolicyCard(kind="risk_tier")` compatibility is enforced.
-- Canonical serialization and hash are deterministic.
-- P1.6.0-P1.6.2 tests remain passing with the new P1.6.3 tests.
-
-## Validation Commands
+## Validation
 
 ```bash
-python3 -m compileall src tests
-PYTHONPATH=src:. ./.venv/bin/pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py tests/test_risk_tier_policy_cards_p163.py -q
-PYTHONPATH=src:. ./.venv/bin/pytest -q
-./.venv/bin/ruff check .
-./.venv/bin/mypy .
-PYTHONPATH=src:. python3 -m agentic_runtime status
+.venv/bin/python -m compileall src tests                                             # PASS
+.venv/bin/python -m pytest tests/test_prompt_policy_cards_p168.py -q --tb=line       # PASS, 74 passed
+.venv/bin/python -m pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py tests/test_risk_tier_policy_cards_p163.py tests/test_human_oversight_policy_cards_p164.py tests/test_data_residency_policy_cards_p165.py tests/test_tool_permission_policy_cards_p166.py tests/test_memory_write_policy_cards_p167.py tests/test_prompt_policy_cards_p168.py -q --tb=line  # PASS, 540 passed
+.venv/bin/python -m pytest tests/test_autonomy_scale_engine.py tests/test_measured_autonomy_score.py -q --tb=line  # PASS, 85 passed
+.venv/bin/ruff check src tests                                                       # PASS
+.venv/bin/mypy src/agentic_runtime                                                   # PASS
+.venv/bin/python -m pytest -q --tb=line                                               # PASS, 3220 passed, 2 skipped
+.venv/bin/python -m pytest --cov=src/agentic_runtime --cov-report=term-missing -q --tb=no  # PASS, 79.27% coverage, 3220 passed, 2 skipped
 ```
+
+## Deferred Structural Debt
+
+- `src/agentic_runtime/cli_modules/identity_commands.py` is large (3380 lines); split later during P1/P25 hardening.
+- Typed policy card modules repeat serialization/validation/hash patterns; consider a shared typed policy-card base after P1.6.10 or during P25 governance hardening.
+- `mypy` still disables several important error codes; tighten during P25/P29 hardening.
+- Security scanning is optional only; promote `bandit` / `pip-audit` to hard gates in P28/P29 if the workflow is ready.
+- Slow test marker discipline remains future P25/P30 test hardening work.
 
 ## Next
 
-P1.6.4 - Human Oversight Policy Card Model.
+- P1.6.9 — Sandbox Policy Card Model
