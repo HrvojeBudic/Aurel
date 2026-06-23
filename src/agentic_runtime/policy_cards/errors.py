@@ -233,3 +233,65 @@ class PromptPolicyCardUnknownFieldError(PromptPolicyCardValidationError):
 
 class PromptPolicyCardUnsafeFieldError(PromptPolicyCardValidationError):
     """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+# ---------------------------------------------------------------------------
+# Sandbox Policy Card errors (P1.6.9)
+# ---------------------------------------------------------------------------
+
+
+class SandboxPolicyCardError(PolicyCardError):
+    """Base error for all sandbox policy card operations."""
+
+
+class SandboxPolicyCardValidationError(SandboxPolicyCardError):
+    """Raised when a sandbox policy card fails structured validation."""
+
+
+class SandboxPolicyCardSerializationError(SandboxPolicyCardError):
+    """Raised when canonical serialization fails."""
+
+
+class SandboxPolicyCardHashError(SandboxPolicyCardError):
+    """Raised when canonical hash computation fails."""
+
+
+class SandboxPolicyCardUnknownFieldError(SandboxPolicyCardValidationError):
+    """Raised when an unknown field is found - closed-world enforcement."""
+
+
+class SandboxPolicyCardUnsafeFieldError(SandboxPolicyCardValidationError):
+    """Raised when a dangerous metadata key or unsafe field is detected."""
+
+
+class SandboxPolicyCardDecisionError(SandboxPolicyCardError):
+    """Raised when sandbox policy decision evaluation encounters an unrecoverable error."""
+
+
+class SandboxPolicyCardSchemaError(SandboxPolicyCardError):
+    """Raised when sandbox policy schema is structurally invalid."""
+
+
+# ---------------------------------------------------------------------------
+# Custos v0 Policy Runtime Resolver errors (P1.6.10)
+# ---------------------------------------------------------------------------
+
+
+class PolicyResolutionError(PolicyCardError):
+    """Base error for all Custos v0 policy resolution operations."""
+
+
+class PolicyResolutionValidationError(PolicyResolutionError):
+    """Raised when resolver input (cards/mode/duplicates) fails structured validation."""
+
+
+class PolicyResolutionContextError(PolicyResolutionError):
+    """Raised when a PolicyResolutionContext is invalid or fails closed-world loading."""
+
+
+class PolicyResolutionSerializationError(PolicyResolutionError):
+    """Raised when resolver context/result canonical serialization fails."""
+
+
+class PolicyResolutionAdapterError(PolicyResolutionError):
+    """Raised when a policy family adapter encounters an unrecoverable error."""

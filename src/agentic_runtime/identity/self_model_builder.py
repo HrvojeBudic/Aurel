@@ -1,7 +1,9 @@
 """Build Aurel Self-Model from validated identity sources (P1.4.6)."""
 from __future__ import annotations
+from collections.abc import Sequence
 
 from pathlib import Path
+from typing import Protocol
 
 from .. import __version__ as RUNTIME_VERSION
 from .communication_modes import AurelCommunicationModeRegistry, load_communication_mode_registry
@@ -37,6 +39,12 @@ from .self_model_policy import SelfModelError, SelfModelPolicy, load_self_model_
 from .self_model_validation import validate_aurel_self_model, validate_self_model_policy
 
 
+class _ValidationResultLike(Protocol):
+    valid: bool
+    critical_failures: Sequence[str]
+    errors: Sequence[str]
+
+
 def _validate_sources_or_raise(
     identity_kernel: AurelIdentityKernel,
     persona_manifest: AurelPersonaManifest,
@@ -46,7 +54,7 @@ def _validate_sources_or_raise(
     self_model_policy: SelfModelPolicy,
     identity_prompt_context: IdentityPromptContext | None,
 ) -> None:
-    checks = (
+    checks: tuple[_ValidationResultLike, ...] = (
         validate_self_model_policy(self_model_policy),
         validate_identity_kernel(identity_kernel),
         validate_persona_manifest(persona_manifest),

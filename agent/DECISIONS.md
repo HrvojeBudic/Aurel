@@ -1,5 +1,39 @@
 # Decisions Log
 
+## 2026-06-23 - P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode
+
+### DEC-P1610-01: Shadow mode only; submit() untouched
+**Decision:** The resolver runs SHADOW only and never modifies, calls, or imports
+`AgenticRuntime.submit()`. It produces a judgment (`ResolvedPolicySet`) but enforces
+nothing. ENFORCE/SIMULATE are reserved enum names rejected fail-closed.
+**Why:** P1.6.10 must create policy judgment without runtime punishment. "Entity
+proposes, runtime disposes" — P1.6.10 does not yet dispose.
+
+### DEC-P1610-02: Resolver lives in `policy_cards/`, not a new package
+**Decision:** Place `resolution_context.py`, `resolution_result.py`, `resolver.py`
+inside `src/agentic_runtime/policy_cards/` rather than a separate `policy_resolver/`.
+**Why:** Every card family already lives there and the resolver is a pure consumer of
+those modules; co-location avoids an import-graph split with zero benefit.
+
+### DEC-P1610-03: Strictest-wins MVP, conservative defaults
+**Decision:** Aggregate with `DENY > REQUIRE_APPROVAL (= ERROR) > WARN > ALLOW >
+NOT_APPLICABLE`. No applicable cards → conservative `WARN` (never silent ALLOW).
+Adapter ERROR is never swallowed: it escalates to REQUIRE_APPROVAL with an explicit
+`ADAPTER_ERROR_CONSERVATIVE` reason.
+**Why:** Fail toward caution; full Policy Conflict Algebra is a later phase.
+
+### DEC-P1610-04: Deterministic, timestamp-free artifacts
+**Decision:** `resolution_id` and both canonical hashes derive purely from
+`context_hash` + sorted card source hashes; no timestamps or random UUIDs enter any
+canonical hash. List fields are sorted in canonical form.
+**Why:** Matches the policy-card determinism convention; same input/cards → same hash.
+
+### DEC-P1610-05: Explicit card loading; no registry in P1.6.10
+**Decision:** The resolver accepts an explicit list of card instances and detects
+duplicate card IDs (ambiguity) fail-closed. No filesystem discovery or registry.
+**Why:** Keeps P1.6.10 deterministic and leaves registry binding intact for P1.6.11
+(no roadmap rewording needed).
+
 ## 2026-06-23 - P1.6.8S Repository Reality & Policy Card Stabilization Seal
 
 ### DEC-P168S-01: Repository truth must match documentation truth

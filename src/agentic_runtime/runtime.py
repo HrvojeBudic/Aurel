@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import threading
 from dataclasses import dataclass
+from typing import Literal, Protocol
 
 from .budget import BudgetExceeded, BudgetLedger
 from .approval import (
@@ -71,6 +72,16 @@ class CommandResult:
 _WRITE_TOOLS = {"edit_file", "write_file", "patch_file", "delete_file",
                 "run_shell", "run_python", "run_tests",
                 "mutate_protected_verification"}
+
+
+class _ContextLock(Protocol):
+    def __enter__(self) -> object: ...
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: object | None,
+    ) -> bool | None: ...
 
 
 class AgenticRuntime:
@@ -217,7 +228,7 @@ class AgenticRuntime:
             raise
 
         is_write = cmd.tool in _WRITE_TOOLS
-        lock = self._write_lock if is_write else _NullLock()
+        lock: _ContextLock = self._write_lock if is_write else _NullLock()
         with lock:
             before_hash = self.tools.sandbox.state_hash()
             snap_id = self.tools.sandbox.snapshot() if is_write else before_hash
@@ -628,5 +639,13 @@ def _short(args: dict) -> str:
 
 
 class _NullLock:
-    def __enter__(self): return self
-    def __exit__(self, *a): return False
+    def __enter__(self) -> "_NullLock":
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: object | None,
+    ) -> Literal[False]:
+        return False

@@ -23,7 +23,7 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `entity.py` | Cognitive organism: plan → execute loop, state machine outcomes |
 | `runtime.py` | Governed command pipeline kernel |
 | `policy.py` | Capability / permission / authority gates + risk re-score |
-| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1, P1.6.3 Risk Tier Policy Card Model v1, P1.6.4 Human Oversight Policy Card Model v1, P1.6.5 Data Residency Policy Card Model v1, P1.6.6 Tool Permission Policy Card Model v1, P1.6.7 Memory Write Policy Card Model v1, P1.6.8 Prompt Policy Card Model v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave, Risk Tier Policy Cards define R0-R6 risk semantics, Human Oversight Policy Cards define human/operator oversight semantics, Data Residency Policy Cards define data locality/egress/exposure semantics, Tool Permission Policy Cards define deny-by-default tool permission semantics, Memory Write Policy Cards define deny-by-default memory write semantics (zones, write types, decisions, verification statuses, retention classes, requirements), Prompt Policy Cards define strict prompt trust/instruction-boundary semantics (sources, trust levels, roles, decisions, injection-risk vocabulary, boundary requirements); centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation; no runtime resolver/classifier/enforcement/approval-workflow/egress-guard/tool-gateway/memory-engine/prompt-compiler yet |
+| `policy_cards/` | P1.6.0 Policy Card Foundation, P1.6.1 Policy Card Schema v1, P1.6.2 Behavioral Contract Schema v1, P1.6.3 Risk Tier Policy Card Model v1, P1.6.4 Human Oversight Policy Card Model v1, P1.6.5 Data Residency Policy Card Model v1, P1.6.6 Tool Permission Policy Card Model v1, P1.6.7 Memory Write Policy Card Model v1, P1.6.8 Prompt Policy Card Model v1: first-class typed/frozen/validated/hashable governance objects; Policy Cards define rules, Behavioral Contracts define how subjects must behave, Risk Tier Policy Cards define R0-R6 risk semantics, Human Oversight Policy Cards define human/operator oversight semantics, Data Residency Policy Cards define data locality/egress/exposure semantics, Tool Permission Policy Cards define deny-by-default tool permission semantics, Memory Write Policy Cards define deny-by-default memory write semantics (zones, write types, decisions, verification statuses, retention classes, requirements), Prompt Policy Cards define strict prompt trust/instruction-boundary semantics (sources, trust levels, roles, decisions, injection-risk vocabulary, boundary requirements); centralized schema versioning, field classifications, deterministic schema export; schema-driven closed-world validation. **P1.6.9 Sandbox Policy Card Model v1** adds backend/filesystem/egress/command-class sandbox semantics with a resolver-ready `evaluate_sandbox_policy_decision()`. **P1.6.10 Custos v0 Policy Runtime Resolver (shadow mode)** (`resolution_context.py`, `resolution_result.py`, `resolver.py`) interprets these cards into a single deterministic `ResolvedPolicySet` with `WOULD_*` shadow outcomes via strictest-wins MVP aggregation — it does NOT enforce, does NOT modify `AgenticRuntime.submit()`, and runs SHADOW-only. Still no runtime enforcement/approval-workflow/egress-guard/tool-gateway/memory-engine/prompt-compiler/registry-binding |
 | `hitl.py` | Approval gates: auto, console, deny-all, preview-only |
 | `approval.py` | Approval contracts, risk classes, policy resolver, previews (P0.15) |
 | `budget.py` | Resource limits and budget ledger |
@@ -59,6 +59,43 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `status.py` | Lightweight runtime diagnostics |
 | `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
 
+
+## Custos v0 Policy Runtime Resolver — Shadow Mode (P1.6.10)
+
+Custos v0 is the first component that turns policy-card *semantics* into a policy
+*judgment*. It is the bridge between the P1.6.0–P1.6.9 policy-card families and future
+runtime consequence.
+
+Conceptual flow:
+
+```
+CommandEnvelope + Agent/Operator context + execution request metadata
+  → PolicyResolutionContext        (deterministic, closed-world, hash-ready)
+  → applicable policy cards         (explicit list; grouped by family)
+  → per-family PolicyFamilyDecision (seven small adapters)
+  → strictest-wins aggregation      (DENY > REQUIRE_APPROVAL/ERROR > WARN > ALLOW > N/A)
+  → ResolvedPolicySet               (overall + WOULD_* shadow action, deterministic hash)
+```
+
+Layer distinction (do not collapse):
+
+- `PolicyResolutionContext` / `ResolvedPolicySet` — describe a proposed action and its
+  shadow judgment. They never enforce.
+- The resolver interprets cards; it does not compile prompts, run sandboxes, write
+  memory, or call tools.
+- Enforcement, registry binding, and Policy Conflict Algebra are later phases.
+
+Non-negotiable law for this phase: **the resolver does not modify
+`AgenticRuntime.submit()` and enforces nothing.** "Entity proposes, runtime disposes" —
+P1.6.10 does not yet dispose; it teaches Custos how to judge before it is allowed to
+enforce. Shadow outcomes are `WOULD_ALLOW`, `WOULD_WARN`, `WOULD_REQUIRE_APPROVAL`,
+`WOULD_DENY` (plus `WOULD_NOT_APPLY` / `WOULD_ERROR` at family level). No-applicable-card
+resolution is conservative (`WARN`), never a silent allow.
+
+Future consumers: Custos runtime governance, AurelRuntime preflight, AurelFlow approval
+pauses, AurelExec execution gates, AurelTrace decision evidence, P1.6.11 registry
+binding, P1.6.12 enforcement adapter, and P25/P29 hardening. P1.6.10 only produces the
+deterministic shadow judgment those consumers will later act on.
 
 ## Risk Tier Policy Cards (P1.6.3)
 

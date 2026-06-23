@@ -1,51 +1,68 @@
-# Active Task: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
+# Active Task: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode
 
-**Status:** COMPLETE
+**Status:** COMPLETE (shadow mode only)
 
 ## Roadmap Position
 
-- Last completed: P1.6.8 — Prompt Policy Card Model
-- Current stabilization: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
-- Next planned: P1.6.9 — Sandbox Policy Card Model
-- Last verified against commit: 3f65647f356eccac8b057592f894c9294bd01f5c
+- Last completed: P1.6.9 — Sandbox Policy Card Model
+- Current active: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode
+- Next planned: P1.6.11 — Policy Resolution Context & Registry Binding
 
 ## Objective
 
-Seal repository reality after P1.6.8 and before P1.6.9. This patch aligns git state, policy-card implementation truth, CLI subprocess tests, linting, validation results, and agent documentation. It does not add Sandbox Policy Card behavior.
+Take the first step from policy-card vocabulary toward policy adjudication. Implement
+Custos v0: a deterministic, hash-ready policy runtime resolver that interprets the
+P1.6.0–P1.6.9 policy cards into a single shadow-mode judgment — without enforcing
+anything and without touching `AgenticRuntime.submit()`.
 
-## Scope Completed
+Core principle: **P1.6.10 interprets policy cards; it does not enforce them.** This
+phase creates policy judgment without runtime punishment. "Entity proposes, runtime
+disposes" — P1.6.10 does not yet dispose.
 
-- Classified tracked, modified, and untracked repository state.
-- Preserved legitimate P1.6.4-P1.6.8 source, test, and report artifacts for final staging.
-- Removed the accidental root-level pager/help artifact named `ive identity, evaluation, contracts, and policy card infrastructure`.
-- Verified P1.6.8 Prompt Policy Card implementation, schema, errors, exports, closed-world validation, canonical serialization, deterministic hash readiness, and tests.
-- Added shared CLI subprocess helper `tests/cli_helpers.py`.
-- Refactored autonomy and measured-autonomy CLI tests off bare `python3 -m agentic_runtime.cli`.
-- Fixed all ruff findings in `src` and `tests`.
-- Reconciled docs to show P1.6.8 complete, P1.6.8S as the stabilization seal, and P1.6.9 next.
-- Added optional dev security tooling seeds (`bandit`, `pip-audit`) without making them hard gates.
+## Scope (completed)
+
+- `policy_cards/resolution_context.py` — `EnforcementMode` (SHADOW + reserved ENFORCE/SIMULATE), `PolicyResolutionContext` (closed-world, deterministic canonical serialization + SHA-256 hash, `from_dict`/`to_canonical_dict`).
+- `policy_cards/resolution_result.py` — `PolicyFamily`, `FamilyDecision` (ALLOW/WARN/REQUIRE_APPROVAL/DENY/NOT_APPLICABLE/ERROR), `ShadowAction` (WOULD_*), `PolicyFamilyDecision`, `ResolvedPolicySet` (deterministic canonical dict + hash, `would_allow/would_warn/would_require_approval/would_deny` predicates).
+- `policy_cards/resolver.py` — seven family adapters (risk tier, human oversight, data residency, tool permission, memory write, prompt, sandbox), strictest-wins MVP aggregation, `resolve_policy_cards()`, `PolicyRuntimeResolver`, `aggregate_family_decisions()`.
+- `policy_cards/errors.py` — 5 resolver errors (`PolicyResolutionError`, `PolicyResolutionValidationError`, `PolicyResolutionContextError`, `PolicyResolutionSerializationError`, `PolicyResolutionAdapterError`).
+- `policy_cards/__init__.py` — public exports for all resolver types/functions.
+- `tests/test_policy_resolver_p1610.py` — 51 tests.
+
+## Non-scope (deliberately NOT implemented)
+
+- No change to `AgenticRuntime.submit()`; no command is blocked, paused, or mutated.
+- No active enforcement, no approval gating at runtime, no ENFORCE/SIMULATE behavior (fail-closed rejected).
+- No full Policy Conflict Algebra; only strictest-wins MVP.
+- No registry / filesystem discovery / database of cards (P1.6.11); loading is explicit.
+- No Golden Thread B, no sandbox runtime behavior change, no Docker/Bubblewrap requirement, no runtime dependencies.
+- No Model Routing / Business Process policy cards.
+
+## Strictest-wins MVP
+
+`DENY > REQUIRE_APPROVAL (= ERROR, conservative) > WARN > ALLOW > NOT_APPLICABLE`.
+No applicable cards → conservative `WARN` (never silent ALLOW). Shadow map:
+DENY→WOULD_DENY, REQUIRE_APPROVAL→WOULD_REQUIRE_APPROVAL, WARN→WOULD_WARN,
+ALLOW→WOULD_ALLOW, NOT_APPLICABLE→WOULD_NOT_APPLY, ERROR→WOULD_ERROR (family) and
+conservative REQUIRE_APPROVAL at the aggregate.
+
+## Acceptance criteria — met
+
+Context + result types exist; resolver accepts explicit cards; determines applicable
+cards; emits per-family decisions; SHADOW only; WOULD_* semantics; strictest-wins;
+conservative no-card behavior; reason codes + applicable card IDs + source hashes in
+result; deterministic context/result serialization and hashes; no `submit()` change;
+no enforcement.
 
 ## Validation
 
 ```bash
-.venv/bin/python -m compileall src tests                                             # PASS
-.venv/bin/python -m pytest tests/test_prompt_policy_cards_p168.py -q --tb=line       # PASS, 74 passed
-.venv/bin/python -m pytest tests/test_policy_cards_p160.py tests/test_policy_cards_schema_p161.py tests/test_behavioral_contract_schema_p162.py tests/test_risk_tier_policy_cards_p163.py tests/test_human_oversight_policy_cards_p164.py tests/test_data_residency_policy_cards_p165.py tests/test_tool_permission_policy_cards_p166.py tests/test_memory_write_policy_cards_p167.py tests/test_prompt_policy_cards_p168.py -q --tb=line  # PASS, 540 passed
-.venv/bin/python -m pytest tests/test_autonomy_scale_engine.py tests/test_measured_autonomy_score.py -q --tb=line  # PASS, 85 passed
-.venv/bin/ruff check src tests                                                       # PASS
-.venv/bin/mypy src/agentic_runtime                                                   # PASS
-.venv/bin/python -m pytest -q --tb=line                                               # PASS, 3220 passed, 2 skipped
-.venv/bin/python -m pytest --cov=src/agentic_runtime --cov-report=term-missing -q --tb=no  # PASS, 79.27% coverage, 3220 passed, 2 skipped
+.venv/bin/python -m compileall src tests                                   # PASS
+.venv/bin/python -m pytest tests/test_policy_resolver_p1610.py -q          # PASS, 51 passed
+# all policy-card families + resolver
+.venv/bin/python -m pytest tests/test_policy_resolver_p1610.py tests/test_sandbox_policy_cards_p169.py tests/test_prompt_policy_cards_p168.py tests/test_memory_write_policy_cards_p167.py tests/test_tool_permission_policy_cards_p166.py tests/test_data_residency_policy_cards_p165.py tests/test_human_oversight_policy_cards_p164.py tests/test_risk_tier_policy_cards_p163.py -q   # PASS, 449 passed
+.venv/bin/ruff check src tests                                             # PASS (new files)
 ```
-
-## Deferred Structural Debt
-
-- `src/agentic_runtime/cli_modules/identity_commands.py` is large (3380 lines); split later during P1/P25 hardening.
-- Typed policy card modules repeat serialization/validation/hash patterns; consider a shared typed policy-card base after P1.6.10 or during P25 governance hardening.
-- `mypy` still disables several important error codes; tighten during P25/P29 hardening.
-- Security scanning is optional only; promote `bandit` / `pip-audit` to hard gates in P28/P29 if the workflow is ready.
-- Slow test marker discipline remains future P25/P30 test hardening work.
 
 ## Next
 
-- P1.6.9 — Sandbox Policy Card Model
+- P1.6.11 — Policy Resolution Context & Registry Binding

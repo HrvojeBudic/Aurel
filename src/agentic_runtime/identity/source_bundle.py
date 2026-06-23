@@ -1,9 +1,10 @@
 """Shared immutable identity source bundle (P1.4.7-MG / P1.4.12)."""
 from __future__ import annotations
+from collections.abc import Sequence
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Protocol, cast
 
 from ..prompts.compiler_policy import (
     IdentityPromptCompilerPolicy,
@@ -64,6 +65,12 @@ from .source_attestation import (
     hash_canonical_source,
     hash_raw_source,
 )
+
+
+class _ValidationResultLike(Protocol):
+    valid: bool
+    critical_failures: Sequence[str]
+    errors: Sequence[str]
 
 
 def _resolve_path(value: str | Path | None, default: Path) -> Path:
@@ -179,17 +186,22 @@ def load_identity_source_bundle(
         "agent_identity_card_config": hash_canonical_source(card_config),
     }
 
-    validation_results = {
-        SourceKind.IDENTITY_KERNEL: validate_identity_kernel(identity_kernel),
-        SourceKind.PERSONA_MANIFEST: validate_persona_manifest(persona_manifest),
-        SourceKind.OPERATOR_CONTRACT: validate_operator_contract(operator_contract),
-        SourceKind.COMMUNICATION_MODES: validate_communication_mode_registry(mode_registry),
-        SourceKind.IDENTITY_PROMPT_COMPILER: validate_identity_prompt_compiler_policy(
-            compiler_policy
-        ),
-        SourceKind.SELF_MODEL_POLICY: validate_self_model_policy(self_model_policy),
-        SourceKind.AGENT_IDENTITY_CARD_CONFIG: validate_agent_identity_card_config(card_config),
-    }
+    validation_results = cast(
+        dict[SourceKind, _ValidationResultLike],
+        {
+            SourceKind.IDENTITY_KERNEL: validate_identity_kernel(identity_kernel),
+            SourceKind.PERSONA_MANIFEST: validate_persona_manifest(persona_manifest),
+            SourceKind.OPERATOR_CONTRACT: validate_operator_contract(operator_contract),
+            SourceKind.COMMUNICATION_MODES: validate_communication_mode_registry(mode_registry),
+            SourceKind.IDENTITY_PROMPT_COMPILER: validate_identity_prompt_compiler_policy(
+                compiler_policy
+            ),
+            SourceKind.SELF_MODEL_POLICY: validate_self_model_policy(self_model_policy),
+            SourceKind.AGENT_IDENTITY_CARD_CONFIG: validate_agent_identity_card_config(
+                card_config
+            ),
+        },
+    )
     typed_objects = {
         SourceKind.IDENTITY_KERNEL: identity_kernel,
         SourceKind.PERSONA_MANIFEST: persona_manifest,
@@ -255,7 +267,7 @@ def load_identity_source_bundle(
 
 def validate_identity_source_bundle(bundle: IdentitySourceBundle) -> tuple[str, ...]:
     """Validate all bundle sources; return critical failure messages."""
-    checks = (
+    checks: tuple[_ValidationResultLike, ...] = (
         validate_identity_kernel(bundle.identity_kernel),
         validate_persona_manifest(bundle.persona_manifest),
         validate_operator_contract(bundle.operator_contract),

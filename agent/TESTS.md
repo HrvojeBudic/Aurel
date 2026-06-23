@@ -18,6 +18,37 @@ pytest -q
 python -m agentic_runtime.cli verify
 ```
 
+## P1.6.10 Verification (Custos v0 Policy Runtime Resolver — Shadow Mode)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_resolver_p1610.py -q
+# resolver + all policy-card families
+.venv/bin/python -m pytest tests/test_policy_resolver_p1610.py tests/test_sandbox_policy_cards_p169.py tests/test_prompt_policy_cards_p168.py tests/test_memory_write_policy_cards_p167.py tests/test_tool_permission_policy_cards_p166.py tests/test_data_residency_policy_cards_p165.py tests/test_human_oversight_policy_cards_p164.py tests/test_risk_tier_policy_cards_p163.py -q
+.venv/bin/ruff check src/agentic_runtime/policy_cards/resolver.py src/agentic_runtime/policy_cards/resolution_context.py src/agentic_runtime/policy_cards/resolution_result.py tests/test_policy_resolver_p1610.py
+```
+
+P1.6.10 local results: compileall **PASS (exit 0)**; resolver focused suite
+**51 passed**; resolver + P1.6.3–P1.6.9 policy-card suites **449 passed**; ruff on new
+files **PASS**.
+
+`tests/test_policy_resolver_p1610.py` (51 tests) covers nine blocks: (1) context
+construction / canonical serialization / hash determinism / closed-world `from_dict`;
+(2) no-card and no-applicable-card conservative behavior (never silent allow); (3) the
+seven single-family adapters; (4) strictest-wins aggregation + deterministic ordering +
+same-input-same-hash; (5) shadow mode (`enforcement_mode == SHADOW`, `WOULD_*` actions,
+ENFORCE/SIMULATE fail-closed, resolver usable independently of the runtime);
+(6) `ResolvedPolicySet` canonical serialization + hash + source ids/hashes + context
+hash; (7) cross-family resolution and aggregation of violations/approvals/card-ids;
+(8) public exports + error hierarchy + no circular import; (9) non-enforcement
+guarantees (no enforcement surface; resolver does not import or call the runtime;
+side-effect free).
+
+Honesty note: full `pytest -q`, `--cov`, and `mypy src/agentic_runtime` were **not
+re-run to completion in this session** (mypy was interrupted). The resolver is additive
+(new modules + additive exports/errors); confirm the full suite, coverage ≥ 75%, and
+`mypy src/agentic_runtime` before commit.
+
 ## P1.6.8S Verification
 
 Last verified against commit: 3f65647f356eccac8b057592f894c9294bd01f5c

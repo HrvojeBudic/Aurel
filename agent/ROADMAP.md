@@ -8,10 +8,14 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | P1.6.8S — Repository Reality & Policy Card Stabilization Seal |
-| **Last completed** | P1.6.8 — Prompt Policy Card Model |
-| **Previous** | P1.6.7 — Memory Write Policy Card Model |
-| **Next planned** | P1.6.9 — Sandbox Policy Card Model |
+| **Current active** | P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode |
+| **Last completed** | P1.6.9 — Sandbox Policy Card Model |
+| **Previous** | P1.6.8S — Repository Reality & Policy Card Stabilization Seal |
+| **Next planned** | P1.6.11 — Policy Resolution Context & Registry Binding |
+
+**P1.6.10 complete (shadow mode)** — Custos v0 Policy Runtime Resolver: the first step from policy vocabulary toward policy adjudication. New `resolution_context.py` (`PolicyResolutionContext`, `EnforcementMode`), `resolution_result.py` (`PolicyFamily`, `FamilyDecision`, `ShadowAction`, `PolicyFamilyDecision`, `ResolvedPolicySet`), and `resolver.py` (seven family adapters + strictest-wins MVP aggregation + `resolve_policy_cards` / `PolicyRuntimeResolver`). Deterministic canonical serialization + SHA-256 hashing for context and result. Shadow-mode only (`WOULD_ALLOW/WARN/REQUIRE_APPROVAL/DENY`), conservative no-applicable-card behavior (never silent allow), closed-world context loading, fail-closed on non-SHADOW modes. **Does not modify `AgenticRuntime.submit()` and enforces nothing** — Custos learns to judge before it is allowed to dispose. 51 new tests. Next: P1.6.11 registry binding.
+
+**P1.6.9 complete** — Sandbox Policy Card Model: 6 enums (SandboxBackend, FilesystemScope, EgressPolicy, CommandClass, SandboxCommandDecision, ApprovalRequirement), backend/filesystem/egress/command-class rules, risk-tier sandbox mappings, approval policy, and a resolver-ready `evaluate_sandbox_policy_decision()` producing `SandboxPolicyDecision` (consumed by P1.6.10). Deny-by-default posture, secrets-path/escape detection, deterministic serialization + hash — semantics only, no real sandbox execution, no Docker/Bubblewrap hard dependency.
 
 **P1.6.8S stabilization complete** — Repository Reality & Policy Card Stabilization Seal: reconciles git/docs/test/lint reality after P1.6.8, preserves legitimate P1.6.4-P1.6.8 policy-card artifacts for final staging, fixes bare-python CLI subprocess tests through a shared helper, clears ruff/mypy/full-suite/coverage validation, records deferred structural debt, and keeps P1.6.9 as the next feature phase. No Sandbox Policy Card behavior is implemented here.
 

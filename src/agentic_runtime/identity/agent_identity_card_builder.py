@@ -1,8 +1,10 @@
 """Build Agent Identity Card from validated identity sources (P1.4.7)."""
 from __future__ import annotations
+from collections.abc import Sequence
 
 from dataclasses import replace
 from pathlib import Path
+from typing import Protocol
 
 from .. import __version__ as RUNTIME_VERSION
 from ..prompts.compiler_policy import IdentityPromptCompilerPolicy
@@ -48,6 +50,12 @@ from .source_bundle import (
 )
 
 
+class _ValidationResultLike(Protocol):
+    valid: bool
+    critical_failures: Sequence[str]
+    errors: Sequence[str]
+
+
 def _validate_sources_or_raise(
     identity_kernel: AurelIdentityKernel,
     persona_manifest: AurelPersonaManifest,
@@ -58,7 +66,7 @@ def _validate_sources_or_raise(
     self_model_policy: SelfModelPolicy,
     card_config: AgentIdentityCardConfig,
 ) -> None:
-    checks = (
+    checks: tuple[_ValidationResultLike, ...] = (
         validate_agent_identity_card_config(card_config),
         validate_identity_kernel(identity_kernel),
         validate_persona_manifest(persona_manifest),

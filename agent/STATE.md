@@ -1,13 +1,25 @@
 # Repository State
 
-_Last updated: 2026-06-23 (P1.6.8S - Repository Reality & Policy Card Stabilization Seal)_
+_Last updated: 2026-06-23 (P1.6.10 - Custos v0 Policy Runtime Resolver / Shadow Mode)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.8 — Prompt Policy Card Model
-- Current stabilization: P1.6.8S — Repository Reality & Policy Card Stabilization Seal
-- Next planned: P1.6.9 — Sandbox Policy Card Model
-- Last verified against commit: 3f65647f356eccac8b057592f894c9294bd01f5c
+- Last completed: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode (and P1.6.9 — Sandbox Policy Card Model)
+- Current active: P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode
+- Next planned: P1.6.11 — Policy Resolution Context & Registry Binding
+
+### P1.6.10 Custos v0 Policy Runtime Resolver (COMPLETE — shadow mode only)
+
+- `policy_cards/resolution_context.py`: `PolicyResolutionContext` (closed-world, deterministic canonical serialization + SHA-256 `context_hash`, `from_dict`); `EnforcementMode` (SHADOW supported; ENFORCE/SIMULATE reserved, fail-closed rejected).
+- `policy_cards/resolution_result.py`: `PolicyFamily`, `FamilyDecision`, `ShadowAction` (WOULD_*), `PolicyFamilyDecision`, `ResolvedPolicySet` (deterministic canonical dict + SHA-256 `canonical_hash`; `would_allow/would_warn/would_require_approval/would_deny`).
+- `policy_cards/resolver.py`: seven family adapters (risk tier, human oversight, data residency, tool permission, memory write, prompt, sandbox), strictest-wins MVP aggregation, `resolve_policy_cards()`, `PolicyRuntimeResolver`, `aggregate_family_decisions()`.
+- Resolver accepts explicit cards, determines applicable cards minimally, emits per-family decisions, SHADOW only, WOULD_* effective actions, strictest-wins works, no-card / no-applicable-card behavior is conservative WARN (never silent allow); result carries reason codes, applicable card IDs, source hashes, context hash; deterministic serialization + hashes.
+- **`AgenticRuntime.submit()` is NOT modified; nothing is enforced.** Custos interprets policy cards; it does not yet dispose. 5 resolver error classes added. 51 new tests in `tests/test_policy_resolver_p1610.py`.
+- Limitations: MVP adapters (not full semantics), no Policy Conflict Algebra, no registry binding (P1.6.11), explicit card loading only. Full-suite/coverage/`mypy src/agentic_runtime` should be confirmed before commit.
+
+### P1.6.9 Sandbox Policy Card (COMPLETE)
+
+- `policy_cards/sandbox.py` + `sandbox_schema.py`: 6 enums, backend/filesystem/egress/command-class rules, risk-tier sandbox mappings, approval policy, deny-by-default, secrets-path/escape detection, deterministic serialization + hash, and resolver-ready `evaluate_sandbox_policy_decision()` → `SandboxPolicyDecision` consumed by P1.6.10. No real sandbox execution; no Docker/Bubblewrap dependency.
 
 ## What works
 

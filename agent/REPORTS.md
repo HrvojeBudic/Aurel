@@ -2,6 +2,8 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode](reports/P1.6.10_CUSTOS_V0_POLICY_RUNTIME_RESOLVER_SHADOW_MODE_REPORT.md) | 2026-06-23 | First step from policy vocabulary to adjudication: PolicyResolutionContext + ResolvedPolicySet + 7 family adapters + strictest-wins MVP, shadow-mode WOULD_* outcomes, deterministic hashes, no `submit()` change, no enforcement, 51 tests |
+| [P1.6.9 Sandbox Policy Card Model](reports/P1.6.9_SANDBOX_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Sandbox Policy Card Model v1: 6 enums, backend/filesystem/egress/command rules, risk-tier sandbox mappings, resolver-ready `evaluate_sandbox_policy_decision()`, deny-by-default, secrets-path detection — semantics only, no real sandbox execution |
 | [P1.6.8S Repository Reality & Policy Card Stabilization Seal](reports/P1.6.8S_REPOSITORY_REALITY_AND_POLICY_CARD_STABILIZATION_SEAL.md) | 2026-06-23 | Governance integrity seal after P1.6.8: git/docs/test/lint reality reconciled, CLI subprocess helper added, ruff/mypy/full-suite/coverage pass, P1.6.9 remains next |
 | [P1.6.8 Prompt Policy Card Model](reports/P1.6.8_PROMPT_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Prompt Policy Card Model v1: 7 enums, 5 frozen dataclasses, strict deny-by-default, untrusted-cannot-command, tool-output-is-data, retrieved-memory-is-context, injection-risk vocabulary, 74 tests |
 | [P1.6.7 Memory Write Policy Card Model](reports/P1.6.7_MEMORY_WRITE_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Memory Write Policy Card Model v1: 6 enums, 5 frozen dataclasses, deny-by-default, no silent canon/policy writes, verified-skill verification, credentials-not-durable, 60 tests |
