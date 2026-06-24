@@ -522,6 +522,9 @@ from .errors import (
     PolicyResolutionSerializationError,
     PolicyResolutionValidationError,
     PolicyRiskMappingError,
+    PolicyRuntimeProjectionError,
+    PolicyRuntimeSnapshotValidationError,
+    PolicyShadowProjectionError,
 )
 from .risk_mapping import (
     RiskMappingResult,
@@ -541,6 +544,22 @@ from .context_binding import (
 from .registry import (
     PolicyCardApplicability,
     PolicyCardRegistry,
+)
+from .runtime_projection import (
+    CustosEffectiveAction,
+    PolicyRuntimeAlignment,
+    PolicyRuntimeMismatch,
+    PolicyShadowProjection,
+    RuntimeEffectiveAction,
+    RuntimePolicySnapshot,
+    compute_policy_shadow_projection_hash,
+    compute_runtime_policy_snapshot_hash,
+    policy_shadow_projection_to_canonical_dict,
+    project_policy_resolution_against_runtime,
+    runtime_policy_snapshot_to_canonical_dict,
+    serialize_policy_shadow_projection_canonical,
+    serialize_runtime_policy_snapshot_canonical,
+    shadow_projection_error_payload,
 )
 
 __all__ = [
@@ -1078,4 +1097,22 @@ __all__ = [
     "PolicyCardRegistryValidationError",
     "PolicyContextBindingError",
     "PolicyRiskMappingError",
+    # - Runtime shadow projection (P1.6.12) -
+    "RuntimePolicySnapshot",
+    "PolicyShadowProjection",
+    "RuntimeEffectiveAction",
+    "CustosEffectiveAction",
+    "PolicyRuntimeAlignment",
+    "PolicyRuntimeMismatch",
+    "runtime_policy_snapshot_to_canonical_dict",
+    "serialize_runtime_policy_snapshot_canonical",
+    "compute_runtime_policy_snapshot_hash",
+    "policy_shadow_projection_to_canonical_dict",
+    "serialize_policy_shadow_projection_canonical",
+    "compute_policy_shadow_projection_hash",
+    "project_policy_resolution_against_runtime",
+    "shadow_projection_error_payload",
+    "PolicyRuntimeProjectionError",
+    "PolicyRuntimeSnapshotValidationError",
+    "PolicyShadowProjectionError",
 ]

@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-23 (P1.6.11 — Policy Resolution Context & Registry Binding)_
+_Last updated: 2026-06-23 (P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix
-- Current active: **P1.6.11 — Policy Resolution Context & Registry Binding**
-- Next planned: P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection
+- Last completed: P1.6.11 — Policy Resolution Context & Registry Binding
+- Current active: **P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook**
+- Next planned: P1.6.13 — Policy Enforcement Adapter Hardening
 
-**P1.6.11 is the current active feature phase.**
-P1.6.10H is last completed and sealed runtime/security/coverage/documentation truth before registry binding.
+**P1.6.12 is the current active feature phase.**
+P1.6.11 is last completed and sealed deterministic registry/context binding before submit observability.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 
@@ -38,6 +38,16 @@ Documentation:
 - `tests/test_policy_registry_binding_p1611.py`: 22 focused tests for registry construction, duplicate handling, family/scope lookup, applicability, context binding, risk mapping, resolver integration, exports, and non-enforcement guarantees.
 
 **P1.6.11 binds policy-card discovery and context assembly to the Custos v0 resolver, but it does not enforce resolver outcomes through `AgenticRuntime.submit()`.** No command blocking, approval activation, sandbox runtime bridge, or active runtime policy-card enforcement is implemented.
+
+### P1.6.12 Custos Shadow Runtime Projection & Submit Observability Hook (ACTIVE — observability only)
+
+- `policy_cards/runtime_projection.py`: `RuntimePolicySnapshot`, `PolicyShadowProjection`, effective-action/alignment/mismatch enums, deterministic canonical dict/hash helpers, and JSON-safe validation. Projection objects are hard-coded shadow-only (`mode="shadow_only"`, `enforced=False`) and expose no enforcement-like methods.
+- `AgenticRuntime.submit()`: optional default-disabled hook attaches `ObservationEnvelope.artifacts["policy_shadow_projection"]` before transition append when both `enable_policy_shadow_projection=True` and an explicit `PolicyCardRegistry` are configured.
+- `build_runtime()`: accepts `policy_card_registry` and `enable_policy_shadow_projection`, both defaulting to no-op behavior. Runtime creates no default cards, discovers no files, and uses no global registry.
+- Runtime behavior remains P0-authoritative: policy, approval, sandbox, budget, verifier, rollback, trace, and memory outcomes are unchanged by Custos shadow decisions. Shadow failures attach `SHADOW_ERROR` metadata and do not crash submit.
+- `tests/test_policy_runtime_projection_p1612.py` and `tests/test_runtime_custos_shadow_submit_p1612.py`: 26 focused tests covering projection determinism, matrix behavior, no-enforcement invariants, submit no-op modes, stricter Custos/runtime visibility, sandbox mismatch visibility, shadow failure degradation, approval behavior, verifier, and rollback-preserving write success.
+
+**Custos shadow decisions are not enforcement decisions. P0 runtime remains authoritative.** Fail-closed apply, `run_shell` string rejection, and Bandit B310/B108 fixes remain deferred.
 
 ### Sandbox Layer Disambiguation
 

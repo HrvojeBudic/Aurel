@@ -316,3 +316,20 @@ class PolicyContextBindingError(PolicyResolutionContextError):
 
 class PolicyRiskMappingError(PolicyResolutionError):
     """Raised when a risk vocabulary value cannot be translated safely."""
+
+
+# ---------------------------------------------------------------------------
+# Runtime projection errors (P1.6.12)
+# ---------------------------------------------------------------------------
+
+
+class PolicyRuntimeProjectionError(PolicyResolutionError):
+    """Base error for comparing Custos shadow resolution with runtime posture."""
+
+
+class PolicyRuntimeSnapshotValidationError(PolicyRuntimeProjectionError):
+    """Raised when a runtime policy snapshot is not deterministic or JSON-safe."""
+
+
+class PolicyShadowProjectionError(PolicyRuntimeProjectionError):
+    """Raised when a shadow projection payload is invalid."""

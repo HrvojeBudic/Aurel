@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import threading
 from dataclasses import dataclass
-from typing import Literal, Protocol
+from typing import Any, Literal, Protocol
 
 from .budget import BudgetExceeded, BudgetLedger
 from .approval import (
@@ -34,6 +34,7 @@ from .approval import (
     ApprovalPolicy,
     ApprovalReceipt,
     ApprovalRequest,
+    ApprovalRequirement,
     build_preview,
 )
 from .core_types import (AgentCard, ApprovalReceiptRecord, CommandEnvelope,
@@ -45,6 +46,16 @@ from .hitl import ApprovalGate
 from .memory import MemoryFabric
 from .memory_governance import MemoryWriteRequest
 from .policy import PolicyEngine, PolicyDecision
+from .policy_cards.context_binding import build_policy_resolution_context
+from .policy_cards.registry import PolicyCardRegistry
+from .policy_cards.resolver import resolve_policy_cards_from_registry
+from .policy_cards.runtime_projection import (
+    RuntimeEffectiveAction,
+    RuntimePolicySnapshot,
+    compute_runtime_policy_snapshot_hash,
+    project_policy_resolution_against_runtime,
+    shadow_projection_error_payload,
+)
 from .sandbox_policy import SandboxDecision, SandboxPolicy
 from .tool_contracts import (ContractValidationResult, ToolContractRegistry,
                              ToolInputValidator, ToolOutputValidator,
@@ -91,7 +102,9 @@ class AgenticRuntime:
                  budget: BudgetLedger,
                  contracts: ToolContractRegistry | None = None,
                  approval_policy: ApprovalPolicy | None = None,
-                 sandbox_policy: SandboxPolicy | None = None) -> None:
+                 sandbox_policy: SandboxPolicy | None = None,
+                 policy_card_registry: PolicyCardRegistry | None = None,
+                 enable_policy_shadow_projection: bool = False) -> None:
         self.tools = tool_runtime
         self.policy = policy
         self.verifier = verifier
@@ -102,6 +115,8 @@ class AgenticRuntime:
         self.contracts = contracts or default_contract_registry()
         self.approval_policy = approval_policy or ApprovalPolicy()
         self.sandbox_policy = sandbox_policy
+        self.policy_card_registry = policy_card_registry
+        self.enable_policy_shadow_projection = enable_policy_shadow_projection
         self.input_validator = ToolInputValidator()
         self.output_validator = ToolOutputValidator()
         self._write_lock = threading.Lock()  # single-writer canonical state
@@ -116,11 +131,12 @@ class AgenticRuntime:
         contract, gate = self.contracts.resolve_for_execution(
             cmd.tool, self.tools.registered)
         if not gate.ok:
-            return self._contract_blocked(pre_policy_hash, cmd, gate, phase="registry")
+            return self._contract_blocked(
+                pre_policy_hash, cmd, gate, phase="registry", card=card)
         input_check = self.input_validator.validate(contract, cmd.args)
         if not input_check.ok:
             return self._contract_blocked(
-                pre_policy_hash, cmd, input_check, phase="input")
+                pre_policy_hash, cmd, input_check, phase="input", card=card)
 
         self.budget.ensure_context(
             run_id=self.trace.run_id,
@@ -134,7 +150,7 @@ class AgenticRuntime:
                 agent_id=cmd.issuer_card_id,
             )
         except BudgetExceeded as e:
-            self._budget_blocked(pre_policy_hash, cmd, e)
+            self._budget_blocked(pre_policy_hash, cmd, e, card=card)
             raise
         # ---- 1. POLICY ------------------------------------------------- #
         decision = self.policy.evaluate(cmd, card)
@@ -142,6 +158,13 @@ class AgenticRuntime:
             obs = ObservationEnvelope.make(cmd.id, success=False,
                 stderr="DENIED by policy: " + "; ".join(decision.reasons))
             vres = VerifierResult(False, "policy", reason="denied")
+            runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+                cmd,
+                card,
+                decision=decision,
+                blocker_codes=("POLICY_DENY",),
+            )
+            self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
             rec = self._append_transition(
                 cmd, decision.verdict, obs, vres, pre_policy_hash, pre_policy_hash
             )
@@ -155,6 +178,8 @@ class AgenticRuntime:
                 pre_policy_hash, cmd, decision, requirement.reason,
                 outcome=ApprovalOutcome.AUTO_DENIED,
                 decided_by="approval_policy",
+                card=card,
+                approval_requirement=requirement,
             )
 
         preview = build_preview(cmd, self.tools.sandbox, tool_spec) if requirement.preview_required else None
@@ -209,22 +234,39 @@ class AgenticRuntime:
                     approval_decision.reason,
                     approval_decision=approval_decision,
                     approval_receipt=approval_receipt,
+                    card=card,
+                    approval_requirement=requirement,
                 )
 
         # ---- 2b. SANDBOX PROFILE --------------------------------------- #
+        sb_decision: SandboxDecision | None = None
         if self.sandbox_policy is not None:
             sb_decision = self.sandbox_policy.check_tool(
                 cmd.tool, tool_spec, cmd.args)
             if not sb_decision.allowed:
                 return self._sandbox_blocked(
-                    pre_policy_hash, cmd, decision, sb_decision)
+                    pre_policy_hash,
+                    cmd,
+                    decision,
+                    sb_decision,
+                    card=card,
+                    approval_requirement=requirement,
+                )
 
         # ---- 3. BUDGET ------------------------------------------------- #
         try:
             self.budget.charge_tool(agent_id=cmd.issuer_card_id)
             self.budget.charge_sandbox_execution()
         except BudgetExceeded as e:
-            self._budget_blocked(pre_policy_hash, cmd, e)
+            self._budget_blocked(
+                pre_policy_hash,
+                cmd,
+                e,
+                card=card,
+                decision=decision,
+                approval_requirement=requirement,
+                sandbox_decision=sb_decision,
+            )
             raise
 
         is_write = cmd.tool in _WRITE_TOOLS
@@ -247,7 +289,16 @@ class AgenticRuntime:
                 if is_write:
                     _rolled, rollback_err = self._attempt_write_rollback(snap_id)
                 self._budget_blocked(
-                    before_hash, cmd, e, obs=obs, rollback_error=rollback_err or None)
+                    before_hash,
+                    cmd,
+                    e,
+                    obs=obs,
+                    rollback_error=rollback_err or None,
+                    card=card,
+                    decision=decision,
+                    approval_requirement=requirement,
+                    sandbox_decision=sb_decision,
+                )
                 raise
 
             after_hash = self.tools.sandbox.state_hash()
@@ -282,6 +333,14 @@ class AgenticRuntime:
         # ---- 8. TRACE (hash-chained) ---------------------------------- #
         if not output_check.ok:
             self._trace_contract_violation(cmd, "output", output_check)
+        runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+            cmd,
+            card,
+            decision=decision,
+            approval_requirement=requirement,
+            sandbox_decision=sb_decision,
+        )
+        self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, after_hash
         )
@@ -315,6 +374,8 @@ class AgenticRuntime:
         decided_by: str = "approval_gate",
         approval_decision: ApprovalDecision | None = None,
         approval_receipt: ApprovalReceipt | None = None,
+        card: AgentCard | None = None,
+        approval_requirement: ApprovalRequirement | None = None,
     ) -> CommandResult:
         if approval_decision is None:
             approval_decision = ApprovalDecision(
@@ -343,6 +404,16 @@ class AgenticRuntime:
                 "decided_by": approval_decision.decided_by,
             },
         )
+        if card is not None:
+            runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+                cmd,
+                card,
+                decision=decision,
+                approval_requirement=approval_requirement,
+                approval_outcome=approval_decision.outcome.value,
+                blocker_codes=("APPROVAL_DENIED",),
+            )
+            self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, before_hash)
         return CommandResult(
@@ -379,6 +450,7 @@ class AgenticRuntime:
         cmd: CommandEnvelope,
         check: ContractValidationResult,
         phase: str,
+        card: AgentCard | None = None,
     ) -> CommandResult:
         """Input/registry contract violation: deny BEFORE policy/budget/exec."""
         self._trace_contract_violation(cmd, phase, check)
@@ -395,6 +467,14 @@ class AgenticRuntime:
         decision = PolicyDecision(
             PolicyVerdict.DENY, RiskLevel.CRITICAL,
             [f"tool contract violation ({phase}): {check.message}"])
+        if card is not None:
+            runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+                cmd,
+                card,
+                decision=decision,
+                blocker_codes=("TOOL_CONTRACT_BLOCK",),
+            )
+            self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, before_hash)
         return CommandResult(obs, vres, decision, transition=rec)
@@ -415,6 +495,13 @@ class AgenticRuntime:
             False, "policy", reason="issuer_mismatch", code="ISSUER_MISMATCH")
         decision = PolicyDecision(
             PolicyVerdict.DENY, RiskLevel.CRITICAL, [msg])
+        runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+            cmd,
+            card,
+            decision=decision,
+            blocker_codes=("ISSUER_MISMATCH",),
+        )
+        self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, before_hash)
         return CommandResult(obs, vres, decision, transition=rec)
@@ -425,6 +512,9 @@ class AgenticRuntime:
         cmd: CommandEnvelope,
         decision: PolicyDecision,
         sb_decision: SandboxDecision,
+        *,
+        card: AgentCard | None = None,
+        approval_requirement: ApprovalRequirement | None = None,
     ) -> CommandResult:
         violation = sb_decision.violation
         profile = self.sandbox_policy.profile.profile_name if self.sandbox_policy else ""
@@ -464,6 +554,16 @@ class AgenticRuntime:
             PolicyVerdict.DENY, RiskLevel.HIGH,
             [f"sandbox violation: {sb_decision.reason}"],
         )
+        if card is not None:
+            runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+                cmd,
+                card,
+                decision=deny,
+                approval_requirement=approval_requirement,
+                sandbox_decision=sb_decision,
+                blocker_codes=("SANDBOX_BLOCK",),
+            )
+            self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         rec = self._append_transition(
             cmd, deny.verdict, obs, vres, before_hash, before_hash)
         return CommandResult(obs, vres, deny, transition=rec)
@@ -581,6 +681,10 @@ class AgenticRuntime:
         err: BudgetExceeded,
         obs: ObservationEnvelope | None = None,
         rollback_error: str | None = None,
+        card: AgentCard | None = None,
+        decision: PolicyDecision | None = None,
+        approval_requirement: ApprovalRequirement | None = None,
+        sandbox_decision: SandboxDecision | None = None,
     ) -> None:
         reason = str(err)
         observation = obs or ObservationEnvelope.make(
@@ -599,6 +703,16 @@ class AgenticRuntime:
             reason="budget exceeded",
             code="BUDGET_EXCEEDED",
         )
+        if card is not None:
+            runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+                cmd,
+                card,
+                decision=decision,
+                approval_requirement=approval_requirement,
+                sandbox_decision=sandbox_decision,
+                blocker_codes=("BUDGET_EXCEEDED",),
+            )
+            self._attach_policy_shadow_projection(cmd, card, observation, runtime_snapshot)
         rec = self._append_transition(
             cmd,
             PolicyVerdict.DENY,
@@ -608,6 +722,161 @@ class AgenticRuntime:
             before_hash,
         )
         _ = rec
+
+
+    def _policy_shadow_enabled(self) -> bool:
+        return bool(self.enable_policy_shadow_projection and self.policy_card_registry)
+
+    def _build_policy_resolution_context_for_submit(
+        self,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        runtime_snapshot: RuntimePolicySnapshot,
+    ):
+        paths = tuple(
+            str(value)
+            for key in ("path", "file", "root", "repo_path")
+            if (value := cmd.args.get(key)) is not None and isinstance(value, str)
+        )
+        network_targets = tuple(
+            str(value)
+            for key in ("url", "endpoint", "host")
+            if (value := cmd.args.get(key)) is not None and isinstance(value, str)
+        )
+        profile = self.sandbox_policy.profile if self.sandbox_policy is not None else None
+        requested_backend = profile.mode.value if profile is not None else None
+        requested_filesystem_scope = None
+        requested_egress = None
+        if profile is not None:
+            if not profile.allow_read and not profile.allow_write:
+                requested_filesystem_scope = "no_filesystem"
+            elif profile.allow_write:
+                requested_filesystem_scope = "read_write_project"
+            else:
+                requested_filesystem_scope = "read_only_project"
+            requested_egress = "any_egress" if profile.allow_network else "no_egress"
+
+        decision_risk = runtime_snapshot.policy_risk or cmd.declared_risk.value
+        return build_policy_resolution_context(
+            {
+                "agent_id": card.id,
+                "command_id": cmd.id,
+                "command_summary": f"{cmd.tool}: {cmd.expected_effect}",
+                "requested_action": cmd.tool,
+                "tool_name": cmd.tool,
+                "runtime_risk": decision_risk,
+                "command_class": _policy_card_command_class(cmd),
+                "requested_sandbox_backend": requested_backend,
+                "requested_filesystem_scope": requested_filesystem_scope,
+                "requested_egress": requested_egress,
+                "requested_paths": paths,
+                "requested_network_targets": network_targets,
+                "memory_write_intent": cmd.tool in {"write_memory", "memory_write"},
+                "touches_secrets": _touches_secrets(cmd),
+                "writes_files": _writes_files(cmd),
+                "runs_shell": cmd.tool in {"run_shell", "run_python", "run_tests"},
+                "installs_packages": _installs_packages(cmd),
+                "requires_network": bool(network_targets) or cmd.tool == "network_fetch",
+                "metadata": {
+                    "runtime_effective_action": runtime_snapshot.runtime_effective_action.value,
+                    "policy_verdict": runtime_snapshot.policy_verdict,
+                    "approval_required": runtime_snapshot.approval_required,
+                    "sandbox_allowed": runtime_snapshot.sandbox_allowed,
+                },
+            }
+        )
+
+    def _build_runtime_policy_snapshot_for_submit(
+        self,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        *,
+        decision: PolicyDecision | None = None,
+        approval_requirement: ApprovalRequirement | None = None,
+        sandbox_decision: SandboxDecision | None = None,
+        approval_outcome: str = "",
+        blocker_codes: tuple[str, ...] = (),
+    ) -> RuntimePolicySnapshot:
+        _ = card
+        action = RuntimeEffectiveAction.RUNTIME_UNKNOWN
+        if blocker_codes:
+            action = RuntimeEffectiveAction.RUNTIME_DENY
+        elif decision is not None and decision.verdict is PolicyVerdict.DENY:
+            action = RuntimeEffectiveAction.RUNTIME_DENY
+        elif sandbox_decision is not None and not sandbox_decision.allowed:
+            action = RuntimeEffectiveAction.RUNTIME_DENY
+        elif approval_requirement is not None and approval_requirement.auto_deny:
+            action = RuntimeEffectiveAction.RUNTIME_DENY
+        elif (
+            decision is not None
+            and (
+                decision.verdict is PolicyVerdict.REQUIRE_APPROVAL
+                or (approval_requirement is not None and approval_requirement.required)
+            )
+        ):
+            action = RuntimeEffectiveAction.RUNTIME_REQUIRE_APPROVAL
+        elif decision is not None and decision.verdict is PolicyVerdict.ALLOW:
+            action = RuntimeEffectiveAction.RUNTIME_ALLOW
+
+        reasons = tuple(decision.reasons) if decision is not None else ()
+        if approval_requirement is not None and approval_requirement.reason:
+            reasons = (*reasons, approval_requirement.reason)
+        if sandbox_decision is not None and sandbox_decision.reason:
+            reasons = (*reasons, sandbox_decision.reason)
+
+        return RuntimePolicySnapshot(
+            runtime_effective_action=action,
+            policy_verdict=decision.verdict.value if decision is not None else "",
+            policy_risk=decision.risk.value if decision is not None else cmd.declared_risk.value,
+            approval_required=bool(
+                approval_requirement is not None
+                and (approval_requirement.required or approval_requirement.auto_deny)
+            ),
+            approval_outcome=approval_outcome,
+            sandbox_allowed=(
+                sandbox_decision.allowed if sandbox_decision is not None else None
+            ),
+            blocker_codes=blocker_codes,
+            reason_codes=tuple(sorted(set(reasons))),
+            violations=blocker_codes,
+            metadata={"tool": cmd.tool},
+        )
+
+    def _attach_policy_shadow_projection(
+        self,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        obs: ObservationEnvelope,
+        runtime_snapshot: RuntimePolicySnapshot,
+    ) -> None:
+        if not self._policy_shadow_enabled():
+            return
+        registry = self.policy_card_registry
+        context_hash = ""
+        registry_hash = ""
+        runtime_snapshot_hash = compute_runtime_policy_snapshot_hash(runtime_snapshot)
+        try:
+            if registry is None:
+                return
+            registry_hash = registry.canonical_hash()
+            context = self._build_policy_resolution_context_for_submit(
+                cmd, card, runtime_snapshot
+            )
+            context_hash = context.context_hash
+            resolved = resolve_policy_cards_from_registry(context, registry)
+            projection = project_policy_resolution_against_runtime(
+                runtime_snapshot,
+                resolved,
+                registry_hash=registry_hash,
+            )
+            obs.artifacts["policy_shadow_projection"] = projection.to_canonical_dict()
+        except Exception as exc:
+            obs.artifacts["policy_shadow_projection"] = shadow_projection_error_payload(
+                context_hash=context_hash,
+                registry_hash=registry_hash,
+                runtime_snapshot_hash=runtime_snapshot_hash,
+                reason=type(exc).__name__,
+            )
 
     def _append_transition(
         self,
@@ -632,6 +901,54 @@ class AgenticRuntime:
         self.trace.append(rec)
         return rec
 
+
+
+def _writes_files(cmd: CommandEnvelope) -> bool:
+    return cmd.tool in {"edit_file", "write_file", "patch_file", "delete_file"}
+
+
+def _touches_secrets(cmd: CommandEnvelope) -> bool:
+    if cmd.args.get("touches_secrets") is True:
+        return True
+    for key in ("path", "file", "root", "repo_path"):
+        value = cmd.args.get(key)
+        if not isinstance(value, str):
+            continue
+        lowered = value.lower()
+        if any(token in lowered for token in (".env", "secret", "credential", "token")):
+            return True
+    return False
+
+
+def _installs_packages(cmd: CommandEnvelope) -> bool:
+    if cmd.args.get("installs_packages") is True:
+        return True
+    raw = cmd.args.get("command") or cmd.args.get("argv") or cmd.args.get("cmd")
+    if isinstance(raw, str):
+        lowered = raw.lower()
+        return "pip install" in lowered or "npm install" in lowered
+    if isinstance(raw, list | tuple):
+        joined = " ".join(str(part).lower() for part in raw)
+        return "pip install" in joined or "npm install" in joined
+    return False
+
+
+def _policy_card_command_class(cmd: CommandEnvelope) -> str:
+    if _touches_secrets(cmd):
+        return "secret_touching_command"
+    if cmd.tool == "delete_file" or cmd.args.get("irreversible") is True:
+        return "destructive_command"
+    if _installs_packages(cmd):
+        return "package_install"
+    if cmd.tool in {"run_shell", "run_python", "run_tests"}:
+        return "shell_command"
+    if cmd.tool == "network_fetch":
+        return "network_command"
+    if _writes_files(cmd):
+        return "write_command"
+    if cmd.tool in {"read_file", "list_dir", "search_text", "git_status", "git_diff"}:
+        return "read_only_command"
+    return "unknown_command"
 
 def _short(args: dict) -> str:
     s = ", ".join(f"{k}={str(v)[:24]}" for k, v in list(args.items())[:3])

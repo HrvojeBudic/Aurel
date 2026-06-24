@@ -68,6 +68,7 @@ from .model_providers import (
 from .model_router import ModelRouter, MockModelClient, ProviderModelClient
 from .plan_validator import PlanStatus, PlanValidationResult, PlanValidator
 from .policy import PolicyEngine
+from .policy_cards.registry import PolicyCardRegistry
 from .runtime import AgenticRuntime
 from .repo_agent import (
     CodeTaskPlanner,
@@ -278,6 +279,8 @@ def build_runtime(
     trace_dir: str = ".traces",
     trace_run_id: Optional[str] = None,
     trace_checkpoint_every: int = 5,
+    policy_card_registry: PolicyCardRegistry | None = None,
+    enable_policy_shadow_projection: bool = False,
 ) -> Kernel:
     sandbox_policy: Optional[SandboxPolicy] = None
     if sandbox is None:
@@ -358,6 +361,8 @@ def build_runtime(
         contracts=contracts,
         approval_policy=approval_policy or ApprovalPolicy(),
         sandbox_policy=sandbox_policy,
+        policy_card_registry=policy_card_registry,
+        enable_policy_shadow_projection=enable_policy_shadow_projection,
     )
     return Kernel(sandbox, tools, policy, verifier, trace, memory, budget,
                   router, skills, runtime, sandbox_policy=sandbox_policy)
