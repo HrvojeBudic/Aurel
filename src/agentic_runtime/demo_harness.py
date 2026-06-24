@@ -8,7 +8,7 @@ from __future__ import annotations
 import difflib
 import json
 import shutil
-import subprocess
+import subprocess  # nosec B404 - demo harness intentionally executes repo-local test commands
 import sys
 import time
 import os
@@ -94,6 +94,33 @@ DemoRunReport = DemoHarnessResult
 
 def _default_test_command() -> list[str]:
     return [sys.executable, "-m", "pytest", "-q"]
+
+
+def _validated_test_command(command: list[str]) -> list[str]:
+    """Validate scenario-owned test argv before execution.
+
+    The demo harness accepts only direct argv execution, never shell-wrapped
+    commands, so test scenarios cannot silently expand into a broader shell.
+    """
+    if not isinstance(command, list):
+        raise TypeError("test command must be a list[str]")
+    if not command:
+        raise ValueError("test command must not be empty")
+
+    validated: list[str] = []
+    for index, part in enumerate(command):
+        if not isinstance(part, str):
+            raise TypeError(f"test command entry {index} must be str")
+        if not part:
+            raise ValueError(f"test command entry {index} must not be empty")
+        if "\x00" in part:
+            raise ValueError(f"test command entry {index} must not contain NUL bytes")
+        validated.append(part)
+
+    executable = os.path.basename(validated[0])
+    if executable in {"sh", "bash", "zsh", "dash"}:
+        raise ValueError("shell-wrapped test commands are not allowed")
+    return validated
 
 
 BUGGY_CALCULATOR_FILES = {
@@ -228,11 +255,11 @@ def _clear_pycache(repo_path: Path) -> None:
 
 
 def run_tests(repo_path: str | Path, command: list[str], timeout: int = 120) -> TestRunResult:
-    cmd = _normalize_test_command(command)
+    cmd = _validated_test_command(_normalize_test_command(command))
     start = time.monotonic()
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B603 - demo scenarios supply validated direct argv, never shell=True
             cmd,
             cwd=str(repo_path),
             capture_output=True,

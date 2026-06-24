@@ -6,7 +6,7 @@ Scenarios exercise integrated chains, not isolated module tests.
 from __future__ import annotations
 
 import json
-import subprocess
+import subprocess  # nosec B404 - identity battery intentionally probes the local CLI as a subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -904,7 +904,7 @@ def run_consent_does_not_grant_capability() -> IdentityTestResult:
 # ---------------------------------------------------------------------------
 
 def _run_cli(*args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(
+    return subprocess.run(  # nosec B603 - fixed local CLI argv assembled from explicit argument strings
         [sys.executable, "-m", "agentic_runtime.cli", *args],
         capture_output=True,
         text=True,

@@ -10,8 +10,10 @@ from .kernel import AurelIdentityKernel, IdentityKernelHash
 
 def _invariant_to_dict(invariant: object) -> dict[str, Any]:
     from .kernel import IdentityInvariant
-
-    assert isinstance(invariant, IdentityInvariant)
+    if not isinstance(invariant, IdentityInvariant):
+        raise TypeError(
+            f"expected IdentityInvariant, got {type(invariant).__name__}"
+        )
     return {
         "expected_value": invariant.expected_value,
         "id": invariant.id,

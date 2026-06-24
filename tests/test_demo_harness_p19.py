@@ -60,6 +60,16 @@ def test_factory_initial_test_fails_for_buggy_calculator(tmp_path):
     assert result.exit_code != 0
 
 
+def test_run_tests_rejects_shell_wrapped_command(tmp_path):
+    with pytest.raises(ValueError, match="shell-wrapped"):
+        run_tests(tmp_path, ["bash", "-lc", "pytest -q"])
+
+
+def test_run_tests_rejects_nul_byte_argument(tmp_path):
+    with pytest.raises(ValueError, match="NUL"):
+        run_tests(tmp_path, ["python3", "-c", "print('ok')\x00"])
+
+
 def test_factory_does_not_write_outside_parent(tmp_path):
     factory = DemoRepoFactory()
     repo = factory.create(BUGGY_CALCULATOR, tmp_path)

@@ -16,6 +16,7 @@ from enum import Enum
 from typing import Any, Callable, Optional
 
 from .core_types import CommandEnvelope, ObservationEnvelope, now
+from .model_providers.http_utils import fetch_url_bytes
 from .sandbox import SandboxBackend
 from .sandbox_policy import SandboxExecutionContext, SandboxPolicy
 from .tool_contracts import (ContractValidationResult, ToolContractRegistry,
@@ -391,34 +392,32 @@ class ToolRuntime(ToolBus):
 
         def network_fetch(sb: SandboxBackend, args: dict) -> ObservationEnvelope:
             import urllib.error
-            import urllib.request
 
             from .core_types import sha
 
             url = args["url"]
             timeout = args.get("timeout_seconds", args.get("timeout", 10))
             max_bytes = int(args.get("max_bytes", 65536))
-            req = urllib.request.Request(
-                url, headers={"User-Agent": "agentic-runtime/0.2"})
             t0 = time.perf_counter()
             try:
-                with urllib.request.urlopen(req, timeout=timeout) as resp:
-                    data = resp.read(max_bytes + 1)
-                    truncated = len(data) > max_bytes
-                    if truncated:
-                        data = data[:max_bytes]
-                    body = data.decode("utf-8", errors="replace")
-                    duration_ms = int((time.perf_counter() - t0) * 1000)
-                    return ObservationEnvelope.make("", success=True,
-                        stdout=body,
-                        artifacts={
-                            "url": url,
-                            "status": resp.status,
-                            "bytes": len(data),
-                            "truncated": truncated,
-                            "content_hash": sha(body),
-                            "duration_ms": duration_ms,
-                        })
+                status, data, truncated = fetch_url_bytes(
+                    url,
+                    headers={"User-Agent": "agentic-runtime/0.2"},
+                    timeout=timeout,
+                    max_bytes=max_bytes,
+                )
+                body = data.decode("utf-8", errors="replace")
+                duration_ms = int((time.perf_counter() - t0) * 1000)
+                return ObservationEnvelope.make("", success=True,
+                    stdout=body,
+                    artifacts={
+                        "url": url,
+                        "status": status,
+                        "bytes": len(data),
+                        "truncated": truncated,
+                        "content_hash": sha(body),
+                        "duration_ms": duration_ms,
+                    })
             except (urllib.error.URLError, TimeoutError, ValueError) as e:
                 return _obs_error("network_error", str(e))
 

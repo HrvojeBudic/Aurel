@@ -10,6 +10,7 @@ from typing import Callable, Optional
 
 from .core_types import CommandEnvelope, ObservationEnvelope, VerifierResult
 from .file_patch import apply_simple_unified_diff, resolve_run_tests_command
+from .model_providers.http_utils import fetch_url_bytes
 from .sandbox import SandboxBackend
 from .test_integrity import (
     FileIntegritySnapshot,
@@ -179,21 +180,20 @@ class StateVerifier:
 
         def verify_network_fetch(sb: SandboxBackend, cmd, obs, _snap_id=None) -> VerifierResult:
             import urllib.error
-            import urllib.request
 
             from .core_types import sha
 
             url = cmd.args["url"]
             timeout = cmd.args.get("timeout_seconds", cmd.args.get("timeout", 10))
             max_bytes = int(cmd.args.get("max_bytes", 65536))
-            req = urllib.request.Request(
-                url, headers={"User-Agent": "agentic-runtime/0.2"})
             try:
-                with urllib.request.urlopen(req, timeout=timeout) as resp:
-                    data = resp.read(max_bytes + 1)
-                    if len(data) > max_bytes:
-                        data = data[:max_bytes]
-                    body = data.decode("utf-8", errors="replace")
+                status, data, _ = fetch_url_bytes(
+                    url,
+                    headers={"User-Agent": "agentic-runtime/0.2"},
+                    timeout=timeout,
+                    max_bytes=max_bytes,
+                )
+                body = data.decode("utf-8", errors="replace")
             except (urllib.error.URLError, TimeoutError, ValueError) as e:
                 return VerifierResult(
                     False, "network_fetch_verifier",
@@ -202,7 +202,7 @@ class StateVerifier:
             return VerifierResult(
                 ok, "network_fetch_verifier",
                 evidence={"url": url, "content_hash_match": ok,
-                          "reexec_status": resp.status},
+                          "reexec_status": status},
                 reason="independent fetch content matches observation" if ok
                        else "fetched content diverges from tool observation")
 

@@ -13,6 +13,7 @@ from agentic_runtime.sandbox import (
     SandboxMode,
     SandboxUnavailableError,
     UnsafeLocalSandbox,
+    _run_subprocess,
     create_sandbox,
 )
 from tests.conftest import make_cmd, requires_subprocess
@@ -119,6 +120,39 @@ def test_structured_observation_on_sandbox_failure(tmp_path):
     assert res.error_kind == "unavailable"
     assert res.sandbox_mode == SandboxMode.UNSAFE_LOCAL.value
     assert res.stderr
+
+
+def test_run_subprocess_rejects_empty_argv(tmp_path):
+    with pytest.raises(ValueError, match="must not be empty"):
+        _run_subprocess(
+            [],
+            cwd=str(tmp_path),
+            env={},
+            timeout=1,
+            sandbox_mode=SandboxMode.UNSAFE_LOCAL,
+        )
+
+
+def test_run_subprocess_rejects_non_string_argv_entries(tmp_path):
+    with pytest.raises(TypeError, match="cmd\\[1\\] must be str"):
+        _run_subprocess(
+            ["python3", 1],  # type: ignore[list-item]
+            cwd=str(tmp_path),
+            env={},
+            timeout=1,
+            sandbox_mode=SandboxMode.UNSAFE_LOCAL,
+        )
+
+
+def test_run_subprocess_rejects_nul_byte_argv(tmp_path):
+    with pytest.raises(ValueError, match="NUL"):
+        _run_subprocess(
+            ["python3", "-c", "print('bad')\x00"],
+            cwd=str(tmp_path),
+            env={},
+            timeout=1,
+            sandbox_mode=SandboxMode.UNSAFE_LOCAL,
+        )
 
 
 @pytest.mark.skipif(not BubblewrapSandbox.is_available(), reason="bwrap not installed")

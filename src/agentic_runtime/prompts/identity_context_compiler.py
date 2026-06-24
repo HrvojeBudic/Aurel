@@ -532,7 +532,27 @@ def compile_identity_prompt_context(
     operator_summary = build_operator_contract_safe_summary(operator_contract)
     mode_summary = build_communication_mode_safe_summary(mode_registry, normalized_mode)
     mode_spec = mode_lookup.mode
-    assert mode_spec is not None
+    if mode_spec is None:
+        post_contradictions = list(contradictions)
+        post_contradictions.append(
+            _contradiction(
+                "CTR-024",
+                "communication_modes",
+                "selected_mode",
+                "resolved mode spec",
+                normalized_mode,
+                f"Selected mode {normalized_mode!r} could not be resolved after validation.",
+            )
+        )
+        return IdentityPromptCompileResult(
+            valid=False,
+            context=None,
+            errors=tuple(errors),
+            warnings=tuple(warnings),
+            critical_failures=(f"unresolved communication mode: {normalized_mode}",),
+            contradictions=tuple(post_contradictions),
+            context_hash=None,
+        )
 
     bundle = IdentityPromptSourceBundle(
         identity_kernel_hash=kernel_hash,

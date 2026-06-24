@@ -76,7 +76,7 @@ class SideEffectType(str, Enum):
     EXTERNAL_READ = "external_read"
     EXTERNAL_WRITE = "external_write"
     NETWORK = "network"
-    SECRET_ACCESS = "secret_access"
+    SECRET_ACCESS = "secret_access"  # nosec B105 - side-effect classification label, not a credential
     PROCESS_EXECUTION = "process_execution"
     STATE_CHANGE = "state_change"
 

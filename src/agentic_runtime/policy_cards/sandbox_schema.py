@@ -200,7 +200,10 @@ REQUIRED_SANDBOX_RISK_TIERS: tuple[RiskTier, ...] = (
 def _backend_rule_to_dict(rule: object) -> dict[str, Any]:
     """Export a SandboxBackendRule to dict form (lazy import)."""
     from .sandbox import SandboxBackendRule  # noqa: PLC0415
-    assert isinstance(rule, SandboxBackendRule)
+    if not isinstance(rule, SandboxBackendRule):
+        raise TypeError(
+            f"expected SandboxBackendRule, got {type(rule).__name__}"
+        )
     result: dict[str, Any] = {
         "rule_id": rule.rule_id,
         "description": rule.description,
@@ -216,7 +219,10 @@ def _backend_rule_to_dict(rule: object) -> dict[str, Any]:
 
 def _filesystem_rule_to_dict(rule: object) -> dict[str, Any]:
     from .sandbox import SandboxFilesystemScopeRule  # noqa: PLC0415
-    assert isinstance(rule, SandboxFilesystemScopeRule)
+    if not isinstance(rule, SandboxFilesystemScopeRule):
+        raise TypeError(
+            f"expected SandboxFilesystemScopeRule, got {type(rule).__name__}"
+        )
     result: dict[str, Any] = {
         "rule_id": rule.rule_id,
         "description": rule.description,
@@ -234,7 +240,10 @@ def _filesystem_rule_to_dict(rule: object) -> dict[str, Any]:
 
 def _egress_rule_to_dict(rule: object) -> dict[str, Any]:
     from .sandbox import SandboxEgressRule  # noqa: PLC0415
-    assert isinstance(rule, SandboxEgressRule)
+    if not isinstance(rule, SandboxEgressRule):
+        raise TypeError(
+            f"expected SandboxEgressRule, got {type(rule).__name__}"
+        )
     result: dict[str, Any] = {
         "rule_id": rule.rule_id,
         "description": rule.description,
@@ -250,7 +259,10 @@ def _egress_rule_to_dict(rule: object) -> dict[str, Any]:
 
 def _command_rule_to_dict(rule: object) -> dict[str, Any]:
     from .sandbox import SandboxCommandClassRule  # noqa: PLC0415
-    assert isinstance(rule, SandboxCommandClassRule)
+    if not isinstance(rule, SandboxCommandClassRule):
+        raise TypeError(
+            f"expected SandboxCommandClassRule, got {type(rule).__name__}"
+        )
     result: dict[str, Any] = {
         "rule_id": rule.rule_id,
         "command_class": rule.command_class.value,
@@ -270,7 +282,10 @@ def _command_rule_to_dict(rule: object) -> dict[str, Any]:
 
 def _risk_tier_mapping_to_dict(mapping: object) -> dict[str, Any]:
     from .sandbox import RiskTierSandboxMapping  # noqa: PLC0415
-    assert isinstance(mapping, RiskTierSandboxMapping)
+    if not isinstance(mapping, RiskTierSandboxMapping):
+        raise TypeError(
+            f"expected RiskTierSandboxMapping, got {type(mapping).__name__}"
+        )
     result: dict[str, Any] = {
         "description": mapping.description,
         "minimum_backend": mapping.minimum_backend.value,

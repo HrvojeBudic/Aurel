@@ -77,7 +77,7 @@ class QuarantineReason(str, Enum):
     UNTRUSTED_PLUGIN = "untrusted_plugin"
     HIGH_RISK_WITHOUT_APPROVAL = "high_risk_without_approval"
     R6_ENABLED = "r6_enabled"
-    SECRET_POLICY_MISSING = "secret_policy_missing"
+    SECRET_POLICY_MISSING = "secret_policy_missing"  # nosec B105 - quarantine reason code, not a credential
     NETWORK_POLICY_MISSING = "network_policy_missing"
     DUPLICATE_TOOL_ID = "duplicate_tool_id"
     PLUGIN_STATUS_QUARANTINED = "plugin_status_quarantined"

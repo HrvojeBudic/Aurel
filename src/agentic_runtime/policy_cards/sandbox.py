@@ -99,7 +99,7 @@ class CommandClass(str, Enum):
     PACKAGE_INSTALL = "package_install"
     NETWORK_COMMAND = "network_command"
     PROCESS_CONTROL = "process_control"
-    SECRET_TOUCHING_COMMAND = "secret_touching_command"
+    SECRET_TOUCHING_COMMAND = "secret_touching_command"  # nosec B105 - command-class taxonomy label, not a credential
     DESTRUCTIVE_COMMAND = "destructive_command"
     UNKNOWN_COMMAND = "unknown_command"
 
@@ -2224,8 +2224,13 @@ def evaluate_sandbox_policy_decision(
     decision_hash: str | None = None
     try:
         decision_hash = compute_sandbox_policy_card_hash(card)
-    except Exception:
-        pass
+    except Exception as exc:
+        warnings.append(SandboxPolicyWarning(
+            "CANONICAL_HASH_UNAVAILABLE",
+            f"Could not compute sandbox policy card hash: {exc}",
+            field="canonical_hash",
+        ))
+        reason_codes.append("CANONICAL_HASH_UNAVAILABLE")
 
     return SandboxPolicyDecision(
         allowed=allowed and len(violations) == 0,

@@ -11,7 +11,7 @@ import argparse
 import json
 import os
 import shlex
-import subprocess
+import subprocess  # nosec B404 - CLI verify intentionally spawns local pytest as a direct argv command
 import sys
 from pathlib import Path
 
@@ -48,7 +48,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     verbosity = "-v" if args.verbose else "-q"
     cmd = [sys.executable, "-m", "pytest", verbosity, "-p", "no:cacheprovider"]
     print(f"running: {' '.join(cmd)}  (cwd={root})")
-    proc = subprocess.run(cmd, cwd=root, env=env)
+    proc = subprocess.run(cmd, cwd=root, env=env)  # nosec B603 - direct argv pytest invocation, no shell expansion
     return proc.returncode
 
 

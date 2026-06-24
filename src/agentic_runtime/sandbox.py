@@ -17,7 +17,7 @@ import enum
 import os
 import resource
 import shutil
-import subprocess
+import subprocess  # nosec B404 - subprocess is the explicit execution backend for sandbox implementations
 import tempfile
 from dataclasses import dataclass, field
 from typing import Callable, Optional, Protocol, runtime_checkable
@@ -27,6 +27,7 @@ from .core_types import new_id, sha
 
 # Retained write snapshots per workspace backend. Oldest entries are evicted under pressure.
 DEFAULT_MAX_SNAPSHOTS = 64
+SANDBOX_TMPDIR = os.path.join(os.sep, "tmp")
 
 
 def max_snapshots_limit() -> int:
@@ -166,6 +167,36 @@ def _decode_stream(data: str | bytes | None) -> str:
     return data
 
 
+def _resolve_executable_path(name: str) -> tuple[str | None, str]:
+    resolved = shutil.which(name)
+    if resolved is None:
+        return None, f"{name} executable not found"
+    return os.path.abspath(resolved), "ok"
+
+
+def _validated_subprocess_cmd(cmd: list[str]) -> list[str]:
+    """Fail closed on malformed argv before invoking a subprocess.
+
+    This validates argv structure only. Callers remain responsible for policy,
+    approval, and sandbox selection before execution reaches this boundary.
+    """
+    if not isinstance(cmd, list):
+        raise TypeError("cmd must be a list[str]")
+    if not cmd:
+        raise ValueError("cmd must not be empty")
+
+    validated: list[str] = []
+    for index, part in enumerate(cmd):
+        if not isinstance(part, str):
+            raise TypeError(f"cmd[{index}] must be str")
+        if not part:
+            raise ValueError(f"cmd[{index}] must not be empty")
+        if "\x00" in part:
+            raise ValueError(f"cmd[{index}] must not contain NUL bytes")
+        validated.append(part)
+    return validated
+
+
 def _run_subprocess(
     cmd: list[str],
     *,
@@ -177,12 +208,13 @@ def _run_subprocess(
     preexec_fn: Optional[Callable[[], None]] = None,
     fs_root: Optional[str] = None,
 ) -> ExecResult:
+    cmd = _validated_subprocess_cmd(cmd)
     before = _tree_map(fs_root) if fs_root else {}
     timed_out = False
     truncated = False
     error_kind = ""
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B603 - argv is validated here; policy and approval occur before sandbox execution
             cmd, cwd=cwd, env=env, preexec_fn=preexec_fn,
             capture_output=True, timeout=timeout)
         code = proc.returncode
@@ -368,11 +400,15 @@ LocalSubprocessSandbox = UnsafeLocalSandbox  # deprecated alias
 #  Bubblewrap — Linux hard isolation
 # --------------------------------------------------------------------------- #
 def _bubblewrap_available() -> tuple[bool, str]:
+    executable, reason = _resolve_executable_path("bwrap")
+    if executable is None:
+        return False, reason
     try:
-        proc = subprocess.run(
-            ["bwrap", "--version"], capture_output=True, text=True, timeout=5)
+        proc = subprocess.run(  # nosec B603 - fixed local availability probe for the resolved bwrap executable
+            [executable, "--version"], capture_output=True, text=True, timeout=5)
         if proc.returncode == 0:
-            return True, (proc.stdout or proc.stderr or "ok").strip()
+            version = (proc.stdout or proc.stderr or "ok").strip()
+            return True, f"{executable} ({version})"
         return False, proc.stderr or f"exit {proc.returncode}"
     except FileNotFoundError:
         return False, "bwrap executable not found"
@@ -382,11 +418,11 @@ def _bubblewrap_available() -> tuple[bool, str]:
         return False, str(e)
 
 
-def _bubblewrap_cmd(workspace: str, cmd: list[str]) -> list[str]:
+def _bubblewrap_cmd(workspace: str, cmd: list[str], executable: str) -> list[str]:
     """Build a bubblewrap invocation with network blocked and workspace bind."""
     work = "/work"
     args = [
-        "bwrap",
+        executable,
         "--unshare-all",
         "--unshare-net",
         "--die-with-parent",
@@ -395,8 +431,8 @@ def _bubblewrap_cmd(workspace: str, cmd: list[str]) -> list[str]:
         "--setenv", "PATH", "/usr/bin:/bin",
         "--setenv", "LANG", "C.UTF-8",
         "--setenv", "HOME", work,
-        "--setenv", "TMPDIR", "/tmp",
-        "--dir", "/tmp",
+        "--setenv", "TMPDIR", SANDBOX_TMPDIR,
+        "--dir", SANDBOX_TMPDIR,
         "--dir", work,
         "--bind", workspace, work,
         "--chdir", work,
@@ -434,7 +470,16 @@ class BubblewrapSandbox(_WorkspaceBackend):
         return cls(root=root, **kwargs)
 
     def run_shell(self, cmd: list[str], timeout: float = DEFAULT_TIMEOUT_S) -> ExecResult:
-        bwrap = _bubblewrap_cmd(self.root, cmd)
+        executable, reason = _resolve_executable_path("bwrap")
+        if executable is None:
+            return ExecResult(
+                exit_code=127,
+                stdout="",
+                stderr=reason,
+                sandbox_mode=self.mode.value,
+                error_kind="unavailable",
+            )
+        bwrap = _bubblewrap_cmd(self.root, cmd, executable)
         return _run_subprocess(
             bwrap, cwd=self.root, env=os.environ.copy(), timeout=timeout,
             sandbox_mode=self.mode, max_output=self.max_output_bytes,
@@ -446,11 +491,14 @@ class BubblewrapSandbox(_WorkspaceBackend):
 #  Docker — container hard isolation
 # --------------------------------------------------------------------------- #
 def _docker_available() -> tuple[bool, str]:
+    executable, reason = _resolve_executable_path("docker")
+    if executable is None:
+        return False, reason
     try:
-        proc = subprocess.run(
-            ["docker", "info"], capture_output=True, text=True, timeout=10)
+        proc = subprocess.run(  # nosec B603 - fixed local availability probe for the resolved docker executable
+            [executable, "info"], capture_output=True, text=True, timeout=10)
         if proc.returncode == 0:
-            return True, "ok"
+            return True, executable
         return False, proc.stderr or f"exit {proc.returncode}"
     except FileNotFoundError:
         return False, "docker executable not found"
@@ -487,11 +535,20 @@ class DockerSandbox(_WorkspaceBackend):
         return cls(root=root, **kwargs)
 
     def run_shell(self, cmd: list[str], timeout: float = DEFAULT_TIMEOUT_S) -> ExecResult:
+        executable, reason = _resolve_executable_path("docker")
+        if executable is None:
+            return ExecResult(
+                exit_code=127,
+                stdout="",
+                stderr=reason,
+                sandbox_mode=self.mode.value,
+                error_kind="unavailable",
+            )
         docker_cmd = [
-            "docker", "run", "--rm", "--network", "none",
+            executable, "run", "--rm", "--network", "none",
             "--memory", f"{self.mem_mb}m", "--pids-limit", str(self.pids),
             "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
-            "--read-only", "--tmpfs", "/tmp:exec",
+            "--read-only", "--tmpfs", f"{SANDBOX_TMPDIR}:exec",
             "-v", f"{self.root}:/work:rw", "-w", "/work", self.image, *cmd,
         ]
         return _run_subprocess(
