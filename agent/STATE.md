@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-24 (P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules)_
+_Last updated: 2026-06-24 (P1.6.14 — Policy Resolution Trace Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook
-- Current active: **P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules**
-- Next planned: P1.6.14 — Policy Enforcement Adapter Hardening
+- Last completed: P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules
+- Current active: **P1.6.14 — Policy Resolution Trace Hook**
+- Next planned: P1.6.15 — Policy Violation Trace Hook
 
-**P1.6.13 is the current active feature phase.**
-P1.6.12 is last completed and sealed deterministic shadow runtime projection before conflict algebra.
+**P1.6.14 is the current active feature phase.**
+P1.6.13 is last completed and sealed deterministic conflict algebra before trace hooks.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 
@@ -60,6 +60,19 @@ Documentation:
 - `tests/test_policy_resolver_conflict_algebra_p1613.py`: resolver integration tests for metadata, backwards compat, shadow-only invariants.
 
 **P1.6.13 formalizes Custos shadow conflict resolution through deterministic strictest-wins algebra; it does not enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.**
+
+### P1.6.14 Policy Resolution Trace Hook (ACTIVE — trace-compatible evidence only)
+
+- `policy_cards/resolution_trace.py`: new module with `PolicyResolutionTraceEvent` (frozen dataclass, shadow_only=True enforced=False, 20+ trace fields), `PolicyResolutionTraceEnvelope`, `PolicyResolutionEvidenceRef`, `PolicyTraceBinding` frozen dataclasses; `build_policy_resolution_trace_event()`, `build_policy_resolution_trace_envelope()`, `policy_trace_canonical_dict()`, `policy_trace_hash()` builder/hash functions. All hash fields optional (explicit empty string), trace_id derived from deterministic SHA-256 hash. No runtime/Ledger imports.
+- `policy_cards/resolution_result.py`: optional `resolution_trace: dict | None`, `resolution_trace_hash: str | None`, `resolution_trace_id: str | None` fields on `ResolvedPolicySet` (default `None`). Included in canonical dict when `include_hash=True`, excluded from `canonical_hash`.
+- `policy_cards/resolver.py`: `_attach_trace_metadata()` builds trace event from resolution, conflict, and source metadata; called after `_attach_conflict_metadata()`.
+- `policy_cards/runtime_projection.py`: `resolution_trace_id` and `resolution_trace_hash` fields on `PolicyShadowProjection`; propagated from `ResolvedPolicySet` in `project_policy_resolution_against_runtime()`.
+- `policy_cards/__init__.py`: ~8 new public exports.
+- `tests/test_policy_resolution_trace_p1614.py`: 32 tests for construction, canonicalization/hash determinism, safety, invariants, envelope/binding.
+- `tests/test_policy_resolver_trace_hook_p1614.py`: 14 tests for resolver integration, backwards compat, non-enforcement.
+- `tests/test_policy_runtime_projection_trace_p1614.py`: 9 tests for projection trace metadata, shadow-only invariants.
+
+**P1.6.14 creates trace-compatible policy resolution evidence; it does not write to the Ledger, enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.**
 
 ### Sandbox Layer Disambiguation
 

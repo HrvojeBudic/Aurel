@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.14 Policy Resolution Trace Hook](reports/P1.6.14_POLICY_RESOLUTION_TRACE_HOOK_REPORT.md) | 2026-06-24 | Trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection; deterministic hashes/identifiers; no Ledger write, no enforcement |
 | [P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules](reports/P1.6.13_POLICY_CONFLICT_ALGEBRA_STRICTEST_WINS_REPORT.md) | 2026-06-24 | Deterministic conflict detection, ranking, classification, and resolution of Custos shadow policy decisions; 6 enums, 6 frozen dataclasses, strictest-wins algebra, specificity scoring, SHA-256 hashing; optional conflict metadata on ResolvedPolicySet; 73+ tests; shadow-only no enforcement |
 | [P1.6.11 Policy Resolution Context & Registry Binding](reports/P1.6.11_POLICY_RESOLUTION_CONTEXT_REGISTRY_BINDING_REPORT.md) | 2026-06-23 | Deterministic explicit PolicyCardRegistry, context binding helpers, conservative risk mapping seed, applicability filtering, registry-to-Custos resolver path, SHADOW-only no enforcement |
 | [P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode](reports/P1.6.10_CUSTOS_V0_POLICY_RUNTIME_RESOLVER_SHADOW_MODE_REPORT.md) | 2026-06-23 | First step from policy vocabulary to adjudication: PolicyResolutionContext + ResolvedPolicySet + 7 family adapters + strictest-wins MVP, shadow-mode WOULD_* outcomes, deterministic hashes, no `submit()` change, no enforcement, 51 tests |

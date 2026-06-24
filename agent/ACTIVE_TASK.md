@@ -1,47 +1,39 @@
-# Active Task: P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules
+# Active Task: P1.6.14 — Policy Resolution Trace Hook
 
 **Status:** ACTIVE
 
 ## Roadmap Position
 
-- Last completed: P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook
-- Current active: **P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules**
-- Next planned: P1.6.14 — Policy Enforcement Adapter Hardening
+- Last completed: P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules
+- Current active: **P1.6.14 — Policy Resolution Trace Hook**
+- Next planned: P1.6.15 — Policy Violation Trace Hook
 
-P1.6.13 introduces deterministic conflict algebra within the Custos shadow policy decision system. It normalizes policy family decisions into formal ranks, classifies conflicts between them, and determines the "strictest valid outcome" according to defined rules. All conflict evidence is preserved and explained deterministically. No enforcement or runtime behavior changes are introduced.
+P1.6.14 creates trace-compatible policy resolution evidence; it does NOT write to the Ledger, enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.
 
 ## Objective
 
-When the Custos resolver produces multiple family decisions, P1.6.13 formalizes:
-
-- **Normalization**: maps every `FamilyDecision`/`ShadowAction` to a `PolicyDecisionRank` (ERROR > DENY > REQUIRE_APPROVAL > WARN > ALLOW > NOT_APPLICABLE)
-- **Conflict classification**: detects and taxonomizes rank, family, risk, approval, sandbox, data, tool, prompt, memory, adapter error, and context conflicts via 14 `PolicyConflictType` values
-- **Strictest-wins resolution**: determines the winning outcome via deterministic rules (strictness → specificity → family_order → lexical), preserving all evidence
-- **Deterministic canonical hashing**: SHA-256 over canonical conflict resolution dict
-
-The integration attaches `conflict_resolution` and `conflict_hash` metadata to `ResolvedPolicySet` as optional backwards-compatible fields. The resolver calls into `conflict_algebra` after `aggregate_family_decisions()` produces the initial family decisions.
+Introduce a formal trace-compatible evidence envelope for Custos policy resolution, strictest-wins conflict algebra, and runtime shadow projection. The system produces deterministic trace-compatible metadata with hashes and identifiers, making policy resolution audit-ready without writing to the real Ledger and without changing runtime behavior.
 
 ## Scope
 
-- `conflict_algebra.py` (new): 6 enums, 6 frozen dataclasses, normalization helpers, strictest-wins resolution, conflict classification, specificity scoring, canonical hashing (~560 lines)
-- `resolution_result.py`: optional `conflict_resolution`/`conflict_hash` fields on `ResolvedPolicySet` (default `None` — backwards compatible)
-- `resolver.py`: calls `resolve_policy_conflicts_strictest_wins()` after `aggregate_family_decisions()`, attaches metadata via `_attach_conflict_metadata()`
-- `__init__.py`: ~14 new public exports
+- `resolution_trace.py` (new): `PolicyResolutionTraceEvent`, `PolicyResolutionTraceEnvelope`, `PolicyResolutionEvidenceRef`, `PolicyTraceBinding`, builder functions, canonical dict/hash
+- `resolution_result.py`: optional `resolution_trace`, `resolution_trace_hash`, `resolution_trace_id` fields on `ResolvedPolicySet`
+- `resolver.py`: `_attach_trace_metadata()` builds trace envelope from resolution + conflict metadata
+- `runtime_projection.py`: `resolution_trace_id`, `resolution_trace_hash` fields on `PolicyShadowProjection`
+- `__init__.py`: ~8 new public exports
 
 ## Non-scope
 
-- No Custos runtime enforcement
-- No command blocking from policy cards
-- No approval activation from policy cards
-- No sandbox behavior changes
-- No runtime authorization modifications
-- No enforcement imports in conflict_algebra.py
+- No Ledger write. No trace.py integration. No AurelTrace integration.
+- No enforcement. No command blocking. No approval activation. No sandbox changes.
+- No runtime.py changes. No AgenticRuntime.submit() changes.
 
 ## Tests
 
-- `tests/test_policy_conflict_algebra_p1613.py` — 73 pure-module tests
-- `tests/test_policy_resolver_conflict_algebra_p1613.py` — resolver integration tests
+- `tests/test_policy_resolution_trace_p1614.py` — pure trace object tests (32 tests)
+- `tests/test_policy_resolver_trace_hook_p1614.py` — resolver integration tests (14 tests)
+- `tests/test_policy_runtime_projection_trace_p1614.py` — projection trace metadata tests (9 tests)
 
 ## Report
 
-Full report: `agent/reports/P1.6.13_POLICY_CONFLICT_ALGEBRA_STRICTEST_WINS_REPORT.md`
+Full report: `agent/reports/P1.6.14_POLICY_RESOLUTION_TRACE_HOOK_REPORT.md`

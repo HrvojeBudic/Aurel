@@ -577,6 +577,16 @@ from .conflict_algebra import (
     normalize_policy_decision_rank,
     resolve_policy_conflicts_strictest_wins,
 )
+from .resolution_trace import (
+    PolicyResolutionEvidenceRef,
+    PolicyResolutionTraceEnvelope,
+    PolicyResolutionTraceEvent,
+    PolicyTraceBinding,
+    build_policy_resolution_trace_envelope,
+    build_policy_resolution_trace_event,
+    policy_trace_canonical_dict,
+    policy_trace_hash,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1146,4 +1156,13 @@ __all__ = [
     "compute_specificity_score",
     "classify_policy_conflicts",
     "resolve_policy_conflicts_strictest_wins",
+    # - Policy Resolution Trace Hook (P1.6.14) -
+    "PolicyResolutionTraceEvent",
+    "PolicyResolutionTraceEnvelope",
+    "PolicyResolutionEvidenceRef",
+    "PolicyTraceBinding",
+    "build_policy_resolution_trace_event",
+    "build_policy_resolution_trace_envelope",
+    "policy_trace_canonical_dict",
+    "policy_trace_hash",
 ]

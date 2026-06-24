@@ -69,6 +69,22 @@ P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in
 .venv/bin/python -m bandit -r src/agentic_runtime -ll
 ```
 
+## P1.6.14 Verification (Policy Resolution Trace Hook)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_resolution_trace_p1614.py tests/test_policy_resolver_trace_hook_p1614.py tests/test_policy_runtime_projection_trace_p1614.py -q
+.venv/bin/python -m pytest tests/test_policy_resolution_trace_p1614.py tests/test_policy_resolver_trace_hook_p1614.py tests/test_policy_runtime_projection_trace_p1614.py tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_runtime_custos_shadow_submit_p1612.py tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_snapshot_security_p1610h.py -q
+.venv/bin/python -m pytest tests/test_policy_resolution_trace_p1614.py tests/test_policy_resolver_trace_hook_p1614.py tests/test_policy_runtime_projection_trace_p1614.py tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_runtime_custos_shadow_submit_p1612.py tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_sandbox_policy_cards_p169.py tests/test_prompt_policy_cards_p168.py tests/test_memory_write_policy_cards_p167.py tests/test_tool_permission_policy_cards_p166.py tests/test_data_residency_policy_cards_p165.py tests/test_human_oversight_policy_cards_p164.py tests/test_risk_tier_policy_cards_p163.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+P1.6.14 creates trace-compatible policy resolution evidence; it does NOT write to the Ledger, enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.
+
 P1.6.13 is shadow-only. No enforcement, no command blocking, no approval activation, no runtime sandbox changes.
 
 P1.6.12 is observability-only. P0 runtime remains authoritative, and Custos shadow decisions are not enforcement decisions.

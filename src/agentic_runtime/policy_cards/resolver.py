@@ -57,6 +57,11 @@ from .resolution_result import (
     decision_to_shadow_action,
 )
 from .conflict_algebra import resolve_policy_conflicts_strictest_wins
+from .resolution_trace import (
+    PolicyResolutionTraceEvent,
+    build_policy_resolution_trace_event,
+    build_policy_resolution_trace_envelope,
+)
 from .risk_tiers import (
     OversightLevel,
     ReversibilityLevel,
@@ -944,6 +949,12 @@ def resolve_policy_cards(
     except Exception:  # pragma: no cover - defensive
         pass
 
+    # P1.6.14 — Attach trace-compatible metadata (shadow-only, no enforcement)
+    try:
+        resolution = _attach_trace_metadata(resolution)
+    except Exception:  # pragma: no cover - defensive
+        pass
+
     return resolution.with_canonical_hash()
 
 
@@ -963,6 +974,44 @@ def _attach_conflict_metadata(
         resolution,
         conflict_resolution=cr.to_canonical_dict(),
         conflict_hash=cr.compute_hash(),
+    )
+
+
+def _attach_trace_metadata(resolution: ResolvedPolicySet) -> ResolvedPolicySet:
+    """Attach P1.6.14 trace-compatible metadata to a ResolvedPolicySet."""
+    conflict_codes: tuple[str, ...] = ()
+    strictest_rank: str = ""
+
+    if resolution.conflict_resolution is not None:
+        conflict_codes = tuple(
+            resolution.conflict_resolution.get("conflict_codes", ()) or ()
+        )
+        strictest_rank = str(
+            resolution.conflict_resolution.get("winning_rank", "")
+        )
+
+    source_families = tuple(sorted({
+        fd.family.value for fd in resolution.family_decisions
+    }))
+
+    trace_event = build_policy_resolution_trace_event(
+        registry_hash=resolution.source_hashes[0] if resolution.source_hashes else "",
+        context_hash=resolution.context_hash,
+        resolution_hash=resolution.canonical_hash or "",
+        conflict_hash=resolution.conflict_hash or "",
+        effective_shadow_action=resolution.effective_shadow_action.value,
+        strictest_decision_rank=strictest_rank,
+        source_family_ids=source_families,
+        source_card_ids=resolution.applicable_card_ids,
+        reason_codes=resolution.reason_codes,
+        conflict_codes=conflict_codes,
+    )
+
+    return replace(
+        resolution,
+        resolution_trace=trace_event.to_canonical_dict(include_hash=True),
+        resolution_trace_hash=trace_event.trace_hash,
+        resolution_trace_id=trace_event.trace_id,
     )
 
 

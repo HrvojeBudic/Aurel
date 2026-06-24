@@ -148,6 +148,8 @@ class PolicyShadowProjection:
     registry_hash: str = ""
     resolved_policy_hash: str = ""
     runtime_snapshot_hash: str = ""
+    resolution_trace_id: str = ""
+    resolution_trace_hash: str = ""
     projection_hash: str | None = None
     enabled: bool = True
     mode: str = "shadow_only"
@@ -276,6 +278,8 @@ def policy_shadow_projection_to_canonical_dict(
         "mode": projection.mode,
         "reason_codes": sorted(projection.reason_codes),
         "registry_hash": projection.registry_hash,
+        "resolution_trace_hash": projection.resolution_trace_hash,
+        "resolution_trace_id": projection.resolution_trace_id,
         "resolved_policy_hash": projection.resolved_policy_hash,
         "runtime_effective_action": projection.runtime_effective_action.value,
         "runtime_snapshot_hash": projection.runtime_snapshot_hash,
@@ -358,6 +362,8 @@ def project_policy_resolution_against_runtime(
         registry_hash=registry_hash,
         resolved_policy_hash=resolved_hash,
         runtime_snapshot_hash=snapshot.runtime_snapshot_hash or "",
+        resolution_trace_id=resolved_policy.resolution_trace_id or "",
+        resolution_trace_hash=resolved_policy.resolution_trace_hash or "",
     )
     return projection.with_projection_hash()
 

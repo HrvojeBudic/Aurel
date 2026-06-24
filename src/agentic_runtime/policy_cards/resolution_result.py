@@ -144,6 +144,9 @@ class ResolvedPolicySet:
     canonical_hash: str | None = None
     conflict_resolution: dict[str, Any] | None = None
     conflict_hash: str | None = None
+    resolution_trace: dict[str, Any] | None = None
+    resolution_trace_hash: str | None = None
+    resolution_trace_id: str | None = None
 
     # -- shadow convenience predicates ------------------------------------
 
@@ -198,6 +201,12 @@ def resolved_policy_set_to_canonical_dict(
         result["conflict_hash"] = rps.conflict_hash
     if include_hash and rps.conflict_resolution is not None:
         result["conflict_resolution"] = rps.conflict_resolution
+    if include_hash and rps.resolution_trace is not None:
+        result["resolution_trace"] = rps.resolution_trace
+    if include_hash and rps.resolution_trace_hash is not None:
+        result["resolution_trace_hash"] = rps.resolution_trace_hash
+    if include_hash and rps.resolution_trace_id is not None:
+        result["resolution_trace_id"] = rps.resolution_trace_id
     return dict(sorted(result.items(), key=lambda i: i[0]))
 
 

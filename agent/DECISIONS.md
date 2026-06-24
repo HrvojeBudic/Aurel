@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-06-24 - P1.6.14 Policy Resolution Trace Hook
+
+### DEC-P1614-01: Trace-compatible evidence, not Ledger integration
+**Decision:** `resolution_trace.py` produces trace-compatible metadata (PolicyResolutionTraceEvent, PolicyResolutionTraceEnvelope) with deterministic hashes and identifiers but does NOT write to `trace.py`/`AurelTraceLog`, import `AgenticRuntime`, or trigger real Ledger operations.
+**Why:** P1.6.14 creates audit-ready evidence without compromising the architectural boundary. Full Ledger integration is deferred.
+
+### DEC-P1614-02: Trace ID is deterministic SHA-256 hash of canonical content
+**Decision:** `trace_id` is derived from `policy_trace_hash()` (SHA-256 over canonical dict). No external randomness, no wall-clock uniqueness.
+**Why:** Determinism enables reproducible trace verification; aligns with all existing Custos hash conventions.
+
+### DEC-P1614-03: Optional trace fields on ResolvedPolicySet (None by default)
+**Decision:** `resolution_trace`, `resolution_trace_hash`, `resolution_trace_id` are `None` by default on `ResolvedPolicySet`.
+**Why:** Full backwards compatibility; existing tests and consumers work without modification.
+
+### DEC-P1614-04: Trace metadata derived from existing resolution + conflict metadata
+**Decision:** `_attach_trace_metadata()` builds the trace event from the `ResolvedPolicySet` fields and `conflict_resolution` dict, not from raw adapter output.
+**Why:** Single source of truth; trace reflects the final resolved state, not intermediate values.
+
+### DEC-P1614-05: Runtime projection carries trace identifiers
+**Decision:** `PolicyShadowProjection` now carries `resolution_trace_id` and `resolution_trace_hash` as optional string fields, propagated from `ResolvedPolicySet` in `project_policy_resolution_against_runtime()`.
+**Why:** Connects shadow projection to trace evidence without changing `AgenticRuntime.submit()` behavior.
+
 ## 2026-06-24 - P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules
 
 ### DEC-P1613-01: Error is highest rank (5) — conservative for conflict purposes
