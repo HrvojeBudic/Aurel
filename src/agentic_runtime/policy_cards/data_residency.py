@@ -62,7 +62,7 @@ class DataClass(str, Enum):
     PUBLIC = "public"
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
-    SECRET = "secret"
+    SECRET = "secret"  # nosec B105 - data-class vocabulary, not a credential
     OPERATOR_PRIVATE = "operator_private"
     PERSONAL_DATA = "personal_data"
     SENSITIVE_PERSONAL_DATA = "sensitive_personal_data"

@@ -208,6 +208,17 @@ def test_run_python_returns_structured_result(tmp_path):
     assert "ok" in res.stdout
 
 
+def test_network_fetch_rejects_non_http_schemes(tmp_path):
+    kernel = _kernel(tmp_path)
+    res = kernel.tools.execute(
+        "network_fetch",
+        {"url": "file:///etc/passwd", "timeout_seconds": 1},
+    )
+    assert not res.success
+    assert res.artifacts["error_code"] == "network_error"
+    assert "unsupported_url_scheme" in res.stderr
+
+
 @requires_subprocess
 def test_run_shell_timeout_is_enforced(tmp_path):
     kernel = _kernel(tmp_path)

@@ -144,20 +144,20 @@ class ToolContract:
         return floor
 
 
-def _type_ok(value: Any, type_token: str) -> bool:
-    if type_token == "str":
+def _type_ok(value: Any, type_name: str) -> bool:
+    if type_name == "str":
         return isinstance(value, str)
-    if type_token == "bool":
+    if type_name == "bool":
         return isinstance(value, bool)
-    if type_token == "int":
+    if type_name == "int":
         return isinstance(value, int) and not isinstance(value, bool)
-    if type_token in ("float", "number"):
+    if type_name in ("float", "number"):
         return isinstance(value, (int, float)) and not isinstance(value, bool)
-    if type_token == "list":
+    if type_name == "list":
         return isinstance(value, list)
-    if type_token == "dict":
+    if type_name == "dict":
         return isinstance(value, dict)
-    if type_token == "list[str]":
+    if type_name == "list[str]":
         return isinstance(value, list) and all(isinstance(x, str) for x in value)
     return False
 

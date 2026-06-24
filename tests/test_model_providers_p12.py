@@ -18,6 +18,7 @@ from agentic_runtime import (
 )
 from agentic_runtime.hitl import AutoApprover
 from agentic_runtime.model_providers.base import ModelRequest
+from agentic_runtime.model_providers.http_utils import post_json
 from agentic_runtime.model_providers.mock_provider import MockProvider
 from agentic_runtime.model_providers.openai_provider import OpenAIProvider
 from agentic_runtime.model_providers.schemas import (
@@ -124,6 +125,13 @@ def test_no_api_key_leaks_in_error_messages(monkeypatch):
     assert resp.error
     assert secret not in resp.error
     assert secret not in (resp.raw_text or "")
+
+
+def test_post_json_rejects_non_http_schemes():
+    data, error, latency = post_json("file:///etc/passwd", {"x": 1})
+    assert data is None
+    assert error == "provider_error:ValueError"
+    assert latency >= 0.0
 
 
 def test_structured_plan_schema_validation():

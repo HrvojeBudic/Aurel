@@ -147,7 +147,7 @@ class PromptInjectionPattern(str, Enum):
     HIDDEN_INSTRUCTION = "hidden_instruction"
     ENCODED_INSTRUCTION = "encoded_instruction"
     PROMPT_LEAK_REQUEST = "prompt_leak_request"
-    SECRET_REQUEST = "secret_request"
+    SECRET_REQUEST = "secret_request"  # nosec B105 - prompt-injection taxonomy label, not a credential
 
 
 class PromptBoundaryRequirementType(str, Enum):

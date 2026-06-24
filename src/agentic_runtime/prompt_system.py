@@ -38,7 +38,7 @@ DEFAULT_FORBIDDEN = {
     "ignore_custos",
     "change_tests_without_permission",
 }
-SECRET_MARKER = "[REDACTED]"
+SECRET_MARKER = "[REDACTED]"  # nosec B105 - redaction placeholder used to avoid exposing secrets
 PLACEHOLDER_RE = re.compile(r"{{\s*([A-Za-z_][A-Za-z0-9_]*)\s*}}")
 SECRET_LIKE_RE = re.compile(
     r"(?i)(\bsk-[A-Za-z0-9_-]{8,}\b|Bearer\s+[A-Za-z0-9._~+/=-]{8,}|"

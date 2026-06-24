@@ -79,7 +79,7 @@ class AdversarialAttackSurface(str, Enum):
 
 
 class AdversarialExpectedOutcome(str, Enum):
-    SHOULD_PASS = "SHOULD_PASS"
+    SHOULD_PASS = "SHOULD_PASS"  # nosec B105 - expected outcome enum, not a credential
     SHOULD_FAIL = "SHOULD_FAIL"
     SHOULD_BLOCK = "SHOULD_BLOCK"
     SHOULD_WARN = "SHOULD_WARN"

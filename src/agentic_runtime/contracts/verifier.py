@@ -23,7 +23,7 @@ class VerifierKind(str, Enum):
 
 
 class VerifierResultStatus(str, Enum):
-    PASS = "pass"
+    PASS = "pass"  # nosec B105 - verifier status label, not a credential
     FAIL = "fail"
     NEEDS_REVIEW = "needs_review"
     INCONCLUSIVE = "inconclusive"

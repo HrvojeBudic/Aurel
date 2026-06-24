@@ -1,0 +1,436 @@
+=== GIT STATUS ===
+ M src/agentic_runtime/alpha_seal.py
+ M src/agentic_runtime/cli.py
+ M src/agentic_runtime/contracts/verifier.py
+ M src/agentic_runtime/demo_harness.py
+ M src/agentic_runtime/evaluation/adversarial_cases.py
+ M src/agentic_runtime/identity/identity_test_battery_scenarios.py
+ M src/agentic_runtime/identity/kernel_hash.py
+ M src/agentic_runtime/identity/p14_exit_seal.py
+ M src/agentic_runtime/model_providers/http_utils.py
+ M src/agentic_runtime/policy_cards/data_residency.py
+ M src/agentic_runtime/policy_cards/prompt_policy.py
+ M src/agentic_runtime/policy_cards/sandbox.py
+ M src/agentic_runtime/policy_cards/sandbox_schema.py
+ M src/agentic_runtime/prompt_system.py
+ M src/agentic_runtime/prompts/identity_context_compiler.py
+ M src/agentic_runtime/sandbox.py
+ M src/agentic_runtime/tool_contracts.py
+ M src/agentic_runtime/tool_manifest/enums.py
+ M src/agentic_runtime/tool_manifest/quarantine.py
+ M src/agentic_runtime/tool_manifest/validation.py
+ M src/agentic_runtime/tools.py
+ M src/agentic_runtime/verifier.py
+ M tests/fixtures/consent/consent_record.json
+ M tests/fixtures/consent/consent_request.json
+ M tests/fixtures/consent/consent_revoked.json
+ M tests/test_demo_harness_p19.py
+ M tests/test_model_providers_p12.py
+ M tests/test_sandbox_p03.py
+ M tests/test_tool_bus_p13.py
+?? agent/reports/validation/
+
+=== COMPILEALL ===
+Listing 'src'...
+Listing 'src/agentic_runtime'...
+Listing 'src/agentic_runtime/_default_config'...
+Listing 'src/agentic_runtime/autonomy'...
+Listing 'src/agentic_runtime/cli_modules'...
+Listing 'src/agentic_runtime/compliance'...
+Listing 'src/agentic_runtime/contracts'...
+Listing 'src/agentic_runtime/evaluation'...
+Listing 'src/agentic_runtime/golden_threads'...
+Listing 'src/agentic_runtime/governance'...
+Listing 'src/agentic_runtime/heretic'...
+Listing 'src/agentic_runtime/identity'...
+Listing 'src/agentic_runtime/metacognition'...
+Listing 'src/agentic_runtime/model_providers'...
+Listing 'src/agentic_runtime/policy_cards'...
+Listing 'src/agentic_runtime/prompts'...
+Compiling 'src/agentic_runtime/tool_contracts.py'...
+Listing 'src/agentic_runtime/tool_manifest'...
+Listing 'src/agentic_runtime/tool_manifest/manifests'...
+Listing 'src/agentic_runtime.egg-info'...
+Listing 'tests'...
+Listing 'tests/contracts'...
+Listing 'tests/evaluation'...
+Listing 'tests/fixtures'...
+Listing 'tests/fixtures/authority_delta'...
+Listing 'tests/fixtures/consent'...
+Listing 'tests/fixtures/tool_manifests'...
+Listing 'tests/golden_threads'...
+Listing 'tests/identity'...
+
+=== P1.6.12 FOCUSED ===
+..........................                                               [100%]
+26 passed in 0.63s
+
+=== P1.6.10-P1.6.12 REGRESSION ===
+........................................................................ [ 64%]
+.......................................s                                 [100%]
+111 passed, 1 skipped in 0.79s
+
+=== RUFF ===
+All checks passed!
+
+=== MYPY ===
+Success: no issues found in 192 source files
+
+=== FULL PYTEST ===
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+.....................................ss................................. [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+..........................s............................................. [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+...............................                                          [100%]
+3412 passed, 3 skipped in 265.21s (0:04:25)
+
+=== COVERAGE ===
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+.....................................ss................................. [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+..........................s............................................. [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+...............................                                          [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                                               Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------------------
+src/agentic_runtime/__init__.py                                       92      9    90%   293-306, 321-324
+src/agentic_runtime/alpha_seal.py                                     54     16    70%   29, 32, 107-124, 134-139
+src/agentic_runtime/approval.py                                      280     22    92%   136-138, 235, 250, 333, 335, 351-355, 393, 395, 423, 427-429, 444, 453, 468, 515
+src/agentic_runtime/autonomy/__init__.py                               1      1     0%   8
+src/agentic_runtime/budget.py                                        172      2    99%   246, 268
+src/agentic_runtime/canonical_path.py                                 52      3    94%   48, 59, 68
+src/agentic_runtime/cli.py                                           822    777     5%   20, 24-33, 37-39, 43-52, 72-96, 100-147, 151-173, 181-184, 188-228, 232-243, 247-261, 265-325, 329-339, 449-475, 479-505, 509-534, 538-540, 544-548, 556-565, 570-594, 598-619, 623-644, 648-669, 673-1538, 1542
+src/agentic_runtime/cli_modules/__init__.py                            0      0   100%
+src/agentic_runtime/cli_modules/common.py                             12      3    75%   11, 16, 21
+src/agentic_runtime/cli_modules/evaluation_commands.py               294    269     9%   10-49, 54-84, 89-104, 109-128, 133-147, 152-166, 171-186, 191-218, 223-238, 243-265, 270-285, 290-313, 318-335, 340-402, 407-424, 429-475, 481-500, 505-564, 569-591, 596-646, 651-670, 675-735
+src/agentic_runtime/cli_modules/identity_commands.py                1797   1689     6%   16-18, 22, 37-59, 63-93, 97-120, 124-166, 170-172, 176, 191-214, 218-248, 252-275, 279-317, 321-351, 355-357, 361, 379-402, 406-436, 440-463, 467-505, 509-539, 543-545, 549-550, 561-583, 587-617, 621-644, 648-686, 690-711, 715-742, 746-750, 754-766, 772-799, 814-833, 837-857, 861-879, 883-904, 908-949, 953-957, 961-964, 977-978, 1016-1041, 1045-1069, 1073-1088, 1092-1117, 1121-1140, 1144-1187, 1191-1195, 1199-1205, 1220-1222, 1261-1282, 1286-1322, 1326-1349, 1353-1402, 1406-1442, 1450-1568, 1572-1574, 1582-1735, 1740-1765, 1770-1780, 1788-1830, 1835-1852, 1857-1887, 1892-1920, 1925-1974, 1981-1993, 1998-2027, 2032-2051, 2056-2077, 2082-2109, 2115-2127, 2131-2134, 2139-2153, 2158-2174, 2179-2198, 2203-2236, 2241-2276, 2286-2340, 2350-2359, 2364-2435, 2440-2505, 2510-2555, 2560-2620, 2625-2687, 2692-2797, 2807-2821, 2826-2840, 2850-2873, 2878-2900, 2905-2935, 2945-2971, 2976-3016, 3021-3068, 3073-3093, 3098-3126, 3136-3151, 3156-3196, 3201-3245, 3250-3291, 3301-3314, 3324-3337, 3342-3352, 3357-3380
+src/agentic_runtime/compliance/__init__.py                             1      1     0%   6
+src/agentic_runtime/contracts/__init__.py                             15      0   100%
+src/agentic_runtime/contracts/capability.py                          117     20    83%   67, 69, 71, 130, 139, 142, 148, 150, 154, 159, 173-187
+src/agentic_runtime/contracts/capability_claims.py                   251     56    78%   79, 102, 104, 106, 108, 129-136, 163, 165, 167, 169, 203, 205, 207, 209, 214, 216, 256, 258, 260, 262, 264, 266, 268, 299, 301, 303, 305, 307, 335, 337, 339, 341, 343, 345, 377, 396, 421, 426-428, 434, 446, 455, 468, 478, 490, 504, 522, 540
+src/agentic_runtime/contracts/context.py                              55     14    75%   25, 27, 29, 48, 50, 52, 54, 59, 63, 67-70, 74
+src/agentic_runtime/contracts/evaluation_cases.py                    146     20    86%   85, 87, 89, 91, 93, 107, 114, 121, 151, 153, 155, 157, 159, 161, 168, 173, 195, 197, 199, 201
+src/agentic_runtime/contracts/evaluation_context.py                  110     21    81%   76, 78, 80, 82, 84, 112, 114, 116, 143, 145, 147, 149, 172, 174, 176, 178, 180, 189, 200, 216, 232
+src/agentic_runtime/contracts/evaluation_runtime.py                  168     20    88%   86, 121, 127, 154, 156, 158, 160, 198, 200, 202, 204, 242, 244, 250, 288, 303-317
+src/agentic_runtime/contracts/evidence.py                             31      3    90%   21, 25, 27
+src/agentic_runtime/contracts/memory_candidates.py                   168     20    88%   125, 149, 151, 153, 186, 188, 190, 192, 194, 196, 198, 202, 256, 258, 260, 262, 290, 292, 294, 296
+src/agentic_runtime/contracts/operator_feedback.py                   151     15    90%   140, 180, 182, 184, 196, 238, 240, 242, 244, 246, 248, 297-299, 308
+src/agentic_runtime/contracts/p15_seal.py                            141     22    84%   42, 44, 46, 48, 50, 52, 54, 56, 58, 132, 134, 136, 155, 197, 199, 216, 218, 220, 286, 288, 290, 292
+src/agentic_runtime/contracts/projections.py                          44      6    86%   39, 41, 43, 45, 62-63
+src/agentic_runtime/contracts/trace.py                               230     26    89%   314, 324, 396, 434-444, 454, 463, 472-478, 491, 493, 495
+src/agentic_runtime/contracts/verifier.py                             77      3    96%   54, 56, 83
+src/agentic_runtime/core_types.py                                    479     43    91%   30-36, 157-159, 184-187, 237-239, 269, 325, 396, 455, 531, 603, 651, 712, 768, 799-802, 844, 850, 854, 858-862, 888-889, 892-894
+src/agentic_runtime/demo.py                                          129    129     0%   7-227
+src/agentic_runtime/demo_harness.py                                  313     45    86%   106, 108, 113, 115, 224, 231-233, 242, 251, 279-283, 305, 335-336, 350, 352, 368, 370, 411, 427, 435, 437, 439, 458, 465, 512, 516, 518, 520, 522, 525-527, 537, 549, 572-573, 640, 647, 653, 669
+src/agentic_runtime/entity.py                                        204     34    83%   49-51, 89-98, 134-141, 167, 190-195, 252-255, 262-265, 271, 297-298, 380, 391, 408-412, 446-450, 456-457, 467-468
+src/agentic_runtime/evaluation/__init__.py                            21      0   100%
+src/agentic_runtime/evaluation/adversarial_cases.py                  249      7    97%   349, 376, 384, 404, 423, 769, 771
+src/agentic_runtime/evaluation/baseline_comparison.py                466     66    86%   417-419, 423-425, 434, 455, 469, 472, 482, 501-504, 508-511, 518, 522, 533-537, 604-605, 675, 680, 685-687, 693, 696, 715, 717, 720, 754-755, 826-843, 891-895, 915-919, 981, 1114, 1116
+src/agentic_runtime/evaluation/benchmark_hygiene.py                  448     50    89%   346-347, 362-363, 366-367, 370-371, 374-375, 390-391, 411, 416, 419-427, 450, 504, 582-586, 613-616, 623-625, 632-634, 641-643, 749, 751, 1010, 1037, 1070, 1100, 1118, 1120
+src/agentic_runtime/evaluation/capability_claim_derivation.py         43      2    95%   257, 276
+src/agentic_runtime/evaluation/capability_evidence.py                274     17    94%   236-239, 256, 306, 326, 329, 405, 469-470, 519, 521, 558-559, 561-562
+src/agentic_runtime/evaluation/context_diagnostics.py                 91      6    93%   93, 142, 144, 147, 192, 364
+src/agentic_runtime/evaluation/evaluation_criteria_schema.py         261      9    97%   276, 388-391, 434, 437-439, 727, 729
+src/agentic_runtime/evaluation/evaluation_foundation.py              139      7    95%   307, 360, 362, 380, 384, 401, 403
+src/agentic_runtime/evaluation/evaluation_objects.py                 242     17    93%   214-215, 225, 227, 264, 300, 302, 393, 455, 527, 529, 561-562, 604-605, 607-608
+src/agentic_runtime/evaluation/evaluation_run_envelope.py            217      8    96%   290, 310, 312, 371, 393, 399, 436, 438
+src/agentic_runtime/evaluation/evaluation_subject_registry.py        266     14    95%   217, 245-246, 251-252, 360, 389, 425-426, 493, 497, 503, 521, 523
+src/agentic_runtime/evaluation/evidence_claim_binding.py             332     29    91%   268-270, 338-341, 388, 390, 392, 472, 474, 519-521, 530-531, 544-547, 580, 590, 607, 609, 736-738, 751-753
+src/agentic_runtime/evaluation/extraction.py                          85      7    92%   77-90
+src/agentic_runtime/evaluation/feedback_processing.py                100     15    85%   248-264, 291-292, 310-322
+src/agentic_runtime/evaluation/memory_candidate_bridge.py             93      4    96%   101, 301-312
+src/agentic_runtime/evaluation/p15_integrated_seal.py                 76      6    92%   82, 84, 91-93, 245
+src/agentic_runtime/evaluation/result_classification.py              382     60    84%   237, 331, 381-384, 397, 406-410, 499, 531, 534, 543, 545, 581, 585, 610-706, 728, 730, 891, 902
+src/agentic_runtime/evaluation/runtime_hook.py                       116     22    81%   75-76, 79-80, 83-87, 267-300, 439, 441, 443, 445, 460, 465, 488-518
+src/agentic_runtime/evaluation/verifier_normalization.py             109      7    94%   188-190, 323, 388, 394, 400
+src/agentic_runtime/file_patch.py                                     44      6    86%   28, 33, 38, 44-47
+src/agentic_runtime/golden_threads/__init__.py                         3      0   100%
+src/agentic_runtime/golden_threads/thread_a.py                       249      3    99%   278-279, 539
+src/agentic_runtime/governance/__init__.py                             1      1     0%   8
+src/agentic_runtime/heretic/__init__.py                                1      1     0%   8
+src/agentic_runtime/hitl.py                                           70     10    86%   53, 69, 152, 162-168
+src/agentic_runtime/identity/__init__.py                              49      0   100%
+src/agentic_runtime/identity/agent_identity_card.py                   46      0   100%
+src/agentic_runtime/identity/agent_identity_card_attestation.py       15      8    47%   16-18, 42-62
+src/agentic_runtime/identity/agent_identity_card_builder.py           61      2    97%   159, 176
+src/agentic_runtime/identity/agent_identity_card_hash.py              40      0   100%
+src/agentic_runtime/identity/agent_identity_card_policy.py           189     18    90%   143, 146, 152, 159-162, 169-171, 274, 277, 281, 300, 307, 311, 340-341
+src/agentic_runtime/identity/agent_identity_card_validation.py       119     16    87%   35, 58, 92, 113, 115, 117, 119, 121, 132, 147, 196, 198, 201, 204, 208, 221
+src/agentic_runtime/identity/agent_lifecycle.py                      304     32    89%   38, 303, 325, 334, 350-352, 363, 365, 381, 397, 625, 782, 837-839, 950, 952, 954, 956, 962-964, 986-988, 990-992, 994-996
+src/agentic_runtime/identity/authority_delta.py                      471     86    82%   450, 453-455, 524-548, 562-563, 615, 623-626, 632-633, 639-640, 648-649, 657-658, 666-667, 679, 690-693, 702-705, 725-729, 735, 740-746, 751, 756-760, 792, 794, 804, 810, 816, 848, 853, 856, 931, 1021-1023
+src/agentic_runtime/identity/authority_relation.py                     7      0   100%
+src/agentic_runtime/identity/autonomy_measurement.py                 230     18    92%   260, 262, 266, 273-274, 320, 324, 335, 338, 346, 361-364, 381, 519, 544, 548, 555
+src/agentic_runtime/identity/autonomy_scale_engine.py                234     30    87%   284-286, 347-361, 367, 386, 394, 396, 478-481, 510-511, 526-527, 534-535, 539-543
+src/agentic_runtime/identity/autonomy_scale_engine_validation.py      74     14    81%   68, 70, 72, 77-78, 83-84, 89-90, 104, 126, 140-142, 158
+src/agentic_runtime/identity/capability_claims.py                    166     12    93%   367, 400-408, 426-429, 435, 596
+src/agentic_runtime/identity/capability_inventory.py                  17      0   100%
+src/agentic_runtime/identity/capability_status.py                      5      0   100%
+src/agentic_runtime/identity/communication_modes.py                  184     22    88%   138, 141, 155, 157, 192, 216, 219, 222, 224, 226, 229, 232, 235, 255, 259, 263, 269, 277, 281, 304-305, 307
+src/agentic_runtime/identity/doctrine_claim_boundaries.py             46      2    96%   51, 100
+src/agentic_runtime/identity/doctrine_mapping.py                      19      0   100%
+src/agentic_runtime/identity/doctrine_registry.py                     89     12    87%   242, 256, 258, 260, 264, 269-270, 274, 282, 284, 311, 336
+src/agentic_runtime/identity/external_doctrine.py                     86      1    99%   100
+src/agentic_runtime/identity/identity_cli_surface.py                 211     38    82%   163-164, 180, 198, 216, 234, 252, 270-277, 305, 307, 309, 316-331, 340-342, 378-379, 387-388, 396-397, 405-406, 422, 424
+src/agentic_runtime/identity/identity_taxonomy.py                     13      0   100%
+src/agentic_runtime/identity/identity_test_battery.py                197     35    82%   140, 142, 153-156, 398, 478-480, 494, 551-567, 570-571, 575, 577, 579, 581, 591, 593
+src/agentic_runtime/identity/identity_test_battery_scenarios.py      270     97    64%   37-38, 132-133, 144, 169-170, 185-195, 234-235, 250-251, 263, 325-326, 367-368, 378, 450-451, 463-473, 500-501, 514, 525-526, 553-554, 605-615, 642-643, 660-670, 697-698, 713-723, 749-750, 765-775, 802-803, 819-829, 855-856, 873-883, 907, 916-940, 951-975, 986-1009, 1020-1056
+src/agentic_runtime/identity/kernel.py                               156     18    88%   109, 115, 118, 163, 166, 169, 171, 173, 176, 179, 182, 208, 223, 231, 235, 259-260, 262
+src/agentic_runtime/identity/kernel_hash.py                           21      2    90%   14, 33
+src/agentic_runtime/identity/kernel_validation.py                     93     19    80%   55, 61, 72, 92, 96, 101-102, 104, 108, 110, 112, 133-134, 171-185
+src/agentic_runtime/identity/mode_hash.py                             22      0   100%
+src/agentic_runtime/identity/mode_registry.py                         10      1    90%   20
+src/agentic_runtime/identity/mode_summary.py                          56      1    98%   86
+src/agentic_runtime/identity/mode_validation.py                      100     22    78%   60, 62, 111, 113, 133-134, 136, 140, 142, 144, 168-169, 187-190, 206-220
+src/agentic_runtime/identity/operator_consent.py                     228     22    90%   213, 311, 315, 317, 319, 347, 391, 433, 481-486, 530-531, 538-543, 550
+src/agentic_runtime/identity/operator_contract.py                    247     20    92%   203, 206, 212, 227, 329, 332, 363, 366, 369, 371, 373, 376, 379, 382, 416, 424, 428, 465-466, 468
+src/agentic_runtime/identity/operator_contract_hash.py                24      0   100%
+src/agentic_runtime/identity/operator_contract_summary.py             22      0   100%
+src/agentic_runtime/identity/operator_contract_validation.py         116     18    84%   292-293, 295, 299, 301, 303, 327-328, 346-349, 365-379
+src/agentic_runtime/identity/p14_exit_seal.py                        384     52    86%   486-487, 496, 511, 519-520, 530, 538-539, 550, 558-559, 576, 583-584, 601, 608-609, 621, 629-630, 741, 758, 773, 799, 874-876, 887-890, 905, 907, 909-911, 915-919, 927, 931, 973, 978, 980, 984, 1079-1082, 1085-1088
+src/agentic_runtime/identity/p14_scope.py                              5      0   100%
+src/agentic_runtime/identity/p14_seal_readiness.py                    63     12    81%   350, 352, 354, 359, 410-413, 415-418
+src/agentic_runtime/identity/persona.py                              235     17    93%   196, 199, 205, 347, 350, 353, 355, 357, 360, 363, 366, 407, 415, 419, 459-460, 462
+src/agentic_runtime/identity/persona_hash.py                          24      0   100%
+src/agentic_runtime/identity/persona_manifest.py                       6      6     0%   8-39
+src/agentic_runtime/identity/persona_summary.py                       20      1    95%   150
+src/agentic_runtime/identity/persona_validation.py                   107     18    83%   183-184, 186, 190, 192, 194, 218-219, 237-240, 256-270
+src/agentic_runtime/identity/runtime_instance.py                      14      2    86%   18, 22
+src/agentic_runtime/identity/self_model.py                            69      0   100%
+src/agentic_runtime/identity/self_model_attestation.py                16      9    44%   16-19, 39-55
+src/agentic_runtime/identity/self_model_builder.py                    87      4    95%   71, 124, 214, 254
+src/agentic_runtime/identity/self_model_hash.py                       37     12    68%   19, 33-42, 96-99
+src/agentic_runtime/identity/self_model_policy.py                    155     10    94%   124, 127, 133, 179, 183, 226, 228, 247, 252, 256
+src/agentic_runtime/identity/self_model_validation.py                133     25    81%   39, 63, 80-81, 107, 111, 113, 115, 117, 145, 150, 155, 159, 178, 189, 192, 194, 196, 198, 200, 202, 220, 224-225, 259
+src/agentic_runtime/identity/source_attestation.py                   220     24    89%   91, 106, 123, 126-128, 179, 231, 233, 235, 237, 239, 243, 247, 261, 272, 274, 598, 609, 613-614, 619, 639, 696
+src/agentic_runtime/identity/source_bundle.py                        114     12    89%   84, 92-93, 95, 108, 173-176, 282, 285, 312
+src/agentic_runtime/identity/trust_evidence.py                       307     33    89%   220, 261, 280, 290, 308, 314, 333, 385, 397, 407, 409, 572-574, 683-686, 688-691, 693-696, 698-701, 720-722
+src/agentic_runtime/memory.py                                        151     24    84%   102-109, 222, 240, 243-250, 258, 261-265, 269-271, 280-281
+src/agentic_runtime/memory_governance.py                             102      2    98%   76, 124
+src/agentic_runtime/metacognition/__init__.py                          1      1     0%   6
+src/agentic_runtime/model_config.py                                  157     21    87%   45, 58, 83, 89, 96, 99, 126, 129-130, 146, 162, 165, 168, 173, 175, 209, 212, 216, 228-229, 245
+src/agentic_runtime/model_providers/__init__.py                        4      0   100%
+src/agentic_runtime/model_providers/anthropic_provider.py             32     32     0%   5-83
+src/agentic_runtime/model_providers/base.py                           67      1    99%   38
+src/agentic_runtime/model_providers/http_utils.py                     45     14    69%   22, 34-41, 61-62, 64, 69, 71
+src/agentic_runtime/model_providers/mock_provider.py                  54      2    96%   49-57
+src/agentic_runtime/model_providers/ollama_provider.py                25     12    52%   28-67
+src/agentic_runtime/model_providers/openai_provider.py                31     12    61%   32, 62-77, 82-86
+src/agentic_runtime/model_providers/schemas.py                        85     21    75%   71, 92-93, 100, 105, 111, 115, 120, 122, 126, 131, 133, 137, 141, 157, 164, 166, 169, 171, 173, 175
+src/agentic_runtime/model_router.py                                  297     92    69%   59, 80, 85, 88-90, 93-95, 99, 106-113, 124, 135, 138, 144-147, 170, 173, 186-190, 204, 215-231, 246-247, 268-275, 281-284, 293-296, 299, 307, 309-311, 317, 321, 323, 344-345, 348, 359, 405, 407, 416-417, 419-420, 424, 445-447, 458-459, 461-462, 466, 473-478, 481, 484, 504
+src/agentic_runtime/plan_validator.py                                 89     12    87%   53, 59-62, 74, 83, 99, 105, 124, 146, 154
+src/agentic_runtime/policy.py                                        111     15    86%   71, 94, 97, 104, 112, 123, 146, 166, 171, 175, 182, 200, 203, 220-221
+src/agentic_runtime/policy_cards/__init__.py                          32      0   100%
+src/agentic_runtime/policy_cards/context_binding.py                  168     21    88%   65, 67, 78, 80, 94, 96, 103, 105, 116-118, 122, 131, 133, 152-153, 163, 165, 173, 190, 244
+src/agentic_runtime/policy_cards/contract_schema.py                   35      2    94%   223, 234
+src/agentic_runtime/policy_cards/contracts.py                        451     24    95%   353, 368, 374, 380, 386, 391, 398, 402, 409, 413, 420, 424, 431, 435, 442, 449, 453, 460, 476-477, 487, 596, 610, 676
+src/agentic_runtime/policy_cards/data_residency.py                   478     47    90%   240-242, 261, 267, 357, 368, 460, 466, 486, 499, 520, 550-553, 557, 587, 696-699, 706, 715, 721-723, 732, 752, 759-763, 775-782, 786-793, 801, 851, 881, 889, 898, 908, 970, 975, 1007, 1055-1056, 1119-1120, 1126, 1144, 1153
+src/agentic_runtime/policy_cards/data_residency_schema.py             36      1    97%   229
+src/agentic_runtime/policy_cards/errors.py                            69      0   100%
+src/agentic_runtime/policy_cards/hashing.py                            7      0   100%
+src/agentic_runtime/policy_cards/human_oversight.py                  501     69    86%   150, 154, 158, 162, 166, 170, 176, 198, 204, 208, 212, 216, 301-303, 322, 328, 487, 509, 522, 571, 585, 611-618, 622, 650, 664, 742, 746, 782-789, 796, 805, 815-817, 826, 847-851, 863-870, 874-881, 889, 898, 907, 916, 926, 945, 1022, 1065, 1095, 1129, 1140-1147, 1149, 1157, 1166, 1177-1178, 1244-1245, 1251, 1263, 1276, 1284, 1291, 1300, 1348
+src/agentic_runtime/policy_cards/human_oversight_schema.py            58      4    93%   431, 443, 508, 519
+src/agentic_runtime/policy_cards/memory_write.py                     417     47    89%   240-242, 261, 267, 323, 357, 363, 376, 383, 435-438, 442, 486, 488, 565, 599, 652, 661, 667, 731-734, 741, 750, 757-763, 766, 786, 802-805, 818-822, 826, 833, 840, 847, 854, 863, 875-876, 940-941, 947, 959, 965, 974
+src/agentic_runtime/policy_cards/memory_write_schema.py               36      1    97%   462
+src/agentic_runtime/policy_cards/models.py                            88      0   100%
+src/agentic_runtime/policy_cards/prompt_policy.py                    437     50    89%   300-302, 321, 327, 382, 400-420, 453, 459, 472, 537-540, 544, 604, 606, 765-768, 775, 784, 791-797, 800, 820, 836-839, 852-856, 860, 867, 874, 881, 888, 896, 902, 910, 921-922, 986-987, 993, 1005, 1011, 1020
+src/agentic_runtime/policy_cards/prompt_policy_schema.py              40      1    98%   448
+src/agentic_runtime/policy_cards/registry.py                         230     43    81%   127, 147, 158, 201, 206, 217, 226, 257, 259, 267, 270, 278, 309, 334, 336, 339, 345, 347-356, 366, 370-374, 379, 381, 387-394, 413
+src/agentic_runtime/policy_cards/resolution_context.py               126     10    92%   133, 141, 145, 147, 157, 221, 238, 243, 250, 263
+src/agentic_runtime/policy_cards/resolution_result.py                 90      4    96%   150, 154, 158, 194
+src/agentic_runtime/policy_cards/resolver.py                         465    114    75%   122, 128-129, 177, 185-186, 202-203, 231-232, 234-236, 256, 263-264, 280-282, 298-306, 310-316, 361-363, 368-387, 417-428, 435, 491, 502-504, 512-525, 565-567, 572-574, 581-608, 627, 630-635, 641-642, 680, 701, 703-704, 708-709, 719, 774, 779, 878, 882, 894-895, 953
+src/agentic_runtime/policy_cards/risk_mapping.py                      89     19    79%   31, 80, 84-87, 94, 132, 150-152, 159, 183, 190, 208-210, 221, 244
+src/agentic_runtime/policy_cards/risk_tier_schema.py                  37      2    95%   437, 448
+src/agentic_runtime/policy_cards/risk_tiers.py                       382     57    85%   178-180, 199, 205, 218, 248, 255, 257, 346, 351, 380-387, 391, 484-491, 498, 507, 517-519, 528, 549-552, 564-571, 575-582, 589, 597, 606, 614, 622, 642, 661, 698, 713, 772-779, 788-795, 799, 807, 810, 818, 827, 838-839, 882, 892, 900-901, 907, 915, 928, 937, 983
+src/agentic_runtime/policy_cards/runtime_projection.py               222     25    89%   93, 97, 99, 130, 158, 160, 164, 168, 172, 203, 223, 244, 268, 314, 318, 322, 402-403, 504, 513, 525, 528-529, 547, 550
+src/agentic_runtime/policy_cards/sandbox.py                          851    181    79%   563-565, 583-585, 590, 616, 621, 641, 650, 659, 690, 696, 705-724, 753, 765-786, 816, 828-842, 871, 884, 892, 899, 905, 928-948, 987-990, 1097, 1099, 1101, 1103, 1105, 1110-1117, 1121-1127, 1201, 1203, 1209, 1211, 1217, 1246, 1300, 1317, 1326, 1345, 1354, 1363, 1371, 1381, 1390, 1409-1412, 1419, 1428, 1435-1441, 1444, 1466, 1474-1478, 1480, 1494, 1501, 1510, 1519-1523, 1525, 1530, 1541, 1550, 1558-1562, 1564, 1569, 1580, 1589, 1598-1602, 1604, 1609, 1617, 1623, 1632-1636, 1647-1651, 1655-1660, 1666, 1672, 1678, 1700, 1707-1712, 1717-1718, 1764, 1774, 1782-1783, 1790, 1801, 1812, 1823, 1834, 1845, 1848-1855, 1861-1869, 1885-1886, 1901-1905, 1994-1995, 2009-2014, 2052-2056, 2079, 2123, 2197-2198, 2201-2202, 2209-2210, 2227-2233
+src/agentic_runtime/policy_cards/sandbox_schema.py                    98      8    92%   204, 223, 233, 237, 244, 263, 286, 358
+src/agentic_runtime/policy_cards/schema.py                            46      0   100%
+src/agentic_runtime/policy_cards/serialization.py                     64     30    53%   49-58, 62-71, 79, 84, 86, 94, 114-116, 119-121
+src/agentic_runtime/policy_cards/tool_permission_schema.py            37      1    97%   235
+src/agentic_runtime/policy_cards/tool_permissions.py                 429     54    87%   236, 256, 262, 309, 325, 347-367, 394, 403, 413, 426, 433, 475-478, 482, 504, 508, 510, 515-521, 543, 545, 673, 729-732, 739, 748, 755-761, 764, 784, 800-804, 811-815, 819, 827, 835, 871-872, 936-937, 943, 955, 961, 970
+src/agentic_runtime/policy_cards/validation.py                       194     29    85%   102-105, 115-118, 132, 152, 158, 161, 169, 173, 177, 194, 198, 209, 213, 217, 226, 232, 241-244, 264, 268, 277, 283, 418
+src/agentic_runtime/praxis.py                                        374     24    94%   256-257, 276, 353-357, 362-365, 377, 469, 505, 511, 513, 560, 575, 622, 656, 669, 859-860
+src/agentic_runtime/prompt_system.py                                 267     46    83%   62, 82-87, 148, 196-200, 227, 232, 235, 246, 273-275, 281-282, 310, 315, 317, 324, 327, 331, 336, 338, 370-373, 385, 391, 395, 404, 412, 429-436, 440
+src/agentic_runtime/prompts/__init__.py                               13      4    69%   77-80
+src/agentic_runtime/prompts/compiler_policy.py                       146      9    94%   118, 124, 127, 133, 233, 235, 254, 259, 263
+src/agentic_runtime/prompts/identity_context.py                       82      0   100%
+src/agentic_runtime/prompts/identity_context_attestation.py           24     18    25%   14-46, 67-84
+src/agentic_runtime/prompts/identity_context_compiler.py             174     19    89%   188, 199, 210, 223, 234, 256, 292, 303, 326, 536-547, 612-625, 684, 719
+src/agentic_runtime/prompts/identity_context_hash.py                  29      0   100%
+src/agentic_runtime/prompts/identity_context_validation.py           108     22    80%   32, 36, 41-42, 54, 56, 68, 100, 115, 119, 121, 123, 125, 127, 130-131, 138, 184, 195, 198, 200, 202
+src/agentic_runtime/repo_agent.py                                    715     70    90%   174, 238-239, 251, 257, 260, 275, 280-281, 355, 362, 366, 370, 372, 374, 380, 392, 396, 399, 407, 409-411, 431, 439, 445, 447, 450, 453, 456, 460, 463, 468, 503, 519-520, 567-576, 584, 611, 613, 615, 636-639, 652-653, 700, 702, 747-749, 780-781, 835-836, 880, 891, 999-1002, 1010, 1032, 1091, 1159, 1175, 1177
+src/agentic_runtime/runtime.py                                       339     19    94%   177, 381, 699, 752, 756, 805, 807, 809, 860, 912, 919, 925, 928-929, 938, 940, 942, 946, 951
+src/agentic_runtime/sandbox.py                                       336     58    83%   124-125, 138-139, 148, 151, 167, 184, 193, 233-236, 315, 380-387, 405, 412-418, 469, 475, 497-508, 517-523, 535, 538-554, 580-582
+src/agentic_runtime/sandbox_policy.py                                292     30    90%   78, 207-208, 210, 213, 220, 229, 267, 333, 356, 409-415, 483, 488, 492, 497, 499, 501, 507, 510-512, 520-521, 582-583, 591, 613
+src/agentic_runtime/secrets.py                                        76     12    84%   20, 66, 90, 97-105
+src/agentic_runtime/skills.py                                         79     28    65%   62-67, 81-87, 91-100, 104-108, 114-116, 139
+src/agentic_runtime/state_machine.py                                  35      2    94%   114, 118
+src/agentic_runtime/status.py                                         29     10    66%   16-19, 82-103
+src/agentic_runtime/test_integrity.py                                134     20    85%   51, 67, 69, 97, 112-113, 120-127, 182, 214-215, 221, 244-245
+src/agentic_runtime/tool_contracts.py                                204     21    90%   119, 155, 159, 162, 187, 220-222, 230, 258, 265, 270-272, 286, 291, 299, 303, 339, 346-347
+src/agentic_runtime/tool_manifest/__init__.py                         13      0   100%
+src/agentic_runtime/tool_manifest/_serde.py                           29      3    90%   17, 19, 32
+src/agentic_runtime/tool_manifest/builtin_manifests.py                 8      0   100%
+src/agentic_runtime/tool_manifest/capability.py                       59      0   100%
+src/agentic_runtime/tool_manifest/enums.py                           187      0   100%
+src/agentic_runtime/tool_manifest/events.py                          182      6    97%   28, 199, 257, 261, 332, 380
+src/agentic_runtime/tool_manifest/invocation.py                      245     33    87%   88, 113, 164, 190, 202, 219-225, 229-235, 264, 267, 308, 310, 314, 316, 318, 320, 322-323, 336, 342-344, 348, 351, 360, 372, 391, 408, 410, 412, 445, 458
+src/agentic_runtime/tool_manifest/loader.py                          203     22    89%   91, 108, 130, 175, 192, 199-200, 213, 219, 225, 231, 237, 336-339, 344, 432-440, 512-513
+src/agentic_runtime/tool_manifest/manifest.py                        106      0   100%
+src/agentic_runtime/tool_manifest/quarantine.py                      358     59    84%   145, 191, 228, 318, 394-395, 397-398, 460-463, 467-468, 476-477, 483-485, 495-497, 507-511, 514-516, 519-521, 530-535, 539-541, 553, 555, 559, 561, 563, 565, 567, 569, 595-598, 603, 605, 649, 651, 653, 655, 657
+src/agentic_runtime/tool_manifest/registry.py                        289     50    83%   108, 150, 155, 157, 159, 161, 163, 165, 219-223, 253-280, 354-363, 372, 397, 512, 587, 602, 627, 670, 687, 724, 754
+src/agentic_runtime/tool_manifest/research_metadata.py               281     31    89%   235, 241, 303, 313, 322, 324, 326, 334, 366-370, 373, 406, 409, 419, 438-439, 458, 488, 491, 494, 497-498, 501-503, 549, 645, 655
+src/agentic_runtime/tool_manifest/validation.py                      444     46    90%   233, 242, 248, 251, 261, 265, 279, 281, 283, 287, 289, 291, 300, 304, 306, 308, 310, 332, 341, 359, 366, 383, 416, 512, 538, 546, 562, 570-571, 613-617, 626, 661, 669-674, 683, 735, 744, 751, 794, 808, 830-831, 845, 895
+src/agentic_runtime/tools.py                                         320     49    85%   93-94, 164, 178-179, 195, 213-215, 293-301, 308-318, 363, 385-386, 388, 409-411, 427, 572-580, 600, 603-604, 614
+src/agentic_runtime/trace.py                                         427     68    84%   163, 173, 258, 262, 275-276, 378-385, 408-415, 424, 446, 456, 463, 470, 486-562, 573, 577, 794-815, 883-905, 911-922, 924, 979, 1013, 1026, 1083, 1088, 1098, 1102, 1118, 1122, 1124, 1126, 1135
+src/agentic_runtime/verifier.py                                      145     30    79%   61-62, 81-82, 85, 90-91, 115-116, 128, 137, 144-145, 158-159, 176, 182-202, 247, 251
+src/agentic_runtime/yaml_minimal.py                                  160     28    82%   19, 22, 24-25, 39-41, 47, 55, 99, 104, 117, 120, 123, 129, 134-140, 145, 150, 175, 178, 183, 196-197
+------------------------------------------------------------------------------------------------
+TOTAL                                                              31393   6408    80%
+Required test coverage of 75% reached. Total coverage: 79.59%
+3412 passed, 3 skipped in 278.46s (0:04:38)
+
+=== BANDIT ===
+Working... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:05
+Run started:2026-06-24 02:14:17.232499+00:00
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 69680
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 29
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+
+=== FINAL GIT STATUS ===
+ M src/agentic_runtime/alpha_seal.py
+ M src/agentic_runtime/cli.py
+ M src/agentic_runtime/contracts/verifier.py
+ M src/agentic_runtime/demo_harness.py
+ M src/agentic_runtime/evaluation/adversarial_cases.py
+ M src/agentic_runtime/identity/identity_test_battery_scenarios.py
+ M src/agentic_runtime/identity/kernel_hash.py
+ M src/agentic_runtime/identity/p14_exit_seal.py
+ M src/agentic_runtime/model_providers/http_utils.py
+ M src/agentic_runtime/policy_cards/data_residency.py
+ M src/agentic_runtime/policy_cards/prompt_policy.py
+ M src/agentic_runtime/policy_cards/sandbox.py
+ M src/agentic_runtime/policy_cards/sandbox_schema.py
+ M src/agentic_runtime/prompt_system.py
+ M src/agentic_runtime/prompts/identity_context_compiler.py
+ M src/agentic_runtime/sandbox.py
+ M src/agentic_runtime/tool_contracts.py
+ M src/agentic_runtime/tool_manifest/enums.py
+ M src/agentic_runtime/tool_manifest/quarantine.py
+ M src/agentic_runtime/tool_manifest/validation.py
+ M src/agentic_runtime/tools.py
+ M src/agentic_runtime/verifier.py
+ M tests/fixtures/consent/consent_record.json
+ M tests/fixtures/consent/consent_request.json
+ M tests/fixtures/consent/consent_revoked.json
+ M tests/test_demo_harness_p19.py
+ M tests/test_model_providers_p12.py
+ M tests/test_sandbox_p03.py
+ M tests/test_tool_bus_p13.py
+?? agent/reports/validation/

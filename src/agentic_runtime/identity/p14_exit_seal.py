@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import os
-import subprocess
+import subprocess  # nosec B404 - exit seal intentionally runs fixed local CLI verification commands
 import sys
 import time
 from dataclasses import dataclass
@@ -427,7 +427,7 @@ def _repo_root() -> str:
 
 
 def _run_cli(*args: str, timeout_s: int = 60) -> subprocess.CompletedProcess:
-    return subprocess.run(
+    return subprocess.run(  # nosec B603 - fixed local CLI argv assembled from explicit argument strings
         [sys.executable, "-m", "agentic_runtime.cli", *args],
         capture_output=True, text=True, timeout=timeout_s,
         cwd=_repo_root(),

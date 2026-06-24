@@ -6,7 +6,7 @@ tests, coverage tooling, CI workflow, and apply-sandbox resolution.
 """
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec B404 - alpha seal intentionally runs fixed local verification commands
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -82,7 +82,7 @@ def run_alpha_seal(
         detail=str(ci_path) if ci_path.is_file() else "missing",
     ))
 
-    compile_proc = subprocess.run(
+    compile_proc = subprocess.run(  # nosec B603 - fixed compileall argv in repo root
         [sys.executable, "-m", "compileall", "-q", "src", "tests"],
         cwd=root,
         capture_output=True,
@@ -112,7 +112,7 @@ def run_alpha_seal(
                 "--cov-report=term-missing:skip-covered",
                 "--cov-fail-under=75",
             ])
-        test_proc = subprocess.run(
+        test_proc = subprocess.run(  # nosec B603 - fixed pytest argv plus optional fixed coverage flags
             test_cmd,
             cwd=root,
             env=env,
