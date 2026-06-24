@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules](reports/P1.6.13_POLICY_CONFLICT_ALGEBRA_STRICTEST_WINS_REPORT.md) | 2026-06-24 | Deterministic conflict detection, ranking, classification, and resolution of Custos shadow policy decisions; 6 enums, 6 frozen dataclasses, strictest-wins algebra, specificity scoring, SHA-256 hashing; optional conflict metadata on ResolvedPolicySet; 73+ tests; shadow-only no enforcement |
 | [P1.6.11 Policy Resolution Context & Registry Binding](reports/P1.6.11_POLICY_RESOLUTION_CONTEXT_REGISTRY_BINDING_REPORT.md) | 2026-06-23 | Deterministic explicit PolicyCardRegistry, context binding helpers, conservative risk mapping seed, applicability filtering, registry-to-Custos resolver path, SHADOW-only no enforcement |
 | [P1.6.10 Custos v0 Policy Runtime Resolver / Shadow Mode](reports/P1.6.10_CUSTOS_V0_POLICY_RUNTIME_RESOLVER_SHADOW_MODE_REPORT.md) | 2026-06-23 | First step from policy vocabulary to adjudication: PolicyResolutionContext + ResolvedPolicySet + 7 family adapters + strictest-wins MVP, shadow-mode WOULD_* outcomes, deterministic hashes, no `submit()` change, no enforcement, 51 tests |
 | [P1.6.9 Sandbox Policy Card Model](reports/P1.6.9_SANDBOX_POLICY_CARD_MODEL_REPORT.md) | 2026-06-23 | Sandbox Policy Card Model v1: 6 enums, backend/filesystem/egress/command rules, risk-tier sandbox mappings, resolver-ready `evaluate_sandbox_policy_decision()`, deny-by-default, secrets-path detection — semantics only, no real sandbox execution |

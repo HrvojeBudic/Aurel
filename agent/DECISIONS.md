@@ -1,5 +1,35 @@
 # Decisions Log
 
+## 2026-06-24 - P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules
+
+### DEC-P1613-01: Error is highest rank (5) — conservative for conflict purposes
+**Decision:** `PolicyDecisionRank.ERROR` has the highest numeric value (5), distinct from the existing `FamilyDecision.ERROR` value (3). When an adapter produces an error, that decision is the strictest in any conflict resolution.
+**Why:** Conservative conflict algebra must treat adapter failures as the most severe outcome to avoid accidentally allowing operations that failed to evaluate.
+
+### DEC-P1613-02: Empty input → NOT_APPLICABLE with NO_APPLICABLE_POLICY
+**Decision:** When `resolve_policy_conflicts_strictest_wins()` receives an empty `family_decisions` tuple, it returns `NOT_APPLICABLE` rank with `NO_APPLICABLE_POLICY` strategy, not a generic WARN.
+**Why:** An empty policy set means no families decided anything. Warning would imply there's something to warn about when there simply isn't any applicable policy.
+
+### DEC-P1613-03: Conflict fields on ResolvedPolicySet are optional (None by default)
+**Decision:** `conflict_resolution: dict | None = None` and `conflict_hash: str | None = None` on `ResolvedPolicySet`.
+**Why:** Full backwards compatibility — existing consumers and tests that construct `ResolvedPolicySet` directly continue to work without modification.
+
+### DEC-P1613-04: Conflict hash is deterministic SHA-256 over canonical conflict dict
+**Decision:** `PolicyConflictResolution.compute_hash()` produces a SHA-256 hash over `json.dumps(self.to_canonical_dict(), sort_keys=True, separators=(",", ":"))`.
+**Why:** Same pattern as all other Custos hashes; deterministic, JSON-safe, verifiable.
+
+### DEC-P1613-05: No enforcement, no runtime imports, no side effects
+**Decision:** `conflict_algebra.py` imports only from `policy_cards` via `TYPE_CHECKING` and never imports or references `AgenticRuntime`, `submit()`, sandbox, approval, or any enforcement machinery. All functions are pure.
+**Why:** P1.6.13 formalizes conflict — it does NOT enforce. This is the cardinal architectural law.
+
+### DEC-P1613-06: Specificity is tie-break only after strictness rank
+**Decision:** `compute_specificity_score()` scores 0-5 per dimension based on metadata presence. A highly specific ALLOW must never override a general DENY or REQUIRE_APPROVAL.
+**Why:** Specificity resolves ties between decisions at the same strictness rank. It is not a mechanism to override stricter decisions with specific-but-lenient ones.
+
+### DEC-P1613-07: Family names normalized via .value for str, Enum compatibility
+**Decision:** `_family_name_from_fd()` extracts family names using `.value` on enum members instead of `str()`, which in Python 3.12+ returns the repr for `str, Enum` mixed classes.
+**Why:** Ensures family names serialize as plain strings (`"risk_tier"`) rather than enum reprs (`"PolicyFamily.RISK_TIER"`) in all canonical representations.
+
 ## 2026-06-23 - P1.6.11 Policy Resolution Context & Registry Binding
 
 ### DEC-P1611-01: Registry is explicit, deterministic, and in-memory

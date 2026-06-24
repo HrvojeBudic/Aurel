@@ -16,6 +16,7 @@ Architectural law:
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from typing import Callable, Sequence
 
 from .data_residency import (
@@ -55,6 +56,7 @@ from .resolution_result import (
     decision_rank,
     decision_to_shadow_action,
 )
+from .conflict_algebra import resolve_policy_conflicts_strictest_wins
 from .risk_tiers import (
     OversightLevel,
     ReversibilityLevel,
@@ -935,7 +937,33 @@ def resolve_policy_cards(
         applicable_card_ids=tuple(applicable_ids),
         source_hashes=tuple(source_hashes),
     )
+
+    # P1.6.13 — Attach conflict algebra metadata (shadow-only, no enforcement)
+    try:
+        resolution = _attach_conflict_metadata(resolution, family_decisions, context)
+    except Exception:  # pragma: no cover - defensive
+        pass
+
     return resolution.with_canonical_hash()
+
+
+def _attach_conflict_metadata(
+    resolution: ResolvedPolicySet,
+    family_decisions: list[PolicyFamilyDecision],
+    context: PolicyResolutionContext,
+) -> ResolvedPolicySet:
+    """Attach P1.6.13 conflict algebra metadata to a ResolvedPolicySet."""
+    if not family_decisions:
+        return resolution
+    cr = resolve_policy_conflicts_strictest_wins(
+        family_decisions=family_decisions,
+        context=context,
+    )
+    return replace(
+        resolution,
+        conflict_resolution=cr.to_canonical_dict(),
+        conflict_hash=cr.compute_hash(),
+    )
 
 
 def resolve_policy_cards_from_registry(

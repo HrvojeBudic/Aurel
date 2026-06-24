@@ -8,12 +8,12 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | **P1.6.11 — Policy Resolution Context & Registry Binding** |
-| **Last completed** | P1.6.10H — Runtime Security, Coverage & Governance Truth Hotfix |
-| **Previous** | P1.6.10 — Custos v0 Policy Runtime Resolver / Shadow Mode |
-| **Next planned** | P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection |
+| **Current active** | **P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules** |
+| **Last completed** | P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook |
+| **Previous** | P1.6.11 — Policy Resolution Context & Registry Binding |
+| **Next planned** | P1.6.14 — Policy Enforcement Adapter Hardening |
 
-**P1.6.11 active** — Policy Resolution Context & Registry Binding: deterministic explicit `PolicyCardRegistry`, context binding helpers, conservative risk mapping seed, applicability filtering, and registry-to-Custos resolver invocation. Output remains SHADOW-only `WOULD_*`; no runtime enforcement and no `AgenticRuntime.submit()` behavior change. Next planned: P1.6.12 — Policy Enforcement Adapter / Shadow Runtime Projection.
+**P1.6.13 active** — Policy Conflict Algebra & Strictest-Wins Rules: deterministic conflict detection, ranking, classification, and resolution of Custos shadow policy decisions via strictest-wins algebra. Conflict metadata is attached to `ResolvedPolicySet` as optional backwards-compatible fields. All operations remain shadow-only with no enforcement surface. Next planned: P1.6.14 — Policy Enforcement Adapter Hardening.
 
 **P1.6.10H complete** — Runtime Security, Coverage & Governance Truth Hotfix sealed runtime/security/coverage/documentation truth before registry binding. See `agent/reports/P1.6.10H_RUNTIME_SECURITY_COVERAGE_GOVERNANCE_TRUTH_HOTFIX_REPORT.md`.
 

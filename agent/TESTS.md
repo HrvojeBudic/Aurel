@@ -55,6 +55,22 @@ python -m agentic_runtime.cli verify
 
 P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in 0.71s**; P1.6.10/P1.6.11/security regression **111 passed, 1 skipped in 0.84s**; P1.6 policy-card family regression **497 passed in 1.64s**; ruff **PASS**; mypy **PASS** (`Success: no issues found in 192 source files`); full pytest **3405 passed, 3 skipped in 260.24s**; coverage **3405 passed, 3 skipped in 283.29s**, total coverage **79.56%**, fail-under 75 passed; Bandit **FAILS on known deferred B310/B108 findings** in `http_utils.py`, `sandbox.py`, `tools.py`, and `verifier.py` (no new P1.6.12 finding).
 
+## P1.6.13 Verification (Policy Conflict Algebra & Strictest-Wins Rules)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py -q
+.venv/bin/python -m pytest tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_snapshot_security_p1610h.py -q
+.venv/bin/python -m pytest tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_runtime_custos_shadow_submit_p1612.py tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_sandbox_policy_cards_p169.py tests/test_prompt_policy_cards_p168.py tests/test_memory_write_policy_cards_p167.py tests/test_tool_permission_policy_cards_p166.py tests/test_data_residency_policy_cards_p165.py tests/test_human_oversight_policy_cards_p164.py tests/test_risk_tier_policy_cards_p163.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+P1.6.13 is shadow-only. No enforcement, no command blocking, no approval activation, no runtime sandbox changes.
+
 P1.6.12 is observability-only. P0 runtime remains authoritative, and Custos shadow decisions are not enforcement decisions.
 
 ## P1.6.11 Verification (Policy Resolution Context & Registry Binding)

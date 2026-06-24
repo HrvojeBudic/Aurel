@@ -13,7 +13,7 @@
   "new_attestation_id": "srcatt_new_cli",
   "highest_severity": "HIGH",
   "risk_acknowledged": true,
-  "granted_at": "2026-06-24T02:28:00.568295+00:00",
+  "granted_at": "2026-06-24T03:05:00.939582+00:00",
   "denied_at": null,
   "revoked_at": null,
   "expires_at": null,

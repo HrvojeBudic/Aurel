@@ -1,50 +1,47 @@
-# Active Task: P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook
+# Active Task: P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules
 
 **Status:** ACTIVE
 
 ## Roadmap Position
 
-- Last completed: P1.6.11 — Policy Resolution Context & Registry Binding
-- Current active: **P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook**
-- Next planned: P1.6.13 — Policy Enforcement Adapter Hardening
+- Last completed: P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook
+- Current active: **P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules**
+- Next planned: P1.6.14 — Policy Enforcement Adapter Hardening
 
-P1.6.12 adds an observability-only bridge from `AgenticRuntime.submit()` to the Custos policy-card resolver. The P0 runtime remains authoritative for policy, approval, sandbox, budget, verifier, rollback, trace, and memory behavior. Custos shadow decisions are attached only as deterministic observation metadata.
+P1.6.13 introduces deterministic conflict algebra within the Custos shadow policy decision system. It normalizes policy family decisions into formal ranks, classifies conflicts between them, and determines the "strictest valid outcome" according to defined rules. All conflict evidence is preserved and explained deterministically. No enforcement or runtime behavior changes are introduced.
 
 ## Objective
 
-When explicitly enabled and supplied with an explicit `PolicyCardRegistry`, submit results may include:
+When the Custos resolver produces multiple family decisions, P1.6.13 formalizes:
 
-```text
-ObservationEnvelope.artifacts["policy_shadow_projection"]
-```
+- **Normalization**: maps every `FamilyDecision`/`ShadowAction` to a `PolicyDecisionRank` (ERROR > DENY > REQUIRE_APPROVAL > WARN > ALLOW > NOT_APPLICABLE)
+- **Conflict classification**: detects and taxonomizes rank, family, risk, approval, sandbox, data, tool, prompt, memory, adapter error, and context conflicts via 14 `PolicyConflictType` values
+- **Strictest-wins resolution**: determines the winning outcome via deterministic rules (strictness → specificity → family_order → lexical), preserving all evidence
+- **Deterministic canonical hashing**: SHA-256 over canonical conflict resolution dict
 
-The payload compares the runtime's effective P0 posture with the Custos `WOULD_*` shadow result and records alignment or mismatch codes. It is included before the state transition append, so it participates in the observation hash used by the trace record.
+The integration attaches `conflict_resolution` and `conflict_hash` metadata to `ResolvedPolicySet` as optional backwards-compatible fields. The resolver calls into `conflict_algebra` after `aggregate_family_decisions()` produces the initial family decisions.
 
 ## Scope
 
-- `RuntimePolicySnapshot` summarizes the authoritative runtime posture.
-- `PolicyShadowProjection` records a deterministic, hash-ready comparison payload.
-- `AgenticRuntime` and `build_runtime()` accept default-disabled shadow projection options.
-- No registry means no projection, even if the flag is true.
-- Flag false means no projection work.
-- Resolver/projection failures degrade to observable `SHADOW_ERROR` metadata and never alter submit behavior.
-- Projection hash excludes only the hash field itself.
+- `conflict_algebra.py` (new): 6 enums, 6 frozen dataclasses, normalization helpers, strictest-wins resolution, conflict classification, specificity scoring, canonical hashing (~560 lines)
+- `resolution_result.py`: optional `conflict_resolution`/`conflict_hash` fields on `ResolvedPolicySet` (default `None` — backwards compatible)
+- `resolver.py`: calls `resolve_policy_conflicts_strictest_wins()` after `aggregate_family_decisions()`, attaches metadata via `_attach_conflict_metadata()`
+- `__init__.py`: ~14 new public exports
 
 ## Non-scope
 
-- No Custos runtime enforcement.
-- No command blocking from policy cards.
-- No approval activation from policy cards.
-- No sandbox runtime bridge from sandbox policy cards.
-- No default policy-card creation in runtime.
-- No file discovery, database registry, or global policy state.
-- Fail-closed apply, `run_shell` string rejection, and Bandit B310/B108 fixes are deferred.
+- No Custos runtime enforcement
+- No command blocking from policy cards
+- No approval activation from policy cards
+- No sandbox behavior changes
+- No runtime authorization modifications
+- No enforcement imports in conflict_algebra.py
 
 ## Tests
 
-- `tests/test_policy_runtime_projection_p1612.py`
-- `tests/test_runtime_custos_shadow_submit_p1612.py`
+- `tests/test_policy_conflict_algebra_p1613.py` — 73 pure-module tests
+- `tests/test_policy_resolver_conflict_algebra_p1613.py` — resolver integration tests
 
 ## Report
 
-Full report: `agent/reports/P1.6.12_CUSTOS_SHADOW_RUNTIME_PROJECTION_REPORT.md`
+Full report: `agent/reports/P1.6.13_POLICY_CONFLICT_ALGEBRA_STRICTEST_WINS_REPORT.md`

@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-23 (P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook)_
+_Last updated: 2026-06-24 (P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.11 — Policy Resolution Context & Registry Binding
-- Current active: **P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook**
-- Next planned: P1.6.13 — Policy Enforcement Adapter Hardening
+- Last completed: P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook
+- Current active: **P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules**
+- Next planned: P1.6.14 — Policy Enforcement Adapter Hardening
 
-**P1.6.12 is the current active feature phase.**
-P1.6.11 is last completed and sealed deterministic registry/context binding before submit observability.
+**P1.6.13 is the current active feature phase.**
+P1.6.12 is last completed and sealed deterministic shadow runtime projection before conflict algebra.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 
@@ -48,6 +48,18 @@ Documentation:
 - `tests/test_policy_runtime_projection_p1612.py` and `tests/test_runtime_custos_shadow_submit_p1612.py`: 26 focused tests covering projection determinism, matrix behavior, no-enforcement invariants, submit no-op modes, stricter Custos/runtime visibility, sandbox mismatch visibility, shadow failure degradation, approval behavior, verifier, and rollback-preserving write success.
 
 **Custos shadow decisions are not enforcement decisions. P0 runtime remains authoritative.** Fail-closed apply, `run_shell` string rejection, and Bandit B310/B108 fixes remain deferred.
+
+### P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules (ACTIVE — shadow-only)
+
+- `policy_cards/conflict_algebra.py`: new pure module with 6 enums (`PolicyDecisionRank`, `PolicyConflictType` 14 values, `PolicyConflictSeverity`, `PolicyConflictResolutionStrategy`), 6 frozen dataclasses (`PolicySpecificityScore`, `PolicyPrecedenceRule`, `PolicyConflict`, `PolicyConflictSet`, `PolicyConflictResolution`, `StrictestWinsResult`), normalization helpers, strictest-wins resolution algorithm, 14-type conflict classifier, specificity scoring, deterministic SHA-256 hashing. No runtime/enforcement imports.
+- `policy_cards/resolution_result.py`: optional `conflict_resolution: dict | None` and `conflict_hash: str | None` fields on `ResolvedPolicySet` (default `None`, fully backwards compatible).
+- `policy_cards/resolver.py`: `_attach_conflict_metadata()` calls into `resolve_policy_conflicts_strictest_wins()` after `aggregate_family_decisions()`, attaching conflict metadata to the `ResolvedPolicySet` before hashing.
+- `policy_cards/__init__.py`: ~14 new public exports.
+- Strictest-wins rules: ERROR(5) > DENY(4) > REQUIRE_APPROVAL(3) > WARN(2) > ALLOW(1) > NOT_APPLICABLE(0); tie-breaks: specificity → family_order → lexical card_id.
+- `tests/test_policy_conflict_algebra_p1613.py`: 73 pure-module tests for ranking, strictest-wins matrix, determinism, taxonomy, specificity, non-enforcement.
+- `tests/test_policy_resolver_conflict_algebra_p1613.py`: resolver integration tests for metadata, backwards compat, shadow-only invariants.
+
+**P1.6.13 formalizes Custos shadow conflict resolution through deterministic strictest-wins algebra; it does not enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.**
 
 ### Sandbox Layer Disambiguation
 

@@ -142,6 +142,8 @@ class ResolvedPolicySet:
     applicable_card_ids: tuple[str, ...] = ()
     source_hashes: tuple[str, ...] = ()
     canonical_hash: str | None = None
+    conflict_resolution: dict[str, Any] | None = None
+    conflict_hash: str | None = None
 
     # -- shadow convenience predicates ------------------------------------
 
@@ -192,6 +194,10 @@ def resolved_policy_set_to_canonical_dict(
     }
     if include_hash and rps.canonical_hash is not None:
         result["canonical_hash"] = rps.canonical_hash
+    if include_hash and rps.conflict_hash is not None:
+        result["conflict_hash"] = rps.conflict_hash
+    if include_hash and rps.conflict_resolution is not None:
+        result["conflict_resolution"] = rps.conflict_resolution
     return dict(sorted(result.items(), key=lambda i: i[0]))
 
 

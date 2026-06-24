@@ -561,6 +561,22 @@ from .runtime_projection import (
     serialize_runtime_policy_snapshot_canonical,
     shadow_projection_error_payload,
 )
+from .conflict_algebra import (
+    PolicyConflict,
+    PolicyConflictResolution,
+    PolicyConflictResolutionStrategy,
+    PolicyConflictSet,
+    PolicyConflictSeverity,
+    PolicyConflictType,
+    PolicyDecisionRank,
+    PolicyPrecedenceRule,
+    PolicySpecificityScore,
+    StrictestWinsResult,
+    classify_policy_conflicts,
+    compute_specificity_score,
+    normalize_policy_decision_rank,
+    resolve_policy_conflicts_strictest_wins,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1115,4 +1131,19 @@ __all__ = [
     "PolicyRuntimeProjectionError",
     "PolicyRuntimeSnapshotValidationError",
     "PolicyShadowProjectionError",
+    # - Policy Conflict Algebra (P1.6.13) -
+    "PolicyDecisionRank",
+    "PolicyConflictType",
+    "PolicyConflictSeverity",
+    "PolicyConflictResolutionStrategy",
+    "PolicySpecificityScore",
+    "PolicyPrecedenceRule",
+    "PolicyConflict",
+    "PolicyConflictSet",
+    "PolicyConflictResolution",
+    "StrictestWinsResult",
+    "normalize_policy_decision_rank",
+    "compute_specificity_score",
+    "classify_policy_conflicts",
+    "resolve_policy_conflicts_strictest_wins",
 ]
