@@ -11,7 +11,7 @@
   "risk_summary": "HIGH/CRITICAL authority delta(s) detected. Explicit risk acknowledgement required.\nThe following deltas expand authority or increase risk:\n  - [HIGH] RISK_CEILING_INCREASED: risk_ceiling",
   "requested_scope": "DELTA_REPORT",
   "requires_explicit_risk_acknowledgement": true,
-  "created_at": "2026-06-24T03:05:00.432516+00:00",
+  "created_at": "2026-06-24T03:25:48.984059+00:00",
   "expires_at": null,
   "evidence_refs": []
 }
