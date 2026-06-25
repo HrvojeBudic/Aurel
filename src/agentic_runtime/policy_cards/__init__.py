@@ -616,6 +616,12 @@ from .test_harness import (
     evaluate_policy_harness_case,
     run_policy_harness_suite,
 )
+from .policy_harness_registry import (
+    DEFAULT_POLICY_HARNESS_SUITE_ID,
+    default_policy_harness_suite,
+    get_policy_harness_case,
+    list_policy_harness_cases,
+)
 from .projection_contract import (
     PolicyProjectionContract,
     PolicyProjectionEvent,
@@ -1235,6 +1241,10 @@ __all__ = [
     "evaluate_policy_harness_case",
     "run_policy_harness_suite",
     "build_policy_harness_report",
+    "DEFAULT_POLICY_HARNESS_SUITE_ID",
+    "default_policy_harness_suite",
+    "get_policy_harness_case",
+    "list_policy_harness_cases",
     # - Policy Projection Contract (P1.6.17) -
     "PolicyProjectionSourceLabel",
     "PolicyProjectionStatus",

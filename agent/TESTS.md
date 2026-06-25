@@ -69,6 +69,18 @@ P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in
 .venv/bin/python -m bandit -r src/agentic_runtime -ll
 ```
 
+## P1.6.18 Verification (Policy CLI/TUI Binding)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py -q
+.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py tests/test_policy_projection_contract_p1617.py tests/test_policy_projection_sources_p1617.py tests/test_policy_projection_integration_p1617.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+P1.6.18 binds the P1.6 policy projection contract to a minimal operator-facing CLI/TUI surface; it does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+
 ## P1.6.17 Verification (Policy Projection/API/Event Contract)
 
 ```bash

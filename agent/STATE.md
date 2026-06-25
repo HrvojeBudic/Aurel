@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.6.17 — Policy Projection/API/Event Contract)_
+_Last updated: 2026-06-25 (P1.6.18 — Policy CLI/TUI Binding)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.17 — Policy Projection/API/Event Contract
-- Current active: **P1.6.18 — Policy CLI/TUI Binding**
-- Next planned: P1.6.19 — Policy Docs/State/Reports Update
+- Last completed: P1.6.18 — Policy CLI/TUI Binding
+- Current active: **P1.6.19 — Policy Docs/State/Reports Update**
+- Next planned: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
 
-**P1.6.17 is last completed (policy projection contract).**
-P1.6.17 exposes honest backend capability state via source-labeled read model; it does not enforce policy decisions.
+**P1.6.18 is last completed (policy CLI binding).**
+P1.6.18 exposes P1.6 policy subsystem via read-only CLI commands consuming `PolicyProjectionContract v1`; it does not enforce policy decisions.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 

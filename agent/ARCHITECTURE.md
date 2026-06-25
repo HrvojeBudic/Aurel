@@ -57,7 +57,8 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `praxis.py` | Praxis memory metabolism seed: experience → candidates → promotion gates (P0.16) |
 | `state_machine.py` | Execution status transitions |
 | `status.py` | Lightweight runtime diagnostics |
-| `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
+| `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `policy`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
+| `cli_modules/policy_commands.py` | P1.6.18 read-only policy projection CLI (`policy status`, `policy projection`, `policy unavailable`, `policy harness list/run`) consuming `PolicyProjectionContract v1` |
 
 
 ## Custos v0 Policy Runtime Resolver — Shadow Mode (P1.6.10)

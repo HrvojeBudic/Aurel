@@ -581,18 +581,31 @@ def build_policy_harness_projection(
     return PolicyHarnessProjection(section=section)
 
 
-def build_policy_cli_binding_projection() -> PolicyCliBindingProjection:
-    section = PolicyProjectionSection(
-        section_id=_SECTION_CLI_BINDING,
-        title="Policy CLI Binding",
-        status=PolicyProjectionStatus.UNAVAILABLE,
-        source=PolicyProjectionSourceLabel.UNAVAILABLE,
-        summary="CLI binding not implemented in P1.6.17",
-        unavailable_reason=PolicyProjectionUnavailableReason(
-            code="CLI_BINDING_DEFERRED",
-            message=CLI_BINDING_UNAVAILABLE_REASON,
-        ),
-    )
+def build_policy_cli_binding_projection(*, available: bool = False) -> PolicyCliBindingProjection:
+    if available:
+        section = PolicyProjectionSection(
+            section_id=_SECTION_CLI_BINDING,
+            title="Policy CLI Binding",
+            status=PolicyProjectionStatus.AVAILABLE,
+            source=PolicyProjectionSourceLabel.LIVE,
+            summary="Policy CLI binding available (P1.6.18)",
+            capabilities={
+                "module": "agentic_runtime.cli_modules.policy_commands",
+                "binding": "cli",
+            },
+        )
+    else:
+        section = PolicyProjectionSection(
+            section_id=_SECTION_CLI_BINDING,
+            title="Policy CLI Binding",
+            status=PolicyProjectionStatus.UNAVAILABLE,
+            source=PolicyProjectionSourceLabel.UNAVAILABLE,
+            summary="CLI binding not implemented in P1.6.17",
+            unavailable_reason=PolicyProjectionUnavailableReason(
+                code="CLI_BINDING_DEFERRED",
+                message=CLI_BINDING_UNAVAILABLE_REASON,
+            ),
+        )
     return PolicyCliBindingProjection(section=section)
 
 
@@ -631,8 +644,8 @@ def _build_readiness(sections: Sequence[PolicyProjectionSection]) -> PolicyProje
         resolution_trace_available=_section_is_available(by_id[_SECTION_RESOLUTION_TRACE]),
         violation_trace_available=_section_is_available(by_id[_SECTION_VIOLATION_TRACE]),
         harness_available=_section_is_available(by_id[_SECTION_POLICY_HARNESS]),
-        cli_binding_available=False,
-        shell_binding_available=False,
+        cli_binding_available=_section_is_available(by_id[_SECTION_CLI_BINDING]),
+        shell_binding_available=_section_is_available(by_id[_SECTION_SHELL_BINDING]),
         trace_binding_available=trace_binding,
     )
 
@@ -672,6 +685,7 @@ def build_policy_projection_contract(
     violation_trace_hash: str = "",
     source: PolicyProjectionSourceLabel = PolicyProjectionSourceLabel.LIVE,
     metadata: Mapping[str, Any] | None = None,
+    cli_binding_available: bool = False,
 ) -> PolicyProjectionContract:
     registry_kwargs: dict[str, Any] = {"source": source}
     if registry is not None:
@@ -728,7 +742,7 @@ def build_policy_projection_contract(
             title="Policy Test Harness",
             kwargs={"source": source},
         ),
-        build_policy_cli_binding_projection().section,
+        build_policy_cli_binding_projection(available=cli_binding_available).section,
         build_policy_shell_binding_projection().section,
     )
 

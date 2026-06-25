@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.18 Policy CLI/TUI Binding](reports/P1.6.18_POLICY_CLI_TUI_BINDING_REPORT.md) | 2026-06-25 | Read-only `policy` CLI commands consume PolicyProjectionContract v1; harness list/run; Shell UNAVAILABLE; no enforcement |
 | [P1.6.17 Policy Projection/API/Event Contract](reports/P1.6.17_POLICY_PROJECTION_API_EVENT_CONTRACT_REPORT.md) | 2026-06-25 | Versioned read-model contract with source labels, readiness, deterministic hashing, event payload seed; CLI/Shell UNAVAILABLE; no enforcement |
 | [P1.6.16 Policy Test Harness](reports/P1.6.16_POLICY_TEST_HARNESS_REPORT.md) | 2026-06-25 | Deterministic shadow-governance scenario harness with expected-vs-actual comparison and hashed reports; no enforcement, no Ledger write |
 | [P1.6.15 Policy Violation Trace Hook](reports/P1.6.15_POLICY_VIOLATION_TRACE_HOOK_REPORT.md) | 2026-06-25 | Shadow violation evidence envelope with classification, deterministic hashes, resolution/projection binding; no Ledger write, no enforcement |

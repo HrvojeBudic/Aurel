@@ -8,12 +8,12 @@
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.6.17 — Policy Projection/API/Event Contract |
-| **Current active** | **P1.6.18 — Policy CLI/TUI Binding** |
-| **Previous** | P1.6.16 — Policy Test Harness |
-| **Next planned** | P1.6.19 — Policy Docs/State/Reports Update |
+| **Last completed** | P1.6.18 — Policy CLI/TUI Binding |
+| **Current active** | **P1.6.19 — Policy Docs/State/Reports Update** |
+| **Previous** | P1.6.17 — Policy Projection/API/Event Contract |
+| **Next planned** | P1.6.20 — P1.6 Exit Seal + Live Integration Demo |
 
-**P1.6.17 complete** — Policy Projection/API/Event Contract: versioned read-model for P1.6 policy subsystem with source labels, readiness, deterministic hashing, and event payload seed. CLI/Shell bindings explicitly UNAVAILABLE. No enforcement, no Ledger writes. Next planned: P1.6.18 — Policy CLI/TUI Binding.
+**P1.6.18 complete** — Policy CLI/TUI Binding: read-only `policy` CLI commands consume `PolicyProjectionContract v1` for status/projection/unavailable; harness list/run bind to P1.6.16 registry. Shell binding remains UNAVAILABLE. No enforcement, no Ledger writes. Next planned: P1.6.19 — Policy Docs/State/Reports Update.
 
 **P1.6.14 complete** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes.
 

@@ -444,6 +444,13 @@ from .cli_modules.evaluation_commands import (
     cmd_evaluation_baseline_examples,
     cmd_evaluation_baseline_status,
 )
+from .cli_modules.policy_commands import (
+    cmd_policy_harness_list,
+    cmd_policy_harness_run,
+    cmd_policy_projection,
+    cmd_policy_status,
+    cmd_policy_unavailable,
+)
 
 def cmd_config_validate(args: argparse.Namespace) -> int:
     from .model_config import ModelConfigError, ProviderConfigLoader
@@ -958,6 +965,38 @@ def main(argv: list[str] | None = None) -> int:
     p_baseline_examples = baseline_sub.add_parser("examples", help="show example baseline comparisons")
     p_baseline_examples.add_argument("--json", action="store_true")
     p_baseline_examples.set_defaults(func=cmd_evaluation_baseline_examples)
+
+    # P1.6.18 — policy projection CLI binding
+    p_policy = sub.add_parser("policy", help="P1.6 policy projection (read-only)")
+    policy_sub = p_policy.add_subparsers(dest="policy_command", required=True)
+
+    p_policy_status = policy_sub.add_parser("status", help="show policy subsystem status")
+    p_policy_status.add_argument("--json", action="store_true")
+    p_policy_status.set_defaults(func=cmd_policy_status)
+
+    p_policy_projection = policy_sub.add_parser(
+        "projection", help="show policy projection contract",
+    )
+    p_policy_projection.add_argument("--json", action="store_true")
+    p_policy_projection.set_defaults(func=cmd_policy_projection)
+
+    p_policy_unavailable = policy_sub.add_parser(
+        "unavailable", help="list unavailable policy projection sections",
+    )
+    p_policy_unavailable.add_argument("--json", action="store_true")
+    p_policy_unavailable.set_defaults(func=cmd_policy_unavailable)
+
+    p_policy_harness = policy_sub.add_parser("harness", help="policy test harness commands")
+    harness_sub = p_policy_harness.add_subparsers(dest="harness_command", required=True)
+
+    p_harness_list = harness_sub.add_parser("list", help="list policy harness cases")
+    p_harness_list.add_argument("--json", action="store_true")
+    p_harness_list.set_defaults(func=cmd_policy_harness_list)
+
+    p_harness_run = harness_sub.add_parser("run", help="run policy harness suite or case")
+    p_harness_run.add_argument("--case", default="", help="run a single case by id")
+    p_harness_run.add_argument("--json", action="store_true")
+    p_harness_run.set_defaults(func=cmd_policy_harness_run)
 
     p_identity = sub.add_parser("identity", help="identity kernel commands")
     identity_sub = p_identity.add_subparsers(dest="identity_command", required=True)

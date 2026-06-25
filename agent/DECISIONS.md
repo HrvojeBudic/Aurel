@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-25 - P1.6.18 Policy CLI/TUI Binding
+
+### DEC-P1618-01: CLI consumes projection contract; no parallel logic
+**Decision:** P1.6.18 adds `cli_modules/policy_commands.py` that calls `build_policy_projection_contract(cli_binding_available=True)` and `policy_projection_to_json_safe_dict()`. No duplicated projection builders or fake LIVE state.
+**Why:** Integration-First law requires CLI to bind to P1.6.17 contract, not scrape internals.
+
+### DEC-P1618-02: Shell binding remains UNAVAILABLE
+**Decision:** Only CLI binding is implemented. `shell_binding` section stays `UNAVAILABLE` with honest reason until Shell UI exists.
+**Why:** P1.6.18 is CLI binding, not full Shell UI.
+
+### DEC-P1618-03: Built-in harness registry for CLI list/run
+**Decision:** `policy_harness_registry.py` exposes built-in scenario matrix for CLI harness commands; comparator logic stays in P1.6.16 `test_harness.py`.
+**Why:** P1.6.16 lacked a public suite registry; CLI needs honest list/run without duplicating harness engine.
+
 ## 2026-06-25 - P1.6.17 Policy Projection/API/Event Contract
 
 ### DEC-P1617-01: Projection contract only; CLI deferred to P1.6.18
