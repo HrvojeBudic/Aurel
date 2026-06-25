@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.6.20 — P1.6 Exit Seal + Live Integration Demo |
-| **Current active** | **P1.7.0 — Path Governance & Source Trust Foundation** |
+| **Last completed** | P1.7.0 — Path Governance & Source Trust Foundation |
+| **Current active** | **P1.7.1 (forward hook)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.1 (forward hook) |
+| **Next planned** | P1.7.2+ (see P1.7 patch table when defined) |
 
-**P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes. Next: **P1.7.0 — Path Governance & Source Trust Foundation**.
+**P1.7.0 complete** — Path governance foundation: `path_governance/` package with projection/trust labels, `FoundationPosture`, `PathGovernanceCapabilityStatus`, closed-world validation, canonical JSON + stable hash, honest capability reporting. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge. 11 focused tests pass. Next: **P1.7.1 (forward hook)**.
+
+**P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes.
 
 **P1.6.19 complete** — Policy Docs/State/Reports Update: truth-sync of roadmap, state, reports, architecture, decisions, operator runbook, source-label doctrine, P1.6.10–P1.6.19 report index, and P1.6.20 exit-seal checklist.
 
@@ -155,6 +157,17 @@ P1.6.19 is a consolidation/audit gate: P1.6 capability map, source-label doctrin
 ### P1.6.20 forward hook
 
 P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal report, demonstrate Integration-First vertical slice. Enforcement remains deferred to later phases (P9/P25).
+
+## P1.7 — Path Governance Engine (v5.1 patch table — foundation started)
+
+| Patch | Name |
+| ----- | ---- |
+| P1.7.0 | **Path Governance & Source Trust Foundation** |
+| P1.7.1 | Forward hook (schema/contract — TBD) |
+
+### P1.7.0 handoff
+
+P1.7.0 delivers foundation vocabulary (`ProjectionSourceLabel`, `SourceTrustLabel`), posture reporting (`FoundationPosture`, `PathGovernanceCapabilityStatus`), closed-world validation, deterministic serialization, and honest UNAVAILABLE reasons. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge. **P1.7.1 is the next forward hook.**
 
 ## Completed (latest)
 

@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.7.0 Path Governance Foundation Validation (COMPLETE)
+
+Focused validation (2026-06-25):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_0_foundation.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P1.7.0 **11 passed**; ruff **PASS**; mypy **PASS** (207 files).
+
+Report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+
+Programmatic foundation status:
+
+```bash
+.venv/bin/python -c "
+from agentic_runtime.path_governance import get_path_governance_foundation_status, stable_hash
+s = get_path_governance_foundation_status()
+print(s.task_id, s.posture.value, stable_hash(s))
+"
+```
+
 ## P1.6.20 Exit Seal Validation (COMPLETE)
 
 Focused validation (2026-06-25):

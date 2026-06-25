@@ -1,15 +1,21 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.6.20 — P1.6 Exit Seal + Live Integration Demo)_
+_Last updated: 2026-06-25 (P1.7.0 — Path Governance & Source Trust Foundation)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
-- Current active: **P1.7.0 — Path Governance & Source Trust Foundation**
-- Next planned: P1.7.1 (forward hook — see ROADMAP.md)
+- Last completed: P1.7.0 — Path Governance & Source Trust Foundation
+- Current active: **P1.7.1 (forward hook — see ROADMAP.md)**
+- Next planned: P1.7.2+ (see ROADMAP.md)
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.0 Path Governance & Source Trust Foundation (COMPLETE — foundation only)
+
+- `path_governance/`: `ProjectionSourceLabel`, `SourceTrustLabel`, `FoundationPosture`, `PathGovernanceCapabilityStatus`, closed-world validation, canonical JSON + stable hash, `get_path_governance_foundation_status()`.
+- Posture: **FOUNDATION_ONLY**; enforcement/resolver/projection/CLI/trace/policy-bridge all **false** with honest unavailable reasons.
+- Report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
 
 ### P1.6.20 P1.6 Exit Seal + Live Integration Demo (COMPLETE — seal only)
 
@@ -55,7 +61,7 @@ Backend is source of truth. No unlabelled mock operational state. Shell UI remai
 - P1.6 section sealed with warnings (2026-06-25).
 - Exit seal module + 42 focused tests + 137 regression tests pass.
 - Known UNAVAILABLE: Shell UI, full Ledger trace write, policy enforcement.
-- Next: P1.7.0 — Path Governance & Source Trust Foundation.
+- Next: P1.7.1 (forward hook).
 
 ### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
 
