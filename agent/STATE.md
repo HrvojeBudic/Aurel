@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.5 — Path Normalization & Escape Detection Contract)_
+_Last updated: 2026-06-25 (P1.7.6 — Path Authority Scope Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.5 — Path Normalization & Escape Detection Contract
-- Current active: **P1.7.6 — Path Authority Scope Model (planned)**
-- Next planned: P1.7.6 — Path Authority Scope Model
+- Last completed: P1.7.6 — Path Authority Scope Model
+- Current active: **P1.7.7 — Untrusted Content Boundary Model (planned)**
+- Next planned: P1.7.7 — Untrusted Content Boundary Model
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.6 Path Authority Scope Model (COMPLETE — declarative scope model only)
+
+- `path_governance/`: `PathAuthoritySubjectKind`, `PathAuthorityBasis`, `PathAuthorityConstraintKind`, `PathAuthoritySubject`, `PathAuthorityConstraint`, `PathAuthorityScope`, `PathAuthorityScopeRegistry`, `build_path_authority_scope()`, `build_path_authority_scope_registry()`.
+- PathAuthoritySubjectKind status: **LIVE schema** — declared subject kind only; subject kind does not grant authority.
+- PathAuthorityBasis status: **LIVE schema** — declared reason a scope exists; basis does not grant permission.
+- PathAuthorityConstraintKind status: **LIVE schema** — future-governance constraint vocabulary; constraint kind does not enforce.
+- PathAuthoritySubject status: **LIVE schema** — deterministic `subject_id`, display name, source label, JSON-safe metadata.
+- PathAuthorityConstraint status: **LIVE schema** — deterministic `constraint_id`, reason, source label, JSON-safe metadata.
+- PathAuthorityScope status: **LIVE schema** — binds subject, optional `root_id`, optional `PathIdentity`, `PathScopeAction` values, basis, constraints, deterministic `scope_id` and `scope_hash`, `created_by_task="P1.7.6"`, `scope_version="path_authority_scope.v1"`.
+- PathAuthorityScopeRegistry status: **LIVE schema** — binds scopes with `created_by_task="P1.7.6"`, `registry_version="path_authority_scope_registry.v1"`, explicit source label, notes, metadata, and deterministic order-insensitive `registry_hash`.
+- Subject/constraint/scope/registry hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, cwd-derived live state, or source/path content scans.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — test fixtures use `DEV_FIXTURE`; production helper defaults remain `LIVE`.
+- Authority scope boundary summary: authority scope model is not an authority decision; authority declaration is not runtime permission; constraint does not enforce; scope registry is not sandbox; `PathScopeAction` remains declaration vocabulary only; no allow/deny/can_* APIs exist.
+- Known unavailable states: untrusted content boundary model, path governance resolver, source trust resolver, path/source resolvers, path permission enforcement, filesystem security, sandbox hardening, runtime enforcement, trace hooks, policy bridge, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.7 readiness: **READY** — next task is Untrusted Content Boundary Model.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.6_PATH_AUTHORITY_SCOPE_MODEL.md`
 
 ### P1.7.5 Path Normalization & Escape Detection Contract (COMPLETE — shadow contract only)
 

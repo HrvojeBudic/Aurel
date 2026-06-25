@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.5 — Path Normalization & Escape Detection Contract |
-| **Current active** | **P1.7.6 — Path Authority Scope Model (planned)** |
+| **Last completed** | P1.7.6 — Path Authority Scope Model |
+| **Current active** | **P1.7.7 — Untrusted Content Boundary Model (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.6 — Path Authority Scope Model |
+| **Next planned** | P1.7.7 — Untrusted Content Boundary Model |
 
-**P1.7.5 complete** — Path normalization and shadow escape detection contract: `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, `detect_path_escape_candidates()`, deterministic hashes, source-label truth, segment-aware string comparison, and closed-world validation. Shadow-only candidate classification without permission, sandbox policy, filesystem access, or enforcement. P1.7 remains in progress. Next: **P1.7.6 — Path Authority Scope Model**.
+**P1.7.6 complete** — Path authority scope model: `PathAuthoritySubjectKind`, `PathAuthorityBasis`, `PathAuthorityConstraintKind`, `PathAuthoritySubject`, `PathAuthorityConstraint`, `PathAuthorityScope`, `PathAuthorityScopeRegistry`, `build_path_authority_scope()`, `build_path_authority_scope_registry()`, deterministic subject/constraint/scope/registry hashes, source-label truth, and closed-world validation. Declarative authority scope only without permission, resolver, sandbox policy, filesystem access, or enforcement. P1.7 remains in progress. Next: **P1.7.7 — Untrusted Content Boundary Model**.
+
+**P1.7.5 complete** — Path normalization and shadow escape detection contract: `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, `detect_path_escape_candidates()`, deterministic hashes, source-label truth, segment-aware string comparison, and closed-world validation. Shadow-only candidate classification without permission, sandbox policy, filesystem access, or enforcement.
 
 **P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes.
 
