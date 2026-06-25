@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-24 (P1.6.14 — Policy Resolution Trace Hook)_
+_Last updated: 2026-06-25 (P1.6.15 — Policy Violation Trace Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules
-- Current active: **P1.6.14 — Policy Resolution Trace Hook**
-- Next planned: P1.6.15 — Policy Violation Trace Hook
+- Last completed: P1.6.14 — Policy Resolution Trace Hook
+- Current active: **P1.6.15 — Policy Violation Trace Hook**
+- Next planned: P1.6.16 — Policy Test Harness
 
-**P1.6.14 is the current active feature phase.**
-P1.6.13 is last completed and sealed deterministic conflict algebra before trace hooks.
+**P1.6.15 is the current active feature phase.**
+P1.6.14 is last completed (resolution trace hook); P1.6.15 adds shadow violation evidence without enforcement.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 

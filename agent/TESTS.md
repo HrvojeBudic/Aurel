@@ -69,6 +69,21 @@ P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in
 .venv/bin/python -m bandit -r src/agentic_runtime -ll
 ```
 
+## P1.6.15 Verification (Policy Violation Trace Hook)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_violation_trace_p1615.py tests/test_policy_runtime_projection_violation_trace_p1615.py tests/test_policy_resolution_violation_binding_p1615.py -q
+.venv/bin/python -m pytest tests/test_policy_violation_trace_p1615.py tests/test_policy_runtime_projection_violation_trace_p1615.py tests/test_policy_resolution_violation_binding_p1615.py tests/test_policy_resolution_trace_p1614.py tests/test_policy_resolver_trace_hook_p1614.py tests/test_policy_runtime_projection_trace_p1614.py tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_runtime_custos_shadow_submit_p1612.py tests/test_policy_registry_binding_p1611.py tests/test_policy_resolver_p1610.py tests/test_snapshot_security_p1610h.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+P1.6.15 records shadow policy violation evidence; it does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+
 ## P1.6.14 Verification (Policy Resolution Trace Hook)
 
 ```bash

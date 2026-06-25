@@ -587,6 +587,21 @@ from .resolution_trace import (
     policy_trace_canonical_dict,
     policy_trace_hash,
 )
+from .violation_trace import (
+    PolicyViolationBinding,
+    PolicyViolationEvidenceRef,
+    PolicyViolationSeverity,
+    PolicyViolationStatus,
+    PolicyViolationTraceEnvelope,
+    PolicyViolationTraceEvent,
+    PolicyViolationType,
+    bind_policy_violation_from_projection,
+    bind_policy_violation_from_resolution,
+    build_policy_violation_trace_envelope,
+    build_policy_violation_trace_event,
+    classify_policy_violation,
+    policy_violation_hash,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1165,4 +1180,18 @@ __all__ = [
     "build_policy_resolution_trace_envelope",
     "policy_trace_canonical_dict",
     "policy_trace_hash",
+    # - Policy Violation Trace Hook (P1.6.15) -
+    "PolicyViolationType",
+    "PolicyViolationSeverity",
+    "PolicyViolationStatus",
+    "PolicyViolationTraceEvent",
+    "PolicyViolationTraceEnvelope",
+    "PolicyViolationEvidenceRef",
+    "PolicyViolationBinding",
+    "build_policy_violation_trace_event",
+    "build_policy_violation_trace_envelope",
+    "classify_policy_violation",
+    "policy_violation_hash",
+    "bind_policy_violation_from_resolution",
+    "bind_policy_violation_from_projection",
 ]

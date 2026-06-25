@@ -62,6 +62,7 @@ from .resolution_trace import (
     build_policy_resolution_trace_event,
     build_policy_resolution_trace_envelope,
 )
+from .violation_trace import bind_policy_violation_from_resolution
 from .risk_tiers import (
     OversightLevel,
     ReversibilityLevel,
@@ -955,6 +956,12 @@ def resolve_policy_cards(
     except Exception:  # pragma: no cover - defensive
         pass
 
+    # P1.6.15 — Attach shadow violation evidence (shadow-only, no enforcement)
+    try:
+        resolution = _attach_violation_metadata(resolution)
+    except Exception:  # pragma: no cover - defensive
+        pass
+
     return resolution.with_canonical_hash()
 
 
@@ -1012,6 +1019,18 @@ def _attach_trace_metadata(resolution: ResolvedPolicySet) -> ResolvedPolicySet:
         resolution_trace=trace_event.to_canonical_dict(include_hash=True),
         resolution_trace_hash=trace_event.trace_hash,
         resolution_trace_id=trace_event.trace_id,
+    )
+
+
+def _attach_violation_metadata(resolution: ResolvedPolicySet) -> ResolvedPolicySet:
+    """Attach P1.6.15 shadow violation evidence to a ResolvedPolicySet."""
+    violation_env = bind_policy_violation_from_resolution(resolution)
+    violation_event = violation_env.trace_event
+    return replace(
+        resolution,
+        violation_trace=violation_event.to_canonical_dict(include_hash=True),
+        violation_trace_hash=violation_event.violation_hash,
+        violation_trace_id=violation_event.violation_trace_id,
     )
 
 

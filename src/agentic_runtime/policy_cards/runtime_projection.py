@@ -150,6 +150,11 @@ class PolicyShadowProjection:
     runtime_snapshot_hash: str = ""
     resolution_trace_id: str = ""
     resolution_trace_hash: str = ""
+    violation_trace_id: str = ""
+    violation_hash: str = ""
+    violation_type: str = ""
+    violation_severity: str = ""
+    violation_status: str = ""
     projection_hash: str | None = None
     enabled: bool = True
     mode: str = "shadow_only"
@@ -208,6 +213,8 @@ class PolicyShadowProjection:
             "projection_hash",
             PolicyShadowProjectionError,
         )
+        if self.violation_hash and len(self.violation_hash) != 64:
+            raise PolicyShadowProjectionError("violation_hash must be a SHA-256 hex digest")
 
     def to_canonical_dict(self, *, include_hash: bool = True) -> dict[str, Any]:
         return policy_shadow_projection_to_canonical_dict(self, include_hash=include_hash)
@@ -284,6 +291,11 @@ def policy_shadow_projection_to_canonical_dict(
         "runtime_effective_action": projection.runtime_effective_action.value,
         "runtime_snapshot_hash": projection.runtime_snapshot_hash,
         "violations": sorted(projection.violations),
+        "violation_hash": projection.violation_hash,
+        "violation_severity": projection.violation_severity,
+        "violation_status": projection.violation_status,
+        "violation_trace_id": projection.violation_trace_id,
+        "violation_type": projection.violation_type,
         "warnings": sorted(projection.warnings),
     }
     if include_hash and projection.projection_hash is not None:
@@ -364,6 +376,23 @@ def project_policy_resolution_against_runtime(
         runtime_snapshot_hash=snapshot.runtime_snapshot_hash or "",
         resolution_trace_id=resolved_policy.resolution_trace_id or "",
         resolution_trace_hash=resolved_policy.resolution_trace_hash or "",
+    )
+    interim = projection.with_projection_hash()
+    from .violation_trace import bind_policy_violation_from_resolution
+
+    violation_env = bind_policy_violation_from_resolution(
+        resolved_policy,
+        projection=interim,
+        runtime_snapshot=snapshot,
+    )
+    violation_event = violation_env.trace_event
+    projection = replace(
+        projection,
+        violation_trace_id=violation_event.violation_trace_id,
+        violation_hash=violation_event.violation_hash or "",
+        violation_type=violation_event.violation_type,
+        violation_severity=violation_event.violation_severity,
+        violation_status=violation_event.violation_status,
     )
     return projection.with_projection_hash()
 

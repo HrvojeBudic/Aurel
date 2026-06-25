@@ -8,12 +8,14 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | **P1.6.14 — Policy Resolution Trace Hook** |
-| **Last completed** | P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules |
-| **Previous** | P1.6.12 — Custos Shadow Runtime Projection & Submit Observability Hook |
-| **Next planned** | P1.6.15 — Policy Violation Trace Hook |
+| **Current active** | **P1.6.15 — Policy Violation Trace Hook** |
+| **Last completed** | P1.6.14 — Policy Resolution Trace Hook |
+| **Previous** | P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules |
+| **Next planned** | P1.6.16 — Policy Test Harness |
 
-**P1.6.14 active** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes. All fields optional (backwards-compatible), shadow_only=true, enforced=false. Next planned: P1.6.15 — Policy Violation Trace Hook.
+**P1.6.15 active** — Policy Violation Trace Hook: shadow violation evidence envelope with deterministic hashes, classification of P0/Custos mismatch and structural governance gaps, binding to resolution trace and runtime projection. Shadow-only, enforced=false, no Ledger writes. Next planned: P1.6.16 — Policy Test Harness.
+
+**P1.6.14 complete** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes.
 
 **P1.6.10H complete** — Runtime Security, Coverage & Governance Truth Hotfix sealed runtime/security/coverage/documentation truth before registry binding. See `agent/reports/P1.6.10H_RUNTIME_SECURITY_COVERAGE_GOVERNANCE_TRUTH_HOTFIX_REPORT.md`.
 

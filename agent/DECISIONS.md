@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-06-25 - P1.6.15 Policy Violation Trace Hook
+
+### DEC-P1615-01: Violation evidence, not enforcement
+**Decision:** `violation_trace.py` produces shadow violation evidence with `shadow_only=true` and `enforced=false` but does NOT write to Ledger, block commands, activate approvals, or change sandbox/runtime authorization.
+**Why:** Violation candidates are audit evidence; shadow mismatch is not proof runtime was wrong.
+
+### DEC-P1615-02: Violation ID is deterministic SHA-256 hash
+**Decision:** `violation_trace_id` equals `policy_violation_hash()` over canonical dict (excludes hash field from body).
+**Why:** Aligns with P1.6.14 trace and all Custos hash conventions.
+
+### DEC-P1615-03: Optional violation fields on ResolvedPolicySet and PolicyShadowProjection
+**Decision:** `violation_trace*` optional on `ResolvedPolicySet`; projection carries violation metadata fields with empty defaults.
+**Why:** Backwards compatibility; violation metadata enriches existing shadow artifacts.
+
+### DEC-P1615-04: Priority-based violation classification
+**Decision:** `classify_policy_violation()` uses violation-type priority so structural gaps (missing context, adapter error, incomplete trace) are not overwritten by alignment-only signals.
+**Why:** Conservative governance evidence must surface structural failures before mismatch taxonomy.
+
+### DEC-P1615-05: Metadata sanitization strips secrets and command bodies
+**Decision:** `_sanitize_violation_metadata()` rejects sensitive keys and command-body fields before canonicalization.
+**Why:** Violation evidence must be metadata-safe and audit-ready without leaking raw secrets or commands.
+
 ## 2026-06-24 - P1.6.14 Policy Resolution Trace Hook
 
 ### DEC-P1614-01: Trace-compatible evidence, not Ledger integration
