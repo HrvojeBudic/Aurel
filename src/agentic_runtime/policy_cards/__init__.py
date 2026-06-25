@@ -616,6 +616,20 @@ from .test_harness import (
     evaluate_policy_harness_case,
     run_policy_harness_suite,
 )
+from .projection_contract import (
+    PolicyProjectionContract,
+    PolicyProjectionEvent,
+    PolicyProjectionReadiness,
+    PolicyProjectionSection,
+    PolicyProjectionSnapshot,
+    PolicyProjectionSourceLabel,
+    PolicyProjectionStatus,
+    build_policy_projection_contract,
+    build_policy_projection_event,
+    build_policy_projection_snapshot,
+    policy_projection_hash,
+    policy_projection_to_json_safe_dict,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1221,4 +1235,17 @@ __all__ = [
     "evaluate_policy_harness_case",
     "run_policy_harness_suite",
     "build_policy_harness_report",
+    # - Policy Projection Contract (P1.6.17) -
+    "PolicyProjectionSourceLabel",
+    "PolicyProjectionStatus",
+    "PolicyProjectionContract",
+    "PolicyProjectionSection",
+    "PolicyProjectionSnapshot",
+    "PolicyProjectionReadiness",
+    "PolicyProjectionEvent",
+    "build_policy_projection_contract",
+    "build_policy_projection_snapshot",
+    "build_policy_projection_event",
+    "policy_projection_to_json_safe_dict",
+    "policy_projection_hash",
 ]

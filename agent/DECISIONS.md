@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-25 - P1.6.17 Policy Projection/API/Event Contract
+
+### DEC-P1617-01: Projection contract only; CLI deferred to P1.6.18
+**Decision:** P1.6.17 implements `projection_contract.py` as a read-only projection/API/event contract. CLI and Shell bindings are represented as `UNAVAILABLE` with honest reasons. No CLI commands added.
+**Why:** Integration-First roadmap separates contract definition (P1.6.17) from operator surface binding (P1.6.18).
+
+### DEC-P1617-02: Source labels are mandatory for capability state
+**Decision:** Every `PolicyProjectionSection` declares a `PolicyProjectionSourceLabel`. `UNAVAILABLE` requires reason; `ERROR` requires safe error; `TRACE_VERIFIED` only when evidence hash present.
+**Why:** No unlabelled mock data as operational truth; backend remains source of truth.
+
+### DEC-P1617-03: Order-insensitive canonical hashing
+**Decision:** `policy_projection_hash()` keys sections by `section_id`, sorts capabilities/reasons/errors before SHA-256.
+**Why:** Stable hashes for CLI/TUI consumption and future event-stream compatibility.
+
 ## 2026-06-25 - P1.6.16 Policy Test Harness
 
 ### DEC-P1616-01: Harness validates shadow governance, does not enforce

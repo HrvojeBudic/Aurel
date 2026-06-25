@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.6.16 — Policy Test Harness)_
+_Last updated: 2026-06-25 (P1.6.17 — Policy Projection/API/Event Contract)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.16 — Policy Test Harness
-- Current active: **P1.6.17 — Policy CLI Surface**
-- Next planned: (TBD after P1.6.17 scope lock)
+- Last completed: P1.6.17 — Policy Projection/API/Event Contract
+- Current active: **P1.6.18 — Policy CLI/TUI Binding**
+- Next planned: P1.6.19 — Policy Docs/State/Reports Update
 
-**P1.6.16 is last completed (policy test harness).**
-P1.6.16 validates shadow governance scenarios; it does not enforce policy decisions.
+**P1.6.17 is last completed (policy projection contract).**
+P1.6.17 exposes honest backend capability state via source-labeled read model; it does not enforce policy decisions.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 

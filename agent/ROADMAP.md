@@ -8,12 +8,12 @@
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.6.16 — Policy Test Harness |
-| **Current active** | **P1.6.17 — Policy CLI Surface** |
-| **Previous** | P1.6.15 — Policy Violation Trace Hook |
-| **Next planned** | (TBD after P1.6.17 scope lock) |
+| **Last completed** | P1.6.17 — Policy Projection/API/Event Contract |
+| **Current active** | **P1.6.18 — Policy CLI/TUI Binding** |
+| **Previous** | P1.6.16 — Policy Test Harness |
+| **Next planned** | P1.6.19 — Policy Docs/State/Reports Update |
 
-**P1.6.16 complete** — Policy Test Harness: deterministic shadow-governance scenario definition, execution, expected-vs-actual comparison, and hashed reports via Custos resolver/conflict/trace/violation stack. Shadow-only, no enforcement, no Ledger writes. Next planned: P1.6.17 — Policy CLI Surface.
+**P1.6.17 complete** — Policy Projection/API/Event Contract: versioned read-model for P1.6 policy subsystem with source labels, readiness, deterministic hashing, and event payload seed. CLI/Shell bindings explicitly UNAVAILABLE. No enforcement, no Ledger writes. Next planned: P1.6.18 — Policy CLI/TUI Binding.
 
 **P1.6.14 complete** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes.
 
