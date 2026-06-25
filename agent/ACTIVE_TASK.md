@@ -1,28 +1,22 @@
-# Active Task: P1.7.1 (forward hook)
+# Active Task: P1.7.2 (planned)
 
-**Status:** PLANNED
+**Status:** P1.7.1 COMPLETE; P1.7.2 PLANNED
 
 ## Roadmap Position
 
-- Last completed: P1.7.0 — Path Governance & Source Trust Foundation
-- Current active: **P1.7.1 (forward hook — see ROADMAP.md)**
-- Next planned: P1.7.2+ (see ROADMAP.md P1.7 patch table when defined)
+- Current completed task: **P1.7.1 — Path Identity & Canonical Path Schema**
+- Next planned task: **P1.7.2 — Source Identity & SourceRef Schema**
 - Roadmap version: **v5.1 Integration-First**
 
-P1.7.0 delivers foundation vocabulary, source/trust labels, closed-world validation, deterministic serialization, and honest capability reporting. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge.
+## P1.7 Status
 
-## P1.7.0 Section Status
+**IN PROGRESS** — path identity schema added; broader P1.7 path/source governance remains in progress.
 
-**COMPLETE** — foundation only (2026-06-25)
+P1.7.1 adds `PathKind`, `PathSensitivity`, `CanonicalizationStatus`, `PathRef`, `CanonicalPathRef`, `PathIdentity`, and `build_path_identity()` with deterministic `path_hash`, `canonical_hash`, and `identity_hash`. It preserves raw path separately from normalized/display representation and keeps closed-world validation.
 
-- `path_governance/` package: labels, posture, errors, validation, serialization, capability status
-- 11 focused foundation tests pass
-- Full report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+No path resolver, source resolver, trusted root registry, path escape detection, runtime enforcement, Ledger write, approval activation, sandbox behavior change, CLI/TUI binding, Shell UI, trace hook, or policy bridge was added.
 
-## Objective
+## Completed Reports
 
-Advance P1.7 Path Governance Engine per ROADMAP.md — next forward hook task P1.7.1.
-
-## Predecessor Report
-
-Full report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+- `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+- `agent/reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md`

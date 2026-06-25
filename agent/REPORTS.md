@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.1 Path Identity & Canonical Path Schema](reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md) | 2026-06-25 | PathKind, PathSensitivity, CanonicalizationStatus, PathRef, CanonicalPathRef, PathIdentity, deterministic hashes, closed-world validation; no resolver/enforcement/CLI |
 | [P1.7.0 Path Governance & Source Trust Foundation](reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md) | 2026-06-25 | Foundation labels, posture, closed-world validation, canonical hash, honest capability status; no resolver/enforcement/CLI |
 | [P1.6.20 P1.6 Exit Seal + Live Integration Demo](reports/P1.6.20_POLICY_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md) | 2026-06-25 | Exit seal proof layer; PASS_WITH_WARNINGS; Integration-First vertical slice sealed; P1.7.0 next |
 | [P1.6.19 Policy Docs/State/Reports Update](reports/P1.6.19_POLICY_DOCS_STATE_REPORTS_UPDATE.md) | 2026-06-25 | Truth-sync: capability map, source labels, operator runbook, P1.6.10–P1.6.19 index, P1.6.20 checklist; no enforcement |
