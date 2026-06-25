@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-25 — P1.6.20 P1.6 Exit Seal + Live Integration Demo
+
+### DEC-P1620-01: P1.6 sealed as Integration-First vertical slice
+**Decision:** P1.6.20 adds `policy_cards/exit_seal.py` — read-only exit seal with 20 checks, deterministic report hash, verdict `PASS_WITH_WARNINGS`. P1.6 section complete.
+**Why:** Integration-First law requires proof, not feature expansion, before advancing to P1.7.
+
+### DEC-P1620-02: No enforcement in exit seal
+**Decision:** Exit seal module does not import runtime, call submit, write Ledger, activate approvals, or mutate sandbox. Seal artifacts contain no raw secrets or command bodies.
+**Why:** Exit seal that overclaims capability is governance theater.
+
+### DEC-P1620-03: P1.7.0 next
+**Decision:** Next planned task is **P1.7.0 — Path Governance & Source Trust Foundation**. P1.6 Policy Cards & Behavioral Contracts is sealed.
+**Why:** P1.6 vertical slice is complete; path governance is the next Integration-First section.
+
 ## 2026-06-25 — P1.6.19 Policy Docs/State/Reports Update
 
 ### DEC-P1619-01: Truth-sync only; no runtime behavior

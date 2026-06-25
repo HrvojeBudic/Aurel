@@ -120,7 +120,7 @@ Architectural boundaries:
 - Registry applicability selects candidate lawbook cards; resolver adapters still produce judgments.
 - `AgenticRuntime.submit()` remains untouched; no command blocking, approval activation, or sandbox runtime bridge exists in P1.6.11.
 
-Next planned: P1.6.20 exit seal; active policy enforcement deferred to later phases (P9/P25).
+Next planned: P1.7.0 — Path Governance & Source Trust Foundation; active policy enforcement deferred to later phases (P9/P25).
 
 
 ## Custos Shadow Runtime Projection (P1.6.12)
@@ -359,7 +359,7 @@ Four distinct sandbox layers exist. They must not be confused:
 
 **P1.6.9 sandbox policy cards and P1.6.10 resolver do not yet enforce runtime sandbox behavior. Runtime enforcement still flows through the P0 runtime policy and sandbox layers.**
 
-## Policy Projection & CLI Binding (P1.6.17–P1.6.18)
+## Policy Projection, CLI Binding & Exit Seal (P1.6.17–P1.6.20)
 
 Integration-First vertical slice for operator inspection of the P1.6 policy subsystem:
 
@@ -370,6 +370,8 @@ policy_cards/ backend (P1.6.0–P1.6.16)
   → policy_projection_to_json_safe_dict()
   → cli_modules/policy_commands.py
   → python -m agentic_runtime.cli policy …
+  → build_policy_exit_seal_report()  [P1.6.20]
+  → agent/reports/P1.6.20_*          [evidence binding]
 ```
 
 Architectural boundaries:
@@ -379,7 +381,8 @@ Architectural boundaries:
 - **Source labels are mandatory** — `LIVE`, `TRACE_VERIFIED`, `SIMULATED`, `DEV_FIXTURE`, `UNAVAILABLE`, `ERROR`. No fake LIVE state.
 - **CLI consumes contract** — `policy status`, `policy projection`, `policy unavailable`, `policy harness list/run` call P1.6.17 builders; no parallel projection logic.
 - **Shell/TUI UNAVAILABLE** — `shell_binding` section stays UNAVAILABLE until Shell UI exists; P1.6.18 is CLI binding only, not a full TUI app.
-- **No enforcement** — policy CLI does not import runtime, approval, ledger, or sandbox; harness reports `enforced: false`.
+- **Exit seal is proof, not expansion** — P1.6.20 `exit_seal.py` verifies the vertical slice read-only; no enforcement, Ledger writes, or runtime mutation.
+- **No enforcement** — policy CLI and exit seal do not import runtime, approval, ledger, or sandbox; harness reports `enforced: false`.
 
 Key modules:
 
@@ -389,8 +392,9 @@ Key modules:
 | `policy_cards/test_harness.py` | P1.6.16 — shadow scenario harness engine |
 | `policy_cards/policy_harness_registry.py` | P1.6.18 — built-in harness case registry for CLI |
 | `cli_modules/policy_commands.py` | P1.6.18 — read-only operator CLI binding |
+| `policy_cards/exit_seal.py` | P1.6.20 — exit seal proof layer, deterministic report hash |
 
-P1.6.19 documents this stack in agent canon; P1.6.20 performs exit seal verification.
+P1.6 section **sealed with warnings** (2026-06-25). Next: P1.7.0 — Path Governance & Source Trust Foundation.
 
 ## LLM repository planning (P0.21)
 

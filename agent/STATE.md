@@ -1,20 +1,26 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.6.19 — Policy Docs/State/Reports Update)_
+_Last updated: 2026-06-25 (P1.6.20 — P1.6 Exit Seal + Live Integration Demo)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.19 — Policy Docs/State/Reports Update
-- Current active: **P1.6.20 — P1.6 Exit Seal + Live Integration Demo**
-- Next planned: P1.7.0 — Path Governance Engine (forward hook)
+- Last completed: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
+- Current active: **P1.7.0 — Path Governance & Source Trust Foundation**
+- Next planned: P1.7.1 (forward hook — see ROADMAP.md)
 - Roadmap version: **v5.1 Integration-First**
 
-**P1.6.19 is last completed (policy docs/state/reports truth-sync).**
-P1.6.19 indexes P1.6.0–P1.6.18 capability, documents source-label doctrine, operator CLI runbook, and P1.6.20 exit-seal checklist; it does not add enforcement, Ledger writes, or runtime behavior changes.
+**P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
 
-### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
+### P1.6.20 P1.6 Exit Seal + Live Integration Demo (COMPLETE — seal only)
 
-- `policy_cards/projection_contract.py`: `PolicyProjectionContract v1` (`policy_projection.v1`), nine sections, readiness flags, source labels, deterministic `projection_hash`, JSON-safe payload, event payload seed.
+- `policy_cards/exit_seal.py`: read-only exit seal proof layer; 20 checks; deterministic report hash; `PASS_WITH_WARNINGS` verdict.
+- Proves backend → `PolicyProjectionContract v1` → CLI binding → report/evidence without enforcement.
+- Shell UI: **UNAVAILABLE** (honest). Trace modules: LIVE; full Ledger integration **not claimed** (WARN).
+- Report: `agent/reports/P1.6.20_POLICY_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md`
+
+### P1.6.19 Policy Docs/State/Reports Update (COMPLETE — truth-sync only)
+
+- `policy_cards/projection_contract.py`: `PolicyProjectionContract v1` (`policy_projection.v1`), eight sections, readiness flags, source labels, deterministic `projection_hash`, JSON-safe payload, event payload seed.
 - Backend modules report availability via symbol presence; projection does not execute resolver during build.
 - Report: `agent/reports/P1.6.17_POLICY_PROJECTION_API_EVENT_CONTRACT_REPORT.md`
 
@@ -46,12 +52,12 @@ Backend is source of truth. No unlabelled mock operational state. Shell UI remai
 
 ### P1.6.20 readiness
 
-- Policy projection + CLI binding documented and test-covered (P1.6.17/18).
-- Operator runbook in P1.6.19 report.
-- Known UNAVAILABLE: Shell UI, TUI app, policy enforcement, Ledger integration, event bus.
-- Next: P1.6.20 live integration demo + seal report.
+- P1.6 section sealed with warnings (2026-06-25).
+- Exit seal module + 42 focused tests + 137 regression tests pass.
+- Known UNAVAILABLE: Shell UI, full Ledger trace write, policy enforcement.
+- Next: P1.7.0 — Path Governance & Source Trust Foundation.
 
-### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
+### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
 
 Security fixes:
 - **Snapshot path traversal**: `_WorkspaceBackend.read_snapshot_file` now routes through `CanonicalPathResolver` (already used by `read_file`, `write_file`, `delete_file`). Parent traversal (`../`), absolute paths, and symlink escapes are rejected. 9 security tests in `tests/test_snapshot_security_p1610h.py`.

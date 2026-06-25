@@ -58,24 +58,47 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
-## P1.6.20 Exit Seal Validation Expectations
+## P1.6.20 Exit Seal Validation (COMPLETE)
 
-P1.6.20 must pass focused regression before seal:
+Focused validation (2026-06-25):
 
 ```bash
 .venv/bin/python -m compileall src tests
 .venv/bin/python -m pytest \
-  tests/test_policy_projection_contract_p1617.py \
-  tests/test_policy_projection_sources_p1617.py \
-  tests/test_policy_projection_integration_p1617.py \
+  tests/test_policy_exit_seal_p1620.py \
+  tests/test_policy_exit_seal_projection_p1620.py \
+  tests/test_policy_exit_seal_cli_p1620.py -q
+.venv/bin/python -m pytest \
+  tests/test_policy_exit_seal_p1620.py \
+  tests/test_policy_exit_seal_projection_p1620.py \
+  tests/test_policy_exit_seal_cli_p1620.py \
   tests/test_policy_cli_binding_p1618.py \
   tests/test_policy_cli_projection_p1618.py \
-  tests/test_policy_cli_harness_p1618.py -q
+  tests/test_policy_cli_harness_p1618.py \
+  tests/test_policy_projection_contract_p1617.py \
+  tests/test_policy_projection_sources_p1617.py \
+  tests/test_policy_projection_integration_p1617.py -q
 .venv/bin/python -m ruff check src tests
 .venv/bin/python -m mypy src/agentic_runtime
 ```
 
-Operator manual seal (optional after P1.6.20): full pytest, coverage ≥75%, Bandit `-ll`.
+Results: compileall **PASS**; focused P1.6.20 **42 passed**; P1.6.17/18 regression **137 passed**; ruff **PASS**; mypy **PASS** (200 files).
+
+Exit seal verdict: **PASS_WITH_WARNINGS**. Report: `agent/reports/P1.6.20_POLICY_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md`
+
+Programmatic seal:
+
+```bash
+.venv/bin/python -c "
+from agentic_runtime.policy_cards import build_policy_exit_seal_report, policy_exit_seal_report_hash
+r = build_policy_exit_seal_report()
+print(r.verdict.value, policy_exit_seal_report_hash(r))
+"
+```
+
+Operator manual seal (optional): full pytest, coverage ≥75%, Bandit `-ll`.
+
+## P1.6.20 Exit Seal Validation Expectations (superseded by COMPLETE section above)
 
 Live CLI verification (from P1.6.19 runbook):
 

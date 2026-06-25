@@ -636,6 +636,15 @@ from .projection_contract import (
     policy_projection_hash,
     policy_projection_to_json_safe_dict,
 )
+from .exit_seal import (
+    PolicyExitSealCheck,
+    PolicyExitSealReport,
+    PolicyExitSealResult,
+    PolicyExitSealVerdict,
+    build_policy_exit_seal_report,
+    policy_exit_seal_report_hash,
+    policy_exit_seal_to_json_safe_dict,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1258,4 +1267,12 @@ __all__ = [
     "build_policy_projection_event",
     "policy_projection_to_json_safe_dict",
     "policy_projection_hash",
+    # - Policy Exit Seal (P1.6.20) -
+    "PolicyExitSealVerdict",
+    "PolicyExitSealCheck",
+    "PolicyExitSealResult",
+    "PolicyExitSealReport",
+    "build_policy_exit_seal_report",
+    "policy_exit_seal_report_hash",
+    "policy_exit_seal_to_json_safe_dict",
 ]

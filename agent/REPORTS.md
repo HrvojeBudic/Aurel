@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.20 P1.6 Exit Seal + Live Integration Demo](reports/P1.6.20_POLICY_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md) | 2026-06-25 | Exit seal proof layer; PASS_WITH_WARNINGS; Integration-First vertical slice sealed; P1.7.0 next |
 | [P1.6.19 Policy Docs/State/Reports Update](reports/P1.6.19_POLICY_DOCS_STATE_REPORTS_UPDATE.md) | 2026-06-25 | Truth-sync: capability map, source labels, operator runbook, P1.6.10–P1.6.19 index, P1.6.20 checklist; no enforcement |
 | [P1.6.18 Policy CLI/TUI Binding](reports/P1.6.18_POLICY_CLI_TUI_BINDING_REPORT.md) | 2026-06-25 | Read-only `policy` CLI commands consume PolicyProjectionContract v1; harness list/run; Shell UNAVAILABLE; no enforcement |
 | [P1.6.17 Policy Projection/API/Event Contract](reports/P1.6.17_POLICY_PROJECTION_API_EVENT_CONTRACT_REPORT.md) | 2026-06-25 | Versioned read-model contract with source labels, readiness, deterministic hashing, event payload seed; CLI bound in P1.6.18; Shell UNAVAILABLE |

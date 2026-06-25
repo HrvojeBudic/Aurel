@@ -16,16 +16,18 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P1.6 — Policy Cards & Behavioral Contracts**
+**P1.7 — Path Governance & Source Trust Foundation**
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.6.19 — Policy Docs/State/Reports Update |
-| **Current active** | **P1.6.20 — P1.6 Exit Seal + Live Integration Demo** |
-| **Previous** | P1.6.18 — Policy CLI/TUI Binding |
-| **Next planned** | P1.7.0 — Path Governance Engine (forward hook) |
+| **Last completed** | P1.6.20 — P1.6 Exit Seal + Live Integration Demo |
+| **Current active** | **P1.7.0 — Path Governance & Source Trust Foundation** |
+| **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
+| **Next planned** | P1.7.1 (forward hook) |
 
-**P1.6.19 complete** — Policy Docs/State/Reports Update: truth-sync of roadmap, state, reports, architecture, decisions, operator runbook, source-label doctrine, P1.6.10–P1.6.19 report index, and P1.6.20 exit-seal checklist. No enforcement, no Ledger writes, no runtime changes. Next: P1.6.20 — P1.6 Exit Seal + Live Integration Demo.
+**P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes. Next: **P1.7.0 — Path Governance & Source Trust Foundation**.
+
+**P1.6.19 complete** — Policy Docs/State/Reports Update: truth-sync of roadmap, state, reports, architecture, decisions, operator runbook, source-label doctrine, P1.6.10–P1.6.19 report index, and P1.6.20 exit-seal checklist.
 
 **P1.6.18 complete** — Policy CLI/TUI Binding: read-only `policy` CLI commands consume `PolicyProjectionContract v1` for status/projection/unavailable; harness list/run bind to P1.6.16 registry. Shell binding remains UNAVAILABLE. No enforcement, no Ledger writes.
 
