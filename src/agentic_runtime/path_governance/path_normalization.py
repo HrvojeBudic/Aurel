@@ -28,8 +28,8 @@ PATH_NORMALIZATION_RESULT_KNOWN_FIELDS: frozenset[str] = frozenset({
     "raw_path",
     "normalized_path",
     "display_path",
-    "status",
-    "escape_signals",
+    "normalization_status",
+    "signals",
     "warnings",
     "source_label",
     "result_hash",
@@ -44,20 +44,22 @@ class PathNormalizationStatus(str, Enum):
     """String normalization outcome; not safety, permission, or authority."""
 
     NORMALIZED = "NORMALIZED"
+    NORMALIZED_WITH_WARNINGS = "NORMALIZED_WITH_WARNINGS"
+    UNRESOLVED = "UNRESOLVED"
+    UNSUPPORTED = "UNSUPPORTED"
     ERROR = "ERROR"
-    UNKNOWN = "UNKNOWN"
 
 
 class PathEscapeSignal(str, Enum):
     """Candidate escape signal; shadow observation only, never enforcement."""
 
-    TRAVERSAL_CANDIDATE = "TRAVERSAL_CANDIDATE"
+    TRAVERSAL_SEGMENT = "TRAVERSAL_SEGMENT"
     ABSOLUTE_PATH_WITHOUT_ROOT_CONTEXT = "ABSOLUTE_PATH_WITHOUT_ROOT_CONTEXT"
-    ROOT_MISMATCH = "ROOT_MISMATCH"
+    ROOT_MISMATCH_CANDIDATE = "ROOT_MISMATCH_CANDIDATE"
     WINDOWS_DRIVE_PREFIX = "WINDOWS_DRIVE_PREFIX"
-    UNC_PATH = "UNC_PATH"
-    HOME_EXPANSION = "HOME_EXPANSION"
-    MIXED_SEPARATORS = "MIXED_SEPARATORS"
+    HOME_EXPANSION_CANDIDATE = "HOME_EXPANSION_CANDIDATE"
+    UNC_PATH_CANDIDATE = "UNC_PATH_CANDIDATE"
+    MIXED_SEPARATOR_CANDIDATE = "MIXED_SEPARATOR_CANDIDATE"
     EMPTY_PATH = "EMPTY_PATH"
     UNKNOWN = "UNKNOWN"
 
@@ -91,14 +93,14 @@ def _parse_normalization_status(
             return PathNormalizationStatus(value)
         except ValueError as exc:
             raise PathGovernanceError(
-                f"invalid status: {value!r}",
+                f"invalid normalization_status: {value!r}",
                 code=PathGovernanceErrorCode.INVALID_ENUM,
-                field="status",
+                field="normalization_status",
             ) from exc
     raise PathGovernanceError(
-        "status must be a string or PathNormalizationStatus",
+        "normalization_status must be a string or PathNormalizationStatus",
         code=PathGovernanceErrorCode.INVALID_ENUM,
-        field="status",
+        field="normalization_status",
     )
 
 
@@ -110,14 +112,14 @@ def _parse_escape_signal(value: PathEscapeSignal | str) -> PathEscapeSignal:
             return PathEscapeSignal(value)
         except ValueError as exc:
             raise PathGovernanceError(
-                f"invalid escape signal: {value!r}",
+                f"invalid signal: {value!r}",
                 code=PathGovernanceErrorCode.INVALID_ENUM,
-                field="escape_signals",
+                field="signals",
             ) from exc
     raise PathGovernanceError(
-        "escape signal must be a string or PathEscapeSignal",
+        "signal must be a string or PathEscapeSignal",
         code=PathGovernanceErrorCode.INVALID_ENUM,
-        field="escape_signals",
+        field="signals",
     )
 
 
@@ -134,15 +136,15 @@ def _freeze_metadata(metadata: Mapping[str, Any] | None) -> Mapping[str, Any]:
     return MappingProxyType(frozen)
 
 
-def _freeze_escape_signals(
+def _freeze_signals(
     signals: tuple[PathEscapeSignal, ...] | list[PathEscapeSignal | str] | None,
 ) -> tuple[PathEscapeSignal, ...]:
     raw = () if signals is None else signals
     if isinstance(raw, str) or not isinstance(raw, (tuple, list)):
         raise PathGovernanceValidationError(
-            "escape_signals must be a list or tuple of PathEscapeSignal values",
+            "signals must be a list or tuple of PathEscapeSignal values",
             code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
-            field="escape_signals",
+            field="signals",
         )
     parsed = tuple(_parse_escape_signal(item) for item in raw)
     return tuple(sorted(parsed, key=lambda item: item.value))
@@ -183,7 +185,7 @@ def _detect_escape_signals(raw_path: str, normalized_path: str) -> tuple[PathEsc
         return tuple(sorted(signals, key=lambda item: item.value))
 
     if "\\" in raw_path and "/" in raw_path:
-        signals.append(PathEscapeSignal.MIXED_SEPARATORS)
+        signals.append(PathEscapeSignal.MIXED_SEPARATOR_CANDIDATE)
 
     if _WINDOWS_DRIVE_PATTERN.match(raw_path.lstrip()) or _WINDOWS_DRIVE_PATTERN.match(
         normalized_path.lstrip(),
@@ -191,13 +193,13 @@ def _detect_escape_signals(raw_path: str, normalized_path: str) -> tuple[PathEsc
         signals.append(PathEscapeSignal.WINDOWS_DRIVE_PREFIX)
 
     if raw_path.startswith("\\\\") or raw_path.startswith("//"):
-        signals.append(PathEscapeSignal.UNC_PATH)
+        signals.append(PathEscapeSignal.UNC_PATH_CANDIDATE)
 
     if raw_path.startswith("~") or "/~" in raw_path or "\\~" in raw_path:
-        signals.append(PathEscapeSignal.HOME_EXPANSION)
+        signals.append(PathEscapeSignal.HOME_EXPANSION_CANDIDATE)
 
     if ".." in normalized_path.split("/"):
-        signals.append(PathEscapeSignal.TRAVERSAL_CANDIDATE)
+        signals.append(PathEscapeSignal.TRAVERSAL_SEGMENT)
 
     if normalized_path.startswith("/"):
         signals.append(PathEscapeSignal.ABSOLUTE_PATH_WITHOUT_ROOT_CONTEXT)
@@ -210,7 +212,7 @@ def _detect_escape_signals(raw_path: str, normalized_path: str) -> tuple[PathEsc
 def _normalization_warnings(signals: tuple[PathEscapeSignal, ...]) -> tuple[str, ...]:
     warnings: list[str] = []
     for signal in signals:
-        if signal is PathEscapeSignal.TRAVERSAL_CANDIDATE:
+        if signal is PathEscapeSignal.TRAVERSAL_SEGMENT:
             warnings.append(
                 "Traversal-like segments preserved; candidate signal only, not enforcement",
             )
@@ -224,17 +226,37 @@ def _normalization_warnings(signals: tuple[PathEscapeSignal, ...]) -> tuple[str,
             warnings.append(
                 "Windows drive prefix detected; candidate signal only, not enforcement",
             )
-        elif signal is PathEscapeSignal.UNC_PATH:
+        elif signal is PathEscapeSignal.UNC_PATH_CANDIDATE:
             warnings.append("UNC path detected; candidate signal only, not enforcement")
-        elif signal is PathEscapeSignal.HOME_EXPANSION:
+        elif signal is PathEscapeSignal.HOME_EXPANSION_CANDIDATE:
             warnings.append(
                 "Home expansion detected; candidate signal only, not enforcement",
             )
-        elif signal is PathEscapeSignal.MIXED_SEPARATORS:
+        elif signal is PathEscapeSignal.MIXED_SEPARATOR_CANDIDATE:
             warnings.append(
                 "Mixed path separators detected; candidate signal only, not enforcement",
             )
+        elif signal is PathEscapeSignal.ROOT_MISMATCH_CANDIDATE:
+            warnings.append(
+                "Root mismatch candidate detected; candidate signal only, not enforcement",
+            )
+        elif signal is PathEscapeSignal.UNKNOWN:
+            warnings.append("Unknown path signal; candidate signal only, not enforcement")
     return tuple(warnings)
+
+
+def _select_normalization_status(
+    signals: tuple[PathEscapeSignal, ...],
+    *,
+    is_empty: bool,
+) -> PathNormalizationStatus:
+    if is_empty:
+        return PathNormalizationStatus.ERROR
+    if PathEscapeSignal.UNKNOWN in signals:
+        return PathNormalizationStatus.UNRESOLVED
+    if signals:
+        return PathNormalizationStatus.NORMALIZED_WITH_WARNINGS
+    return PathNormalizationStatus.NORMALIZED
 
 
 def compute_normalization_result_hash(
@@ -242,8 +264,8 @@ def compute_normalization_result_hash(
     raw_path: str,
     normalized_path: str,
     display_path: str,
-    status: PathNormalizationStatus,
-    escape_signals: tuple[PathEscapeSignal, ...],
+    normalization_status: PathNormalizationStatus,
+    signals: tuple[PathEscapeSignal, ...],
     warnings: tuple[str, ...],
     source_label: ProjectionSourceLabel,
     contract_version: str,
@@ -253,12 +275,12 @@ def compute_normalization_result_hash(
     return stable_hash({
         "contract_version": contract_version,
         "display_path": display_path,
-        "escape_signals": [item.value for item in escape_signals],
         "metadata": dict(sorted(metadata.items(), key=lambda item: item[0])),
+        "normalization_status": normalization_status.value,
         "normalized_path": normalized_path,
         "raw_path": raw_path,
+        "signals": [item.value for item in signals],
         "source_label": source_label.value,
-        "status": status.value,
         "warnings": list(warnings),
     })
 
@@ -270,8 +292,8 @@ class PathNormalizationResult:
     raw_path: str
     normalized_path: str
     display_path: str
-    status: PathNormalizationStatus
-    escape_signals: tuple[PathEscapeSignal, ...] = field(default_factory=tuple)
+    normalization_status: PathNormalizationStatus
+    signals: tuple[PathEscapeSignal, ...] = field(default_factory=tuple)
     warnings: tuple[str, ...] = field(default_factory=tuple)
     source_label: ProjectionSourceLabel = ProjectionSourceLabel.LIVE
     result_hash: str = ""
@@ -291,13 +313,13 @@ class PathNormalizationResult:
                 code=PathGovernanceErrorCode.INVALID_VERSION,
                 field="contract_version",
             )
-        status = _parse_normalization_status(self.status)
+        normalization_status = _parse_normalization_status(self.normalization_status)
         source_label = _parse_source_label(self.source_label)
-        escape_signals = _freeze_escape_signals(self.escape_signals)
+        signals = _freeze_signals(self.signals)
         warnings = _freeze_warnings(self.warnings)
         metadata = _freeze_metadata(self.metadata)
 
-        if status is PathNormalizationStatus.ERROR:
+        if normalization_status is PathNormalizationStatus.ERROR:
             normalized_path = self.normalized_path if isinstance(self.normalized_path, str) else ""
             display_path = self.display_path if isinstance(self.display_path, str) else ""
         else:
@@ -320,8 +342,8 @@ class PathNormalizationResult:
             raw_path=self.raw_path,
             normalized_path=normalized_path,
             display_path=display_path,
-            status=status,
-            escape_signals=escape_signals,
+            normalization_status=normalization_status,
+            signals=signals,
             warnings=warnings,
             source_label=source_label,
             contract_version=self.contract_version,
@@ -333,9 +355,9 @@ class PathNormalizationResult:
                 code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
                 field="result_hash",
             )
-        object.__setattr__(self, "status", status)
+        object.__setattr__(self, "normalization_status", normalization_status)
         object.__setattr__(self, "source_label", source_label)
-        object.__setattr__(self, "escape_signals", escape_signals)
+        object.__setattr__(self, "signals", signals)
         object.__setattr__(self, "warnings", warnings)
         object.__setattr__(self, "metadata", metadata)
         object.__setattr__(self, "normalized_path", normalized_path)
@@ -346,13 +368,13 @@ class PathNormalizationResult:
         return {
             "contract_version": self.contract_version,
             "display_path": self.display_path,
-            "escape_signals": [item.value for item in self.escape_signals],
             "metadata": dict(sorted(self.metadata.items(), key=lambda item: item[0])),
+            "normalization_status": self.normalization_status.value,
             "normalized_path": self.normalized_path,
             "raw_path": self.raw_path,
             "result_hash": self.result_hash,
+            "signals": [item.value for item in self.signals],
             "source_label": self.source_label.value,
-            "status": self.status.value,
             "warnings": list(self.warnings),
         }
 
@@ -367,8 +389,11 @@ class PathNormalizationResult:
             raw_path=data["raw_path"],
             normalized_path=data.get("normalized_path", ""),
             display_path=data.get("display_path", ""),
-            status=data.get("status", PathNormalizationStatus.UNKNOWN),
-            escape_signals=data.get("escape_signals", ()),
+            normalization_status=data.get(
+                "normalization_status",
+                PathNormalizationStatus.UNRESOLVED,
+            ),
+            signals=data.get("signals", ()),
             warnings=data.get("warnings", ()),
             source_label=data.get("source_label", ProjectionSourceLabel.LIVE),
             result_hash=data.get("result_hash", ""),
@@ -400,8 +425,8 @@ def normalize_path_for_governance(
             raw_path=raw_path,
             normalized_path="",
             display_path="",
-            status=PathNormalizationStatus.ERROR,
-            escape_signals=signals,
+            normalization_status=PathNormalizationStatus.ERROR,
+            signals=signals,
             warnings=warnings,
             source_label=parsed_source_label,
             metadata=frozen_metadata,
@@ -411,17 +436,14 @@ def normalize_path_for_governance(
     display_path = normalized_path
     signals = _detect_escape_signals(raw_path, normalized_path)
     warnings = _normalization_warnings(signals)
-
-    status = PathNormalizationStatus.NORMALIZED
-    if PathEscapeSignal.UNKNOWN in signals:
-        status = PathNormalizationStatus.UNKNOWN
+    normalization_status = _select_normalization_status(signals, is_empty=False)
 
     return PathNormalizationResult(
         raw_path=raw_path,
         normalized_path=normalized_path,
         display_path=display_path,
-        status=status,
-        escape_signals=signals,
+        normalization_status=normalization_status,
+        signals=signals,
         warnings=warnings,
         source_label=parsed_source_label,
         metadata=frozen_metadata,

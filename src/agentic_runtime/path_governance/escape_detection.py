@@ -32,16 +32,17 @@ PATH_ESCAPE_DETECTION_TASK_ID = "P1.7.5"
 PATH_ESCAPE_DETECTION_VERSION = "path_escape_detection_contract.v1"
 
 PATH_BOUNDARY_CHECK_RESULT_KNOWN_FIELDS: frozenset[str] = frozenset({
-    "raw_path",
+    "path_identity",
     "normalized_path",
-    "status",
-    "escape_signals",
-    "matched_root_id",
-    "comparison_root_id",
-    "source_label",
+    "trusted_root_id",
+    "trusted_root_normalized_path",
+    "boundary_status",
+    "signals",
     "shadow_only",
     "enforced",
+    "reason",
     "result_hash",
+    "source_label",
     "contract_version",
     "metadata",
 })
@@ -64,8 +65,9 @@ class PathBoundaryStatus(str, Enum):
     PATH_OK = "PATH_OK"
     PATH_OUTSIDE_TRUSTED_ROOT = "PATH_OUTSIDE_TRUSTED_ROOT"
     PATH_TRAVERSAL_CANDIDATE = "PATH_TRAVERSAL_CANDIDATE"
+    PATH_UNKNOWN = "PATH_UNKNOWN"
     PATH_UNRESOLVED = "PATH_UNRESOLVED"
-    UNKNOWN = "UNKNOWN"
+    PATH_ERROR = "PATH_ERROR"
 
 
 def _parse_source_label(value: ProjectionSourceLabel | str) -> ProjectionSourceLabel:
@@ -95,14 +97,14 @@ def _parse_boundary_status(value: PathBoundaryStatus | str) -> PathBoundaryStatu
             return PathBoundaryStatus(value)
         except ValueError as exc:
             raise PathGovernanceError(
-                f"invalid status: {value!r}",
+                f"invalid boundary_status: {value!r}",
                 code=PathGovernanceErrorCode.INVALID_ENUM,
-                field="status",
+                field="boundary_status",
             ) from exc
     raise PathGovernanceError(
-        "status must be a string or PathBoundaryStatus",
+        "boundary_status must be a string or PathBoundaryStatus",
         code=PathGovernanceErrorCode.INVALID_ENUM,
-        field="status",
+        field="boundary_status",
     )
 
 
@@ -114,14 +116,14 @@ def _parse_escape_signal(value: PathEscapeSignal | str) -> PathEscapeSignal:
             return PathEscapeSignal(value)
         except ValueError as exc:
             raise PathGovernanceError(
-                f"invalid escape signal: {value!r}",
+                f"invalid signal: {value!r}",
                 code=PathGovernanceErrorCode.INVALID_ENUM,
-                field="escape_signals",
+                field="signals",
             ) from exc
     raise PathGovernanceError(
-        "escape signal must be a string or PathEscapeSignal",
+        "signal must be a string or PathEscapeSignal",
         code=PathGovernanceErrorCode.INVALID_ENUM,
-        field="escape_signals",
+        field="signals",
     )
 
 
@@ -138,15 +140,15 @@ def _freeze_metadata(metadata: Mapping[str, Any] | None) -> Mapping[str, Any]:
     return MappingProxyType(frozen)
 
 
-def _freeze_escape_signals(
+def _freeze_signals(
     signals: tuple[PathEscapeSignal, ...] | list[PathEscapeSignal | str] | None,
 ) -> tuple[PathEscapeSignal, ...]:
     raw = () if signals is None else signals
     if isinstance(raw, str) or not isinstance(raw, (tuple, list)):
         raise PathGovernanceValidationError(
-            "escape_signals must be a list or tuple of PathEscapeSignal values",
+            "signals must be a list or tuple of PathEscapeSignal values",
             code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
-            field="escape_signals",
+            field="signals",
         )
     parsed = tuple(_parse_escape_signal(item) for item in raw)
     return tuple(sorted(parsed, key=lambda item: item.value))
@@ -163,14 +165,26 @@ def _freeze_notes(notes: Sequence[str] | None) -> tuple[str, ...]:
     return tuple(str(item) for item in raw)
 
 
+def _optional_string(value: Any, *, field_name: str) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise PathGovernanceValidationError(
+            f"{field_name} must be a string or None",
+            code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
+            field=field_name,
+        )
+    return value
+
+
 def _optional_root_id(value: Any) -> str | None:
     if value is None:
         return None
     if not isinstance(value, str) or value == "":
         raise PathGovernanceValidationError(
-            "root id fields must be a non-empty string or None",
+            "trusted_root_id must be a non-empty string or None",
             code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
-            field="root_id",
+            field="trusted_root_id",
         )
     return value
 
@@ -194,7 +208,7 @@ def _resolve_input_path(
     *,
     path_identity: PathIdentity | None,
     raw_path: str | None,
-) -> tuple[str, str]:
+) -> tuple[PathIdentity | None, str, str]:
     if path_identity is not None and raw_path is not None:
         identity_raw = path_identity.path_ref.raw_path
         if identity_raw != raw_path:
@@ -205,6 +219,7 @@ def _resolve_input_path(
             )
     if path_identity is not None:
         return (
+            path_identity,
             path_identity.path_ref.raw_path,
             path_identity.canonical_ref.normalized_path,
         )
@@ -216,7 +231,7 @@ def _resolve_input_path(
                 field="raw_path",
             )
         normalization = normalize_path_for_governance(raw_path)
-        return raw_path, normalization.normalized_path
+        return None, raw_path, normalization.normalized_path
     raise PathGovernanceValidationError(
         "path_identity or raw_path is required",
         code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
@@ -244,31 +259,35 @@ def _collect_trusted_roots(
 
 def compute_boundary_result_hash(
     *,
-    raw_path: str,
+    path_identity: PathIdentity | None,
     normalized_path: str,
-    status: PathBoundaryStatus,
-    escape_signals: tuple[PathEscapeSignal, ...],
-    matched_root_id: str | None,
-    comparison_root_id: str | None,
-    source_label: ProjectionSourceLabel,
+    trusted_root_id: str | None,
+    trusted_root_normalized_path: str | None,
+    boundary_status: PathBoundaryStatus,
+    signals: tuple[PathEscapeSignal, ...],
     shadow_only: bool,
     enforced: bool,
+    reason: str | None,
+    source_label: ProjectionSourceLabel,
     contract_version: str,
     metadata: Mapping[str, Any],
 ) -> str:
     """Compute deterministic boundary check result hash."""
     return stable_hash({
-        "comparison_root_id": comparison_root_id,
+        "boundary_status": boundary_status.value,
         "contract_version": contract_version,
         "enforced": enforced,
-        "escape_signals": [item.value for item in escape_signals],
-        "matched_root_id": matched_root_id,
         "metadata": dict(sorted(metadata.items(), key=lambda item: item[0])),
         "normalized_path": normalized_path,
-        "raw_path": raw_path,
+        "path_identity": (
+            None if path_identity is None else path_identity.to_canonical_dict()
+        ),
+        "reason": reason,
         "shadow_only": shadow_only,
+        "signals": [item.value for item in signals],
         "source_label": source_label.value,
-        "status": status.value,
+        "trusted_root_id": trusted_root_id,
+        "trusted_root_normalized_path": trusted_root_normalized_path,
     })
 
 
@@ -276,26 +295,21 @@ def compute_boundary_result_hash(
 class PathBoundaryCheckResult:
     """Shadow boundary check result; candidate classification only."""
 
-    raw_path: str
     normalized_path: str
-    status: PathBoundaryStatus
-    escape_signals: tuple[PathEscapeSignal, ...] = field(default_factory=tuple)
-    matched_root_id: str | None = None
-    comparison_root_id: str | None = None
-    source_label: ProjectionSourceLabel = ProjectionSourceLabel.LIVE
+    boundary_status: PathBoundaryStatus
+    path_identity: PathIdentity | None = None
+    trusted_root_id: str | None = None
+    trusted_root_normalized_path: str | None = None
+    signals: tuple[PathEscapeSignal, ...] = field(default_factory=tuple)
     shadow_only: bool = True
     enforced: bool = False
+    reason: str | None = None
+    source_label: ProjectionSourceLabel = ProjectionSourceLabel.LIVE
     result_hash: str = ""
     contract_version: str = PATH_ESCAPE_DETECTION_VERSION
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if not isinstance(self.raw_path, str):
-            raise PathGovernanceValidationError(
-                "raw_path must be a string",
-                code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
-                field="raw_path",
-            )
         if not isinstance(self.normalized_path, str):
             raise PathGovernanceValidationError(
                 "normalized_path must be a string",
@@ -320,22 +334,33 @@ class PathBoundaryCheckResult:
                 code=PathGovernanceErrorCode.ENFORCEMENT_NOT_AVAILABLE,
                 field="shadow_only",
             )
-        status = _parse_boundary_status(self.status)
+        if self.path_identity is not None and not isinstance(self.path_identity, PathIdentity):
+            raise PathGovernanceValidationError(
+                "path_identity must be a PathIdentity or None",
+                code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
+                field="path_identity",
+            )
+        boundary_status = _parse_boundary_status(self.boundary_status)
         source_label = _parse_source_label(self.source_label)
-        escape_signals = _freeze_escape_signals(self.escape_signals)
-        matched_root_id = _optional_root_id(self.matched_root_id)
-        comparison_root_id = _optional_root_id(self.comparison_root_id)
+        signals = _freeze_signals(self.signals)
+        trusted_root_id = _optional_root_id(self.trusted_root_id)
+        trusted_root_normalized_path = _optional_string(
+            self.trusted_root_normalized_path,
+            field_name="trusted_root_normalized_path",
+        )
+        reason = _optional_string(self.reason, field_name="reason")
         metadata = _freeze_metadata(self.metadata)
         result_hash = compute_boundary_result_hash(
-            raw_path=self.raw_path,
+            path_identity=self.path_identity,
             normalized_path=self.normalized_path,
-            status=status,
-            escape_signals=escape_signals,
-            matched_root_id=matched_root_id,
-            comparison_root_id=comparison_root_id,
-            source_label=source_label,
+            trusted_root_id=trusted_root_id,
+            trusted_root_normalized_path=trusted_root_normalized_path,
+            boundary_status=boundary_status,
+            signals=signals,
             shadow_only=True,
             enforced=False,
+            reason=reason,
+            source_label=source_label,
             contract_version=self.contract_version,
             metadata=metadata,
         )
@@ -345,28 +370,38 @@ class PathBoundaryCheckResult:
                 code=PathGovernanceErrorCode.SERIALIZATION_ERROR,
                 field="result_hash",
             )
-        object.__setattr__(self, "status", status)
+        object.__setattr__(self, "boundary_status", boundary_status)
         object.__setattr__(self, "source_label", source_label)
-        object.__setattr__(self, "escape_signals", escape_signals)
-        object.__setattr__(self, "matched_root_id", matched_root_id)
-        object.__setattr__(self, "comparison_root_id", comparison_root_id)
+        object.__setattr__(self, "signals", signals)
+        object.__setattr__(self, "trusted_root_id", trusted_root_id)
+        object.__setattr__(
+            self,
+            "trusted_root_normalized_path",
+            trusted_root_normalized_path,
+        )
+        object.__setattr__(self, "reason", reason)
         object.__setattr__(self, "metadata", metadata)
         object.__setattr__(self, "result_hash", result_hash)
 
     def to_canonical_dict(self) -> dict[str, Any]:
         return {
-            "comparison_root_id": self.comparison_root_id,
+            "boundary_status": self.boundary_status.value,
             "contract_version": self.contract_version,
             "enforced": self.enforced,
-            "escape_signals": [item.value for item in self.escape_signals],
-            "matched_root_id": self.matched_root_id,
             "metadata": dict(sorted(self.metadata.items(), key=lambda item: item[0])),
             "normalized_path": self.normalized_path,
-            "raw_path": self.raw_path,
+            "path_identity": (
+                None
+                if self.path_identity is None
+                else self.path_identity.to_canonical_dict()
+            ),
+            "reason": self.reason,
             "result_hash": self.result_hash,
             "shadow_only": self.shadow_only,
+            "signals": [item.value for item in self.signals],
             "source_label": self.source_label.value,
-            "status": self.status.value,
+            "trusted_root_id": self.trusted_root_id,
+            "trusted_root_normalized_path": self.trusted_root_normalized_path,
         }
 
     @classmethod
@@ -376,16 +411,25 @@ class PathBoundaryCheckResult:
             PATH_BOUNDARY_CHECK_RESULT_KNOWN_FIELDS,
             label="path_boundary_check_result",
         )
+        path_identity_raw = data.get("path_identity")
+        path_identity = None
+        if path_identity_raw is not None:
+            path_identity = (
+                path_identity_raw
+                if isinstance(path_identity_raw, PathIdentity)
+                else PathIdentity.from_dict(path_identity_raw)
+            )
         return cls(
-            raw_path=data["raw_path"],
             normalized_path=data["normalized_path"],
-            status=data.get("status", PathBoundaryStatus.UNKNOWN),
-            escape_signals=data.get("escape_signals", ()),
-            matched_root_id=data.get("matched_root_id"),
-            comparison_root_id=data.get("comparison_root_id"),
-            source_label=data.get("source_label", ProjectionSourceLabel.LIVE),
+            boundary_status=data.get("boundary_status", PathBoundaryStatus.PATH_UNKNOWN),
+            path_identity=path_identity,
+            trusted_root_id=data.get("trusted_root_id"),
+            trusted_root_normalized_path=data.get("trusted_root_normalized_path"),
+            signals=data.get("signals", ()),
             shadow_only=data.get("shadow_only", True),
             enforced=data.get("enforced", False),
+            reason=data.get("reason"),
+            source_label=data.get("source_label", ProjectionSourceLabel.LIVE),
             result_hash=data.get("result_hash", ""),
             contract_version=data.get(
                 "contract_version",
@@ -522,6 +566,36 @@ class EscapeDetectionContract:
         )
 
 
+def _build_boundary_result(
+    *,
+    path_identity: PathIdentity | None,
+    normalized_path: str,
+    boundary_status: PathBoundaryStatus,
+    signals: tuple[PathEscapeSignal, ...],
+    trusted_root: TrustedRoot | None,
+    reason: str | None,
+    source_label: ProjectionSourceLabel,
+    metadata: Mapping[str, Any],
+) -> PathBoundaryCheckResult:
+    trusted_root_id = trusted_root.root_id if trusted_root is not None else None
+    trusted_root_normalized_path = (
+        trusted_root.path_identity.canonical_ref.normalized_path
+        if trusted_root is not None
+        else None
+    )
+    return PathBoundaryCheckResult(
+        path_identity=path_identity,
+        normalized_path=normalized_path,
+        boundary_status=boundary_status,
+        signals=signals,
+        trusted_root_id=trusted_root_id,
+        trusted_root_normalized_path=trusted_root_normalized_path,
+        reason=reason,
+        source_label=source_label,
+        metadata=metadata,
+    )
+
+
 def detect_path_escape_candidates(
     *,
     path_identity: PathIdentity | None = None,
@@ -534,7 +608,7 @@ def detect_path_escape_candidates(
     """Detect path escape candidates using supplied string context only."""
     parsed_source_label = _parse_source_label(source_label)
     frozen_metadata = _freeze_metadata(metadata)
-    input_raw_path, normalized_path = _resolve_input_path(
+    resolved_identity, input_raw_path, normalized_path = _resolve_input_path(
         path_identity=path_identity,
         raw_path=raw_path,
     )
@@ -544,7 +618,7 @@ def detect_path_escape_candidates(
         metadata=frozen_metadata,
     )
 
-    signals = list(normalization.escape_signals)
+    signals = list(normalization.signals)
     roots = _collect_trusted_roots(
         trusted_root=trusted_root,
         trusted_root_registry=trusted_root_registry,
@@ -555,11 +629,14 @@ def detect_path_escape_candidates(
         if normalized_path.startswith("/"):
             if PathEscapeSignal.ABSOLUTE_PATH_WITHOUT_ROOT_CONTEXT not in signals:
                 signals.append(PathEscapeSignal.ABSOLUTE_PATH_WITHOUT_ROOT_CONTEXT)
-        boundary = PathBoundaryCheckResult(
-            raw_path=input_raw_path,
+        frozen_signals = tuple(sorted(set(signals), key=lambda item: item.value))
+        boundary = _build_boundary_result(
+            path_identity=resolved_identity,
             normalized_path=normalized_path,
-            status=PathBoundaryStatus.PATH_UNRESOLVED,
-            escape_signals=tuple(sorted(set(signals), key=lambda item: item.value)),
+            boundary_status=PathBoundaryStatus.PATH_UNRESOLVED,
+            signals=frozen_signals,
+            trusted_root=None,
+            reason="trusted root context not supplied",
             source_label=parsed_source_label,
             metadata=frozen_metadata,
         )
@@ -570,19 +647,21 @@ def detect_path_escape_candidates(
             notes=(
                 "P1.7.5 escape detection is shadow-only candidate classification.",
                 "PATH_UNRESOLVED means trusted root context was not supplied.",
-                "PATH_OK would mean no candidate mismatch under supplied string context only.",
+                "PATH_OK means no candidate mismatch under supplied string context only.",
             ),
             metadata=frozen_metadata,
         )
 
-    if PathEscapeSignal.TRAVERSAL_CANDIDATE in signals:
+    if PathEscapeSignal.TRAVERSAL_SEGMENT in signals:
         comparison_root = sorted_roots[0]
-        boundary = PathBoundaryCheckResult(
-            raw_path=input_raw_path,
+        frozen_signals = tuple(sorted(set(signals), key=lambda item: item.value))
+        boundary = _build_boundary_result(
+            path_identity=resolved_identity,
             normalized_path=normalized_path,
-            status=PathBoundaryStatus.PATH_TRAVERSAL_CANDIDATE,
-            escape_signals=tuple(sorted(set(signals), key=lambda item: item.value)),
-            comparison_root_id=comparison_root.root_id,
+            boundary_status=PathBoundaryStatus.PATH_TRAVERSAL_CANDIDATE,
+            signals=frozen_signals,
+            trusted_root=comparison_root,
+            reason="traversal-like segment detected under supplied string context",
             source_label=parsed_source_label,
             metadata=frozen_metadata,
         )
@@ -606,23 +685,28 @@ def detect_path_escape_candidates(
 
     comparison_root = matched_root or sorted_roots[0]
     if matched_root is not None:
-        status = PathBoundaryStatus.PATH_OK
-        matched_root_id = matched_root.root_id
-        if PathEscapeSignal.ROOT_MISMATCH in signals:
-            signals = [item for item in signals if item is not PathEscapeSignal.ROOT_MISMATCH]
+        boundary_status = PathBoundaryStatus.PATH_OK
+        reason = "no candidate mismatch under supplied string-level root context"
+        if PathEscapeSignal.ROOT_MISMATCH_CANDIDATE in signals:
+            signals = [
+                item
+                for item in signals
+                if item is not PathEscapeSignal.ROOT_MISMATCH_CANDIDATE
+            ]
     else:
-        status = PathBoundaryStatus.PATH_OUTSIDE_TRUSTED_ROOT
-        matched_root_id = None
-        if PathEscapeSignal.ROOT_MISMATCH not in signals:
-            signals.append(PathEscapeSignal.ROOT_MISMATCH)
+        boundary_status = PathBoundaryStatus.PATH_OUTSIDE_TRUSTED_ROOT
+        reason = "string-level path may be outside supplied trusted root"
+        if PathEscapeSignal.ROOT_MISMATCH_CANDIDATE not in signals:
+            signals.append(PathEscapeSignal.ROOT_MISMATCH_CANDIDATE)
 
-    boundary = PathBoundaryCheckResult(
-        raw_path=input_raw_path,
+    frozen_signals = tuple(sorted(set(signals), key=lambda item: item.value))
+    boundary = _build_boundary_result(
+        path_identity=resolved_identity,
         normalized_path=normalized_path,
-        status=status,
-        escape_signals=tuple(sorted(set(signals), key=lambda item: item.value)),
-        matched_root_id=matched_root_id,
-        comparison_root_id=comparison_root.root_id,
+        boundary_status=boundary_status,
+        signals=frozen_signals,
+        trusted_root=comparison_root,
+        reason=reason,
         source_label=parsed_source_label,
         metadata=frozen_metadata,
     )

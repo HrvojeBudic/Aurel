@@ -69,7 +69,7 @@ Focused validation (2026-06-25):
 .venv/bin/python -m mypy src/agentic_runtime
 ```
 
-Results: compileall **PASS**; focused P1.7.0 + P1.7.1 + P1.7.2 + P1.7.3 + P1.7.4 + P1.7.5 **121 passed**; ruff **PASS**; mypy **PASS** (214 files).
+Results: compileall **PASS**; focused P1.7.0 + P1.7.1 + P1.7.2 + P1.7.3 + P1.7.4 + P1.7.5 **124 passed** (30 P1.7.5 focused); ruff **PASS**; mypy **PASS** (214 files).
 
 Report: `agent/reports/P1.7.5_PATH_NORMALIZATION_ESCAPE_DETECTION_CONTRACT.md`
 

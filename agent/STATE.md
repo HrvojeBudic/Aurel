@@ -14,11 +14,11 @@ _Last updated: 2026-06-25 (P1.7.5 — Path Normalization & Escape Detection Cont
 ### P1.7.5 Path Normalization & Escape Detection Contract (COMPLETE — shadow contract only)
 
 - `path_governance/`: `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, `detect_path_escape_candidates()`.
-- PathNormalizationStatus: **LIVE schema** — string normalization outcome only; not safety, permission, or authority.
-- PathEscapeSignal: **LIVE schema** — candidate escape signal vocabulary; shadow observation only, never enforcement.
-- PathNormalizationResult: **LIVE schema** — preserves `raw_path`, computes deterministic `normalized_path` and `display_path`, escape signals, warnings, and `result_hash`.
-- PathBoundaryStatus: **LIVE schema** — candidate boundary classification; `PATH_OK` is string-context match only, not safe or authorized.
-- PathBoundaryCheckResult: **LIVE schema** — always `shadow_only=True`, `enforced=False`; never runtime denial or block.
+- PathNormalizationStatus: **LIVE schema** — `NORMALIZED`, `NORMALIZED_WITH_WARNINGS`, `UNRESOLVED`, `UNSUPPORTED`, `ERROR`; not safety, permission, or authority.
+- PathEscapeSignal: **LIVE schema** — `TRAVERSAL_SEGMENT`, `ROOT_MISMATCH_CANDIDATE`, `UNC_PATH_CANDIDATE`, etc.; shadow observation only, never enforcement.
+- PathNormalizationResult: **LIVE schema** — preserves `raw_path`, `normalization_status`, `signals`, deterministic `normalized_path`/`display_path`, and `result_hash`.
+- PathBoundaryStatus: **LIVE schema** — `PATH_OK`, `PATH_OUTSIDE_TRUSTED_ROOT`, `PATH_TRAVERSAL_CANDIDATE`, `PATH_UNKNOWN`, `PATH_UNRESOLVED`, `PATH_ERROR`; `PATH_OK` is string-context match only.
+- PathBoundaryCheckResult: **LIVE schema** — `path_identity`, `trusted_root_id`, `trusted_root_normalized_path`, `boundary_status`, `reason`; always `shadow_only=True`, `enforced=False`.
 - EscapeDetectionContract: **LIVE schema** — binds normalization and boundary results with `contract_version="path_escape_detection_contract.v1"`, `created_by_task="P1.7.5"`, and deterministic `contract_hash`.
 - Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, cwd-derived live state, or source/path content scans.
 - Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
