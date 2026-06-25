@@ -1,15 +1,33 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.4 — Trusted Root & Scope Registry Seed)_
+_Last updated: 2026-06-25 (P1.7.5 — Path Normalization & Escape Detection Contract)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.4 — Trusted Root & Scope Registry Seed
-- Current active: **P1.7.5 — Path Normalization & Escape Detection Contract (planned)**
-- Next planned: P1.7.5 — Path Normalization & Escape Detection Contract
+- Last completed: P1.7.5 — Path Normalization & Escape Detection Contract
+- Current active: **P1.7.6 — Path Authority Scope Model (planned)**
+- Next planned: P1.7.6 — Path Authority Scope Model
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.5 Path Normalization & Escape Detection Contract (COMPLETE — shadow contract only)
+
+- `path_governance/`: `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, `detect_path_escape_candidates()`.
+- PathNormalizationStatus: **LIVE schema** — string normalization outcome only; not safety, permission, or authority.
+- PathEscapeSignal: **LIVE schema** — candidate escape signal vocabulary; shadow observation only, never enforcement.
+- PathNormalizationResult: **LIVE schema** — preserves `raw_path`, computes deterministic `normalized_path` and `display_path`, escape signals, warnings, and `result_hash`.
+- PathBoundaryStatus: **LIVE schema** — candidate boundary classification; `PATH_OK` is string-context match only, not safe or authorized.
+- PathBoundaryCheckResult: **LIVE schema** — always `shadow_only=True`, `enforced=False`; never runtime denial or block.
+- EscapeDetectionContract: **LIVE schema** — binds normalization and boundary results with `contract_version="path_escape_detection_contract.v1"`, `created_by_task="P1.7.5"`, and deterministic `contract_hash`.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, cwd-derived live state, or source/path content scans.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — test fixtures use `DEV_FIXTURE`; production helper defaults remain `LIVE`.
+- Boundary summary: normalization means represent not resolve; escape detection means classify candidates not deny/block; traversal `..` segments are preserved and signaled; absolute paths without root context return `PATH_UNRESOLVED`.
+- Known unavailable states: full path authority scope model, source provenance/evidence binding, source/path resolvers, trace hooks, policy bridge, projection/API/event contract, CLI/TUI binding, Shell UI, trusted root authority resolution, filesystem security, sandbox hardening, and runtime enforcement.
+- P1.7.6 readiness: **READY** — next task is Path Authority Scope Model.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.5_PATH_NORMALIZATION_ESCAPE_DETECTION_CONTRACT.md`
 
 ### P1.7.4 Trusted Root & Scope Registry Seed (COMPLETE — registry schema only)
 

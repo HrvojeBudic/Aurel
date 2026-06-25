@@ -6,6 +6,7 @@ P1.7.1 adds deterministic path identity schema objects without enforcement.
 P1.7.2 adds deterministic source identity schema objects without trust resolution.
 P1.7.3 adds deterministic source trust label taxonomy objects without resolver behavior.
 P1.7.4 adds deterministic trusted root registry seed objects without authority resolution.
+P1.7.5 adds deterministic path normalization and shadow escape candidate detection.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -74,6 +75,25 @@ from .source_trust_taxonomy import (
     compute_definition_hash,
     compute_taxonomy_hash,
 )
+from .path_normalization import (
+    PATH_NORMALIZATION_RESULT_KNOWN_FIELDS,
+    PATH_NORMALIZATION_TASK_ID,
+    PATH_NORMALIZATION_VERSION,
+    PathEscapeSignal,
+    PathNormalizationResult,
+    PathNormalizationStatus,
+    normalize_path_for_governance,
+)
+from .escape_detection import (
+    ESCAPE_DETECTION_CONTRACT_KNOWN_FIELDS,
+    PATH_BOUNDARY_CHECK_RESULT_KNOWN_FIELDS,
+    PATH_ESCAPE_DETECTION_TASK_ID,
+    PATH_ESCAPE_DETECTION_VERSION,
+    EscapeDetectionContract,
+    PathBoundaryCheckResult,
+    PathBoundaryStatus,
+    detect_path_escape_candidates,
+)
 from .trusted_roots import (
     PATH_SCOPE_DENY_KNOWN_FIELDS,
     PATH_SCOPE_GRANT_KNOWN_FIELDS,
@@ -112,7 +132,14 @@ __all__ = [
     "PATH_GOVERNANCE_MODULE_NAME",
     "PATH_GOVERNANCE_MODULE_VERSION",
     "PATH_GOVERNANCE_TASK_ID",
+    "ESCAPE_DETECTION_CONTRACT_KNOWN_FIELDS",
+    "PATH_BOUNDARY_CHECK_RESULT_KNOWN_FIELDS",
+    "PATH_ESCAPE_DETECTION_TASK_ID",
+    "PATH_ESCAPE_DETECTION_VERSION",
     "PATH_GOVERNANCE_UNAVAILABLE_REASONS",
+    "PATH_NORMALIZATION_RESULT_KNOWN_FIELDS",
+    "PATH_NORMALIZATION_TASK_ID",
+    "PATH_NORMALIZATION_VERSION",
     "PATH_IDENTITY_KNOWN_FIELDS",
     "PATH_IDENTITY_SCHEMA_VERSION",
     "PATH_IDENTITY_TASK_ID",
@@ -133,9 +160,15 @@ __all__ = [
     "TRUSTED_ROOT_REGISTRY_TASK_ID",
     "TRUSTED_ROOT_REGISTRY_VERSION",
     "TRAVERSAL_WARNING",
+    "EscapeDetectionContract",
     "CanonicalPathRef",
     "CanonicalizationStatus",
+    "PathBoundaryCheckResult",
+    "PathBoundaryStatus",
+    "PathEscapeSignal",
     "PathGovernanceCapabilityStatus",
+    "PathNormalizationResult",
+    "PathNormalizationStatus",
     "PathGovernanceError",
     "PathGovernanceErrorCode",
     "PathGovernanceSerializationError",
@@ -165,6 +198,7 @@ __all__ = [
     "TrustedRootKind",
     "TrustedRootRegistry",
     "build_path_identity",
+    "detect_path_escape_candidates",
     "build_source_identity",
     "build_source_trust_taxonomy",
     "build_trusted_root_registry",
@@ -177,6 +211,7 @@ __all__ = [
     "compute_source_id",
     "compute_taxonomy_hash",
     "get_path_governance_foundation_status",
+    "normalize_path_for_governance",
     "normalize_path_string",
     "path_normalization_warnings",
     "stable_hash",

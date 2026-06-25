@@ -1,22 +1,22 @@
-# Active Task: P1.7.5 (planned)
+# Active Task: P1.7.6 (planned)
 
-**Status:** P1.7.4 COMPLETE; P1.7.5 PLANNED
+**Status:** P1.7.5 COMPLETE; P1.7.6 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.4 — Trusted Root & Scope Registry Seed**
-- Next planned task: **P1.7.5 — Path Normalization & Escape Detection Contract**
+- Current completed task: **P1.7.5 — Path Normalization & Escape Detection Contract**
+- Next planned task: **P1.7.6 — Path Authority Scope Model**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — trusted root registry seed added; broader P1.7 path/source governance remains in progress.
+**IN PROGRESS** — path normalization and shadow escape detection contract added; broader P1.7 path/source governance remains in progress.
 
-P1.7.4 adds `TrustedRootKind`, `PathScopeAction`, `PathScopeReason`, `TrustedRoot`, `PathScopeGrant`, `PathScopeDeny`, `TrustedRootRegistry`, and `build_trusted_root_registry()` with deterministic `root_id`, `grant_id`, `deny_id`, and `registry_hash`, closed-world validation, and source-label truth for registry declarations.
+P1.7.5 adds `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, and `detect_path_escape_candidates()` with deterministic hashes, closed-world validation, source-label truth, and shadow-only boundary classification.
 
-A trusted root remains declaration only. It is not permission, sandbox policy, path escape detection, filesystem security, runtime authority, or enforcement.
+Normalization and escape detection remain representation and candidate classification only. They are not permission, sandbox policy, filesystem security, runtime authority, or enforcement.
 
-No path normalization, path escape detection, trusted root authority resolver, path/source resolver, path permission enforcement, filesystem security, filesystem read/stat/resolve, symlink resolution, sandbox hardening, runtime enforcement, Ledger write, approval activation, CLI/TUI binding, Shell UI, trace hook, or policy bridge was added.
+No trusted root authority resolver, path/source resolver, path permission enforcement, filesystem read/stat/resolve, symlink resolution, sandbox hardening, runtime enforcement, Ledger write, approval activation, CLI/TUI binding, Shell UI, trace hook, or policy bridge was added.
 
 Git status: committed locally, no push performed.
 
@@ -27,3 +27,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.2_SOURCE_IDENTITY_SOURCE_REF_SCHEMA.md`
 - `agent/reports/P1.7.3_SOURCE_TRUST_LABEL_TAXONOMY.md`
 - `agent/reports/P1.7.4_TRUSTED_ROOT_SCOPE_REGISTRY_SEED.md`
+- `agent/reports/P1.7.5_PATH_NORMALIZATION_ESCAPE_DETECTION_CONTRACT.md`
