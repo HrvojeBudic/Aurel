@@ -1,6 +1,18 @@
 # Roadmap
 
-**Macro roadmap version:** Aurel Roadmap v3.2 (based on v3.1 macro update — refined, not reset)
+**Macro roadmap version:** Aurel Roadmap v5.1 — Integration-First (evolved from v3.2 macro structure)
+
+## Integration-First law
+
+Every completed Pn.x section must produce a vertical slice:
+
+1. **Backend capability** — real modules, not mocks
+2. **Versioned contract/schema** — deterministic, hash-ready read model
+3. **Projection/API/CLI-readable state** — honest availability and readiness
+4. **Shell/CLI/TUI binding** — or explicit UNAVAILABLE reason
+5. **Trace/evidence/report binding** — audit-ready artifacts
+
+Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock data is forbidden as operational truth; fixtures must be labeled `DEV_FIXTURE`.
 
 ## Current phase
 
@@ -8,12 +20,16 @@
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.6.18 — Policy CLI/TUI Binding |
-| **Current active** | **P1.6.19 — Policy Docs/State/Reports Update** |
-| **Previous** | P1.6.17 — Policy Projection/API/Event Contract |
-| **Next planned** | P1.6.20 — P1.6 Exit Seal + Live Integration Demo |
+| **Last completed** | P1.6.19 — Policy Docs/State/Reports Update |
+| **Current active** | **P1.6.20 — P1.6 Exit Seal + Live Integration Demo** |
+| **Previous** | P1.6.18 — Policy CLI/TUI Binding |
+| **Next planned** | P1.7.0 — Path Governance Engine (forward hook) |
 
-**P1.6.18 complete** — Policy CLI/TUI Binding: read-only `policy` CLI commands consume `PolicyProjectionContract v1` for status/projection/unavailable; harness list/run bind to P1.6.16 registry. Shell binding remains UNAVAILABLE. No enforcement, no Ledger writes. Next planned: P1.6.19 — Policy Docs/State/Reports Update.
+**P1.6.19 complete** — Policy Docs/State/Reports Update: truth-sync of roadmap, state, reports, architecture, decisions, operator runbook, source-label doctrine, P1.6.10–P1.6.19 report index, and P1.6.20 exit-seal checklist. No enforcement, no Ledger writes, no runtime changes. Next: P1.6.20 — P1.6 Exit Seal + Live Integration Demo.
+
+**P1.6.18 complete** — Policy CLI/TUI Binding: read-only `policy` CLI commands consume `PolicyProjectionContract v1` for status/projection/unavailable; harness list/run bind to P1.6.16 registry. Shell binding remains UNAVAILABLE. No enforcement, no Ledger writes.
+
+**P1.6.17 complete** — Policy Projection/API/Event Contract: versioned read-model for P1.6 policy subsystem with source labels, readiness, deterministic hashing, and event payload seed. CLI binding added in P1.6.18; Shell remains UNAVAILABLE.
 
 **P1.6.14 complete** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes.
 
@@ -65,7 +81,7 @@ Canonical P1.4 detail: `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`, `docs/P1
 
 ## Roadmap v3.2 doctrine
 
-**Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. Current active work is P1.6.11; next planned feature work is P1.6.12.
+**Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. P1.6 advanced through P1.6.19 truth-sync; current active work is **P1.6.20 exit seal**.
 
 - **P1–P2 remain stable** — completed foundation is not reset.
 - **P3–P21 are refined, not reset.**
@@ -98,6 +114,45 @@ P1.8.0–P1.8.20   Delegation / Non-Repudiation / Agent Identity Mesh
 P1.9.0–P1.9.20   Provenance / Disclosure / Output Passport
 P2.0.0–P2.0.20   Phase 2 lock
 ```
+
+## P1.6 — Policy Cards & Behavioral Contracts (v5.1 patch table)
+
+| Patch | Name |
+| ----- | ---- |
+| P1.6.0 | Policy Card Foundation |
+| P1.6.1 | Policy Card Schema |
+| P1.6.2 | Behavioral Contract Schema |
+| P1.6.3 | Risk Tier Policy Card Model |
+| P1.6.4 | Human Oversight Policy Card Model |
+| P1.6.5 | Data Residency Policy Card Model |
+| P1.6.6 | Tool Permission Policy Card Model |
+| P1.6.7 | Memory Write Policy Card Model |
+| P1.6.8 | Prompt Policy Card Model |
+| P1.6.9 | Sandbox Policy Card Model |
+| P1.6.10 | Custos v0 Policy Runtime Resolver / Shadow Mode |
+| P1.6.10H | Runtime Security, Coverage & Governance Truth Hotfix |
+| P1.6.11 | Policy Resolution Context & Registry Binding |
+| P1.6.12 | Custos Shadow Runtime Projection & Submit Observability Hook |
+| P1.6.13 | Policy Conflict Algebra & Strictest-Wins Rules |
+| P1.6.14 | Policy Resolution Trace Hook |
+| P1.6.15 | Policy Violation Trace Hook |
+| P1.6.16 | Policy Test Harness |
+| P1.6.17 | **Policy Projection/API/Event Contract** |
+| P1.6.18 | **Policy CLI/TUI Binding** |
+| P1.6.19 | **Policy Docs/State/Reports Update** |
+| P1.6.20 | **P1.6 Exit Seal + Live Integration Demo** |
+
+### P1.6.18 handoff
+
+P1.6.18 binds `PolicyProjectionContract v1` to read-only CLI commands (`policy status`, `policy projection`, `policy unavailable`, `policy harness list/run`). Shell binding remains UNAVAILABLE. No enforcement. **P1.6.19 synchronizes documentation and prepares exit seal.**
+
+### P1.6.19 handoff
+
+P1.6.19 is a consolidation/audit gate: P1.6 capability map, source-label doctrine, operator runbook, reports index P1.6.10–P1.6.19, and 20-item P1.6.20 checklist. It adds no governance semantics and does not mutate runtime. **P1.6 is seal-ready. P1.6.20 performs live integration demo and exit seal verification.**
+
+### P1.6.20 forward hook
+
+P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal report, demonstrate Integration-First vertical slice. Enforcement remains deferred to later phases (P9/P25).
 
 ## Completed (latest)
 

@@ -94,7 +94,7 @@ enforce. Shadow outcomes are `WOULD_ALLOW`, `WOULD_WARN`, `WOULD_REQUIRE_APPROVA
 resolution is conservative (`WARN`), never a silent allow.
 
 Future consumers: Custos runtime governance, AurelRuntime preflight, AurelFlow approval
-pauses, AurelExec execution gates, AurelTrace decision evidence, P1.6.12 enforcement adapter, and P25/P29 hardening. P1.6.10 only produces the
+pauses, AurelExec execution gates, AurelTrace decision evidence, P1.6.12 shadow runtime projection, and P25/P29 hardening. P1.6.10 only produces the
 deterministic shadow judgment those consumers will later act on.
 
 ## Policy Resolution Context & Registry Binding (P1.6.11)
@@ -120,7 +120,7 @@ Architectural boundaries:
 - Registry applicability selects candidate lawbook cards; resolver adapters still produce judgments.
 - `AgenticRuntime.submit()` remains untouched; no command blocking, approval activation, or sandbox runtime bridge exists in P1.6.11.
 
-Next planned: P1.6.13 — Policy Enforcement Adapter Hardening.
+Next planned: P1.6.20 exit seal; active policy enforcement deferred to later phases (P9/P25).
 
 
 ## Custos Shadow Runtime Projection (P1.6.12)
@@ -358,6 +358,39 @@ Four distinct sandbox layers exist. They must not be confused:
    - Produces `WOULD_*` decisions. Does NOT block runtime behavior.
 
 **P1.6.9 sandbox policy cards and P1.6.10 resolver do not yet enforce runtime sandbox behavior. Runtime enforcement still flows through the P0 runtime policy and sandbox layers.**
+
+## Policy Projection & CLI Binding (P1.6.17–P1.6.18)
+
+Integration-First vertical slice for operator inspection of the P1.6 policy subsystem:
+
+```
+policy_cards/ backend (P1.6.0–P1.6.16)
+  → build_policy_projection_contract()
+  → PolicyProjectionContract v1 (policy_projection.v1)
+  → policy_projection_to_json_safe_dict()
+  → cli_modules/policy_commands.py
+  → python -m agentic_runtime.cli policy …
+```
+
+Architectural boundaries:
+
+- **Backend is source of truth** — `policy_cards/` modules (registry, resolver, conflict algebra, trace hooks, harness).
+- **Projection is not authority** — contract reports module availability and readiness; it does not enforce policy or mutate runtime state.
+- **Source labels are mandatory** — `LIVE`, `TRACE_VERIFIED`, `SIMULATED`, `DEV_FIXTURE`, `UNAVAILABLE`, `ERROR`. No fake LIVE state.
+- **CLI consumes contract** — `policy status`, `policy projection`, `policy unavailable`, `policy harness list/run` call P1.6.17 builders; no parallel projection logic.
+- **Shell/TUI UNAVAILABLE** — `shell_binding` section stays UNAVAILABLE until Shell UI exists; P1.6.18 is CLI binding only, not a full TUI app.
+- **No enforcement** — policy CLI does not import runtime, approval, ledger, or sandbox; harness reports `enforced: false`.
+
+Key modules:
+
+| Module | Role |
+|--------|------|
+| `policy_cards/projection_contract.py` | P1.6.17 — `PolicyProjectionContract v1`, sections, readiness, hashing |
+| `policy_cards/test_harness.py` | P1.6.16 — shadow scenario harness engine |
+| `policy_cards/policy_harness_registry.py` | P1.6.18 — built-in harness case registry for CLI |
+| `cli_modules/policy_commands.py` | P1.6.18 — read-only operator CLI binding |
+
+P1.6.19 documents this stack in agent canon; P1.6.20 performs exit seal verification.
 
 ## LLM repository planning (P0.21)
 

@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-25 — P1.6.19 Policy Docs/State/Reports Update
+
+### DEC-P1619-01: Truth-sync only; no runtime behavior
+**Decision:** P1.6.19 updates agent documentation, state canon, reports index, operator runbook, and P1.6.20 checklist only. No policy backend, CLI, enforcement, Ledger, approval, or sandbox changes.
+**Why:** P1.6.19 is a governance truth gate before exit seal, not a feature phase.
+
+### DEC-P1619-02: Roadmap v5.1 naming correction canonized
+**Decision:** P1.6.17 is **Policy Projection/API/Event Contract** (not "Policy CLI Surface"). P1.6.18 is **Policy CLI/TUI Binding** (not "Projection Contract"). P1.6.19 is docs/state/reports update. P1.6.20 is exit seal + live integration demo.
+**Why:** Integration-First roadmap separates contract definition from operator surface binding; stale names are governance bugs.
+
+### DEC-P1619-03: Operator runbook in agent canon
+**Decision:** Operator inspection commands and source-label doctrine live in `agent/reports/P1.6.19_*` and synced `agent/*.md` files. CLI consumes projection contract; docs do not duplicate backend logic.
+**Why:** Backend remains source of truth; documentation is projection over verified capability.
+
 ## 2026-06-25 - P1.6.18 Policy CLI/TUI Binding
 
 ### DEC-P1618-01: CLI consumes projection contract; no parallel logic

@@ -1,19 +1,20 @@
-# Active Task: P1.6.19 — Policy Docs/State/Reports Update
+# Active Task: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
 
 **Status:** PLANNED
 
 ## Roadmap Position
 
-- Last completed: P1.6.18 — Policy CLI/TUI Binding
-- Current active: **P1.6.19 — Policy Docs/State/Reports Update**
-- Next planned: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
+- Last completed: P1.6.19 — Policy Docs/State/Reports Update
+- Current active: **P1.6.20 — P1.6 Exit Seal + Live Integration Demo**
+- Next planned: P1.7.0 — Path Governance Engine (forward hook)
+- Roadmap version: **v5.1 Integration-First**
 
-P1.6.18 binds the P1.6 policy projection contract to a minimal operator-facing CLI/TUI surface; it does not enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+P1.6.19 synchronizes the policy subsystem documentation, state, reports, and operator runbook for the Integration-First roadmap; it does not add policy enforcement, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
 
 ## Objective
 
-Update policy subsystem documentation, state canon, and reports to reflect P1.6 CLI binding and prepare for P1.6 exit seal.
+Run P1.6.20 exit seal: live integration demo, focused validation, seal report, and honest capability boundary confirmation for the P1.6 policy subsystem.
 
 ## Predecessor Report
 
-Full report: `agent/reports/P1.6.18_POLICY_CLI_TUI_BINDING_REPORT.md`
+Full report: `agent/reports/P1.6.19_POLICY_DOCS_STATE_REPORTS_UPDATE.md`

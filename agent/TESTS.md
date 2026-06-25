@@ -38,6 +38,82 @@ large modules just to pass.
 python -m agentic_runtime.cli verify
 ```
 
+## Lean validation doctrine (v5.1 Integration-First)
+
+**Default for phase work:** focused pytest on the touched subsystem plus compileall/ruff/mypy when Python changes.
+
+**Operator manual seal** (not required for docs-only tasks like P1.6.19):
+
+```bash
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+Run full pytest/coverage/Bandit only when:
+
+- Runtime/security/sandbox/network/subprocess/secrets paths are touched
+- Focused validation reveals a cross-system issue
+- Operator explicitly requests full validation
+
+Docs-only patches (agent reports/state) require `git status --short` verification only.
+
+## P1.6.20 Exit Seal Validation Expectations
+
+P1.6.20 must pass focused regression before seal:
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest \
+  tests/test_policy_projection_contract_p1617.py \
+  tests/test_policy_projection_sources_p1617.py \
+  tests/test_policy_projection_integration_p1617.py \
+  tests/test_policy_cli_binding_p1618.py \
+  tests/test_policy_cli_projection_p1618.py \
+  tests/test_policy_cli_harness_p1618.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Operator manual seal (optional after P1.6.20): full pytest, coverage ≥75%, Bandit `-ll`.
+
+Live CLI verification (from P1.6.19 runbook):
+
+```bash
+.venv/bin/python -m agentic_runtime.cli policy status
+.venv/bin/python -m agentic_runtime.cli policy projection --json
+.venv/bin/python -m agentic_runtime.cli policy unavailable
+.venv/bin/python -m agentic_runtime.cli policy harness list
+.venv/bin/python -m agentic_runtime.cli policy harness run
+```
+
+## P1.6.19 Verification (Policy Docs/State/Reports Update)
+
+Docs-only task — no Python source changes expected.
+
+```bash
+git status --short
+```
+
+Optional sanity check:
+
+```bash
+.venv/bin/python -m compileall src tests
+```
+
+P1.6.19 synchronizes the policy subsystem documentation, state, reports, and operator runbook for the Integration-First roadmap; it does NOT add policy enforcement, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+
+## P1.6.18 Verification (Policy CLI/TUI Binding)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py -q
+.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py tests/test_policy_projection_contract_p1617.py tests/test_policy_projection_sources_p1617.py tests/test_policy_projection_integration_p1617.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+P1.6.18 binds the P1.6 policy projection contract to a minimal operator-facing CLI/TUI surface; it does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
 
 ## P1.6.12 Verification (Custos Shadow Runtime Projection & Submit Observability Hook)
 
@@ -69,18 +145,6 @@ P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in
 .venv/bin/python -m bandit -r src/agentic_runtime -ll
 ```
 
-## P1.6.18 Verification (Policy CLI/TUI Binding)
-
-```bash
-.venv/bin/python -m compileall src tests
-.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py -q
-.venv/bin/python -m pytest tests/test_policy_cli_binding_p1618.py tests/test_policy_cli_projection_p1618.py tests/test_policy_cli_harness_p1618.py tests/test_policy_projection_contract_p1617.py tests/test_policy_projection_sources_p1617.py tests/test_policy_projection_integration_p1617.py -q
-.venv/bin/python -m ruff check src tests
-.venv/bin/python -m mypy src/agentic_runtime
-```
-
-P1.6.18 binds the P1.6 policy projection contract to a minimal operator-facing CLI/TUI surface; it does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
-
 ## P1.6.17 Verification (Policy Projection/API/Event Contract)
 
 ```bash
@@ -91,7 +155,7 @@ P1.6.18 binds the P1.6 policy projection contract to a minimal operator-facing C
 .venv/bin/python -m mypy src/agentic_runtime
 ```
 
-P1.6.17 introduces the versioned policy projection/API/event contract required by the Integration-First roadmap; it does NOT implement the final CLI binding, enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+P1.6.17 introduces the versioned policy projection/API/event contract required by the Integration-First roadmap; CLI binding was added in P1.6.18. P1.6.17 does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
 
 ## P1.6.16 Verification (Policy Test Harness)
 

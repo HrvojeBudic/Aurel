@@ -1,15 +1,55 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.6.18 — Policy CLI/TUI Binding)_
+_Last updated: 2026-06-25 (P1.6.19 — Policy Docs/State/Reports Update)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.6.18 — Policy CLI/TUI Binding
-- Current active: **P1.6.19 — Policy Docs/State/Reports Update**
-- Next planned: P1.6.20 — P1.6 Exit Seal + Live Integration Demo
+- Last completed: P1.6.19 — Policy Docs/State/Reports Update
+- Current active: **P1.6.20 — P1.6 Exit Seal + Live Integration Demo**
+- Next planned: P1.7.0 — Path Governance Engine (forward hook)
+- Roadmap version: **v5.1 Integration-First**
 
-**P1.6.18 is last completed (policy CLI binding).**
-P1.6.18 exposes P1.6 policy subsystem via read-only CLI commands consuming `PolicyProjectionContract v1`; it does not enforce policy decisions.
+**P1.6.19 is last completed (policy docs/state/reports truth-sync).**
+P1.6.19 indexes P1.6.0–P1.6.18 capability, documents source-label doctrine, operator CLI runbook, and P1.6.20 exit-seal checklist; it does not add enforcement, Ledger writes, or runtime behavior changes.
+
+### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
+
+- `policy_cards/projection_contract.py`: `PolicyProjectionContract v1` (`policy_projection.v1`), nine sections, readiness flags, source labels, deterministic `projection_hash`, JSON-safe payload, event payload seed.
+- Backend modules report availability via symbol presence; projection does not execute resolver during build.
+- Report: `agent/reports/P1.6.17_POLICY_PROJECTION_API_EVENT_CONTRACT_REPORT.md`
+
+### P1.6.18 Policy CLI/TUI Binding (COMPLETE — CLI only)
+
+- `cli_modules/policy_commands.py`: read-only `policy status`, `policy projection`, `policy unavailable`, `policy harness list/run` consuming P1.6.17 contract.
+- Entry: `python -m agentic_runtime.cli policy …` (not `aurel`).
+- `cli_binding` section: **LIVE**; `shell_binding`: **UNAVAILABLE** (no Shell UI, no full TUI app).
+- Report: `agent/reports/P1.6.18_POLICY_CLI_TUI_BINDING_REPORT.md`
+
+### P1.6.19 Policy Docs/State/Reports Update (COMPLETE — truth-sync only)
+
+- Synchronizes `agent/ROADMAP.md`, `STATE.md`, `TESTS.md`, `REPORTS.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `ACTIVE_TASK.md`.
+- Full report: `agent/reports/P1.6.19_POLICY_DOCS_STATE_REPORTS_UPDATE.md`
+- P1.6.20 exit-seal checklist (20 items) documented; P1.6 is seal-ready for live integration demo.
+
+### Source label doctrine (v5.1)
+
+| Label | Meaning |
+|-------|---------|
+| LIVE | Real backend/projection/runtime data |
+| TRACE_VERIFIED | Trace/evidence hash present |
+| SIMULATED | Dry-run/simulation |
+| DEV_FIXTURE | Visible test/demo fixture |
+| UNAVAILABLE | Not implemented — reason required |
+| ERROR | Failed attempt — safe error info required |
+
+Backend is source of truth. No unlabelled mock operational state. Shell UI remains UNAVAILABLE unless implemented.
+
+### P1.6.20 readiness
+
+- Policy projection + CLI binding documented and test-covered (P1.6.17/18).
+- Operator runbook in P1.6.19 report.
+- Known UNAVAILABLE: Shell UI, TUI app, policy enforcement, Ledger integration, event bus.
+- Next: P1.6.20 live integration demo + seal report.
 
 ### P1.6.10H Runtime Security, Coverage & Governance Truth Hotfix (COMPLETE — hotfix)
 
@@ -29,7 +69,7 @@ Documentation:
 - Sandbox layer disambiguation: four layers clearly distinguished (runtime sandbox policy, sandbox backend, sandbox policy card, Custos v0 resolver).
 - All agent docs updated for P1.6.10H phase.
 
-### P1.6.11 Policy Resolution Context & Registry Binding (ACTIVE — shadow binding only)
+### P1.6.11 Policy Resolution Context & Registry Binding (COMPLETE — shadow binding only)
 
 - `policy_cards/registry.py`: `PolicyCardRegistry` accepts explicit typed card instances/lists, detects duplicate card IDs deterministically, deduplicates identical duplicates, rejects same ID with different canonical hash, returns stable family/scope lookups, applicability explanations, source hashes, canonical dict, and canonical hash. No database, no filesystem discovery, no runtime imports.
 - `policy_cards/context_binding.py`: `build_policy_resolution_context()`, `normalize_resolution_context()`, and `context_from_*_like()` helpers convert runtime-like dicts/lightweight objects into deterministic `PolicyResolutionContext`. Dict inputs are closed-world; list/set-like fields are sorted; metadata is JSON-safe and non-authoritative.
@@ -39,7 +79,7 @@ Documentation:
 
 **P1.6.11 binds policy-card discovery and context assembly to the Custos v0 resolver, but it does not enforce resolver outcomes through `AgenticRuntime.submit()`.** No command blocking, approval activation, sandbox runtime bridge, or active runtime policy-card enforcement is implemented.
 
-### P1.6.12 Custos Shadow Runtime Projection & Submit Observability Hook (ACTIVE — observability only)
+### P1.6.12 Custos Shadow Runtime Projection & Submit Observability Hook (COMPLETE — observability only)
 
 - `policy_cards/runtime_projection.py`: `RuntimePolicySnapshot`, `PolicyShadowProjection`, effective-action/alignment/mismatch enums, deterministic canonical dict/hash helpers, and JSON-safe validation. Projection objects are hard-coded shadow-only (`mode="shadow_only"`, `enforced=False`) and expose no enforcement-like methods.
 - `AgenticRuntime.submit()`: optional default-disabled hook attaches `ObservationEnvelope.artifacts["policy_shadow_projection"]` before transition append when both `enable_policy_shadow_projection=True` and an explicit `PolicyCardRegistry` are configured.
@@ -49,7 +89,7 @@ Documentation:
 
 **Custos shadow decisions are not enforcement decisions. P0 runtime remains authoritative.** Fail-closed apply, `run_shell` string rejection, and Bandit B310/B108 fixes remain deferred.
 
-### P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules (ACTIVE — shadow-only)
+### P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules (COMPLETE — shadow-only)
 
 - `policy_cards/conflict_algebra.py`: new pure module with 6 enums (`PolicyDecisionRank`, `PolicyConflictType` 14 values, `PolicyConflictSeverity`, `PolicyConflictResolutionStrategy`), 6 frozen dataclasses (`PolicySpecificityScore`, `PolicyPrecedenceRule`, `PolicyConflict`, `PolicyConflictSet`, `PolicyConflictResolution`, `StrictestWinsResult`), normalization helpers, strictest-wins resolution algorithm, 14-type conflict classifier, specificity scoring, deterministic SHA-256 hashing. No runtime/enforcement imports.
 - `policy_cards/resolution_result.py`: optional `conflict_resolution: dict | None` and `conflict_hash: str | None` fields on `ResolvedPolicySet` (default `None`, fully backwards compatible).
@@ -61,7 +101,7 @@ Documentation:
 
 **P1.6.13 formalizes Custos shadow conflict resolution through deterministic strictest-wins algebra; it does not enforce policy decisions, activate approvals, block commands, or change runtime sandbox behavior.**
 
-### P1.6.14 Policy Resolution Trace Hook (ACTIVE — trace-compatible evidence only)
+### P1.6.14 Policy Resolution Trace Hook (COMPLETE — trace-compatible evidence only)
 
 - `policy_cards/resolution_trace.py`: new module with `PolicyResolutionTraceEvent` (frozen dataclass, shadow_only=True enforced=False, 20+ trace fields), `PolicyResolutionTraceEnvelope`, `PolicyResolutionEvidenceRef`, `PolicyTraceBinding` frozen dataclasses; `build_policy_resolution_trace_event()`, `build_policy_resolution_trace_envelope()`, `policy_trace_canonical_dict()`, `policy_trace_hash()` builder/hash functions. All hash fields optional (explicit empty string), trace_id derived from deterministic SHA-256 hash. No runtime/Ledger imports.
 - `policy_cards/resolution_result.py`: optional `resolution_trace: dict | None`, `resolution_trace_hash: str | None`, `resolution_trace_id: str | None` fields on `ResolvedPolicySet` (default `None`). Included in canonical dict when `include_hash=True`, excluded from `canonical_hash`.
