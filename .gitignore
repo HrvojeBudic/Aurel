@@ -24,14 +24,4 @@ __pycache__/
 # Local git hygiene snapshots
 reports/git_hygiene/
 
-# Local test/cache artifacts
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
-__pycache__/
-*.pyc
-
-# Local git hygiene snapshots
-reports/git_hygiene/
+.claude/settings.local.json
