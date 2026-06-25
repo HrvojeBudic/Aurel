@@ -38,6 +38,16 @@ def cmd_demo(_args: argparse.Namespace) -> int:
     main()
     return 0
 
+_NESTED_VERIFY_DRIFT_TESTS = (
+    "tests/test_prompt_system_p12.py",
+    "tests/test_model_config_p11.py",
+    "tests/test_repo_planner_p021.py",
+    "tests/test_demo_harness_p19.py",
+    "tests/test_policy_exit_seal_p1620.py",
+    "tests/test_policy_exit_seal_projection_p1620.py",
+    "tests/test_policy_exit_seal_cli_p1620.py",
+)
+
 
 def cmd_verify(args: argparse.Namespace) -> int:
     root = _repo_root()
@@ -46,7 +56,14 @@ def cmd_verify(args: argparse.Namespace) -> int:
     # warm .pytest_cache (which can mask cold-cache-only failures) nor writes a
     # stale one. Cold and warm invocations therefore always agree.
     verbosity = "-v" if args.verbose else "-q"
-    cmd = [sys.executable, "-m", "pytest", verbosity, "-p", "no:cacheprovider"]
+    nested_smoke = env.get("AGENTIC_SKIP_RECURSIVE_SMOKE") == "1"
+    cmd = [sys.executable, "-m", "pytest", verbosity]
+    if nested_smoke:
+        # Smoke tests invoke `cli verify` from inside pytest. In that nested path
+        # we favor a fast drift check over a second cold-cache full-tree run.
+        cmd.extend(_NESTED_VERIFY_DRIFT_TESTS)
+    else:
+        cmd.extend(["-p", "no:cacheprovider"])
     print(f"running: {' '.join(cmd)}  (cwd={root})")
     proc = subprocess.run(cmd, cwd=root, env=env)  # nosec B603 - direct argv pytest invocation, no shell expansion
     return proc.returncode

@@ -62,7 +62,7 @@ _COMMAND_BODY_KEYS = frozenset({
 
 
 class PolicyHarnessVerdict(str, Enum):
-    PASS = "PASS"
+    PASS = "PASS"  # nosec B105 - enum verdict label, not a credential
     FAIL = "FAIL"
     WARN = "WARN"
     ERROR = "ERROR"

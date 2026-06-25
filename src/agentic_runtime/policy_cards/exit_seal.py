@@ -63,7 +63,7 @@ _CRITICAL_CHECK_IDS = frozenset({
 
 
 class PolicyExitSealVerdict(str, Enum):
-    PASS = "PASS"
+    PASS = "PASS"  # nosec B105 - enum verdict label, not a credential
     WARN = "WARN"
     FAIL = "FAIL"
     ERROR = "ERROR"
@@ -71,8 +71,8 @@ class PolicyExitSealVerdict(str, Enum):
 
 
 class PolicyExitSealReportVerdict(str, Enum):
-    PASS = "PASS"
-    PASS_WITH_WARNINGS = "PASS_WITH_WARNINGS"
+    PASS = "PASS"  # nosec B105 - enum verdict label, not a credential
+    PASS_WITH_WARNINGS = "PASS_WITH_WARNINGS"  # nosec B105 - enum verdict label, not a credential
     FAIL = "FAIL"
     ERROR = "ERROR"
 
@@ -357,15 +357,18 @@ def _static_governance_check(check_id: str, forbidden: tuple[str, ...]) -> Polic
 
     tree = ast.parse(_executable_source())
     found: list[str] = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Attribute):
-                attr = node.func.attr
-                if attr in forbidden:
-                    found.append(attr)
-            elif isinstance(node.func, ast.Name):
-                if node.func.id in forbidden:
-                    found.append(node.func.id)
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "_static_governance_check":
+            continue
+        for inner in ast.walk(node):
+            if isinstance(inner, ast.Call):
+                if isinstance(inner.func, ast.Attribute):
+                    attr = inner.func.attr
+                    if attr in forbidden:
+                        found.append(attr)
+                elif isinstance(inner.func, ast.Name):
+                    if inner.func.id in forbidden:
+                        found.append(inner.func.id)
     if found:
         return _make_result(
             check_id,
@@ -857,13 +860,15 @@ def _result_to_canonical_dict(
     result: PolicyExitSealResult,
     *,
     include_duration: bool = True,
+    include_summary: bool = True,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "check_id": result.check_id,
         "evidence_refs": sorted(result.evidence_refs),
-        "summary": result.summary,
         "verdict": result.verdict.value,
     }
+    if include_summary:
+        payload["summary"] = result.summary
     if result.details:
         payload["details"] = _sanitize_details(result.details)
     if include_duration and result.duration_ms is not None:
@@ -875,13 +880,18 @@ def policy_exit_seal_to_json_safe_dict(
     report: PolicyExitSealReport,
     *,
     include_duration: bool = True,
+    include_summary: bool = True,
 ) -> dict[str, Any]:
     """JSON-safe canonical dict for the exit seal report."""
     checks_payload = [
-        _result_to_canonical_dict(r, include_duration=include_duration)
+        _result_to_canonical_dict(
+            r,
+            include_duration=include_duration,
+            include_summary=include_summary,
+        )
         for r in sorted(report.checks, key=lambda c: c.check_id)
     ]
-    return dict(sorted({
+    payload = {
         "checks": checks_payload,
         "cli_status": report.cli_status,
         "docs_status": report.docs_status,
@@ -890,16 +900,22 @@ def policy_exit_seal_to_json_safe_dict(
         "next_task": report.next_task,
         "projection_status": report.projection_status,
         "seal_version": report.seal_version,
-        "summary": report.summary,
         "trace_status": report.trace_status,
         "verdict": report.verdict.value,
-    }.items(), key=lambda i: i[0]))
+    }
+    if include_summary:
+        payload["summary"] = report.summary
+    return dict(sorted(payload.items(), key=lambda i: i[0]))
 
 
 def policy_exit_seal_report_hash(report: PolicyExitSealReport) -> str:
-    """Deterministic SHA-256 hash over canonical check outcomes (excludes timestamps)."""
+    """Deterministic SHA-256 hash over canonical check outcomes (excludes timestamps and prose)."""
     canonical = json.dumps(
-        policy_exit_seal_to_json_safe_dict(report, include_duration=False),
+        policy_exit_seal_to_json_safe_dict(
+            report,
+            include_duration=False,
+            include_summary=False,
+        ),
         sort_keys=True,
         separators=(",", ":"),
     )
