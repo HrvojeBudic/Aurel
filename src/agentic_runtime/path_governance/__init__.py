@@ -5,6 +5,7 @@ deterministic serialization, and honest capability reporting.
 P1.7.1 adds deterministic path identity schema objects without enforcement.
 P1.7.2 adds deterministic source identity schema objects without trust resolution.
 P1.7.3 adds deterministic source trust label taxonomy objects without resolver behavior.
+P1.7.4 adds deterministic trusted root registry seed objects without authority resolution.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -73,6 +74,26 @@ from .source_trust_taxonomy import (
     compute_definition_hash,
     compute_taxonomy_hash,
 )
+from .trusted_roots import (
+    PATH_SCOPE_DENY_KNOWN_FIELDS,
+    PATH_SCOPE_GRANT_KNOWN_FIELDS,
+    TRUSTED_ROOT_KNOWN_FIELDS,
+    TRUSTED_ROOT_REGISTRY_KNOWN_FIELDS,
+    TRUSTED_ROOT_REGISTRY_TASK_ID,
+    TRUSTED_ROOT_REGISTRY_VERSION,
+    PathScopeAction,
+    PathScopeDeny,
+    PathScopeGrant,
+    PathScopeReason,
+    TrustedRoot,
+    TrustedRootKind,
+    TrustedRootRegistry,
+    build_trusted_root_registry,
+    compute_deny_id,
+    compute_grant_id,
+    compute_registry_hash,
+    compute_root_id,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -95,6 +116,8 @@ __all__ = [
     "PATH_IDENTITY_KNOWN_FIELDS",
     "PATH_IDENTITY_SCHEMA_VERSION",
     "PATH_IDENTITY_TASK_ID",
+    "PATH_SCOPE_DENY_KNOWN_FIELDS",
+    "PATH_SCOPE_GRANT_KNOWN_FIELDS",
     "PATH_REF_KNOWN_FIELDS",
     "SOURCE_IDENTITY_KNOWN_FIELDS",
     "SOURCE_IDENTITY_SCHEMA_VERSION",
@@ -105,6 +128,10 @@ __all__ = [
     "SOURCE_TRUST_TAXONOMY_TASK_ID",
     "SOURCE_TRUST_TAXONOMY_VERSION",
     "TRUST_LABEL_DEFINITION_KNOWN_FIELDS",
+    "TRUSTED_ROOT_KNOWN_FIELDS",
+    "TRUSTED_ROOT_REGISTRY_KNOWN_FIELDS",
+    "TRUSTED_ROOT_REGISTRY_TASK_ID",
+    "TRUSTED_ROOT_REGISTRY_VERSION",
     "TRAVERSAL_WARNING",
     "CanonicalPathRef",
     "CanonicalizationStatus",
@@ -119,6 +146,10 @@ __all__ = [
     "PathKind",
     "PathRef",
     "PathSensitivity",
+    "PathScopeAction",
+    "PathScopeDeny",
+    "PathScopeGrant",
+    "PathScopeReason",
     "ProjectionSourceLabel",
     "SourceIdentity",
     "SourceKind",
@@ -130,11 +161,19 @@ __all__ = [
     "SourceTrustTaxonomy",
     "TrustLabelDefinition",
     "TrustPosture",
+    "TrustedRoot",
+    "TrustedRootKind",
+    "TrustedRootRegistry",
     "build_path_identity",
     "build_source_identity",
     "build_source_trust_taxonomy",
+    "build_trusted_root_registry",
     "compute_definition_hash",
+    "compute_deny_id",
+    "compute_grant_id",
     "compute_lineage_hash",
+    "compute_registry_hash",
+    "compute_root_id",
     "compute_source_id",
     "compute_taxonomy_hash",
     "get_path_governance_foundation_status",

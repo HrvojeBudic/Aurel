@@ -20,12 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.3 — Source Trust Label Taxonomy |
-| **Current active** | **P1.7.4 — Trusted Root & Scope Registry Seed (planned)** |
+| **Last completed** | P1.7.4 — Trusted Root & Scope Registry Seed |
+| **Current active** | **P1.7.5 — Path Normalization & Escape Detection Contract (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.4 — Trusted Root & Scope Registry Seed |
+| **Next planned** | P1.7.5 — Path Normalization & Escape Detection Contract |
 
-**P1.7.3 complete** — Source trust label taxonomy: `TrustPosture`, `TrustLabelDefinition`, `SourceTrustTaxonomy`, and `build_source_trust_taxonomy()` with deterministic `definition_hash`, order-insensitive `taxonomy_hash`, closed-world validation, allowed interpretations, forbidden interpretations, and authority statements for every `SourceTrustLabel`. No trust resolver, authority resolver, provenance/evidence binding, network fetching, filesystem reads, memory/prompt/command authority, runtime enforcement, CLI/TUI, projection, trace hooks, or policy bridge. P1.7 remains in progress. Next: **P1.7.4 — Trusted Root & Scope Registry Seed**.
+**P1.7.4 complete** — Trusted root registry seed: `TrustedRootKind`, `PathScopeAction`, `PathScopeReason`, `TrustedRoot`, `PathScopeGrant`, `PathScopeDeny`, `TrustedRootRegistry`, and `build_trusted_root_registry()` with deterministic `root_id`, `grant_id`, `deny_id`, `registry_hash`, source-label truth, and closed-world validation. No path normalization, escape detection, trusted root authority resolver, path/source resolver, filesystem security, filesystem reads/stat/resolve, sandbox hardening, runtime enforcement, CLI/TUI, projection, trace hooks, or policy bridge. P1.7 remains in progress. Next: **P1.7.5 — Path Normalization & Escape Detection Contract**.
 
 **P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes.
 
@@ -166,6 +166,7 @@ P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal 
 | P1.7.1 | **Path Identity & Canonical Path Schema** |
 | P1.7.2 | **Source Identity & SourceRef Schema** |
 | P1.7.3 | **Source Trust Label Taxonomy** |
+| P1.7.4 | **Trusted Root & Scope Registry Seed** |
 
 ### P1.7.0 handoff
 
@@ -182,6 +183,10 @@ P1.7.2 delivers schema-only source identity objects: `SourceKind`, `SourceOrigin
 ### P1.7.3 handoff
 
 P1.7.3 delivers taxonomy-only source trust semantics: `TrustPosture`, `TrustLabelDefinition`, `SourceTrustTaxonomy`, `build_source_trust_taxonomy()`, deterministic `definition_hash`, order-insensitive `taxonomy_hash`, closed-world validation, and explicit semantic boundaries for every `SourceTrustLabel`. It defines allowed interpretations, forbidden interpretations, and authority statements without trust resolution or authority decisions. It does not implement source trust resolver, source authority resolver, untrusted content boundary decisions, provenance/evidence binding, memory write authority, prompt authority, command authority, tool permission authority, runtime enforcement, Ledger writes, approval activation, sandbox behavior changes, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.4 — Trusted Root & Scope Registry Seed is next.**
+
+### P1.7.4 handoff
+
+P1.7.4 delivers registry-only trusted root declarations: `TrustedRootKind`, `PathScopeAction`, `PathScopeReason`, `TrustedRoot`, `PathScopeGrant`, `PathScopeDeny`, `TrustedRootRegistry`, `build_trusted_root_registry()`, deterministic `root_id`, `grant_id`, `deny_id`, order-insensitive `registry_hash`, source-label truth, and closed-world validation. It represents root/scope declarations without permission, sandbox policy, escape detection, filesystem security, or enforcement. It does not implement path normalization, path escape detection, trusted root authority resolver, path/source resolver, path permission enforcement, filesystem reads/stat/resolve, symlink resolution, runtime enforcement, Ledger writes, approval activation, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.5 — Path Normalization & Escape Detection Contract is next.**
 
 ## Completed (latest)
 

@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.3 — Source Trust Label Taxonomy)_
+_Last updated: 2026-06-25 (P1.7.4 — Trusted Root & Scope Registry Seed)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.3 — Source Trust Label Taxonomy
-- Current active: **P1.7.4 — Trusted Root & Scope Registry Seed (planned)**
-- Next planned: P1.7.4 — Trusted Root & Scope Registry Seed
+- Last completed: P1.7.4 — Trusted Root & Scope Registry Seed
+- Current active: **P1.7.5 — Path Normalization & Escape Detection Contract (planned)**
+- Next planned: P1.7.5 — Path Normalization & Escape Detection Contract
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.4 Trusted Root & Scope Registry Seed (COMPLETE — registry schema only)
+
+- `path_governance/`: `TrustedRootKind`, `PathScopeAction`, `PathScopeReason`, `TrustedRoot`, `PathScopeGrant`, `PathScopeDeny`, `TrustedRootRegistry`, `build_trusted_root_registry()`.
+- TrustedRootKind status: **LIVE schema** — declared root boundary kind only; not permission, safety, sandbox policy, or authority.
+- PathScopeAction status: **LIVE schema** — declared action vocabulary only; not runtime permission.
+- PathScopeReason status: **LIVE schema** — explanation metadata only; not enforcement.
+- TrustedRoot status: **LIVE schema** — represents a root declaration around a `PathIdentity`, source label, trust label, declared actions, reason, deterministic `root_id`, and metadata.
+- PathScopeGrant status: **LIVE schema** — represents grantable scope declaration with deterministic `grant_id`; does not grant runtime authority.
+- PathScopeDeny status: **LIVE schema** — represents denied/restricted scope declaration with deterministic `deny_id`; does not enforce runtime blocking.
+- TrustedRootRegistry status: **LIVE schema** — binds roots/grants/denies with `created_by_task="P1.7.4"`, `registry_version="trusted_root_registry.v1"`, explicit source label, notes, metadata, and deterministic order-insensitive `registry_hash`.
+- Root/grant/deny/registry hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, cwd-derived live state, or source/path content scans.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — registry/root source labels are preserved; test fixture roots use `DEV_FIXTURE`; no fake LIVE fixture root state is claimed.
+- Registry boundary summary: Trusted root does not mean permission; scope grant does not mean runtime authority; scope deny does not mean enforcement; registry seed does not mean sandbox; repo root does not mean executable-safe; workspace root does not mean sandbox permission; operator-approved does not override policy; uploads do not become trusted; denied root does not block runtime yet.
+- Known unavailable states: Path normalization / escape detection, full path authority scope model, source provenance/evidence binding, source/path resolvers, trace hooks, policy bridge, projection/API/event contract, CLI/TUI binding, Shell UI, trusted root authority resolution, filesystem security, sandbox hardening, and runtime enforcement.
+- P1.7.5 readiness: **READY** — next task is Path Normalization & Escape Detection Contract.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.4_TRUSTED_ROOT_SCOPE_REGISTRY_SEED.md`
 
 ### P1.7.3 Source Trust Label Taxonomy (COMPLETE — taxonomy only)
 
