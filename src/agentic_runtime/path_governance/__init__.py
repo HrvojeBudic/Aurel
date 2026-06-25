@@ -4,6 +4,7 @@ Foundation-only package: labels, posture vocabulary, closed-world validation,
 deterministic serialization, and honest capability reporting.
 P1.7.1 adds deterministic path identity schema objects without enforcement.
 P1.7.2 adds deterministic source identity schema objects without trust resolution.
+P1.7.3 adds deterministic source trust label taxonomy objects without resolver behavior.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -60,6 +61,18 @@ from .source_identity import (
     compute_lineage_hash,
     compute_source_id,
 )
+from .source_trust_taxonomy import (
+    SOURCE_TRUST_TAXONOMY_KNOWN_FIELDS,
+    SOURCE_TRUST_TAXONOMY_TASK_ID,
+    SOURCE_TRUST_TAXONOMY_VERSION,
+    TRUST_LABEL_DEFINITION_KNOWN_FIELDS,
+    SourceTrustTaxonomy,
+    TrustLabelDefinition,
+    TrustPosture,
+    build_source_trust_taxonomy,
+    compute_definition_hash,
+    compute_taxonomy_hash,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -88,6 +101,10 @@ __all__ = [
     "SOURCE_IDENTITY_TASK_ID",
     "SOURCE_LINEAGE_REF_KNOWN_FIELDS",
     "SOURCE_REF_KNOWN_FIELDS",
+    "SOURCE_TRUST_TAXONOMY_KNOWN_FIELDS",
+    "SOURCE_TRUST_TAXONOMY_TASK_ID",
+    "SOURCE_TRUST_TAXONOMY_VERSION",
+    "TRUST_LABEL_DEFINITION_KNOWN_FIELDS",
     "TRAVERSAL_WARNING",
     "CanonicalPathRef",
     "CanonicalizationStatus",
@@ -110,10 +127,16 @@ __all__ = [
     "SourceOrigin",
     "SourceRef",
     "SourceTrustLabel",
+    "SourceTrustTaxonomy",
+    "TrustLabelDefinition",
+    "TrustPosture",
     "build_path_identity",
     "build_source_identity",
+    "build_source_trust_taxonomy",
+    "compute_definition_hash",
     "compute_lineage_hash",
     "compute_source_id",
+    "compute_taxonomy_hash",
     "get_path_governance_foundation_status",
     "normalize_path_string",
     "path_normalization_warnings",

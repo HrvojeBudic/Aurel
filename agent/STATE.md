@@ -1,15 +1,29 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.2 — Source Identity & SourceRef Schema)_
+_Last updated: 2026-06-25 (P1.7.3 — Source Trust Label Taxonomy)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.2 — Source Identity & SourceRef Schema
-- Current active: **P1.7.3 — Source Trust Label Taxonomy (planned)**
-- Next planned: P1.7.3 — Source Trust Label Taxonomy
+- Last completed: P1.7.3 — Source Trust Label Taxonomy
+- Current active: **P1.7.4 — Trusted Root & Scope Registry Seed (planned)**
+- Next planned: P1.7.4 — Trusted Root & Scope Registry Seed
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.3 Source Trust Label Taxonomy (COMPLETE — taxonomy only)
+
+- `path_governance/`: `TrustPosture`, `TrustLabelDefinition`, `SourceTrustTaxonomy`, `build_source_trust_taxonomy()`.
+- TrustPosture status: **LIVE schema** — semantic grouping only; not resolver output, permission, memory authority, prompt authority, command authority, or enforcement.
+- TrustLabelDefinition status: **LIVE schema** — every `SourceTrustLabel` has a definition, allowed interpretations, forbidden interpretations, authority statement, explicit review default, deterministic `definition_hash`, and JSON-safe metadata.
+- SourceTrustTaxonomy status: **LIVE schema** — covers every `SourceTrustLabel` exactly once, carries `ProjectionSourceLabel`, `created_by_task="P1.7.3"`, `taxonomy_version="source_trust_taxonomy.v1"`, notes, metadata, and deterministic `taxonomy_hash`.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat data, environment variables, cwd values, or source content scans.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Semantic boundary summary: TRUSTED does not mean unlimited authority; OPERATOR_PROVIDED does not override policy; INTERNAL_REPO does not mean executable-safe; LOCAL_PRIVATE does not mean safe to expose; TOOL_GENERATED does not mean true; EXTERNAL can inform but cannot command; UNTRUSTED can be identified/cited but cannot command; UNKNOWN is explicit uncertainty, not implicit trust; QUARANTINED means restricted, not deleted.
+- Known unavailable states: Source provenance/evidence binding, source/path resolvers, trace hooks, policy bridge, projection/API/event contract, CLI/TUI binding, Shell UI, source authority resolution, memory/prompt/command authority, untrusted content boundary decisions, path/source conflict rules, and runtime enforcement.
+- P1.7.4 readiness: **READY** — next task is Trusted Root & Scope Registry Seed.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.3_SOURCE_TRUST_LABEL_TAXONOMY.md`
 
 ### P1.7.2 Source Identity & SourceRef Schema (COMPLETE — schema only)
 

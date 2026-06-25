@@ -20,12 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.2 — Source Identity & SourceRef Schema |
-| **Current active** | **P1.7.3 — Source Trust Label Taxonomy (planned)** |
+| **Last completed** | P1.7.3 — Source Trust Label Taxonomy |
+| **Current active** | **P1.7.4 — Trusted Root & Scope Registry Seed (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.3 — Source Trust Label Taxonomy |
+| **Next planned** | P1.7.4 — Trusted Root & Scope Registry Seed |
 
-**P1.7.2 complete** — Source identity schema: `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, and `build_source_identity()` with deterministic `source_id`, `lineage_hash`, `identity_hash`, and closed-world validation. No trust resolver, authority resolver, provenance/evidence binding, network fetching, filesystem reads, memory/prompt/command authority, runtime enforcement, CLI/TUI, projection, trace hooks, or policy bridge. P1.7 remains in progress. Next: **P1.7.3 — Source Trust Label Taxonomy**.
+**P1.7.3 complete** — Source trust label taxonomy: `TrustPosture`, `TrustLabelDefinition`, `SourceTrustTaxonomy`, and `build_source_trust_taxonomy()` with deterministic `definition_hash`, order-insensitive `taxonomy_hash`, closed-world validation, allowed interpretations, forbidden interpretations, and authority statements for every `SourceTrustLabel`. No trust resolver, authority resolver, provenance/evidence binding, network fetching, filesystem reads, memory/prompt/command authority, runtime enforcement, CLI/TUI, projection, trace hooks, or policy bridge. P1.7 remains in progress. Next: **P1.7.4 — Trusted Root & Scope Registry Seed**.
 
 **P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes.
 
@@ -165,7 +165,7 @@ P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal 
 | P1.7.0 | **Path Governance & Source Trust Foundation** |
 | P1.7.1 | **Path Identity & Canonical Path Schema** |
 | P1.7.2 | **Source Identity & SourceRef Schema** |
-| P1.7.3 | Source Trust Label Taxonomy |
+| P1.7.3 | **Source Trust Label Taxonomy** |
 
 ### P1.7.0 handoff
 
@@ -178,6 +178,10 @@ P1.7.1 delivers schema-only path identity objects: `PathKind`, `PathSensitivity`
 ### P1.7.2 handoff
 
 P1.7.2 delivers schema-only source identity objects: `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, `build_source_identity()`, deterministic `source_id`, `lineage_hash`, `identity_hash`, and closed-world validation. It represents source kinds, origins, and lineage seeds without trust resolution or authority. It does not implement source trust taxonomy expansion, trust resolver, authority resolver, provenance/evidence binding, memory write authority, prompt authority, command authority, untrusted content boundary decisions, network fetching, filesystem reads, enforcement, Ledger writes, approval activation, sandbox behavior changes, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.3 — Source Trust Label Taxonomy is next.**
+
+### P1.7.3 handoff
+
+P1.7.3 delivers taxonomy-only source trust semantics: `TrustPosture`, `TrustLabelDefinition`, `SourceTrustTaxonomy`, `build_source_trust_taxonomy()`, deterministic `definition_hash`, order-insensitive `taxonomy_hash`, closed-world validation, and explicit semantic boundaries for every `SourceTrustLabel`. It defines allowed interpretations, forbidden interpretations, and authority statements without trust resolution or authority decisions. It does not implement source trust resolver, source authority resolver, untrusted content boundary decisions, provenance/evidence binding, memory write authority, prompt authority, command authority, tool permission authority, runtime enforcement, Ledger writes, approval activation, sandbox behavior changes, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.4 — Trusted Root & Scope Registry Seed is next.**
 
 ## Completed (latest)
 

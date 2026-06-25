@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.3 Source Trust Label Taxonomy](reports/P1.7.3_SOURCE_TRUST_LABEL_TAXONOMY.md) | 2026-06-25 | TrustPosture, TrustLabelDefinition, SourceTrustTaxonomy, deterministic definition/taxonomy hashes, closed-world validation, semantic boundaries for every SourceTrustLabel; no resolver/authority/enforcement/CLI |
 | [P1.7.2 Source Identity & SourceRef Schema](reports/P1.7.2_SOURCE_IDENTITY_SOURCE_REF_SCHEMA.md) | 2026-06-25 | SourceKind, SourceOrigin, SourceLineageRelationship, SourceRef, SourceLineageRef, SourceIdentity, deterministic hashes, closed-world validation; no trust resolver/authority/enforcement/CLI |
 | [P1.7.1 Path Identity & Canonical Path Schema](reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md) | 2026-06-25 | PathKind, PathSensitivity, CanonicalizationStatus, PathRef, CanonicalPathRef, PathIdentity, deterministic hashes, closed-world validation; no resolver/enforcement/CLI |
 | [P1.7.0 Path Governance & Source Trust Foundation](reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md) | 2026-06-25 | Foundation labels, posture, closed-world validation, canonical hash, honest capability status; no resolver/enforcement/CLI |
