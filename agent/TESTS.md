@@ -69,6 +69,19 @@ P1.6.12 local results: compileall **PASS**; focused P1.6.12 suite **26 passed in
 .venv/bin/python -m bandit -r src/agentic_runtime -ll
 ```
 
+## P1.6.16 Verification (Policy Test Harness)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_policy_test_harness_p1616.py tests/test_policy_test_harness_integration_p1616.py tests/test_policy_test_harness_determinism_p1616.py -q
+.venv/bin/python -m pytest tests/test_policy_test_harness_p1616.py tests/test_policy_test_harness_integration_p1616.py tests/test_policy_test_harness_determinism_p1616.py tests/test_policy_violation_trace_p1615.py tests/test_policy_runtime_projection_violation_trace_p1615.py tests/test_policy_resolution_violation_binding_p1615.py -q
+.venv/bin/python -m pytest tests/test_policy_test_harness_p1616.py tests/test_policy_test_harness_integration_p1616.py tests/test_policy_test_harness_determinism_p1616.py tests/test_policy_violation_trace_p1615.py tests/test_policy_runtime_projection_violation_trace_p1615.py tests/test_policy_resolution_violation_binding_p1615.py tests/test_policy_resolution_trace_p1614.py tests/test_policy_resolver_trace_hook_p1614.py tests/test_policy_runtime_projection_trace_p1614.py tests/test_policy_conflict_algebra_p1613.py tests/test_policy_resolver_conflict_algebra_p1613.py tests/test_policy_runtime_projection_p1612.py tests/test_runtime_custos_shadow_submit_p1612.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+P1.6.16 introduces a deterministic policy test harness for shadow governance validation; it does NOT enforce policy decisions, write to the Ledger, activate approvals, block commands, or change runtime sandbox behavior.
+
 ## P1.6.15 Verification (Policy Violation Trace Hook)
 
 ```bash

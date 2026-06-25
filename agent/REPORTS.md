@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.6.16 Policy Test Harness](reports/P1.6.16_POLICY_TEST_HARNESS_REPORT.md) | 2026-06-25 | Deterministic shadow-governance scenario harness with expected-vs-actual comparison and hashed reports; no enforcement, no Ledger write |
 | [P1.6.15 Policy Violation Trace Hook](reports/P1.6.15_POLICY_VIOLATION_TRACE_HOOK_REPORT.md) | 2026-06-25 | Shadow violation evidence envelope with classification, deterministic hashes, resolution/projection binding; no Ledger write, no enforcement |
 | [P1.6.14 Policy Resolution Trace Hook](reports/P1.6.14_POLICY_RESOLUTION_TRACE_HOOK_REPORT.md) | 2026-06-24 | Trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection; deterministic hashes/identifiers; no Ledger write, no enforcement |
 | [P1.6.13 Policy Conflict Algebra & Strictest-Wins Rules](reports/P1.6.13_POLICY_CONFLICT_ALGEBRA_STRICTEST_WINS_REPORT.md) | 2026-06-24 | Deterministic conflict detection, ranking, classification, and resolution of Custos shadow policy decisions; 6 enums, 6 frozen dataclasses, strictest-wins algebra, specificity scoring, SHA-256 hashing; optional conflict metadata on ResolvedPolicySet; 73+ tests; shadow-only no enforcement |

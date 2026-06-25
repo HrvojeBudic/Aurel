@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-06-25 - P1.6.16 Policy Test Harness
+
+### DEC-P1616-01: Harness validates shadow governance, does not enforce
+**Decision:** `test_harness.py` defines scenario cases, runs Custos shadow stack, compares expected vs actual, and emits hashed reports — but does NOT enforce policy, write Ledger, activate approvals, block commands, or change sandbox/runtime behavior.
+**Why:** P1.6.16 formalizes testability of shadow governance without crossing the enforcement boundary.
+
+### DEC-P1616-02: Deterministic hashes with order-insensitive collections
+**Decision:** Case, result, and report hashes sort tags, conflict types, violation types, reason codes, and results by `case_id` before SHA-256 canonicalization.
+**Why:** Reproducible governance scenario verification requires stable hashes across shuffled inputs.
+
+### DEC-P1616-03: Reuse resolver attach hooks for family-decision scenarios
+**Decision:** Family-decision harness path calls existing `_attach_conflict_metadata`, `_attach_trace_metadata`, `_attach_violation_metadata` after `aggregate_family_decisions` — no parallel resolver.
+**Why:** Single source of truth for shadow metadata attachment; avoids duplicated strictest-wins or violation logic.
+
+### DEC-P1616-04: Metadata sanitization in harness reports
+**Decision:** `_sanitize_metadata()` strips sensitive keys and command-body fields from harness case/report payloads.
+**Why:** Governance test artifacts must be JSON-safe and audit-ready without leaking secrets or raw commands.
+
 ## 2026-06-25 - P1.6.15 Policy Violation Trace Hook
 
 ### DEC-P1615-01: Violation evidence, not enforcement

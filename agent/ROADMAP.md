@@ -8,12 +8,12 @@
 
 | Status | Module |
 |--------|--------|
-| **Current active** | **P1.6.15 — Policy Violation Trace Hook** |
-| **Last completed** | P1.6.14 — Policy Resolution Trace Hook |
-| **Previous** | P1.6.13 — Policy Conflict Algebra & Strictest-Wins Rules |
-| **Next planned** | P1.6.16 — Policy Test Harness |
+| **Last completed** | P1.6.16 — Policy Test Harness |
+| **Current active** | **P1.6.17 — Policy CLI Surface** |
+| **Previous** | P1.6.15 — Policy Violation Trace Hook |
+| **Next planned** | (TBD after P1.6.17 scope lock) |
 
-**P1.6.15 active** — Policy Violation Trace Hook: shadow violation evidence envelope with deterministic hashes, classification of P0/Custos mismatch and structural governance gaps, binding to resolution trace and runtime projection. Shadow-only, enforced=false, no Ledger writes. Next planned: P1.6.16 — Policy Test Harness.
+**P1.6.16 complete** — Policy Test Harness: deterministic shadow-governance scenario definition, execution, expected-vs-actual comparison, and hashed reports via Custos resolver/conflict/trace/violation stack. Shadow-only, no enforcement, no Ledger writes. Next planned: P1.6.17 — Policy CLI Surface.
 
 **P1.6.14 complete** — Policy Resolution Trace Hook: trace-compatible evidence envelope for policy resolution, conflict algebra, and shadow projection metadata. Produces deterministic hashes/identifiers for audit-readiness without Ledger writes.
 

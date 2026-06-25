@@ -602,6 +602,20 @@ from .violation_trace import (
     classify_policy_violation,
     policy_violation_hash,
 )
+from .test_harness import (
+    PolicyHarnessActual,
+    PolicyHarnessCase,
+    PolicyHarnessExpected,
+    PolicyHarnessFailureType,
+    PolicyHarnessReport,
+    PolicyHarnessResult,
+    PolicyHarnessSuite,
+    PolicyHarnessVerdict,
+    build_policy_harness_report,
+    compare_policy_harness_expected_actual,
+    evaluate_policy_harness_case,
+    run_policy_harness_suite,
+)
 
 __all__ = [
     # ─ Policy Card models ─
@@ -1194,4 +1208,17 @@ __all__ = [
     "policy_violation_hash",
     "bind_policy_violation_from_resolution",
     "bind_policy_violation_from_projection",
+    # - Policy Test Harness (P1.6.16) -
+    "PolicyHarnessCase",
+    "PolicyHarnessExpected",
+    "PolicyHarnessActual",
+    "PolicyHarnessResult",
+    "PolicyHarnessSuite",
+    "PolicyHarnessReport",
+    "PolicyHarnessVerdict",
+    "PolicyHarnessFailureType",
+    "compare_policy_harness_expected_actual",
+    "evaluate_policy_harness_case",
+    "run_policy_harness_suite",
+    "build_policy_harness_report",
 ]
