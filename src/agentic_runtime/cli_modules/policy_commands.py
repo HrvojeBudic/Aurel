@@ -161,8 +161,8 @@ def cmd_policy_harness_list(args: argparse.Namespace) -> int:
 
 def _format_harness_report_text(report: object) -> str:
     from ..policy_cards.test_harness import PolicyHarnessReport
-
-    assert isinstance(report, PolicyHarnessReport)
+    if not isinstance(report, PolicyHarnessReport):
+        raise TypeError("report must be a PolicyHarnessReport")
     lines = [
         f"suite_id: {report.suite_id}",
         f"case_count: {report.case_count}",
@@ -180,8 +180,8 @@ def _format_harness_report_text(report: object) -> str:
 
 def _harness_exit_code(report: object) -> int:
     from ..policy_cards.test_harness import PolicyHarnessReport
-
-    assert isinstance(report, PolicyHarnessReport)
+    if not isinstance(report, PolicyHarnessReport):
+        raise TypeError("report must be a PolicyHarnessReport")
     if report.failed > 0:
         return 1
     return 0

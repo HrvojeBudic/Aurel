@@ -20,12 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.0 — Path Governance & Source Trust Foundation |
-| **Current active** | **P1.7.1 (forward hook)** |
+| **Last completed** | P1.7.2 — Source Identity & SourceRef Schema |
+| **Current active** | **P1.7.3 — Source Trust Label Taxonomy (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.2+ (see P1.7 patch table when defined) |
+| **Next planned** | P1.7.3 — Source Trust Label Taxonomy |
 
-**P1.7.0 complete** — Path governance foundation: `path_governance/` package with projection/trust labels, `FoundationPosture`, `PathGovernanceCapabilityStatus`, closed-world validation, canonical JSON + stable hash, honest capability reporting. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge. 11 focused tests pass. Next: **P1.7.1 (forward hook)**.
+**P1.7.2 complete** — Source identity schema: `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, and `build_source_identity()` with deterministic `source_id`, `lineage_hash`, `identity_hash`, and closed-world validation. No trust resolver, authority resolver, provenance/evidence binding, network fetching, filesystem reads, memory/prompt/command authority, runtime enforcement, CLI/TUI, projection, trace hooks, or policy bridge. P1.7 remains in progress. Next: **P1.7.3 — Source Trust Label Taxonomy**.
 
 **P1.6.20 complete** — Exit seal + live integration demo: `exit_seal.py` proof layer, 20 checks, `PASS_WITH_WARNINGS` verdict, 42 focused + 137 regression tests pass. P1.6 Integration-First vertical slice sealed. No enforcement, no Ledger writes, no runtime changes.
 
@@ -163,11 +163,21 @@ P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal 
 | Patch | Name |
 | ----- | ---- |
 | P1.7.0 | **Path Governance & Source Trust Foundation** |
-| P1.7.1 | Forward hook (schema/contract — TBD) |
+| P1.7.1 | **Path Identity & Canonical Path Schema** |
+| P1.7.2 | **Source Identity & SourceRef Schema** |
+| P1.7.3 | Source Trust Label Taxonomy |
 
 ### P1.7.0 handoff
 
-P1.7.0 delivers foundation vocabulary (`ProjectionSourceLabel`, `SourceTrustLabel`), posture reporting (`FoundationPosture`, `PathGovernanceCapabilityStatus`), closed-world validation, deterministic serialization, and honest UNAVAILABLE reasons. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge. **P1.7.1 is the next forward hook.**
+P1.7.0 delivers foundation vocabulary (`ProjectionSourceLabel`, `SourceTrustLabel`), posture reporting (`FoundationPosture`, `PathGovernanceCapabilityStatus`), closed-world validation, deterministic serialization, and honest UNAVAILABLE reasons. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge.
+
+### P1.7.1 handoff
+
+P1.7.1 delivers schema-only path identity objects: `PathKind`, `PathSensitivity`, `CanonicalizationStatus`, `PathRef`, `CanonicalPathRef`, `PathIdentity`, `build_path_identity()`, deterministic `path_hash`, `canonical_hash`, `identity_hash`, and closed-world validation. It preserves raw path separately from normalized/display representation. It does not implement SourceRef, resolvers, trusted roots, path escape detection, enforcement, Ledger writes, approval activation, sandbox behavior changes, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.2 — Source Identity & SourceRef Schema is next.**
+
+### P1.7.2 handoff
+
+P1.7.2 delivers schema-only source identity objects: `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, `build_source_identity()`, deterministic `source_id`, `lineage_hash`, `identity_hash`, and closed-world validation. It represents source kinds, origins, and lineage seeds without trust resolution or authority. It does not implement source trust taxonomy expansion, trust resolver, authority resolver, provenance/evidence binding, memory write authority, prompt authority, command authority, untrusted content boundary decisions, network fetching, filesystem reads, enforcement, Ledger writes, approval activation, sandbox behavior changes, CLI/TUI, Shell UI, trace hooks, or policy bridge. **P1.7.3 — Source Trust Label Taxonomy is next.**
 
 ## Completed (latest)
 

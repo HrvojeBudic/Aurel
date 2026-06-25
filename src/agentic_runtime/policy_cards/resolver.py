@@ -116,6 +116,9 @@ _UNTRUSTED_PROMPT_SOURCES: frozenset[str] = frozenset({
 _EXTERNAL_EGRESS_VALUES: frozenset[str] = frozenset({
     "any_egress", "allowlist_only", "private_network_only",
 })
+_CONFLICT_METADATA_WARNING = "CONFLICT_METADATA_UNAVAILABLE"
+_TRACE_METADATA_WARNING = "TRACE_METADATA_UNAVAILABLE"
+_VIOLATION_METADATA_WARNING = "VIOLATION_METADATA_UNAVAILABLE"
 
 
 # ---------------------------------------------------------------------------
@@ -162,6 +165,18 @@ def _family_decision(
 
 def _stricter(a: FamilyDecision, b: FamilyDecision) -> FamilyDecision:
     return a if decision_rank(a) >= decision_rank(b) else b
+
+
+def _append_resolution_warning(
+    resolution: ResolvedPolicySet,
+    warning: str,
+) -> ResolvedPolicySet:
+    if warning in resolution.warnings:
+        return resolution
+    return replace(
+        resolution,
+        warnings=tuple(sorted((*resolution.warnings, warning))),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -948,19 +963,28 @@ def resolve_policy_cards(
     try:
         resolution = _attach_conflict_metadata(resolution, family_decisions, context)
     except Exception:  # pragma: no cover - defensive
-        pass
+        resolution = _append_resolution_warning(
+            resolution,
+            _CONFLICT_METADATA_WARNING,
+        )
 
     # P1.6.14 — Attach trace-compatible metadata (shadow-only, no enforcement)
     try:
         resolution = _attach_trace_metadata(resolution)
     except Exception:  # pragma: no cover - defensive
-        pass
+        resolution = _append_resolution_warning(
+            resolution,
+            _TRACE_METADATA_WARNING,
+        )
 
     # P1.6.15 — Attach shadow violation evidence (shadow-only, no enforcement)
     try:
         resolution = _attach_violation_metadata(resolution)
     except Exception:  # pragma: no cover - defensive
-        pass
+        resolution = _append_resolution_warning(
+            resolution,
+            _VIOLATION_METADATA_WARNING,
+        )
 
     return resolution.with_canonical_hash()
 

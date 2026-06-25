@@ -1,15 +1,42 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.0 — Path Governance & Source Trust Foundation)_
+_Last updated: 2026-06-25 (P1.7.2 — Source Identity & SourceRef Schema)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.0 — Path Governance & Source Trust Foundation
-- Current active: **P1.7.1 (forward hook — see ROADMAP.md)**
-- Next planned: P1.7.2+ (see ROADMAP.md)
+- Last completed: P1.7.2 — Source Identity & SourceRef Schema
+- Current active: **P1.7.3 — Source Trust Label Taxonomy (planned)**
+- Next planned: P1.7.3 — Source Trust Label Taxonomy
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.2 Source Identity & SourceRef Schema (COMPLETE — schema only)
+
+- `path_governance/`: `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, `build_source_identity()`.
+- SourceKind status: **LIVE schema** — represents operator input, repo file, local file, uploaded file, external web, tool output, model output, agent output, memory entry, path-ref source, and unknown source kinds.
+- SourceOrigin status: **LIVE schema** — represents operator, internal repo, local machine, upload, external network, governed tool, model, agent, memory, and unknown origins.
+- SourceLineageRelationship status: **LIVE schema** — flat lineage seed relationships only; no provenance graph or evidence binding.
+- SourceRef status: **LIVE schema** — deterministic `source_id`, kind/origin labels, projection source label, trust label metadata, optional display name, optional URI/path, optional explicit content hash, and JSON-safe metadata.
+- SourceLineageRef status: **LIVE schema** — deterministic `lineage_hash` over parent source ID, relationship, notes, and metadata; no parent lookup.
+- SourceIdentity status: **LIVE schema** — binds source ref and lineage refs with deterministic `identity_hash`, `created_by_task="P1.7.2"`, `schema_version="source_identity.v1"`.
+- Deterministic source/hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat data, or environment variables.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Known unavailable states: Source Trust Label Taxonomy expansion, source trust resolver, source authority resolver, provenance/evidence binding, full provenance graph, memory/prompt/command authority, untrusted content boundary decisions, projection/API/event contract, CLI/TUI, Shell UI, trace hooks, policy bridge, and enforcement.
+- P1.7.3 readiness: **READY** — next task is Source Trust Label Taxonomy.
+- Report: `agent/reports/P1.7.2_SOURCE_IDENTITY_SOURCE_REF_SCHEMA.md`
+
+### P1.7.1 Path Identity & Canonical Path Schema (COMPLETE — schema only)
+
+- `path_governance/`: `PathKind`, `PathSensitivity`, `CanonicalizationStatus`, `PathRef`, `CanonicalPathRef`, `PathIdentity`, `build_path_identity()`.
+- PathRef status: **LIVE schema** — preserves `raw_path`, kind/sensitivity declaration, source label, and JSON-safe metadata.
+- CanonicalPathRef status: **LIVE schema** — separates raw/normalized/display paths, status, warnings, `path_hash`, and `canonical_hash`.
+- PathIdentity status: **LIVE schema** — binds path/canonical refs with deterministic `identity_hash`, `created_by_task="P1.7.1"`, `schema_version="path_identity.v1"`.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, cwd-derived state, or filesystem stat data.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Known unavailable states: SourceRef, path/source resolver, trusted roots, path escape detection, projection/API/event contract, CLI/TUI, Shell UI, trace hooks, policy bridge, and enforcement.
+- P1.7.2 handoff: **COMPLETE** — Source Identity & SourceRef Schema now follows this layer.
+- Report: `agent/reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md`
 
 ### P1.7.0 Path Governance & Source Trust Foundation (COMPLETE — foundation only)
 
@@ -61,7 +88,7 @@ Backend is source of truth. No unlabelled mock operational state. Shell UI remai
 - P1.6 section sealed with warnings (2026-06-25).
 - Exit seal module + 42 focused tests + 137 regression tests pass.
 - Known UNAVAILABLE: Shell UI, full Ledger trace write, policy enforcement.
-- Next: P1.7.1 (forward hook).
+- Next path-governance task: P1.7.2 — Source Identity & SourceRef Schema.
 
 ### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
 

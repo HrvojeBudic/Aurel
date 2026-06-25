@@ -1,28 +1,23 @@
-# Active Task: P1.7.1 (forward hook)
+# Active Task: P1.7.3 (planned)
 
-**Status:** PLANNED
+**Status:** P1.7.2 COMPLETE; P1.7.3 PLANNED
 
 ## Roadmap Position
 
-- Last completed: P1.7.0 — Path Governance & Source Trust Foundation
-- Current active: **P1.7.1 (forward hook — see ROADMAP.md)**
-- Next planned: P1.7.2+ (see ROADMAP.md P1.7 patch table when defined)
+- Current completed task: **P1.7.2 — Source Identity & SourceRef Schema**
+- Next planned task: **P1.7.3 — Source Trust Label Taxonomy**
 - Roadmap version: **v5.1 Integration-First**
 
-P1.7.0 delivers foundation vocabulary, source/trust labels, closed-world validation, deterministic serialization, and honest capability reporting. No resolver, enforcement, CLI, projection, trace hooks, or policy bridge.
+## P1.7 Status
 
-## P1.7.0 Section Status
+**IN PROGRESS** — source identity schema added; broader P1.7 path/source governance remains in progress.
 
-**COMPLETE** — foundation only (2026-06-25)
+P1.7.2 adds `SourceKind`, `SourceOrigin`, `SourceLineageRelationship`, `SourceRef`, `SourceLineageRef`, `SourceIdentity`, and `build_source_identity()` with deterministic `source_id`, `lineage_hash`, and `identity_hash`. It represents source identity and lineage seeds without trust resolution or authority.
 
-- `path_governance/` package: labels, posture, errors, validation, serialization, capability status
-- 11 focused foundation tests pass
-- Full report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+No Source Trust Label Taxonomy expansion, source trust resolver, source authority resolver, provenance/evidence binding, memory write authority, prompt authority, command authority, runtime enforcement, Ledger write, approval activation, sandbox behavior change, CLI/TUI binding, Shell UI, trace hook, network fetch, or filesystem read was added.
 
-## Objective
+## Completed Reports
 
-Advance P1.7 Path Governance Engine per ROADMAP.md — next forward hook task P1.7.1.
-
-## Predecessor Report
-
-Full report: `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+- `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
+- `agent/reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md`
+- `agent/reports/P1.7.2_SOURCE_IDENTITY_SOURCE_REF_SCHEMA.md`
