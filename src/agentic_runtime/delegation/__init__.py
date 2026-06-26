@@ -20,6 +20,15 @@ DelegationConstraintSet without granting authority, verifying authority,
 creating approval, calling policy/Custos, enforcing constraints, executing
 runtime actions, writing trace, or writing Ledger.
 
+Evidence / non-repudiation reference binding layer (P1.8.5): deterministic,
+versioned, JSON-safe, side-effect-free evidence hook for delegation
+accountability. Binds reference-only evidence, claim, attestation, signature,
+and trace refs to DelegationRef / DelegationIdentity /
+DelegationRoleBindingSet / DelegationConstraintSet /
+DelegationAuthorityBindingSet without verifying evidence, proving claims,
+verifying signatures, verifying trace, claiming legal finality,
+writing Ledger, writing global trace, or creating Output Passport behavior.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -57,6 +66,17 @@ Architectural law:
   - Authority binding exists ≠ permission granted.
   - Authority hash exists ≠ TRACE_VERIFIED.
   - Authority binding set exists ≠ runtime execution.
+  - NonRepudiationRef exists ≠ non-repudiation is proven.
+  - EvidenceRef exists ≠ evidence is verified.
+  - ClaimRef exists ≠ claim is proven.
+  - AttestationRef exists ≠ attestation is verified.
+  - SignatureRef exists ≠ signature is verified.
+  - TraceRef exists ≠ TRACE_VERIFIED.
+  - EvidenceEnvelope exists ≠ legal finality.
+  - CompletenessProfile exists ≠ trust score.
+  - Evidence hash exists ≠ proof.
+  - evidence_envelope_hash exists ≠ legal finality.
+  - non_repudiation_binding_set_hash exists ≠ proof of non-repudiation.
 """
 from __future__ import annotations
 
@@ -239,6 +259,53 @@ from .authority import (
     hash_delegation_authority_ref,
     serialize_delegation_authority_binding_set,
     serialize_delegation_authority_ref,
+)
+
+from .non_repudiation import (
+    CLAIM_REF_KNOWN_FIELDS,
+    COMPLETENESS_PROFILE_KNOWN_FIELDS,
+    DELEGATION_CLAIM_REF_VERSION,
+    DELEGATION_EVIDENCE_COMPLETENESS_PROFILE_VERSION,
+    DELEGATION_EVIDENCE_ENVELOPE_VERSION,
+    DELEGATION_EVIDENCE_REF_VERSION,
+    DELEGATION_NON_REPUDIATION_BINDING_SET_VERSION,
+    DELEGATION_NON_REPUDIATION_BINDING_VERSION,
+    DELEGATION_NON_REPUDIATION_SIDE_EFFECTS_VERSION,
+    DELEGATION_NON_REPUDIATION_STATUS_REPORT_VERSION,
+    DELEGATION_NON_REPUDIATION_TASK_ID,
+    DELEGATION_NON_REPUDIATION_UNAVAILABLE_BINDINGS,
+    EVIDENCE_ENVELOPE_KNOWN_FIELDS,
+    EVIDENCE_REF_KNOWN_FIELDS,
+    NON_REPUDIATION_BINDING_KNOWN_FIELDS,
+    NON_REPUDIATION_BINDING_SET_KNOWN_FIELDS,
+    NON_REPUDIATION_SIDE_EFFECTS_KNOWN_FIELDS,
+    NON_REPUDIATION_STATUS_REPORT_KNOWN_FIELDS,
+    DelegationDisputeReadinessStatus,
+    DelegationEvidenceCompletenessProfile,
+    DelegationEvidenceEnvelope,
+    DelegationEvidenceKind,
+    DelegationEvidenceRef,
+    DelegationEvidenceStatus,
+    DelegationNonRepudiationBinding,
+    DelegationNonRepudiationBindingSet,
+    DelegationNonRepudiationClaimRef,
+    DelegationNonRepudiationSideEffects,
+    DelegationNonRepudiationStatusReport,
+    DelegationProofReferenceStatus,
+    build_delegation_evidence_completeness_profile,
+    build_delegation_evidence_envelope,
+    build_delegation_evidence_ref,
+    build_delegation_non_repudiation_binding,
+    build_delegation_non_repudiation_binding_set,
+    build_delegation_non_repudiation_claim_ref,
+    build_delegation_non_repudiation_status_report,
+    hash_delegation_evidence_completeness_profile,
+    hash_delegation_evidence_envelope,
+    hash_delegation_evidence_ref,
+    hash_delegation_non_repudiation_binding_set,
+    hash_delegation_non_repudiation_claim_ref,
+    serialize_delegation_evidence_envelope,
+    serialize_delegation_non_repudiation_binding_set,
 )
 
 __all__ = [
@@ -429,4 +496,52 @@ __all__ = [
     "hash_delegation_authority_ref",
     "serialize_delegation_authority_binding_set",
     "serialize_delegation_authority_ref",
+    # P1.8.5 non-repudiation constants
+    "CLAIM_REF_KNOWN_FIELDS",
+    "COMPLETENESS_PROFILE_KNOWN_FIELDS",
+    "DELEGATION_CLAIM_REF_VERSION",
+    "DELEGATION_EVIDENCE_COMPLETENESS_PROFILE_VERSION",
+    "DELEGATION_EVIDENCE_ENVELOPE_VERSION",
+    "DELEGATION_EVIDENCE_REF_VERSION",
+    "DELEGATION_NON_REPUDIATION_BINDING_SET_VERSION",
+    "DELEGATION_NON_REPUDIATION_BINDING_VERSION",
+    "DELEGATION_NON_REPUDIATION_SIDE_EFFECTS_VERSION",
+    "DELEGATION_NON_REPUDIATION_STATUS_REPORT_VERSION",
+    "DELEGATION_NON_REPUDIATION_TASK_ID",
+    "DELEGATION_NON_REPUDIATION_UNAVAILABLE_BINDINGS",
+    "EVIDENCE_ENVELOPE_KNOWN_FIELDS",
+    "EVIDENCE_REF_KNOWN_FIELDS",
+    "NON_REPUDIATION_BINDING_KNOWN_FIELDS",
+    "NON_REPUDIATION_BINDING_SET_KNOWN_FIELDS",
+    "NON_REPUDIATION_SIDE_EFFECTS_KNOWN_FIELDS",
+    "NON_REPUDIATION_STATUS_REPORT_KNOWN_FIELDS",
+    # P1.8.5 enums
+    "DelegationDisputeReadinessStatus",
+    "DelegationEvidenceKind",
+    "DelegationEvidenceStatus",
+    "DelegationProofReferenceStatus",
+    # P1.8.5 dataclasses
+    "DelegationEvidenceRef",
+    "DelegationNonRepudiationClaimRef",
+    "DelegationEvidenceEnvelope",
+    "DelegationEvidenceCompletenessProfile",
+    "DelegationNonRepudiationBinding",
+    "DelegationNonRepudiationBindingSet",
+    "DelegationNonRepudiationSideEffects",
+    "DelegationNonRepudiationStatusReport",
+    # P1.8.5 builders / helpers / hash functions
+    "build_delegation_evidence_ref",
+    "build_delegation_non_repudiation_claim_ref",
+    "build_delegation_evidence_envelope",
+    "build_delegation_evidence_completeness_profile",
+    "build_delegation_non_repudiation_binding",
+    "build_delegation_non_repudiation_binding_set",
+    "build_delegation_non_repudiation_status_report",
+    "serialize_delegation_evidence_envelope",
+    "serialize_delegation_non_repudiation_binding_set",
+    "hash_delegation_evidence_ref",
+    "hash_delegation_non_repudiation_claim_ref",
+    "hash_delegation_evidence_envelope",
+    "hash_delegation_evidence_completeness_profile",
+    "hash_delegation_non_repudiation_binding_set",
 ]

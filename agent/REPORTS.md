@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.8.5 Non-RepudiationRef Binding / Evidence Hook](reports/P1.8.5_NON_REPUDIATION_REF_BINDING.md) | 2026-06-27 | Evidence/non-repudiation reference binding; DelegationEvidenceRef/ClaimRef/Envelope/CompletenessProfile/NonRepudiationBinding/BindingSet/SideEffects/StatusReport; 14 all-false side-effects; evidence ref ≠ verification; claim ref ≠ proof; no verifiers/Ledger/trace |
 | [P1.8.4 Delegation AuthorityRef Binding](reports/P1.8.4_DELEGATION_AUTHORITY_REF_BINDING.md) | 2026-06-27 | Reference-only authority-binding layer; DelegationAuthorityRef/Binding/Set/SideEffects/StatusReport; 11 all-false side-effects; authority ref ≠ grant; no resolver/verifier |
 | [P1.8.3 Delegation Constraint Model](reports/P1.8.3_DELEGATION_CONSTRAINT_MODEL.md) | 2026-06-27 | Declared constraint model; DelegationConstraintRef/Binding/Set/SideEffects/StatusReport; 12 all-false side-effects; constraints declared ≠ enforced; no resolver/enforcement |
 | [P1.8.2 Delegator / Delegate / Subject Model](reports/P1.8.2_DELEGATOR_DELEGATE_SUBJECT_MODEL.md) | 2026-06-26 | Delegation role-binding schema; PartyRoleRef, SubjectRef, RoleBinding, BindingSet, SideEffects; deterministic hashes; role binding ≠ approval/enforcement; no resolver |

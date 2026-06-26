@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.4 — Delegation AuthorityRef Binding)_
+_Last updated: 2026-06-27 (P1.8.5 — Non-RepudiationRef Binding / Evidence Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.4 — Delegation AuthorityRef Binding
-- Current active: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook (planned)**
-- Next planned: P1.8.5 — Non-RepudiationRef Binding / Evidence Hook
+- Last completed: P1.8.5 — Non-RepudiationRef Binding / Evidence Hook
+- Current active: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook (planned)**
+- Next planned: P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5 complete)
+
+### P1.8.5 delegation evidence / non-repudiation reference binding summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationEvidenceRef | Deterministic `evidence_ref_hash` | DEV_FIXTURE in tests | Not evidence verification |
+| DelegationNonRepudiationClaimRef | Deterministic `claim_ref_hash` | DEV_FIXTURE | Not claim proof |
+| DelegationEvidenceEnvelope | Deterministic `evidence_envelope_hash` | DEV_FIXTURE | Not legal finality |
+| DelegationEvidenceCompletenessProfile | Deterministic `profile_hash` | DEV_FIXTURE | Not trust score |
+| DelegationNonRepudiationBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not proof/verification |
+| DelegationNonRepudiationBindingSet | Deterministic `non_repudiation_binding_set_hash` | DEV_FIXTURE | Not non-repudiation proof |
+| DelegationNonRepudiationSideEffects | 14 booleans all false | LIVE schema | Non-verifying, non-final, non-mutating |
+| Non-repudiation status report | `delegation_non_repudiation_status_report.v1` | DEV_FIXTURE | Not runtime active |
+
+**Known UNAVAILABLE (P1.8.5):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, crypto verifier, signature verifier, trace verifier, evidence truth verifier, claim verifier, attestation verifier, legal non-repudiation engine, dispute resolver, Output Passport/P1.9, identity mesh binding/P1.8.6, runtime delegation execution, policy/Custos decision.
+
+**Explicit negatives:** NonRepudiationRef exists ≠ non-repudiation proven. EvidenceRef exists ≠ evidence verified. ClaimRef exists ≠ claim proven. AttestationRef exists ≠ attestation verified. SignatureRef exists ≠ signature verified. TraceRef exists ≠ TRACE_VERIFIED. EvidenceEnvelope exists ≠ legal finality. CompletenessProfile exists ≠ trust score. Evidence hash exists ≠ proof. evidence_envelope_hash exists ≠ legal finality. non_repudiation_binding_set_hash exists ≠ proof of non-repudiation. No crypto/signature/trace/evidence/claim/attestation verifier, no Ledger/global trace, no Output Passport/P1.9, no identity mesh/P1.8.6.
+
+Report: `agent/reports/P1.8.5_NON_REPUDIATION_REF_BINDING.md`
 
 ### P1.8.4 delegation authority-reference binding summary
 

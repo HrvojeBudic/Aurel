@@ -1,12 +1,22 @@
-# Active Task: P1.8.5 (planned)
+# Active Task: P1.8.6 (planned)
 
-**Status:** P1.8.4 COMPLETE; P1.8.5 PLANNED
+**Status:** P1.8.5 COMPLETE; P1.8.6 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.4 — Delegation AuthorityRef Binding**
-- Next planned task: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook**
+- Last completed task: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook**
+- Next planned task: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.5 Status
+
+**COMPLETE** — P1.8.5 evidence/non-repudiation reference binding layer verified after focused validation.
+
+P1.8.5 establishes a deterministic, versioned, JSON-safe, side-effect-free evidence/non-repudiation reference binding layer for delegation accountability. DelegationEvidenceKind (DOCUMENT_REF/ARTIFACT_REF/TRACE_REF/SIGNATURE_REF/ATTESTATION_REF/OPERATOR_STATEMENT_REF/SYSTEM_EVENT_REF/EXTERNAL_REF/UNKNOWN), DelegationEvidenceStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationProofReferenceStatus (REFERENCE_ONLY/EVIDENCE_REFERENCED/CLAIM_REFERENCED/ATTESTATION_REFERENCED/SIGNATURE_REFERENCED/TRACE_REFERENCED/VERIFIER_UNAVAILABLE/UNAVAILABLE/ERROR/UNKNOWN), DelegationDisputeReadinessStatus (NOT_EVALUATED/DISPUTE_REF_AVAILABLE/UNAVAILABLE/UNKNOWN), DelegationEvidenceRef, DelegationNonRepudiationClaimRef, DelegationEvidenceEnvelope, DelegationEvidenceCompletenessProfile, DelegationNonRepudiationBinding, DelegationNonRepudiationBindingSet, DelegationNonRepudiationSideEffects (14 all-false booleans), DelegationNonRepudiationStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain (51 tests), and 16 unavailable surface reasons.
+
+Boundary: NonRepudiationRef exists ≠ non-repudiation proven. EvidenceRef exists ≠ evidence verified. ClaimRef exists ≠ claim proven. AttestationRef exists ≠ attestation verified. SignatureRef exists ≠ signature verified. TraceRef exists ≠ TRACE_VERIFIED. EvidenceEnvelope exists ≠ legal finality. CompletenessProfile exists ≠ trust score. Evidence hash exists ≠ proof. evidence_envelope_hash exists ≠ legal finality. non_repudiation_binding_set_hash exists ≠ proof of non-repudiation. No crypto/signature/trace/evidence/claim/attestation verifier, no Ledger/global trace write, no Output Passport/P1.9, no identity mesh/P1.8.6. No runtime delegation execution.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.4 Status
 
