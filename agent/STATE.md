@@ -1,15 +1,32 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation)_
+_Last updated: 2026-06-26 (P1.8.1 — Delegation Identity / DelegationRef Schema)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation
-- Current active: **P1.8.1 — Delegation Identity / DelegationRef Schema (planned)**
-- Next planned: P1.8.1 — Delegation Identity / DelegationRef Schema
+- Last completed: P1.8.1 — Delegation Identity / DelegationRef Schema
+- Current active: **P1.8.2 — Delegator / Delegate / Subject Model (planned)**
+- Next planned: P1.8.2 — Delegator / Delegate / Subject Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1 complete)
+
+### P1.8.1 delegation identity/ref summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationRef | Deterministic `ref_hash` | DEV_FIXTURE in tests | Not approval |
+| DelegationIdentity | Deterministic `identity_hash` | DEV_FIXTURE | Not verification |
+| DelegationRefBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not trace proof |
+| DelegationIdentitySideEffects | All booleans false | LIVE schema | Non-executing |
+| Identity status report | `delegation_identity_status_report.v1` | DEV_FIXTURE | Not runtime active |
+| P1.8.0→P1.8.1 chain | record_hash → ref → binding → identity | DEV_FIXTURE | Reference only |
+
+**Known UNAVAILABLE (P1.8.1):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, policy/Custos enforcement, approval activation, identity resolver, non-repudiation verifier, runtime delegation execution.
+
+**Explicit negatives:** DelegationRef is not approval. DelegationIdentity is not verification. DelegationRefBinding is not trace proof. record_hash is not TRACE_VERIFIED. identity_hash is not proof. No policy/Custos/approval/Ledger/global trace/runtime mutation.
+
+Report: `agent/reports/P1.8.1_DELEGATION_IDENTITY_REF_SCHEMA.md`
 
 ### P1.8.0 delegation foundation summary
 

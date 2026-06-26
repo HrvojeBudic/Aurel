@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.8.1 Delegation Identity / DelegationRef Schema](reports/P1.8.1_DELEGATION_IDENTITY_REF_SCHEMA.md) | 2026-06-26 | Stable delegation identity/ref layer; DelegationRef/Identity/Binding with deterministic hashes; side effects all false; ref not approval; identity not verification |
 | [P1.8.0 Delegation / Non-Repudiation / Agent Identity Mesh Foundation](reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md) | 2026-06-26 | Delegation foundation schema; DEV_FIXTURE test chain; side effects all false; DelegationRecord is not permission; no enforcement |
 | [CODEOPS-0A Agent-Native Hybrid Control Protocol](reports/CODEOPS_0A_AGENT_NATIVE_HYBRID_CONTROL_PROTOCOL.md) | 2026-06-26 | Installs Aurel CodeOps v1.6 upstream control protocol inside agent/; templates, no duplicate governance, no runtime changes |
 | [P1.7.20 Exit Seal + Live Integration Demo](reports/P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md) | 2026-06-26 | Exit seal evidence layer; DEV_FIXTURE vertical slice; side effects all false; P1.7 sealed; no enforcement |

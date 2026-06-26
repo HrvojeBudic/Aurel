@@ -1,14 +1,23 @@
-"""Delegation / Non-Repudiation / Agent Identity Mesh Foundation (P1.8.0).
+"""Delegation / Non-Repudiation / Agent Identity Mesh (P1.8).
 
-Foundation-only package: typed delegation records, reference-only evidence hooks,
+Foundation layer (P1.8.0): typed delegation records, reference-only evidence hooks,
 identity mesh references, deterministic serialization, and honest capability reporting.
-P1.8.0 does not authorize, enforce, verify, execute, or write trace/Ledger.
+
+Identity / reference layer (P1.8.1): stable DelegationRef, DelegationIdentity,
+DelegationRefBinding, and status report with deterministic hashing.
+
+P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
   - DelegationRecord is not permission.
   - AuthorityRef is not granted authority.
   - NonRepudiationRef is not verified proof.
   - AgentIdentityMeshRef is not live mesh activation.
+  - DelegationRef is not approval.
+  - DelegationIdentity is not verification.
+  - DelegationRefBinding is not trace proof.
+  - record_hash is not TRACE_VERIFIED.
+  - identity_hash is not proof.
 """
 from __future__ import annotations
 
@@ -65,43 +74,79 @@ from .foundation import (
     validate_known_fields,
 )
 
+from .identity import (
+    DELEGATION_IDENTITY_SCHEMA_VERSION,
+    DELEGATION_IDENTITY_SIDE_EFFECTS_VERSION,
+    DELEGATION_IDENTITY_STATUS_REPORT_VERSION,
+    DELEGATION_IDENTITY_TASK_ID,
+    DELEGATION_IDENTITY_UNAVAILABLE_BINDINGS,
+    DELEGATION_REF_BINDING_SCHEMA_VERSION,
+    DELEGATION_REF_KNOWN_FIELDS,
+    DELEGATION_REF_SCHEMA_VERSION,
+    IDENTITY_KNOWN_FIELDS,
+    IDENTITY_SIDE_EFFECTS_KNOWN_FIELDS,
+    IDENTITY_STATUS_REPORT_KNOWN_FIELDS,
+    REF_BINDING_KNOWN_FIELDS,
+    DelegationIdentity,
+    DelegationIdentityKind,
+    DelegationIdentitySideEffects,
+    DelegationIdentityStatus,
+    DelegationIdentityStatusReport,
+    DelegationRef,
+    DelegationRefBinding,
+    DelegationRefBindingKind,
+    build_delegation_identity,
+    build_delegation_identity_status_report,
+    build_delegation_ref,
+    build_delegation_ref_binding,
+    hash_delegation_identity,
+    hash_delegation_ref,
+    serialize_delegation_identity,
+    serialize_delegation_ref,
+)
+
 __all__ = [
+    # P1.8.0 foundation constants
     "ACTOR_REF_KNOWN_FIELDS",
     "AUTHORITY_REF_KNOWN_FIELDS",
-    "AgentIdentityMeshRef",
     "CONSTRAINT_KNOWN_FIELDS",
     "DELEGATION_FOUNDATION_STATUS_VERSION",
     "DELEGATION_MODULE_NAME",
     "DELEGATION_SCHEMA_VERSION",
     "DELEGATION_TASK_ID",
     "DELEGATION_UNAVAILABLE_BINDINGS",
-    "DelegationActorKind",
-    "DelegationActorRef",
-    "DelegationAuthorityKind",
-    "DelegationAuthorityRef",
-    "DelegationConstraint",
-    "DelegationConstraintKind",
-    "DelegationError",
-    "DelegationErrorCode",
-    "DelegationFoundationCapability",
-    "DelegationFoundationStatus",
-    "DelegationRecord",
-    "DelegationSerializationError",
-    "DelegationSideEffects",
-    "DelegationSourceLabel",
-    "DelegationStructuredError",
-    "DelegationSubject",
-    "DelegationSubjectKind",
-    "DelegationUnknownFieldError",
-    "DelegationValidationError",
     "FOUNDATION_STATUS_KNOWN_FIELDS",
     "IDENTITY_MESH_REF_KNOWN_FIELDS",
     "NON_REPUDIATION_REF_KNOWN_FIELDS",
-    "NonRepudiationProofStatus",
-    "NonRepudiationRef",
     "RECORD_KNOWN_FIELDS",
     "SIDE_EFFECTS_KNOWN_FIELDS",
     "SUBJECT_KNOWN_FIELDS",
+    # P1.8.0 enums
+    "DelegationActorKind",
+    "DelegationAuthorityKind",
+    "DelegationConstraintKind",
+    "DelegationFoundationCapability",
+    "DelegationErrorCode",
+    "DelegationSourceLabel",
+    "DelegationSubjectKind",
+    "NonRepudiationProofStatus",
+    # P1.8.0 dataclasses
+    "AgentIdentityMeshRef",
+    "DelegationActorRef",
+    "DelegationAuthorityRef",
+    "DelegationConstraint",
+    "DelegationFoundationStatus",
+    "DelegationRecord",
+    "DelegationSideEffects",
+    "DelegationStructuredError",
+    "DelegationSubject",
+    "NonRepudiationRef",
+    # P1.8.0 errors
+    "DelegationError",
+    "DelegationSerializationError",
+    "DelegationUnknownFieldError",
+    "DelegationValidationError",
+    # P1.8.0 builders / helpers
     "build_agent_identity_mesh_ref",
     "build_delegation_actor_ref",
     "build_delegation_authority_ref",
@@ -116,4 +161,36 @@ __all__ = [
     "to_canonical_dict",
     "to_canonical_json",
     "validate_known_fields",
+    # P1.8.1 identity constants
+    "DELEGATION_IDENTITY_SCHEMA_VERSION",
+    "DELEGATION_IDENTITY_SIDE_EFFECTS_VERSION",
+    "DELEGATION_IDENTITY_STATUS_REPORT_VERSION",
+    "DELEGATION_IDENTITY_TASK_ID",
+    "DELEGATION_IDENTITY_UNAVAILABLE_BINDINGS",
+    "DELEGATION_REF_BINDING_SCHEMA_VERSION",
+    "DELEGATION_REF_KNOWN_FIELDS",
+    "DELEGATION_REF_SCHEMA_VERSION",
+    "IDENTITY_KNOWN_FIELDS",
+    "IDENTITY_SIDE_EFFECTS_KNOWN_FIELDS",
+    "IDENTITY_STATUS_REPORT_KNOWN_FIELDS",
+    "REF_BINDING_KNOWN_FIELDS",
+    # P1.8.1 enums
+    "DelegationIdentityKind",
+    "DelegationIdentityStatus",
+    "DelegationRefBindingKind",
+    # P1.8.1 dataclasses
+    "DelegationIdentity",
+    "DelegationIdentitySideEffects",
+    "DelegationIdentityStatusReport",
+    "DelegationRef",
+    "DelegationRefBinding",
+    # P1.8.1 builders / helpers
+    "build_delegation_identity",
+    "build_delegation_identity_status_report",
+    "build_delegation_ref",
+    "build_delegation_ref_binding",
+    "hash_delegation_identity",
+    "hash_delegation_ref",
+    "serialize_delegation_identity",
+    "serialize_delegation_ref",
 ]

@@ -1,12 +1,22 @@
-# Active Task: P1.8.1 (planned)
+# Active Task: P1.8.2 (planned)
 
-**Status:** P1.8.0 COMPLETE; P1.8.1 PLANNED
+**Status:** P1.8.1 COMPLETE; P1.8.2 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation**
-- Next planned task: **P1.8.1 — Delegation Identity / DelegationRef Schema**
+- Last completed task: **P1.8.1 — Delegation Identity / DelegationRef Schema**
+- Next planned task: **P1.8.2 — Delegator / Delegate / Subject Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.1 Status
+
+**COMPLETE** — P1.8.1 identity/ref schema layer verified after focused validation.
+
+P1.8.1 establishes stable delegation identity/reference objects (`DelegationRef`, `DelegationIdentity`, `DelegationRefBinding`, `DelegationIdentitySideEffects`, `DelegationIdentityStatusReport`) with deterministic hashing, closed-world validation, and all-side-effects-false posture. The P1.8.0 `DelegationRecord` feeds the identity/ref chain via `record_hash`. No approval, enforcement, verification, runtime execution, or side effects.
+
+Boundary: DelegationRef is not approval; DelegationIdentity is not verification; DelegationRefBinding is not trace proof; record_hash is not TRACE_VERIFIED; identity_hash is not proof. No delegation resolver, no non-repudiation verifier, no crypto signing, no policy/Custos call, no approval creation, no Ledger write, no global trace write, no CLI/TUI/projection/API, no agent activation, no identity mesh resolver.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.0 Status
 
@@ -24,6 +34,7 @@ Git status: committed locally, no push performed.
 
 ## Completed Reports
 
+- `agent/reports/P1.8.1_DELEGATION_IDENTITY_REF_SCHEMA.md`
 - `agent/reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md`
 - `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`
 - `agent/reports/P1.7.1_PATH_IDENTITY_CANONICAL_PATH_SCHEMA.md`

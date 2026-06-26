@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation |
-| **Current active** | **P1.8.1 — Delegation Identity / DelegationRef Schema (planned)** |
+| **Last completed** | P1.8.1 — Delegation Identity / DelegationRef Schema |
+| **Current active** | **P1.8.2 — Delegator / Delegate / Subject Model (planned)** |
 | **Previous section** | P1.7 — Path Governance & Source Trust (**SEALED**) |
-| **Next planned** | P1.8.1 — Delegation Identity / DelegationRef Schema |
+| **Next planned** | P1.8.2 — Delegator / Delegate / Subject Model |
+
+**P1.8.1 complete** — Delegation identity/ref: `DelegationIdentityKind`, `DelegationIdentityStatus`, `DelegationRefBindingKind`, `DelegationRef`, `DelegationIdentity`, `DelegationRefBinding`, `DelegationIdentitySideEffects`, `DelegationIdentityStatusReport`, `build_delegation_*()` helpers, `serialize_delegation_ref/identity()`, `hash_delegation_ref/identity()`, DEV_FIXTURE focused test chain, deterministic ref/binding/identity/status hashes, unavailable surface reasons, side-effect truth all false, closed-world validation. DelegationRef is not approval; DelegationIdentity is not verification; DelegationRefBinding is not trace proof; record_hash is not TRACE_VERIFIED; identity_hash is not proof; no delegation resolver, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, runtime execution, or agent activation. P1.8 remains in progress. Next: **P1.8.2 — Delegator / Delegate / Subject Model**.
 
 **P1.8.0 complete** — Delegation foundation: `DelegationSourceLabel`, `DelegationActorKind`, `DelegationSubjectKind`, `DelegationAuthorityKind`, `DelegationConstraintKind`, `NonRepudiationProofStatus`, `DelegationFoundationCapability`, `DelegationActorRef`, `DelegationSubject`, `DelegationAuthorityRef`, `DelegationConstraint`, `NonRepudiationRef`, `AgentIdentityMeshRef`, `DelegationSideEffects`, `DelegationRecord`, `DelegationFoundationStatus`, `build_delegation_*()` helpers, `serialize_delegation_record()`, `hash_delegation_record()`, DEV_FIXTURE focused test chain, deterministic record/status hashes, unavailable surface reasons, side-effect truth all false, closed-world validation. Foundation schema only; DelegationRecord is not permission; AuthorityRef is not granted authority; NonRepudiationRef is not verified proof; AgentIdentityMeshRef is not live mesh activation; no delegation resolver, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, runtime execution, or agent activation. P1.8 remains in progress. Next: **P1.8.1 — Delegation Identity / DelegationRef Schema**.
 
