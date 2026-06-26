@@ -6,6 +6,10 @@ identity mesh references, deterministic serialization, and honest capability rep
 Identity / reference layer (P1.8.1): stable DelegationRef, DelegationIdentity,
 DelegationRefBinding, and status report with deterministic hashing.
 
+Role-binding layer (P1.8.2): typed, deterministic, JSON-safe role contracts for
+delegator/delegate/subject bound to DelegationRef/DelegationIdentity without
+approving, executing, enforcing, verifying, activating, or granting authority.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -18,6 +22,12 @@ Architectural law:
   - DelegationRefBinding is not trace proof.
   - record_hash is not TRACE_VERIFIED.
   - identity_hash is not proof.
+  - DelegationPartyRoleRef is not verified authority.
+  - DelegatedSubjectRef is not subject execution.
+  - DelegationRoleBinding is not approval or permission.
+  - DelegationRoleBindingSet is not enforcement.
+  - role_binding_hash is not TRACE_VERIFIED.
+  - Role model exists ≠ resolver exists.
 """
 from __future__ import annotations
 
@@ -103,6 +113,43 @@ from .identity import (
     hash_delegation_ref,
     serialize_delegation_identity,
     serialize_delegation_ref,
+)
+
+from .roles import (
+    DELEGATED_SUBJECT_REF_VERSION,
+    DELEGATION_PARTY_ROLE_REF_VERSION,
+    DELEGATION_ROLE_BINDING_SET_VERSION,
+    DELEGATION_ROLE_BINDING_VERSION,
+    DELEGATION_ROLES_TASK_ID,
+    DELEGATION_ROLES_UNAVAILABLE_BINDINGS,
+    DELEGATION_ROLE_SIDE_EFFECTS_VERSION,
+    DELEGATION_ROLE_STATUS_REPORT_VERSION,
+    PARTY_ROLE_REF_KNOWN_FIELDS,
+    ROLE_BINDING_KNOWN_FIELDS,
+    ROLE_BINDING_SET_KNOWN_FIELDS,
+    ROLE_SIDE_EFFECTS_KNOWN_FIELDS,
+    ROLE_STATUS_REPORT_KNOWN_FIELDS,
+    SUBJECT_ROLE_REF_KNOWN_FIELDS,
+    DelegatedSubjectRef,
+    DelegationPartyRoleRef,
+    DelegationRoleBinding,
+    DelegationRoleBindingSet,
+    DelegationRoleBindingStatus,
+    DelegationRoleKind,
+    DelegationRoleSideEffects,
+    DelegationRoleStatusReport,
+    build_delegated_subject_ref,
+    build_delegation_party_role_ref,
+    build_delegation_role_binding,
+    build_delegation_role_binding_set,
+    build_delegation_role_status_report,
+    compute_role_binding_hash,
+    compute_role_binding_set_hash,
+    compute_role_ref_hash,
+    compute_role_status_report_hash,
+    compute_subject_role_hash,
+    hash_delegation_role_binding_set,
+    serialize_delegation_role_binding_set,
 )
 
 __all__ = [
@@ -193,4 +240,42 @@ __all__ = [
     "hash_delegation_ref",
     "serialize_delegation_identity",
     "serialize_delegation_ref",
+    # P1.8.2 role constants
+    "DELEGATED_SUBJECT_REF_VERSION",
+    "DELEGATION_PARTY_ROLE_REF_VERSION",
+    "DELEGATION_ROLE_BINDING_SET_VERSION",
+    "DELEGATION_ROLE_BINDING_VERSION",
+    "DELEGATION_ROLES_TASK_ID",
+    "DELEGATION_ROLES_UNAVAILABLE_BINDINGS",
+    "DELEGATION_ROLE_SIDE_EFFECTS_VERSION",
+    "DELEGATION_ROLE_STATUS_REPORT_VERSION",
+    "PARTY_ROLE_REF_KNOWN_FIELDS",
+    "ROLE_BINDING_KNOWN_FIELDS",
+    "ROLE_BINDING_SET_KNOWN_FIELDS",
+    "ROLE_SIDE_EFFECTS_KNOWN_FIELDS",
+    "ROLE_STATUS_REPORT_KNOWN_FIELDS",
+    "SUBJECT_ROLE_REF_KNOWN_FIELDS",
+    # P1.8.2 enums
+    "DelegationRoleBindingStatus",
+    "DelegationRoleKind",
+    # P1.8.2 dataclasses
+    "DelegatedSubjectRef",
+    "DelegationPartyRoleRef",
+    "DelegationRoleBinding",
+    "DelegationRoleBindingSet",
+    "DelegationRoleSideEffects",
+    "DelegationRoleStatusReport",
+    # P1.8.2 builders / helpers / hash functions
+    "build_delegated_subject_ref",
+    "build_delegation_party_role_ref",
+    "build_delegation_role_binding",
+    "build_delegation_role_binding_set",
+    "build_delegation_role_status_report",
+    "compute_role_binding_hash",
+    "compute_role_binding_set_hash",
+    "compute_role_ref_hash",
+    "compute_role_status_report_hash",
+    "compute_subject_role_hash",
+    "hash_delegation_role_binding_set",
+    "serialize_delegation_role_binding_set",
 ]

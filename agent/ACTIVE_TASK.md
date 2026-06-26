@@ -1,12 +1,22 @@
-# Active Task: P1.8.2 (planned)
+# Active Task: P1.8.3 (planned)
 
-**Status:** P1.8.1 COMPLETE; P1.8.2 PLANNED
+**Status:** P1.8.2 COMPLETE; P1.8.3 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.1 — Delegation Identity / DelegationRef Schema**
-- Next planned task: **P1.8.2 — Delegator / Delegate / Subject Model**
+- Last completed task: **P1.8.2 — Delegator / Delegate / Subject Model**
+- Next planned task: **P1.8.3 — Delegation Constraint Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.2 Status
+
+**COMPLETE** — P1.8.2 role model verified after focused validation.
+
+P1.8.2 establishes a deterministic, versioned, JSON-safe, side-effect-free role model for the delegation triangle (delegator → delegate → subject) bound to DelegationRef / DelegationIdentity without approving, executing, enforcing, verifying, activating, or granting authority. DelegationPartyRoleRef, DelegatedSubjectRef, DelegationRoleBinding, DelegationRoleBindingSet, DelegationRoleSideEffects (11 all-false), and DelegationRoleStatusReport with deterministic hashing, closed-world validation, and honest UNAVAILABLE surface reasons.
+
+Boundary: DelegationPartyRoleRef identifies actor role; it does not verify authority. Delegate role ref exists ≠ delegate activated. DelegatedSubjectRef describes what is delegated; it does not execute task/action/output. DelegationRoleBinding is not approval. DelegationRoleBindingSet is not enforcement. Role binding is not permission. role_binding_hash exists ≠ TRACE_VERIFIED. Role model exists ≠ resolver exists. No delegation resolver, non-repudiation verifier, crypto signing, policy/Custos call, approval creation, Ledger write, global trace write, CLI/TUI/projection/API, agent activation, or identity mesh resolver.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.1 Status
 
@@ -34,6 +44,7 @@ Git status: committed locally, no push performed.
 
 ## Completed Reports
 
+- `agent/reports/P1.8.2_DELEGATOR_DELEGATE_SUBJECT_MODEL.md`
 - `agent/reports/P1.8.1_DELEGATION_IDENTITY_REF_SCHEMA.md`
 - `agent/reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md`
 - `agent/reports/P1.7.0_PATH_GOVERNANCE_SOURCE_TRUST_FOUNDATION.md`

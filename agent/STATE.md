@@ -1,15 +1,32 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.8.1 — Delegation Identity / DelegationRef Schema)_
+_Last updated: 2026-06-26 (P1.8.2 — Delegator / Delegate / Subject Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.1 — Delegation Identity / DelegationRef Schema
-- Current active: **P1.8.2 — Delegator / Delegate / Subject Model (planned)**
-- Next planned: P1.8.2 — Delegator / Delegate / Subject Model
+- Last completed: P1.8.2 — Delegator / Delegate / Subject Model
+- Current active: **P1.8.3 — Delegation Constraint Model (planned)**
+- Next planned: P1.8.3 — Delegation Constraint Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2 complete)
+
+### P1.8.2 delegation role model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationPartyRoleRef | Deterministic `role_ref_hash` | DEV_FIXTURE in tests | Not verified authority |
+| DelegatedSubjectRef | Deterministic `subject_role_hash` | DEV_FIXTURE | Not subject execution |
+| DelegationRoleBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not approval or permission |
+| DelegationRoleBindingSet | Deterministic `role_binding_hash` | DEV_FIXTURE | Not enforcement |
+| DelegationRoleSideEffects | 11 booleans all false | LIVE schema | Non-executing |
+| Role status report | `delegation_role_status_report.v1` | DEV_FIXTURE | Not runtime active |
+
+**Known UNAVAILABLE (P1.8.2):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, policy/Custos enforcement, approval activation, delegation resolver, delegation chain resolver, authority bridge, identity mesh resolver, non-repudiation verifier, runtime delegation execution.
+
+**Explicit negatives:** DelegationPartyRoleRef is not verified authority. DelegatedSubjectRef is not subject execution. DelegationRoleBinding is not approval or permission. DelegationRoleBindingSet is not enforcement. role_binding_hash is not TRACE_VERIFIED. Role model exists ≠ resolver exists. No policy/Custos/approval/Ledger/global trace/runtime mutation.
+
+Report: `agent/reports/P1.8.2_DELEGATOR_DELEGATE_SUBJECT_MODEL.md`
 
 ### P1.8.1 delegation identity/ref summary
 

@@ -18,12 +18,16 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 **P1.8 — Delegation / Non-Repudiation / Agent Identity Mesh (IN PROGRESS)**
 
-| Status | Module |
-|--------|--------|
-| **Last completed** | P1.8.1 — Delegation Identity / DelegationRef Schema |
-| **Current active** | **P1.8.2 — Delegator / Delegate / Subject Model (planned)** |
-| **Previous section** | P1.7 — Path Governance & Source Trust (**SEALED**) |
-| **Next planned** | P1.8.2 — Delegator / Delegate / Subject Model |
+**P1.8.2 complete** — Delegation role model: DelegationRoleKind (DELEGATOR/DELEGATE/SUBJECT/OBSERVER/UNKNOWN), DelegationRoleBindingStatus (ROLE_BOUND/REFERENCE_ONLY/UNAVAILABLE/ERROR/UNKNOWN), DelegationPartyRoleRef, DelegatedSubjectRef, DelegationRoleBinding, DelegationRoleBindingSet, DelegationRoleSideEffects (11 all-false booleans), DelegationRoleStatusReport, deterministic role/binding/set/status hashes, closed-world validation, DEV_FIXTURE focused test chain, unavailable surface reasons, side-effect truth all false. DelegationPartyRoleRef is not verified authority; DelegatedSubjectRef is not subject execution; DelegationRoleBinding is not approval or permission; DelegationRoleBindingSet is not enforcement; role_binding_hash is not TRACE_VERIFIED; role model exists ≠ resolver exists. No delegation resolver, chain resolver, authority bridge, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, agent activation, or runtime execution. P1.8 remains in progress. Next: **P1.8.3 — Delegation Constraint Model**.
+
+    | Status | Module |
+    |--------|--------|
+    | **Last completed** | P1.8.2 — Delegator / Delegate / Subject Model |
+    | **Current active** | **P1.8.3 — Delegation Constraint Model (planned)** |
+    | **Previous section** | P1.7 — Path Governance & Source Trust (**SEALED**) |
+    | **Next planned** | P1.8.3 — Delegation Constraint Model |
+
+**P1.8.2 complete** — Delegation role model: DelegationRoleKind (DELEGATOR/DELEGATE/SUBJECT/OBSERVER/UNKNOWN), DelegationRoleBindingStatus (ROLE_BOUND/REFERENCE_ONLY/UNAVAILABLE/ERROR/UNKNOWN), DelegationPartyRoleRef, DelegatedSubjectRef, DelegationRoleBinding, DelegationRoleBindingSet, DelegationRoleSideEffects (11 all-false booleans), DelegationRoleStatusReport, deterministic role/binding/set/status hashes, closed-world validation, DEV_FIXTURE focused test chain, unavailable surface reasons, side-effect truth all false. DelegationPartyRoleRef is not verified authority; DelegatedSubjectRef is not subject execution; DelegationRoleBinding is not approval or permission; DelegationRoleBindingSet is not enforcement; role_binding_hash is not TRACE_VERIFIED; role model exists ≠ resolver exists. No delegation resolver, chain resolver, authority bridge, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, agent activation, or runtime execution. P1.8 remains in progress. Next: **P1.8.3 — Delegation Constraint Model**.
 
 **P1.8.1 complete** — Delegation identity/ref: `DelegationIdentityKind`, `DelegationIdentityStatus`, `DelegationRefBindingKind`, `DelegationRef`, `DelegationIdentity`, `DelegationRefBinding`, `DelegationIdentitySideEffects`, `DelegationIdentityStatusReport`, `build_delegation_*()` helpers, `serialize_delegation_ref/identity()`, `hash_delegation_ref/identity()`, DEV_FIXTURE focused test chain, deterministic ref/binding/identity/status hashes, unavailable surface reasons, side-effect truth all false, closed-world validation. DelegationRef is not approval; DelegationIdentity is not verification; DelegationRefBinding is not trace proof; record_hash is not TRACE_VERIFIED; identity_hash is not proof; no delegation resolver, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, runtime execution, or agent activation. P1.8 remains in progress. Next: **P1.8.2 — Delegator / Delegate / Subject Model**.
 
