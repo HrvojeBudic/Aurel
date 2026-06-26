@@ -17,8 +17,9 @@ PATH_GOVERNANCE_UNAVAILABLE_REASONS: dict[str, str] = {
     "CLI/TUI Binding": "CLI/TUI Binding scheduled for P1.7.18",
     "Resolver": "Path/source resolvers scheduled for P1.7.10 and P1.7.11",
     "Trace hooks": (
-        "P1.7.13 path resolution trace payload model exists; "
-        "global AurelTrace spine write remains unavailable until later P1.7 tasks"
+        "P1.7.13 path resolution trace and P1.7.14 violation/drift trace payload "
+        "models exist; global AurelTrace spine write remains unavailable until "
+        "later P1.7 tasks"
     ),
     "Policy bridge": "Policy context bridge scheduled for P1.7.16",
 }

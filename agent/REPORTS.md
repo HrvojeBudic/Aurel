@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.14 Path Violation / Drift Trace Hook](reports/P1.7.14_PATH_VIOLATION_DRIFT_TRACE_HOOK.md) | 2026-06-26 | PathViolationTraceInput, PathViolationTracePayload, PathViolationTraceHookResult, PathSourceDriftSignal; expected/current drift detection; PAYLOAD_ONLY default; no correction/Ledger/enforcement |
 | [P1.7.13 Path Resolution Trace Hook](reports/P1.7.13_PATH_RESOLUTION_TRACE_HOOK.md) | 2026-06-26 | PathResolutionTraceInput, PathResolutionTracePayload, PathResolutionTraceHookResult; PAYLOAD_ONLY default, injected sink testability; no Ledger/global trace spine/enforcement |
 | [P1.7.12 Path/Source Conflict & Precedence Rules](reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md) | 2026-06-26 | PathSourceConflictKind, PrecedenceRuleKind, ConflictPrecedenceInput, ConflictPrecedenceResult; shadow-only conflict signals and strictest-wins precedence; no enforcement/policy/approval/trace/Ledger/source mutation |
 | [P1.7.11 Source Trust Resolver v0 / Shadow Mode](reports/P1.7.11_SOURCE_TRUST_RESOLVER_SHADOW_MODE.md) | 2026-06-26 | SourceTrustShadowDecision, SourceTrustDecisionReason, SourceTrustResolverInput, SourceTrustResolverResult; shadow-only WOULD_* trust recommendations; advisory recommended_trust_label; no trust mutation/policy/approval/trace/Ledger/enforcement |
