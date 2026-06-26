@@ -1,15 +1,38 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.14 — Path Violation / Drift Trace Hook)_
+_Last updated: 2026-06-26 (P1.7.15 — Path Governance Test Harness)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.14 — Path Violation / Drift Trace Hook
-- Current active: **P1.7.15 — Path Governance Test Harness (planned)**
-- Next planned: P1.7.15 — Path Governance Test Harness
+- Last completed: P1.7.15 — Path Governance Test Harness
+- Current active: **P1.7.16 — Policy Context Bridge (planned)**
+- Next planned: P1.7.16 — Policy Context Bridge
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.15 Path Governance Test Harness (COMPLETE — shadow-chain harness only)
+
+- `path_governance/test_harness.py`: `PathGovernanceHarnessScenarioKind`, `PathGovernanceHarnessExpectation`, `PathGovernanceHarnessStatus`, `PathGovernanceHarnessScenario`, `PathGovernanceHarnessRunInput`, `PathGovernanceHarnessStepResult`, `PathGovernanceHarnessRunResult`, `build_path_governance_harness_scenario()`, `build_default_path_governance_harness_suite()`, `run_path_governance_harness_scenario()`, `run_path_governance_harness_suite()`.
+- PathGovernanceHarnessScenarioKind status: **LIVE schema** — scenario classification vocabulary; not runtime action.
+- PathGovernanceHarnessExpectation status: **LIVE schema** — advisory expectation vocabulary; does not enforce.
+- PathGovernanceHarnessStatus status: **LIVE schema** — harness step status; FAIL is not enforcement.
+- PathGovernanceHarnessScenario status: **LIVE schema** — deterministic DEV_FIXTURE scenario with `scenario_id`.
+- PathGovernanceHarnessRunInput status: **LIVE schema** — deterministic suite input with `run_id` and `input_hash`.
+- PathGovernanceHarnessStepResult status: **LIVE schema** — per-scenario step outcome with `step_id` and `step_hash`.
+- PathGovernanceHarnessRunResult status: **LIVE schema** — aggregated suite outcome with `result_id` and `result_hash`, `created_by_task="P1.7.15"`, `harness_version="path_governance_test_harness.v1"`.
+- PathGovernanceHarnessReport status: **NOT IMPLEMENTED** — intentionally skipped; markdown report is the trace/evidence/report binding for this task.
+- Default DEV_FIXTURE suite status: **PASS** — nine deterministic default scenarios, all labeled `DEV_FIXTURE`.
+- `run_path_governance_harness_scenario()` status: **LIVE backend helper** — runs P1.7 shadow helpers only; no policy/approval/Ledger/runtime mutation.
+- `run_path_governance_harness_suite()` status: **LIVE backend helper** — deterministic suite aggregation; same suite yields same `result_hash`.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, or filesystem-derived state.
+- Closed-world validation status: **PASS** — harness scenario/run/step/result reject unknown fields with `UNKNOWN_FIELD`.
+- Source-label truth status: **PASS** — harness objects preserve `ProjectionSourceLabel`; default fixtures use `DEV_FIXTURE`.
+- Harness boundary summary: Path Governance Test Harness verifies shadow governance behavior; harness pass is not allow; harness fail is not deny.
+- Known unavailable states: policy context bridge, projection/API/event contract, CLI/TUI binding, Shell inspector, policy engine integration, approval activation, real enforcement, Ledger integration, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement.
+- P1.7.16 readiness: **READY** — next task is Policy Context Bridge.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md`
 
 ### P1.7.14 Path Violation / Drift Trace Hook (COMPLETE — observability-only violation/drift payload)
 

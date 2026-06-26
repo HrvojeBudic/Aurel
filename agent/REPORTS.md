@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.15 Path Governance Test Harness](reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md) | 2026-06-26 | PathGovernanceHarnessScenario/RunInput/StepResult/RunResult; default DEV_FIXTURE suite; shadow-chain harness; no policy/Ledger/enforcement |
 | [P1.7.14 Path Violation / Drift Trace Hook](reports/P1.7.14_PATH_VIOLATION_DRIFT_TRACE_HOOK.md) | 2026-06-26 | PathViolationTraceInput, PathViolationTracePayload, PathViolationTraceHookResult, PathSourceDriftSignal; expected/current drift detection; PAYLOAD_ONLY default; no correction/Ledger/enforcement |
 | [P1.7.13 Path Resolution Trace Hook](reports/P1.7.13_PATH_RESOLUTION_TRACE_HOOK.md) | 2026-06-26 | PathResolutionTraceInput, PathResolutionTracePayload, PathResolutionTraceHookResult; PAYLOAD_ONLY default, injected sink testability; no Ledger/global trace spine/enforcement |
 | [P1.7.12 Path/Source Conflict & Precedence Rules](reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md) | 2026-06-26 | PathSourceConflictKind, PrecedenceRuleKind, ConflictPrecedenceInput, ConflictPrecedenceResult; shadow-only conflict signals and strictest-wins precedence; no enforcement/policy/approval/trace/Ledger/source mutation |

@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.7.15 Path Governance Test Harness Validation (COMPLETE)
+
+Focused validation (2026-06-26):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_0_foundation.py tests/path_governance/test_p1_7_1_path_identity.py tests/path_governance/test_p1_7_2_source_identity.py tests/path_governance/test_p1_7_3_source_trust_taxonomy.py tests/path_governance/test_p1_7_4_trusted_roots.py tests/path_governance/test_p1_7_5_path_normalization_escape_contract.py tests/path_governance/test_p1_7_6_path_authority_scope.py tests/path_governance/test_p1_7_7_untrusted_content_boundary.py tests/path_governance/test_p1_7_8_source_provenance_evidence_binding.py tests/path_governance/test_p1_7_9_path_source_risk_classification.py tests/path_governance/test_p1_7_10_path_governance_resolver_shadow.py tests/path_governance/test_p1_7_11_source_trust_resolver_shadow.py tests/path_governance/test_p1_7_12_conflict_precedence.py tests/path_governance/test_p1_7_13_path_resolution_trace_hook.py tests/path_governance/test_p1_7_14_path_violation_drift_trace_hook.py tests/path_governance/test_p1_7_15_path_governance_test_harness.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P1.7.0 + P1.7.1 + P1.7.2 + P1.7.3 + P1.7.4 + P1.7.5 + P1.7.6 + P1.7.7 + P1.7.8 + P1.7.9 + P1.7.10 + P1.7.11 + P1.7.12 + P1.7.13 + P1.7.14 + P1.7.15 **499 passed** (42 P1.7.15 focused); ruff **PASS**; mypy **PASS** (224 files).
+
+Report: `agent/reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md`
+
+Operator manual seal commands (optional, not run for P1.7.15):
+
+```bash
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
 ## P1.7.14 Path Violation / Drift Trace Hook Validation (COMPLETE)
 
 Focused validation (2026-06-26):

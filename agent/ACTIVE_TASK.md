@@ -1,22 +1,22 @@
-# Active Task: P1.7.15 (planned)
+# Active Task: P1.7.16 (planned)
 
-**Status:** P1.7.14 COMPLETE; P1.7.15 PLANNED
+**Status:** P1.7.15 COMPLETE; P1.7.16 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.14 — Path Violation / Drift Trace Hook**
-- Next planned task: **P1.7.15 — Path Governance Test Harness**
+- Current completed task: **P1.7.15 — Path Governance Test Harness**
+- Next planned task: **P1.7.16 — Policy Context Bridge**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — path violation/drift trace payload/hook model added; broader P1.7 path/source governance remains in progress.
+**IN PROGRESS** — path governance test harness added; broader P1.7 path/source governance remains in progress.
 
-P1.7.14 adds `PathViolationTraceEventKind`, `PathViolationSeverity`, `PathViolationTraceHookMode`, `PathViolationTraceDisposition`, `PathViolationTraceReason`, `PathViolationTraceInput`, `PathViolationTracePayload`, `PathViolationTraceHookResult`, `PathSourceDriftSignal`, `build_path_violation_trace_payload()`, `record_path_violation_trace_hook()`, `detect_path_source_drift_signals()`, deterministic input/payload/hook/drift-signal identifiers and hashes, closed-world validation, source-label truth, `PAYLOAD_ONLY` default mode, optional injected sink testability, and observability-only violation/drift hook boundary semantics.
+P1.7.15 adds `PathGovernanceHarnessScenarioKind`, `PathGovernanceHarnessExpectation`, `PathGovernanceHarnessStatus`, `PathGovernanceHarnessScenario`, `PathGovernanceHarnessRunInput`, `PathGovernanceHarnessStepResult`, `PathGovernanceHarnessRunResult`, `build_path_governance_harness_scenario()`, `build_default_path_governance_harness_suite()`, `run_path_governance_harness_scenario()`, `run_path_governance_harness_suite()`, deterministic scenario/run/step/result identifiers and hashes, closed-world validation, source-label truth, default DEV_FIXTURE scenario suite, and shadow-chain-only harness boundary semantics.
 
-Violation/drift trace hook records evidence of mismatch. It does not correct, enforce, rollback, or punish. Every hook result has `ledger_written=false`, `runtime_mutated=false`, and `enforcement_triggered=false`.
+Path Governance Test Harness verifies shadow governance behavior. It must not become the governance runtime. Harness pass is not allow; harness fail is not deny.
 
-No path governance test harness, policy engine integration, real conflict enforcement, real precedence enforcement, source trust mutation, source taxonomy mutation, source identity mutation, trust promotion, source blocking, runtime quarantine, memory canonization, approval activation, global trace spine write by default, fake TRACE_VERIFIED, Ledger write, correction, rollback, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem access, network access, sandbox hardening, runtime enforcement, CLI/TUI binding, Shell UI, or policy bridge was added.
+No policy context bridge, projection/API/event contract, CLI/TUI binding, Shell UI, policy engine integration, approval activation, real enforcement, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem access, network access, sandbox hardening, or runtime enforcement was added.
 
 Git status: committed locally, no push performed.
 
@@ -37,3 +37,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md`
 - `agent/reports/P1.7.13_PATH_RESOLUTION_TRACE_HOOK.md`
 - `agent/reports/P1.7.14_PATH_VIOLATION_DRIFT_TRACE_HOOK.md`
+- `agent/reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md`
