@@ -468,6 +468,18 @@ from .cli_modules.policy_commands import (
     cmd_policy_status,
     cmd_policy_unavailable,
 )
+from .cli_modules.path_governance import (
+    cmd_path_governance_api_envelope,
+    cmd_path_governance_capabilities,
+    cmd_path_governance_events,
+    cmd_path_governance_harness_summary,
+    cmd_path_governance_policy_context_summary,
+    cmd_path_governance_read_model,
+    cmd_path_governance_status,
+    cmd_path_governance_trace_hook_summary,
+    cmd_path_governance_unavailable,
+    cmd_path_governance_violation_drift_summary,
+)
 
 def cmd_config_validate(args: argparse.Namespace) -> int:
     from .model_config import ModelConfigError, ProviderConfigLoader
@@ -1014,6 +1026,76 @@ def main(argv: list[str] | None = None) -> int:
     p_harness_run.add_argument("--case", default="", help="run a single case by id")
     p_harness_run.add_argument("--json", action="store_true")
     p_harness_run.set_defaults(func=cmd_policy_harness_run)
+
+    # P1.7.18 — path governance projection CLI binding
+    p_pg = sub.add_parser(
+        "path-governance",
+        help="P1.7 path governance projection (read-only)",
+    )
+    pg_sub = p_pg.add_subparsers(dest="path_governance_command", required=True)
+
+    p_pg_status = pg_sub.add_parser("status", help="show path governance projection status")
+    p_pg_status.add_argument("--json", action="store_true")
+    p_pg_status.add_argument("--table", action="store_true")
+    p_pg_status.add_argument("--tui", action="store_true")
+    p_pg_status.set_defaults(func=cmd_path_governance_status)
+
+    p_pg_capabilities = pg_sub.add_parser(
+        "capabilities", help="show path governance capability records",
+    )
+    p_pg_capabilities.add_argument("--json", action="store_true")
+    p_pg_capabilities.add_argument("--table", action="store_true")
+    p_pg_capabilities.add_argument("--tui", action="store_true")
+    p_pg_capabilities.set_defaults(func=cmd_path_governance_capabilities)
+
+    p_pg_read_model = pg_sub.add_parser(
+        "read-model", help="show path governance read model (JSON)",
+    )
+    p_pg_read_model.add_argument("--json", action="store_true")
+    p_pg_read_model.set_defaults(func=cmd_path_governance_read_model)
+
+    p_pg_api_envelope = pg_sub.add_parser(
+        "api-envelope", help="show path governance API envelope (JSON)",
+    )
+    p_pg_api_envelope.add_argument("--json", action="store_true")
+    p_pg_api_envelope.set_defaults(func=cmd_path_governance_api_envelope)
+
+    p_pg_events = pg_sub.add_parser("events", help="show projection event contracts")
+    p_pg_events.add_argument("--json", action="store_true")
+    p_pg_events.set_defaults(func=cmd_path_governance_events)
+
+    p_pg_unavailable = pg_sub.add_parser(
+        "unavailable", help="list unavailable path governance bindings",
+    )
+    p_pg_unavailable.add_argument("--json", action="store_true")
+    p_pg_unavailable.set_defaults(func=cmd_path_governance_unavailable)
+
+    p_pg_harness = pg_sub.add_parser(
+        "harness-summary", help="show path governance harness projection summary",
+    )
+    p_pg_harness.add_argument("--json", action="store_true")
+    p_pg_harness.set_defaults(func=cmd_path_governance_harness_summary)
+
+    p_pg_policy = pg_sub.add_parser(
+        "policy-context-summary",
+        help="show policy context bridge projection summary",
+    )
+    p_pg_policy.add_argument("--json", action="store_true")
+    p_pg_policy.set_defaults(func=cmd_path_governance_policy_context_summary)
+
+    p_pg_trace = pg_sub.add_parser(
+        "trace-hook-summary",
+        help="show path resolution trace hook projection summary",
+    )
+    p_pg_trace.add_argument("--json", action="store_true")
+    p_pg_trace.set_defaults(func=cmd_path_governance_trace_hook_summary)
+
+    p_pg_violation = pg_sub.add_parser(
+        "violation-drift-summary",
+        help="show violation/drift trace hook projection summary",
+    )
+    p_pg_violation.add_argument("--json", action="store_true")
+    p_pg_violation.set_defaults(func=cmd_path_governance_violation_drift_summary)
 
     p_identity = sub.add_parser("identity", help="identity kernel commands")
     identity_sub = p_identity.add_subparsers(dest="identity_command", required=True)

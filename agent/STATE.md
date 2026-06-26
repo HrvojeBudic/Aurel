@@ -1,15 +1,37 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.17 — Path Governance Projection/API/Event Contract)_
+_Last updated: 2026-06-26 (P1.7.18 — Path Governance CLI/TUI Binding)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.17 — Path Governance Projection/API/Event Contract
-- Current active: **P1.7.18 — Path Governance CLI/TUI Binding (planned)**
-- Next planned: P1.7.18 — Path Governance CLI/TUI Binding
+- Last completed: P1.7.18 — Path Governance CLI/TUI Binding
+- Current active: **P1.7.19 — Docs/State/Reports Update (planned)**
+- Next planned: P1.7.19 — Docs/State/Reports Update
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.18 Path Governance CLI/TUI Binding (COMPLETE — read-only projection binding)
+
+- `path_governance/cli_binding.py`: `PathGovernanceCliCommandKind`, `PathGovernanceCliOutputFormat`, `PathGovernanceCliBindingMode`, `PathGovernanceCliSideEffects`, `PathGovernanceCliRequest`, `PathGovernanceCliRenderedLine`, `PathGovernanceCliResponse`, `build_path_governance_cli_request()`, `render_path_governance_status_text()`, `render_path_governance_capability_table()`, `render_path_governance_json_payload()`, `render_path_governance_cli_response()`, `handle_path_governance_cli_request()`.
+- PathGovernanceCliCommandKind status: **LIVE schema** — STATUS, CAPABILITIES, READ_MODEL, API_ENVELOPE, EVENTS, HARNESS_SUMMARY, POLICY_CONTEXT_SUMMARY, TRACE_HOOK_SUMMARY, VIOLATION_DRIFT_SUMMARY, UNAVAILABLE_BINDINGS; not runtime action.
+- PathGovernanceCliOutputFormat status: **LIVE schema** — TEXT, JSON, TABLE, TUI_TEXT; TUI_TEXT is terminal-readable text, not Shell UI.
+- PathGovernanceCliBindingMode status: **LIVE schema** — default READ_ONLY; not authority.
+- PathGovernanceCliSideEffects status: **LIVE schema** — all side-effect booleans false in P1.7.18.
+- PathGovernanceCliRequest status: **LIVE schema** — deterministic `request_id` and `request_hash`; no side effects.
+- PathGovernanceCliRenderedLine status: **LIVE schema** — deterministic `line_id` and `line_hash`.
+- PathGovernanceCliResponse status: **LIVE schema** — deterministic `response_id` and `response_hash`; `created_by_task="P1.7.18"`.
+- PathGovernanceCliBindingReport status: **NOT IMPLEMENTED** — intentionally skipped; markdown report is the evidence artifact.
+- CLI registration status: **LIVE (read-only)** — `cli_modules/path_governance.py` + `cli.py path-governance` subcommands; no `register_path_governance_cli()` (follows P1.6.18 policy pattern).
+- Side-effect truth status: **PASS** — `policy_called`, `approval_created`, `ledger_written`, `global_trace_written`, `runtime_mutated`, `enforcement_triggered`, `source_mutated`, `prompt_filtered`, `memory_written`, `tool_blocked` all false.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, or filesystem-derived state.
+- Closed-world validation status: **PASS** — CLI request/side effects/rendered line/response reject unknown fields with `UNKNOWN_FIELD`.
+- Source-label truth status: **PASS** — CLI output preserves `ProjectionSourceLabel`; no fake TRACE_VERIFIED.
+- CLI/TUI boundary summary: CLI binding exposes projection state; it does not create authority or execute policy.
+- Known unavailable states: Shell UI, Web UI, HTTP server, policy runtime, Ledger integration, enforcement, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement.
+- P1.7.19 readiness: **READY** — next task is Docs/State/Reports Update.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.18_PATH_GOVERNANCE_CLI_TUI_BINDING.md`
 
 ### P1.7.17 Path Governance Projection/API/Event Contract (COMPLETE — read-model only)
 

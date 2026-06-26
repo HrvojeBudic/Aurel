@@ -29,8 +29,12 @@ PATH_GOVERNANCE_PROJECTION_EVENT_SCHEMA = "path_governance_projection_event.v1"
 PATH_GOVERNANCE_API_ENVELOPE_CONTRACT_NAME = "path_governance_projection_api_event_contract"
 PATH_GOVERNANCE_API_ENVELOPE_CONTRACT_VERSION = "v1"
 
+CLI_BINDING_MODULE = "agentic_runtime.path_governance.cli_binding"
 CLI_TUI_BINDING_UNAVAILABLE_REASON = (
     "UNAVAILABLE: CLI/TUI binding begins in P1.7.18"
+)
+CLI_TUI_BINDING_AVAILABLE_SUMMARY = (
+    "Path governance CLI/TUI binding available (P1.7.18)"
 )
 SHELL_BINDING_UNAVAILABLE_REASON = (
     "UNAVAILABLE: Shell binding not implemented in P1.7.17"
@@ -795,12 +799,17 @@ def _compute_envelope_hash(envelope: PathGovernanceApiEnvelope) -> str:
     return stable_hash(envelope.to_canonical_dict(include_hash=False))
 
 
-def _default_unavailable_bindings() -> dict[str, dict[str, str]]:
-    return {
-        "cli_tui": {
+def _default_unavailable_bindings(
+    *,
+    cli_binding_available: bool = False,
+) -> dict[str, dict[str, str]]:
+    bindings: dict[str, dict[str, str]] = {}
+    if not cli_binding_available:
+        bindings["cli_tui"] = {
             "reason": CLI_TUI_BINDING_UNAVAILABLE_REASON,
             "status": ProjectionSourceLabel.UNAVAILABLE.value,
-        },
+        }
+    bindings.update({
         "http_server": {
             "reason": HTTP_SERVER_UNAVAILABLE_REASON,
             "status": ProjectionSourceLabel.UNAVAILABLE.value,
@@ -817,7 +826,8 @@ def _default_unavailable_bindings() -> dict[str, dict[str, str]]:
             "reason": SHELL_BINDING_UNAVAILABLE_REASON,
             "status": ProjectionSourceLabel.UNAVAILABLE.value,
         },
-    }
+    })
+    return bindings
 
 
 def build_path_governance_projection_record(
@@ -988,6 +998,7 @@ def _default_projection_events(
     records: Sequence[PathGovernanceProjectionRecord],
     read_model: PathGovernanceReadModel,
     source_label: ProjectionSourceLabel,
+    cli_binding_available: bool = False,
 ) -> tuple[PathGovernanceProjectionEvent, ...]:
     events = [
         build_path_governance_projection_event(
@@ -997,11 +1008,16 @@ def _default_projection_events(
             summary="path governance read model created",
             source_label=source_label,
         ),
-        build_path_governance_projection_event(
-            PathGovernanceProjectionEventKind.CLI_BINDING_UNAVAILABLE,
-            summary=CLI_TUI_BINDING_UNAVAILABLE_REASON,
-            source_label=ProjectionSourceLabel.UNAVAILABLE,
-        ),
+    ]
+    if not cli_binding_available:
+        events.append(
+            build_path_governance_projection_event(
+                PathGovernanceProjectionEventKind.CLI_BINDING_UNAVAILABLE,
+                summary=CLI_TUI_BINDING_UNAVAILABLE_REASON,
+                source_label=ProjectionSourceLabel.UNAVAILABLE,
+            ),
+        )
+    events.extend([
         build_path_governance_projection_event(
             PathGovernanceProjectionEventKind.SHELL_BINDING_UNAVAILABLE,
             summary=SHELL_BINDING_UNAVAILABLE_REASON,
@@ -1017,7 +1033,7 @@ def _default_projection_events(
             summary=LEDGER_WRITE_UNAVAILABLE_REASON,
             source_label=ProjectionSourceLabel.UNAVAILABLE,
         ),
-    ]
+    ])
     for record in records:
         if record.capability_kind is PathGovernanceCapabilityKind.POLICY_CONTEXT_BRIDGE:
             events.append(
@@ -1080,6 +1096,7 @@ def build_path_governance_api_envelope(
     unavailable_bindings: Mapping[str, Any] | None = None,
     source_label: ProjectionSourceLabel | str | None = None,
     metadata: Mapping[str, Any] | None = None,
+    cli_binding_available: bool = False,
 ) -> PathGovernanceApiEnvelope:
     """Build API envelope object; does not start HTTP server or CLI."""
     effective_records = list(records or ())
@@ -1097,7 +1114,7 @@ def build_path_governance_api_envelope(
         )
     parsed_source = read_model.source_label if source_label is None else _parse_source_label(source_label)
     frozen_metadata = _freeze_metadata(metadata)
-    bindings = _default_unavailable_bindings()
+    bindings = _default_unavailable_bindings(cli_binding_available=cli_binding_available)
     if unavailable_bindings:
         bindings.update(dict(unavailable_bindings))
 
@@ -1105,6 +1122,7 @@ def build_path_governance_api_envelope(
         records=read_model.records,
         read_model=read_model,
         source_label=parsed_source,
+        cli_binding_available=cli_binding_available,
     )
 
     envelope_id = compute_path_governance_api_envelope_id(
@@ -1135,8 +1153,14 @@ def build_path_governance_api_envelope(
     )
 
 
-def _default_capability_summary(kind: PathGovernanceCapabilityKind) -> str:
+def _default_capability_summary(
+    kind: PathGovernanceCapabilityKind,
+    *,
+    cli_binding_available: bool = False,
+) -> str:
     if kind is PathGovernanceCapabilityKind.CLI_TUI_BINDING:
+        if cli_binding_available:
+            return CLI_TUI_BINDING_AVAILABLE_SUMMARY
         return "CLI/TUI binding unavailable until P1.7.18"
     module = _DEFAULT_CAPABILITY_MODULES.get(kind, "")
     if module:
@@ -1148,6 +1172,7 @@ def build_default_path_governance_capability_projection(
     *,
     source_label: ProjectionSourceLabel | str | None = None,
     metadata: Mapping[str, Any] | None = None,
+    cli_binding_available: bool = False,
 ) -> PathGovernanceApiEnvelope:
     """Build default P1.7.0–P1.7.17 capability projection envelope."""
     parsed_source = (
@@ -1158,15 +1183,30 @@ def build_default_path_governance_capability_projection(
     records: list[PathGovernanceProjectionRecord] = []
     for kind in _DEFAULT_CAPABILITY_ORDER:
         if kind is PathGovernanceCapabilityKind.CLI_TUI_BINDING:
-            records.append(
-                build_path_governance_projection_record(
-                    kind,
-                    ProjectionSourceLabel.UNAVAILABLE,
-                    _default_capability_summary(kind),
-                    unavailable_reason=CLI_TUI_BINDING_UNAVAILABLE_REASON,
-                    source_label=ProjectionSourceLabel.UNAVAILABLE,
-                ),
-            )
+            if cli_binding_available:
+                records.append(
+                    build_path_governance_projection_record(
+                        kind,
+                        ProjectionSourceLabel.LIVE,
+                        _default_capability_summary(
+                            kind,
+                            cli_binding_available=True,
+                        ),
+                        subject_refs=[{"module": CLI_BINDING_MODULE}],
+                        evidence_refs=[{"task": "p1.7.18"}],
+                        source_label=parsed_source,
+                    ),
+                )
+            else:
+                records.append(
+                    build_path_governance_projection_record(
+                        kind,
+                        ProjectionSourceLabel.UNAVAILABLE,
+                        _default_capability_summary(kind),
+                        unavailable_reason=CLI_TUI_BINDING_UNAVAILABLE_REASON,
+                        source_label=ProjectionSourceLabel.UNAVAILABLE,
+                    ),
+                )
             continue
         module = _DEFAULT_CAPABILITY_MODULES.get(kind, "")
         records.append(
@@ -1183,4 +1223,5 @@ def build_default_path_governance_capability_projection(
         records=records,
         source_label=parsed_source,
         metadata=metadata,
+        cli_binding_available=cli_binding_available,
     )

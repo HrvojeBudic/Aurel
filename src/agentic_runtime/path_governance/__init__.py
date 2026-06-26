@@ -19,6 +19,7 @@ P1.7.14 adds deterministic path violation/drift trace hook payload model without
 P1.7.15 adds deterministic path governance test harness without runtime enforcement.
 P1.7.16 adds deterministic policy context bridge without policy engine or enforcement.
 P1.7.17 adds deterministic projection/API/event contract without CLI, HTTP server, or enforcement.
+P1.7.18 adds deterministic CLI/TUI binding without runtime authority, policy, or enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -381,6 +382,7 @@ from .policy_context_bridge import (
     derive_path_policy_requirements,
 )
 from .projection_contract import (
+    CLI_BINDING_MODULE,
     CLI_TUI_BINDING_UNAVAILABLE_REASON,
     HTTP_SERVER_UNAVAILABLE_REASON,
     LEDGER_WRITE_UNAVAILABLE_REASON,
@@ -411,6 +413,28 @@ from .projection_contract import (
     compute_path_governance_projection_event_id,
     compute_path_governance_projection_record_id,
     compute_path_governance_read_model_id,
+)
+from .cli_binding import (
+    ENFORCEMENT_UNAVAILABLE_REASON,
+    PATH_GOVERNANCE_CLI_RENDERED_LINE_SCHEMA,
+    PATH_GOVERNANCE_CLI_REQUEST_SCHEMA,
+    PATH_GOVERNANCE_CLI_RESPONSE_SCHEMA,
+    PATH_GOVERNANCE_CLI_SIDE_EFFECTS_SCHEMA,
+    PathGovernanceCliBindingMode,
+    PathGovernanceCliCommandKind,
+    PathGovernanceCliOutputFormat,
+    PathGovernanceCliRenderedLine,
+    PathGovernanceCliRenderLineLevel,
+    PathGovernanceCliRequest,
+    PathGovernanceCliResponse,
+    PathGovernanceCliSideEffects,
+    build_path_governance_cli_request,
+    build_path_governance_cli_side_effects,
+    handle_path_governance_cli_request,
+    render_path_governance_capability_table,
+    render_path_governance_cli_response,
+    render_path_governance_json_payload,
+    render_path_governance_status_text,
 )
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
@@ -468,6 +492,7 @@ __all__ = [
     "compute_path_policy_context_packet_id",
     "compute_path_policy_context_subject_ref_id",
     "derive_path_policy_requirements",
+    "CLI_BINDING_MODULE",
     "CLI_TUI_BINDING_UNAVAILABLE_REASON",
     "HTTP_SERVER_UNAVAILABLE_REASON",
     "LEDGER_WRITE_UNAVAILABLE_REASON",
@@ -498,6 +523,26 @@ __all__ = [
     "compute_path_governance_projection_event_id",
     "compute_path_governance_projection_record_id",
     "compute_path_governance_read_model_id",
+    "ENFORCEMENT_UNAVAILABLE_REASON",
+    "PATH_GOVERNANCE_CLI_RENDERED_LINE_SCHEMA",
+    "PATH_GOVERNANCE_CLI_REQUEST_SCHEMA",
+    "PATH_GOVERNANCE_CLI_RESPONSE_SCHEMA",
+    "PATH_GOVERNANCE_CLI_SIDE_EFFECTS_SCHEMA",
+    "PathGovernanceCliBindingMode",
+    "PathGovernanceCliCommandKind",
+    "PathGovernanceCliOutputFormat",
+    "PathGovernanceCliRenderedLine",
+    "PathGovernanceCliRenderLineLevel",
+    "PathGovernanceCliRequest",
+    "PathGovernanceCliResponse",
+    "PathGovernanceCliSideEffects",
+    "build_path_governance_cli_request",
+    "build_path_governance_cli_side_effects",
+    "handle_path_governance_cli_request",
+    "render_path_governance_capability_table",
+    "render_path_governance_cli_response",
+    "render_path_governance_json_payload",
+    "render_path_governance_status_text",
     "PATH_GOVERNANCE_MODULE_NAME",
     "PATH_GOVERNANCE_MODULE_VERSION",
     "PATH_GOVERNANCE_RESOLVER_INPUT_KNOWN_FIELDS",

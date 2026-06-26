@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.17 — Path Governance Projection/API/Event Contract |
-| **Current active** | **P1.7.18 — Path Governance CLI/TUI Binding (planned)** |
+| **Last completed** | P1.7.18 — Path Governance CLI/TUI Binding |
+| **Current active** | **P1.7.19 — Docs/State/Reports Update (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.18 — Path Governance CLI/TUI Binding |
+| **Next planned** | P1.7.19 — Docs/State/Reports Update |
+
+**P1.7.18 complete** — Path governance CLI/TUI binding: `PathGovernanceCliCommandKind`, `PathGovernanceCliOutputFormat`, `PathGovernanceCliBindingMode`, `PathGovernanceCliSideEffects`, `PathGovernanceCliRequest`, `PathGovernanceCliRenderedLine`, `PathGovernanceCliResponse`, `build_path_governance_cli_request()`, `render_path_governance_status_text()`, `render_path_governance_capability_table()`, `render_path_governance_json_payload()`, `render_path_governance_cli_response()`, `handle_path_governance_cli_request()`, read-only `path-governance` CLI subcommands, deterministic request/line/response hashes, source-label truth, unavailable reason visibility, side-effect truth booleans all false, and closed-world validation. Read-only projection binding; CLI exposes state and does not execute policy; no Shell UI, Web UI, HTTP server, policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, or runtime enforcement. P1.7 remains in progress. Next: **P1.7.19 — Docs/State/Reports Update**.
 
 **P1.7.17 complete** — Path governance projection/API/event contract: `PathGovernanceCapabilityKind`, `PathGovernanceProjectionEventKind`, `PathGovernanceProjectionRecord`, `PathGovernanceReadModel`, `PathGovernanceProjectionEvent`, `PathGovernanceApiEnvelope`, `build_path_governance_projection_record()`, `build_path_governance_read_model()`, `build_path_governance_projection_event()`, `build_path_governance_api_envelope()`, `build_default_path_governance_capability_projection()`, deterministic record/read-model/event/envelope identifiers and hashes, default P1.7.0–P1.7.17 capability projection, CLI_TUI_BINDING marked UNAVAILABLE, source-label truth, unavailable reason handling, and closed-world validation. Read-model only; projection exposes state and does not execute state; no CLI/TUI, Shell UI, HTTP server, policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, or runtime enforcement. P1.7 remains in progress. Next: **P1.7.18 — Path Governance CLI/TUI Binding**.
 
