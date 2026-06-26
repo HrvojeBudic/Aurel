@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook)_
+_Last updated: 2026-06-27 (P1.8.7 — Delegation Scope / Boundary Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook
-- Current active: **P1.8.7 — Delegation Scope / Boundary Model (planned)**
-- Next planned: P1.8.7 — Delegation Scope / Boundary Model
+- Last completed: P1.8.7 — Delegation Scope / Boundary Model
+- Current active: **P1.8.8 — Delegation Expiry / RevocationRef Model (planned)**
+- Next planned: P1.8.8 — Delegation Expiry / RevocationRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7 complete)
+
+### P1.8.7 delegation scope / boundary model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationScopeRef | Deterministic `scope_hash` | DEV_FIXTURE in tests | Not permission granted |
+| DelegationBoundaryRef | Deterministic `boundary_hash` | DEV_FIXTURE | Not boundary enforced |
+| DelegationScopeInclusionRef | Deterministic `inclusion_hash` | DEV_FIXTURE | Not permission |
+| DelegationScopeExclusionRef | Deterministic `exclusion_hash` | DEV_FIXTURE | Not denial |
+| DelegationBoundaryMatrix | Deterministic `boundary_matrix_hash` | DEV_FIXTURE | Not enforcement matrix |
+| DelegationScopeReadinessProfile | Deterministic `scope_readiness_hash` | DEV_FIXTURE | Not enforcement readiness guarantee |
+| DelegationScopeEnvelope | Deterministic `scope_envelope_hash` | DEV_FIXTURE | Not permission grant |
+| DelegationScopeBindingSet | Deterministic `scope_binding_set_hash` | DEV_FIXTURE | Does not grant access |
+
+**Known UNAVAILABLE (P1.8.7):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Permission Grant, Access Control Engine, Runtime Boundary Enforcer, Tool Permission Mutation, Data Access Mutation, Memory Access Mutation, Path Authorization, Network Access Mutation, Policy/Custos Decision, Approval Creation, Runtime Blocker, P1.8.8 Expiry/Revocation Model, Output Passport/P1.9, Runtime Delegation Execution.
+
+**Explicit negatives:** DelegationScopeRef exists ≠ permission granted. DelegationBoundaryRef exists ≠ boundary enforced. ScopeEnvelope exists ≠ runtime access control exists. BoundaryMatrix exists ≠ enforcement matrix exists. IN_SCOPE ≠ allowed. OUT_OF_SCOPE ≠ blocked. InclusionRef ≠ permission. ExclusionRef ≠ denial. ScopeReadinessProfile ≠ enforcement readiness guarantee. Scope hash ≠ TRACE_VERIFIED. scope_envelope_hash ≠ TRACE_VERIFIED. scope_binding_set_hash ≠ proof of enforcement. No permission/access/boundary/runtime/tool/data/memory/path/network mutation, no policy/Custos/approval/Ledger/trace, no P1.8.8, no P1.9.
+
+Report: `agent/reports/P1.8.7_DELEGATION_SCOPE_BOUNDARY_MODEL.md`
 
 ### P1.8.6 agent identity mesh reference-binding summary
 

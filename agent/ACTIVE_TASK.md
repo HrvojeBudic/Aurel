@@ -1,12 +1,22 @@
-# Active Task: P1.8.7 (planned)
+# Active Task: P1.8.8 (planned)
 
-**Status:** P1.8.6 COMPLETE; P1.8.7 PLANNED
+**Status:** P1.8.7 COMPLETE; P1.8.8 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook**
-- Next planned task: **P1.8.7 — Delegation Scope / Boundary Model**
+- Last completed task: **P1.8.7 — Delegation Scope / Boundary Model**
+- Next planned task: **P1.8.8 — Delegation Expiry / RevocationRef Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.7 Status
+
+**COMPLETE** — P1.8.7 delegation scope/boundary reference model verified after focused validation.
+
+P1.8.7 establishes a deterministic, versioned, JSON-safe, side-effect-free delegation scope/boundary reference layer. DelegationScopeKind (TASK_SCOPE/TOOL_SCOPE/DATA_SCOPE/MEMORY_SCOPE/PATH_SCOPE/RUNTIME_SCOPE/AGENT_SCOPE/MODEL_SCOPE/NETWORK_SCOPE/APPROVAL_SCOPE/TIME_SCOPE/RISK_SCOPE/UNKNOWN), DelegationBoundaryKind (INCLUSION/EXCLUSION/LIMIT/REQUIREMENT/REFERENCE_ONLY/UNAVAILABLE/UNKNOWN), DelegationScopeDimension (TOOL/DATA/MEMORY/PATH/RUNTIME/AGENT/MODEL/NETWORK/HUMAN_APPROVAL/TIME/RISK/UNKNOWN), DelegationBoundaryPosture (IN_SCOPE/OUT_OF_SCOPE/REFERENCE_ONLY/UNAVAILABLE/UNKNOWN), DelegationScopeStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationScopeRef, DelegationBoundaryRef, DelegationScopeInclusionRef, DelegationScopeExclusionRef, DelegationBoundaryMatrixEntry, DelegationBoundaryMatrix, DelegationScopeReadinessProfile, DelegationScopeEnvelope, DelegationScopeBinding, DelegationScopeBindingSet, DelegationScopeSideEffects (15 all-false booleans), DelegationScopeStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain (82 tests), and 18 unavailable surface reasons.
+
+Boundary: DelegationScopeRef exists ≠ permission granted. DelegationBoundaryRef exists ≠ boundary enforced. ScopeEnvelope exists ≠ runtime access control exists. BoundaryMatrix exists ≠ enforcement matrix exists. IN_SCOPE exists ≠ allowed. OUT_OF_SCOPE exists ≠ blocked. InclusionRef exists ≠ permission. ExclusionRef exists ≠ denial. ScopeReadinessProfile exists ≠ enforcement readiness guarantee. Scope hash exists ≠ TRACE_VERIFIED. scope_envelope_hash exists ≠ TRACE_VERIFIED. scope_binding_set_hash exists ≠ proof of enforcement. No permission grant, access grant, boundary enforcement, runtime blocking, tool/data/memory/path/network mutation, policy/Custos, approval creation, Ledger write, global trace write, runtime mutation, P1.8.8, P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.6 Status
 
@@ -84,6 +94,9 @@ Git status: committed locally, no push performed.
 
 ## Completed Reports
 
+- `agent/reports/P1.8.7_DELEGATION_SCOPE_BOUNDARY_MODEL.md`
+- `agent/reports/P1.8.6_AGENT_IDENTITY_MESH_REF_BINDING.md`
+- `agent/reports/P1.8.5_NON_REPUDIATION_REF_BINDING.md`
 - `agent/reports/P1.8.4_DELEGATION_AUTHORITY_REF_BINDING.md`
 - `agent/reports/P1.8.3_DELEGATION_CONSTRAINT_MODEL.md`
 - `agent/reports/P1.8.2_DELEGATOR_DELEGATE_SUBJECT_MODEL.md`
