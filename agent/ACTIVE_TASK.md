@@ -1,12 +1,22 @@
-# Active Task: P1.8.4 (planned)
+# Active Task: P1.8.5 (planned)
 
-**Status:** P1.8.3 COMPLETE; P1.8.4 PLANNED
+**Status:** P1.8.4 COMPLETE; P1.8.5 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.3 — Delegation Constraint Model**
-- Next planned task: **P1.8.4 — Delegation AuthorityRef Binding**
+- Last completed task: **P1.8.4 — Delegation AuthorityRef Binding**
+- Next planned task: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.4 Status
+
+**COMPLETE** — P1.8.4 authority-reference binding layer verified after focused validation.
+
+P1.8.4 establishes a deterministic, versioned, JSON-safe, side-effect-free authority-reference binding layer for delegation authority context. DelegationAuthorityRefKind (OPERATOR_DECLARED/POLICY_CONTEXT_REFERENCED/PATH_AUTHORITY_REFERENCED/SYSTEM_DECLARED/CONSTRAINT_CONTEXT_REFERENCED/UNKNOWN), DelegationAuthorityRefStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationAuthorityRef, DelegationAuthorityBinding, DelegationAuthorityBindingSet, DelegationAuthoritySideEffects (11 all-false booleans), DelegationAuthorityStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain, and 16 unavailable surface reasons.
+
+Boundary: AuthorityRef exists ≠ authority granted. Authority basis exists ≠ authority verified. Policy context ref exists ≠ policy/Custos decision. Path authority ref exists ≠ path authorized. Operator declaration exists ≠ legal or operational authority proven. Authority binding exists ≠ approval created. Authority binding exists ≠ permission granted. Authority hash exists ≠ TRACE_VERIFIED. Authority binding set exists ≠ runtime execution. Authority model exists ≠ resolver exists. No authority resolver, authority verifier, authority grant, policy/Custos decision, approval creation, permission grant, path authorization, constraint enforcement, crypto signing, trace/Ledger write, CLI/TUI/projection/API, or non-repudiation verifier.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.3 Status
 
@@ -54,6 +64,8 @@ Git status: committed locally, no push performed.
 
 ## Completed Reports
 
+- `agent/reports/P1.8.4_DELEGATION_AUTHORITY_REF_BINDING.md`
+- `agent/reports/P1.8.3_DELEGATION_CONSTRAINT_MODEL.md`
 - `agent/reports/P1.8.2_DELEGATOR_DELEGATE_SUBJECT_MODEL.md`
 - `agent/reports/P1.8.1_DELEGATION_IDENTITY_REF_SCHEMA.md`
 - `agent/reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md`

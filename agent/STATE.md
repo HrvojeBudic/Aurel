@@ -1,15 +1,31 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.3 — Delegation Constraint Model)_
+_Last updated: 2026-06-27 (P1.8.4 — Delegation AuthorityRef Binding)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.3 — Delegation Constraint Model
-- Current active: **P1.8.4 — Delegation AuthorityRef Binding (planned)**
-- Next planned: P1.8.4 — Delegation AuthorityRef Binding
+- Last completed: P1.8.4 — Delegation AuthorityRef Binding
+- Current active: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook (planned)**
+- Next planned: P1.8.5 — Non-RepudiationRef Binding / Evidence Hook
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4 complete)
+
+### P1.8.4 delegation authority-reference binding summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationAuthorityRef | Deterministic `authority_ref_hash` | DEV_FIXTURE in tests | Not authority grant |
+| DelegationAuthorityBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not approval/permission |
+| DelegationAuthorityBindingSet | Deterministic `authority_binding_set_hash` | DEV_FIXTURE | Not runtime execution |
+| DelegationAuthoritySideEffects | 11 booleans all false | LIVE schema | Non-authorizing, non-verifying, non-mutating |
+| Authority status report | `delegation_authority_status_report.v1` | DEV_FIXTURE | Not runtime active |
+
+**Known UNAVAILABLE (P1.8.4):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, policy/Custos decision, policy/Custos enforcement, approval activation, authority grant, authority resolver, authority verifier, permission grant, path authorization, constraint enforcement, non-repudiation verifier, violation/drift detector, runtime delegation execution.
+
+**Explicit negatives:** AuthorityRef exists ≠ authority granted. Authority basis exists ≠ authority verified. Policy context ref exists ≠ policy/Custos decision. Path authority ref exists ≠ path authorized. Operator declaration exists ≠ legal/operational authority proven. Authority binding exists ≠ approval created. Authority binding exists ≠ permission granted. Authority hash exists ≠ TRACE_VERIFIED. Authority binding set exists ≠ runtime execution. Authority model exists ≠ resolver. No policy/Custos/approval/Ledger/global trace/runtime mutation.
+
+Report: `agent/reports/P1.8.4_DELEGATION_AUTHORITY_REF_BINDING.md`
 
 ### P1.8.3 delegation constraint model summary
 

@@ -14,6 +14,12 @@ Constraint model layer (P1.8.3): declared constraint contracts bound to
 DelegationRef / DelegationIdentity / DelegationRoleBindingSet without enforcing,
 approving, blocking, verifying, resolving, or mutating runtime behavior.
 
+Authority-reference binding layer (P1.8.4): reference-only authority context
+binding to DelegationRef / DelegationIdentity / DelegationRoleBindingSet /
+DelegationConstraintSet without granting authority, verifying authority,
+creating approval, calling policy/Custos, enforcing constraints, executing
+runtime actions, writing trace, or writing Ledger.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -42,6 +48,15 @@ Architectural law:
   - Constraint set exists ≠ runtime blocking.
   - Constraint model exists ≠ resolver exists.
   - Constraint binding exists ≠ authority granted.
+  - AuthorityRef exists ≠ authority granted.
+  - Authority basis exists ≠ authority verified.
+  - Policy context ref exists ≠ policy/Custos decision.
+  - Path authority ref exists ≠ path authorized.
+  - Operator declaration exists ≠ legal or operational authority proven.
+  - Authority binding exists ≠ approval created.
+  - Authority binding exists ≠ permission granted.
+  - Authority hash exists ≠ TRACE_VERIFIED.
+  - Authority binding set exists ≠ runtime execution.
 """
 from __future__ import annotations
 
@@ -194,6 +209,36 @@ from .constraints import (
     hash_delegation_constraint_set,
     serialize_delegation_constraint_ref,
     serialize_delegation_constraint_set,
+)
+
+from .authority import (
+    AUTHORITY_BINDING_KNOWN_FIELDS,
+    AUTHORITY_BINDING_SET_KNOWN_FIELDS,
+    AUTHORITY_REF_KNOWN_FIELDS,
+    AUTHORITY_SIDE_EFFECTS_KNOWN_FIELDS,
+    AUTHORITY_STATUS_REPORT_KNOWN_FIELDS,
+    DELEGATION_AUTHORITY_BINDING_SET_VERSION,
+    DELEGATION_AUTHORITY_BINDING_VERSION,
+    DELEGATION_AUTHORITY_REF_VERSION,
+    DELEGATION_AUTHORITY_SIDE_EFFECTS_VERSION,
+    DELEGATION_AUTHORITY_STATUS_REPORT_VERSION,
+    DELEGATION_AUTHORITY_TASK_ID,
+    DELEGATION_AUTHORITY_UNAVAILABLE_BINDINGS,
+    DelegationAuthorityBinding,
+    DelegationAuthorityBindingSet,
+    DelegationAuthorityRef,
+    DelegationAuthorityRefKind,
+    DelegationAuthorityRefStatus,
+    DelegationAuthoritySideEffects,
+    DelegationAuthorityStatusReport,
+    build_delegation_authority_binding,
+    build_delegation_authority_binding_set,
+    build_delegation_authority_ref,
+    build_delegation_authority_status_report,
+    hash_delegation_authority_binding_set,
+    hash_delegation_authority_ref,
+    serialize_delegation_authority_binding_set,
+    serialize_delegation_authority_ref,
 )
 
 __all__ = [
@@ -353,4 +398,35 @@ __all__ = [
     "hash_delegation_constraint_set",
     "serialize_delegation_constraint_ref",
     "serialize_delegation_constraint_set",
+    # P1.8.4 authority constants
+    "AUTHORITY_BINDING_KNOWN_FIELDS",
+    "AUTHORITY_BINDING_SET_KNOWN_FIELDS",
+    "AUTHORITY_REF_KNOWN_FIELDS",
+    "AUTHORITY_SIDE_EFFECTS_KNOWN_FIELDS",
+    "AUTHORITY_STATUS_REPORT_KNOWN_FIELDS",
+    "DELEGATION_AUTHORITY_BINDING_SET_VERSION",
+    "DELEGATION_AUTHORITY_BINDING_VERSION",
+    "DELEGATION_AUTHORITY_REF_VERSION",
+    "DELEGATION_AUTHORITY_SIDE_EFFECTS_VERSION",
+    "DELEGATION_AUTHORITY_STATUS_REPORT_VERSION",
+    "DELEGATION_AUTHORITY_TASK_ID",
+    "DELEGATION_AUTHORITY_UNAVAILABLE_BINDINGS",
+    # P1.8.4 enums
+    "DelegationAuthorityRefKind",
+    "DelegationAuthorityRefStatus",
+    # P1.8.4 dataclasses
+    "DelegationAuthorityBinding",
+    "DelegationAuthorityBindingSet",
+    "DelegationAuthorityRef",
+    "DelegationAuthoritySideEffects",
+    "DelegationAuthorityStatusReport",
+    # P1.8.4 builders / helpers / hash functions
+    "build_delegation_authority_binding",
+    "build_delegation_authority_binding_set",
+    "build_delegation_authority_ref",
+    "build_delegation_authority_status_report",
+    "hash_delegation_authority_binding_set",
+    "hash_delegation_authority_ref",
+    "serialize_delegation_authority_binding_set",
+    "serialize_delegation_authority_ref",
 ]
