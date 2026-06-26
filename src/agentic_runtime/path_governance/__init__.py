@@ -20,6 +20,7 @@ P1.7.15 adds deterministic path governance test harness without runtime enforcem
 P1.7.16 adds deterministic policy context bridge without policy engine or enforcement.
 P1.7.17 adds deterministic projection/API/event contract without CLI, HTTP server, or enforcement.
 P1.7.18 adds deterministic CLI/TUI binding without runtime authority, policy, or enforcement.
+P1.7.20 adds deterministic exit seal + live integration demo without runtime authority or enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -436,6 +437,23 @@ from .cli_binding import (
     render_path_governance_json_payload,
     render_path_governance_status_text,
 )
+from .exit_seal import (
+    PATH_GOVERNANCE_EXIT_SEAL_SCHEMA,
+    PATH_GOVERNANCE_EXIT_SEAL_TASK_ID,
+    P17_REPORT_INVENTORY,
+    P17_UNAVAILABLE_INTEGRATIONS,
+    PathGovernanceExitSealCheckKind,
+    PathGovernanceExitSealCheckResult,
+    PathGovernanceExitSealDemoInput,
+    PathGovernanceExitSealResult,
+    PathGovernanceExitSealSideEffects,
+    PathGovernanceExitSealStatus,
+    build_default_path_governance_exit_seal_checks,
+    build_path_governance_exit_seal_demo_input,
+    build_path_governance_exit_seal_side_effects,
+    render_path_governance_exit_seal_summary,
+    run_path_governance_exit_seal,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -462,7 +480,21 @@ __all__ = [
     "ConflictPrecedencePosture",
     "ConflictPrecedenceResult",
     "ConflictSeverity",
-    "PATH_GOVERNANCE_HARNESS_RUN_INPUT_KNOWN_FIELDS",
+    "PATH_GOVERNANCE_EXIT_SEAL_SCHEMA",
+    "PATH_GOVERNANCE_EXIT_SEAL_TASK_ID",
+    "P17_REPORT_INVENTORY",
+    "P17_UNAVAILABLE_INTEGRATIONS",
+    "PathGovernanceExitSealCheckKind",
+    "PathGovernanceExitSealCheckResult",
+    "PathGovernanceExitSealDemoInput",
+    "PathGovernanceExitSealResult",
+    "PathGovernanceExitSealSideEffects",
+    "PathGovernanceExitSealStatus",
+    "build_default_path_governance_exit_seal_checks",
+    "build_path_governance_exit_seal_demo_input",
+    "build_path_governance_exit_seal_side_effects",
+    "render_path_governance_exit_seal_summary",
+    "run_path_governance_exit_seal",
     "PATH_GOVERNANCE_HARNESS_RUN_RESULT_KNOWN_FIELDS",
     "PATH_GOVERNANCE_HARNESS_SCENARIO_KNOWN_FIELDS",
     "PATH_GOVERNANCE_HARNESS_STEP_RESULT_KNOWN_FIELDS",

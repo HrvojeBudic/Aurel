@@ -16,16 +16,18 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P1.7 — Path Governance & Source Trust Foundation**
+**P1.7 — Path Governance & Source Trust Foundation (SEALED)**
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.19 — Docs / State / Reports Update |
-| **Current active** | **P1.7.20 — Exit Seal + Live Integration Demo (planned)** |
+| **Last completed** | P1.7.20 — Exit Seal + Live Integration Demo |
+| **Current active** | **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.20 — Exit Seal + Live Integration Demo |
+| **Next planned** | P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh |
 
-**P1.7.19 complete** — Docs/state/reports truth sync: P1.7.0–P1.7.18 report inventory, shadow-only boundaries (P1.7.10–P1.7.12), trace/Ledger boundaries (P1.7.13–P1.7.14), DEV_FIXTURE harness boundary (P1.7.15), policy context packet boundary (P1.7.16), projection read-model boundary (P1.7.17), read-only CLI boundary (P1.7.18), source-label truth, known UNAVAILABLE states, P1.7.20 readiness checklist, docs consistency test. Evidence metadata sync only; no runtime behavior, policy runtime, Ledger write, global trace write, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes. P1.7 is **pre-seal** — not fully sealed until P1.7.20. Next: **P1.7.20 — Exit Seal + Live Integration Demo**.
+**P1.7.20 complete** — Exit seal + live integration demo: `PathGovernanceExitSealCheckKind`, `PathGovernanceExitSealStatus`, `PathGovernanceExitSealSideEffects`, `PathGovernanceExitSealCheckResult`, `PathGovernanceExitSealDemoInput`, `PathGovernanceExitSealResult`, `build_path_governance_exit_seal_demo_input()`, `build_default_path_governance_exit_seal_checks()`, `run_path_governance_exit_seal()`, `render_path_governance_exit_seal_summary()`, DEV_FIXTURE vertical slice demo chain, deterministic seal hashes, unavailable state proof, side-effect truth all false, closed-world validation. Evidence-only seal; no policy engine, Custos, approval, Ledger, global trace write, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes. **P1.7 is sealed.** Next: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh**.
+
+**P1.7.19 complete** — Docs/state/reports truth sync: P1.7.0–P1.7.18 report inventory, shadow-only boundaries (P1.7.10–P1.7.12), trace/Ledger boundaries (P1.7.13–P1.7.14), DEV_FIXTURE harness boundary (P1.7.15), policy context packet boundary (P1.7.16), projection read-model boundary (P1.7.17), read-only CLI boundary (P1.7.18), source-label truth, known UNAVAILABLE states, P1.7.20 readiness checklist, docs consistency test. Evidence metadata sync only; no runtime behavior, policy runtime, Ledger write, global trace write, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes.
 
 **P1.7.18 complete** — Path governance CLI/TUI binding: `PathGovernanceCliCommandKind`, `PathGovernanceCliOutputFormat`, `PathGovernanceCliBindingMode`, `PathGovernanceCliSideEffects`, `PathGovernanceCliRequest`, `PathGovernanceCliRenderedLine`, `PathGovernanceCliResponse`, `build_path_governance_cli_request()`, `render_path_governance_status_text()`, `render_path_governance_capability_table()`, `render_path_governance_json_payload()`, `render_path_governance_cli_response()`, `handle_path_governance_cli_request()`, read-only `path-governance` CLI subcommands, deterministic request/line/response hashes, source-label truth, unavailable reason visibility, side-effect truth booleans all false, and closed-world validation. Read-only projection binding; CLI exposes state and does not execute policy; no Shell UI, Web UI, HTTP server, policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, or runtime enforcement. P1.7 remains in progress. Next: **P1.7.19 — Docs/State/Reports Update**.
 

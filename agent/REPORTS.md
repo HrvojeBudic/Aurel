@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.20 Exit Seal + Live Integration Demo](reports/P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md) | 2026-06-26 | Exit seal evidence layer; DEV_FIXTURE vertical slice; side effects all false; P1.7 sealed; no enforcement |
 | [P1.7.19 Docs / State / Reports Update](reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md) | 2026-06-26 | Truth-sync: P1.7.0–P1.7.18 inventory, boundaries, unavailable states, P1.7.20 readiness; no enforcement |
 | [P1.7.18 Path Governance CLI/TUI Binding](reports/P1.7.18_PATH_GOVERNANCE_CLI_TUI_BINDING.md) | 2026-06-26 | Read-only CLI/TUI binding over P1.7.17 projection; path-governance CLI subcommands; side effects all false; Shell/HTTP/policy/Ledger/enforcement UNAVAILABLE |
 | [P1.7.17 Path Governance Projection/API/Event Contract](reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md) | 2026-06-26 | PathGovernanceProjectionRecord/ReadModel/ProjectionEvent/ApiEnvelope; default capability projection; CLI/Shell/HTTP UNAVAILABLE; no policy/Ledger/enforcement |

@@ -1,4 +1,4 @@
-"""P1.7.19 tests: docs/state/reports truth sync and anti-overclaim anchors."""
+"""P1.7.19 tests: docs/state/reports truth sync and post-P1.7.20 seal anchors."""
 from __future__ import annotations
 
 import os
@@ -26,6 +26,7 @@ P17_REPORTS = [
     "P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md",
     "P1.7.18_PATH_GOVERNANCE_CLI_TUI_BINDING.md",
     "P1.7.19_DOCS_STATE_REPORTS_UPDATE.md",
+    "P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md",
 ]
 
 
@@ -45,21 +46,21 @@ def test_p17_report_files_exist():
 
 def test_reports_index_references_p17_reports():
     reports = _read("agent/REPORTS.md")
-    for n in range(0, 20):
+    for n in range(0, 21):
         assert f"P1.7.{n}" in reports, f"P1.7.{n} not indexed in REPORTS.md"
 
 
-def test_roadmap_marks_p17_19_complete_p17_20_next():
+def test_roadmap_marks_p17_20_complete_p18_next():
     roadmap = _read("agent/ROADMAP.md")
-    assert "P1.7.19" in roadmap
     assert "P1.7.20" in roadmap
-    assert "Docs / State / Reports Update" in roadmap or "Docs/State/Reports Update" in roadmap
+    assert "Exit Seal" in roadmap
+    assert "P1.8.0" in roadmap
 
 
-def test_active_task_points_to_p17_20_next():
+def test_active_task_points_to_p18_next():
     active = _read("agent/ACTIVE_TASK.md")
     assert "P1.7.20" in active
-    assert "Exit Seal" in active
+    assert "P1.8.0" in active
 
 
 def test_state_contains_unavailable_anchors():
@@ -71,9 +72,10 @@ def test_state_contains_unavailable_anchors():
 def test_tests_doc_contains_p17_validation_command():
     tests_doc = _read("agent/TESTS.md")
     assert "test_p1_7_0_foundation" in tests_doc
+    assert "test_p1_7_20_exit_seal_live_integration_demo" in tests_doc
 
 
-def test_docs_do_not_claim_p17_20_complete():
+def test_docs_claim_p17_sealed_and_p18_next():
     scanned = "\n".join(
         _read(p)
         for p in (
@@ -82,8 +84,9 @@ def test_docs_do_not_claim_p17_20_complete():
             "agent/ROADMAP.md",
         )
     )
-    assert "P1.7.20 COMPLETE" not in scanned
-    assert "P1.7 section SEALED" not in scanned.upper()
+    assert "P1.7.20 COMPLETE" in scanned or "P1.7.20 — Exit Seal" in scanned
+    assert "sealed" in scanned.lower()
+    assert "P1.8.0" in scanned
 
 
 def test_p17_19_report_exists():

@@ -1,22 +1,20 @@
-# Active Task: P1.7.20 (planned)
+# Active Task: P1.8.0 (planned)
 
-**Status:** P1.7.19 COMPLETE; P1.7.20 PLANNED
+**Status:** P1.7.20 COMPLETE; P1.8.0 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.19 — Docs / State / Reports Update**
-- Next planned task: **P1.7.20 — Exit Seal + Live Integration Demo**
+- Current completed task: **P1.7.20 — Exit Seal + Live Integration Demo**
+- Next planned task: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**PRE-SEAL** — P1.7.0–P1.7.19 complete; docs/state/report truth sync added; section awaiting exit seal (not sealed).
+**SEALED** — P1.7.0–P1.7.20 complete; exit seal + live integration demo verified; section sealed after focused validation.
 
-P1.7.19 synchronizes documentation, state, roadmap, test index, and report index for Path Governance & Source Trust. It indexes P1.7.0–P1.7.18 reports, documents shadow-only boundaries, trace/Ledger boundaries, policy context boundaries, projection/CLI boundaries, source-label truth, and known UNAVAILABLE states. It prepares P1.7.20 exit seal readiness.
+P1.7.20 seals Path Governance & Source Trust as an operator-inspectable, read-only, shadow-governance vertical slice via `path_governance/exit_seal.py`. DEV_FIXTURE harness, policy context packet, projection/API envelope, read-only CLI binding, trace/violation payloads, unavailable state proof, and side-effect truth are exercised in-process without runtime authority.
 
-P1.7.19 is evidence metadata sync only. It does not add new runtime behavior, policy runtime, Ledger integration, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes.
-
-Boundary: no new runtime behavior, no policy runtime, no Ledger, no enforcement.
+Boundary: no runtime enforcement, no policy runtime, no Ledger, no global trace write, no source mutation, no Shell UI, no HTTP server.
 
 Git status: committed locally, no push performed.
 
@@ -42,3 +40,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md`
 - `agent/reports/P1.7.18_PATH_GOVERNANCE_CLI_TUI_BINDING.md`
 - `agent/reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md`
+- `agent/reports/P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md`

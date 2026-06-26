@@ -1,20 +1,39 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.19 — Docs / State / Reports Update)_
+_Last updated: 2026-06-26 (P1.7.20 — Exit Seal + Live Integration Demo)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.19 — Docs / State / Reports Update
-- Current active: **P1.7.20 — Exit Seal + Live Integration Demo (planned)**
-- Next planned: P1.7.20 — Exit Seal + Live Integration Demo
+- Last completed: P1.7.20 — Exit Seal + Live Integration Demo
+- Current active: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh (planned)**
+- Next planned: P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh
 - Roadmap version: **v5.1 Integration-First**
-- P1.7 section status: **PRE-SEAL** (P1.7.0–P1.7.19 complete; P1.7.20 pending)
+- P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
 
-### P1.7 pre-seal summary (P1.7.0–P1.7.19)
+### P1.7.20 exit seal summary
 
-P1.7 Path Governance & Source Trust is **pre-seal** — all implementation patches through P1.7.18 plus docs truth-sync (P1.7.19) are complete; exit seal (P1.7.20) is next.
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| Exit seal schema | `path_governance_exit_seal.v1` | DEV_FIXTURE demo | Evidence only |
+| Demo input | Deterministic `demo_id`/`demo_hash` | DEV_FIXTURE | No side effects |
+| Check results | 25+ integration checks | DEV_FIXTURE / UNAVAILABLE | Not policy decision |
+| Seal result | Deterministic `seal_id`/`seal_hash` | DEV_FIXTURE | Pass ≠ authority |
+| Harness demo | `run_path_governance_harness_suite()` | DEV_FIXTURE | Not allow/deny |
+| Policy context demo | `bridge_path_governance_to_policy_context()` | DEV_FIXTURE | `policy_called=false` |
+| Projection demo | `build_default_path_governance_capability_projection()` | DEV_FIXTURE | Object contract, not HTTP |
+| CLI demo | `handle_path_governance_cli_request()` STATUS/READ_MODEL/UNAVAILABLE | DEV_FIXTURE | Read-only projection |
+| Trace payload demo | `build_path_resolution_trace_payload()` | DEV_FIXTURE | No Ledger/global trace |
+| Violation demo | `build_path_violation_trace_payload()` | DEV_FIXTURE | No correction/enforcement |
+| Unavailable proof | 9 integrations documented | UNAVAILABLE | Honest reasons |
+| Side-effect truth | All booleans false | LIVE schema | No enforcement |
+
+No fake LIVE or TRACE_VERIFIED for DEV_FIXTURE demos. No policy runtime, Ledger write, global trace write, source mutation, Shell UI, or HTTP server.
+
+### P1.7 sealed summary (P1.7.0–P1.7.20)
+
+P1.7 Path Governance & Source Trust is **sealed** — all implementation patches through P1.7.20 exit seal are complete.
 
 | Phase | Summary | Boundary |
 |-------|---------|----------|
@@ -38,6 +57,7 @@ P1.7 Path Governance & Source Trust is **pre-seal** — all implementation patch
 | P1.7.17 | Projection/API/event contract | Read model; not HTTP server |
 | P1.7.18 | CLI/TUI binding | Read-only inspector; not control plane |
 | P1.7.19 | Docs/state/reports sync | Evidence metadata; not implementation |
+| P1.7.20 | Exit seal + live integration demo | Evidence artifact; not enforcement |
 
 **Known UNAVAILABLE (P1.7):** Shell UI, HTTP API server, policy runtime/Custos enforcement, Ledger write, global trace spine write, runtime enforcement, source trust mutation, approval activation, real allow/deny/block decisions, P1.7.20 exit seal.
 

@@ -58,6 +58,38 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.7.20 Exit Seal + Live Integration Demo Validation (COMPLETE)
+
+Focused validation (2026-06-26):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_0_foundation.py tests/path_governance/test_p1_7_1_path_identity.py tests/path_governance/test_p1_7_2_source_identity.py tests/path_governance/test_p1_7_3_source_trust_taxonomy.py tests/path_governance/test_p1_7_4_trusted_roots.py tests/path_governance/test_p1_7_5_path_normalization_escape_contract.py tests/path_governance/test_p1_7_6_path_authority_scope.py tests/path_governance/test_p1_7_7_untrusted_content_boundary.py tests/path_governance/test_p1_7_8_source_provenance_evidence_binding.py tests/path_governance/test_p1_7_9_path_source_risk_classification.py tests/path_governance/test_p1_7_10_path_governance_resolver_shadow.py tests/path_governance/test_p1_7_11_source_trust_resolver_shadow.py tests/path_governance/test_p1_7_12_conflict_precedence.py tests/path_governance/test_p1_7_13_path_resolution_trace_hook.py tests/path_governance/test_p1_7_14_path_violation_drift_trace_hook.py tests/path_governance/test_p1_7_15_path_governance_test_harness.py tests/path_governance/test_p1_7_16_policy_context_bridge.py tests/path_governance/test_p1_7_17_projection_api_event_contract.py tests/path_governance/test_p1_7_18_path_governance_cli_tui_binding.py tests/path_governance/test_p1_7_20_exit_seal_live_integration_demo.py -q
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_19_docs_state_reports_sync.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Report: `agent/reports/P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md`
+
+Results: compileall **PASS**; focused P1.7.0–P1.7.20 **679 passed** (35 P1.7.20 focused); P1.7.19 docs sync **8 passed**; ruff **PASS**; mypy **PASS** (229 files).
+
+Operator manual seal command (in-process demo):
+
+```bash
+.venv/bin/python -c "from agentic_runtime.path_governance import run_path_governance_exit_seal, render_path_governance_exit_seal_summary as s; r=run_path_governance_exit_seal(); print(s(r))"
+```
+
+Operator manual seal commands (optional, not run for P1.7.20):
+
+```bash
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+P1.7.20 seals Path Governance as evidence-only vertical slice; it does NOT add runtime enforcement, policy decisions, Ledger writes, global trace writes, source mutation, Shell UI, HTTP server, or sandbox changes.
+
 ## P1.7.19 Docs / State / Reports Update Validation (COMPLETE)
 
 Focused validation (2026-06-26):
