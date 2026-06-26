@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.9 — Path/Source Risk Classification Model)_
+_Last updated: 2026-06-26 (P1.7.10 — Path Governance Resolver v0 / Shadow Mode)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.9 — Path/Source Risk Classification Model
-- Current active: **P1.7.10 — Path Governance Resolver v0 / Shadow Mode (planned)**
-- Next planned: P1.7.10 — Path Governance Resolver v0 / Shadow Mode
+- Last completed: P1.7.10 — Path Governance Resolver v0 / Shadow Mode
+- Current active: **P1.7.11 — Source Trust Resolver v0 / Shadow Mode (planned)**
+- Next planned: P1.7.11 — Source Trust Resolver v0 / Shadow Mode
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.10 Path Governance Resolver v0 / Shadow Mode (COMPLETE — shadow resolver only)
+
+- `path_governance/`: `PathGovernanceShadowDecision`, `PathGovernanceDecisionReason`, `PathGovernanceResolverInput`, `PathGovernanceResolverResult`, `resolve_path_governance_shadow()`.
+- PathGovernanceShadowDecision status: **LIVE schema** — `WOULD_ALLOW`, `WOULD_REVIEW`, `WOULD_RESTRICT`, `WOULD_DENY`, `WOULD_QUARANTINE`, `WOULD_REQUIRE_OPERATOR_REVIEW`, `WOULD_REQUIRE_POLICY_REVIEW`, `UNKNOWN`; vocabulary only, not runtime action.
+- PathGovernanceDecisionReason status: **LIVE schema** — deterministic explanation vocabulary for source trust, path boundary, authority, untrusted boundary, risk, provenance/evidence, policy bridge unavailable, and shadow-only reasons.
+- PathGovernanceResolverInput status: **LIVE schema** — optional references to `PathIdentity`, `SourceIdentity`, `TrustedRootRegistry`, `PathBoundaryCheckResult`, `PathAuthorityScope`, `UntrustedContentBoundary`, `ProvenanceBinding`, and `PathSourceRiskClassification`; deterministic `input_id` and `input_hash`.
+- PathGovernanceResolverResult status: **LIVE schema** — shadow decision, deterministic ordered reasons, risk level, source label, advisory flags, deterministic `result_id` and `result_hash`, `created_by_task="P1.7.10"`, `resolver_version="path_governance_resolver.v0.shadow"`.
+- PathGovernanceResolverReport status: **NOT IMPLEMENTED** — intentionally skipped to keep P1.7.10 narrow; markdown report is the trace/evidence/report binding for this task.
+- `resolve_path_governance_shadow()` status: **LIVE backend helper** — produces deterministic non-enforcing `WOULD_*` recommendations from supplied P1.7 context.
+- Shadow-only/enforced truth status: **PASS** — every result has `shadow_only=true` and `enforced=false`.
+- Input/result hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation status: **PASS** — resolver input/result reject unknown fields with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — resolver input/result preserve `ProjectionSourceLabel`; test fixtures use `DEV_FIXTURE`.
+- Shadow resolver boundary summary: resolver v0 is shadow-only; shadow decision is not enforcement; recommended action is not runtime action; `WOULD_DENY` is not `DENY`; `WOULD_ALLOW` is not `ALLOW`; `WOULD_RESTRICT` is not `RESTRICT`; `WOULD_QUARANTINE` is not `QUARANTINE`.
+- Known unavailable states: source trust resolver, path/source conflict rules, precedence rules, policy engine integration, policy bridge, real allow/deny/block decisions, approval activation, trace hooks, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.11 readiness: **READY** — next task is Source Trust Resolver v0 / Shadow Mode.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.10_PATH_GOVERNANCE_RESOLVER_SHADOW_MODE.md`
 
 ### P1.7.9 Path/Source Risk Classification Model (COMPLETE — classification model only)
 

@@ -11,6 +11,7 @@ P1.7.6 adds deterministic path authority scope declaration objects without resol
 P1.7.7 adds deterministic untrusted content boundary declaration objects without filtering or enforcement.
 P1.7.8 adds deterministic source provenance and evidence binding seed objects without truth verification or trace/Ledger writes.
 P1.7.9 adds deterministic path/source risk classification model objects without resolver or enforcement behavior.
+P1.7.10 adds deterministic path governance resolver v0 shadow recommendations without enforcement behavior.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -221,6 +222,20 @@ from .trusted_roots import (
     compute_registry_hash,
     compute_root_id,
 )
+from .path_resolver import (
+    PATH_GOVERNANCE_RESOLVER_INPUT_KNOWN_FIELDS,
+    PATH_GOVERNANCE_RESOLVER_RESULT_KNOWN_FIELDS,
+    PATH_GOVERNANCE_RESOLVER_TASK_ID,
+    PATH_GOVERNANCE_RESOLVER_VERSION,
+    PathGovernanceDecisionReason,
+    PathGovernanceResolverInput,
+    PathGovernanceResolverResult,
+    PathGovernanceShadowDecision,
+    compute_path_governance_resolver_input_hash,
+    compute_path_governance_resolver_result_hash,
+    compute_path_governance_resolver_result_id,
+    resolve_path_governance_shadow,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -241,6 +256,10 @@ __all__ = [
     "CANONICAL_PATH_REF_KNOWN_FIELDS",
     "PATH_GOVERNANCE_MODULE_NAME",
     "PATH_GOVERNANCE_MODULE_VERSION",
+    "PATH_GOVERNANCE_RESOLVER_INPUT_KNOWN_FIELDS",
+    "PATH_GOVERNANCE_RESOLVER_RESULT_KNOWN_FIELDS",
+    "PATH_GOVERNANCE_RESOLVER_TASK_ID",
+    "PATH_GOVERNANCE_RESOLVER_VERSION",
     "PATH_GOVERNANCE_TASK_ID",
     "ESCAPE_DETECTION_CONTRACT_KNOWN_FIELDS",
     "PATH_AUTHORITY_CONSTRAINT_KNOWN_FIELDS",
@@ -302,6 +321,9 @@ __all__ = [
     "PathBoundaryStatus",
     "PathEscapeSignal",
     "PathGovernanceCapabilityStatus",
+    "PathGovernanceDecisionReason",
+    "PathGovernanceResolverInput",
+    "PathGovernanceResolverResult",
     "PathNormalizationResult",
     "PathNormalizationStatus",
     "PathGovernanceError",
@@ -310,6 +332,7 @@ __all__ = [
     "PathGovernanceStructuredError",
     "PathGovernanceUnknownFieldError",
     "PathGovernanceValidationError",
+    "PathGovernanceShadowDecision",
     "PathIdentity",
     "PathKind",
     "PathRef",
@@ -409,6 +432,9 @@ __all__ = [
     "compute_grant_id",
     "compute_lineage_hash",
     "compute_registry_hash",
+    "compute_path_governance_resolver_input_hash",
+    "compute_path_governance_resolver_result_hash",
+    "compute_path_governance_resolver_result_id",
     "compute_root_id",
     "compute_source_id",
     "compute_taxonomy_hash",
@@ -416,6 +442,7 @@ __all__ = [
     "normalize_path_for_governance",
     "normalize_path_string",
     "path_normalization_warnings",
+    "resolve_path_governance_shadow",
     "stable_hash",
     "to_canonical_dict",
     "to_canonical_json",

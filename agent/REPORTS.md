@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.10 Path Governance Resolver v0 / Shadow Mode](reports/P1.7.10_PATH_GOVERNANCE_RESOLVER_SHADOW_MODE.md) | 2026-06-26 | PathGovernanceShadowDecision, PathGovernanceDecisionReason, PathGovernanceResolverInput, PathGovernanceResolverResult; shadow-only WOULD_* recommendations; no policy/approval/trace/Ledger/enforcement |
 | [P1.7.9 Path/Source Risk Classification Model](reports/P1.7.9_PATH_SOURCE_RISK_CLASSIFICATION_MODEL.md) | 2026-06-26 | PathSourceRiskLevel, PathSourceRiskSignalKind, RiskClassificationBasis, RiskClassificationPosture, PathSourceRiskSignal, PathSourceRiskClassification; classification-only; no resolver/policy/enforcement |
 | [P1.7.8 Source Provenance & Evidence Binding Seed](reports/P1.7.8_SOURCE_PROVENANCE_EVIDENCE_BINDING_SEED.md) | 2026-06-26 | SourceProvenanceKind, EvidenceBindingKind, EvidenceConfidence, SourceClaimKind, SourceEvidenceRef, SourceClaimRef, SourceProvenanceRef, ProvenanceBinding; reference/binding seed only; no truth verification/trace/Ledger/resolver |
 | [P1.7.7 Untrusted Content Boundary Model](reports/P1.7.7_UNTRUSTED_CONTENT_BOUNDARY_MODEL.md) | 2026-06-25 | UntrustedContentKind, ContentInfluenceSurface, BoundaryRestrictionKind, UntrustedBoundaryPosture, BoundaryRestriction, UntrustedContentBoundary, declarative information-vs-instruction boundaries; no filtering/enforcement/network access |
