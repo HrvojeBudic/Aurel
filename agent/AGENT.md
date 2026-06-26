@@ -11,6 +11,25 @@ policy, authority, HITL, budget, sandbox, verifier, trace, and governed memory.
 3. Read `ARCHITECTURE.md` — module map and execution pipeline.
 4. Read `TESTS.md` — canonical compile and test commands.
 
+## CodeOps
+
+This repository uses `agent/CODEOPS.md` as the upstream development protocol.
+
+Before planning or coding significant work, follow:
+
+1. Intake / Current Canon Snapshot
+2. Brainstorm
+3. Plan
+4. Prompt Contract
+5. Agent Report
+6. OMNI Review
+
+Templates live in `agent/templates/`.
+
+CodeOps does not replace this guide. It extends the existing `agent/` governance layer.
+
+Do not create duplicate state, decision, validation, or evidence systems.
+
 ## While working
 
 - Keep changes **minimal and targeted**. No broad refactors unless explicitly tasked.
