@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.7 — Untrusted Content Boundary Model |
-| **Current active** | **P1.7.8 — Source Provenance & Evidence Binding Seed (planned)** |
+| **Last completed** | P1.7.8 — Source Provenance & Evidence Binding Seed |
+| **Current active** | **P1.7.9 — Path/Source Risk Classification Model (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.8 — Source Provenance & Evidence Binding Seed |
+| **Next planned** | P1.7.9 — Path/Source Risk Classification Model |
 
-**P1.7.7 complete** — Untrusted content boundary model: `UntrustedContentKind`, `ContentInfluenceSurface`, `BoundaryRestrictionKind`, `UntrustedBoundaryPosture`, `BoundaryRestriction`, `UntrustedContentBoundary`, `UntrustedContentBoundaryRegistry`, `build_untrusted_content_boundary()`, `build_untrusted_content_boundary_registry()`, trust-label default declaration helpers, deterministic restriction/boundary/registry hashes, source-label truth, and closed-world validation. Declarative information-vs-instruction boundaries only without prompt filtering, memory gating, tool blocking, resolver, or enforcement. P1.7 remains in progress. Next: **P1.7.8 — Source Provenance & Evidence Binding Seed**.
+**P1.7.8 complete** — Source provenance and evidence binding seed: `SourceProvenanceKind`, `EvidenceBindingKind`, `EvidenceConfidence`, `SourceClaimKind`, `SourceEvidenceRef`, `SourceClaimRef`, `SourceProvenanceRef`, `ProvenanceBinding`, `ProvenanceBindingRegistry`, `build_source_evidence_ref()`, `build_source_claim_ref()`, `build_source_provenance_ref()`, `build_provenance_binding()`, `build_provenance_binding_registry()`, deterministic evidence/claim/provenance/binding/registry hashes, source-label truth, and closed-world validation. Reference/binding objects only without truth verification, trace emission, Ledger writes, resolver, or enforcement. P1.7 remains in progress. Next: **P1.7.9 — Path/Source Risk Classification Model**.
+
+**P1.7.7 complete** — Untrusted content boundary model: `UntrustedContentKind`, `ContentInfluenceSurface`, `BoundaryRestrictionKind`, `UntrustedBoundaryPosture`, `BoundaryRestriction`, `UntrustedContentBoundary`, `UntrustedContentBoundaryRegistry`, `build_untrusted_content_boundary()`, `build_untrusted_content_boundary_registry()`, trust-label default declaration helpers, deterministic restriction/boundary/registry hashes, source-label truth, and closed-world validation. Declarative information-vs-instruction boundaries only without prompt filtering, memory gating, tool blocking, resolver, or enforcement. Next: **P1.7.8 — Source Provenance & Evidence Binding Seed**.
 
 **P1.7.6 complete** — Path authority scope model: `PathAuthoritySubjectKind`, `PathAuthorityBasis`, `PathAuthorityConstraintKind`, `PathAuthoritySubject`, `PathAuthorityConstraint`, `PathAuthorityScope`, `PathAuthorityScopeRegistry`, `build_path_authority_scope()`, `build_path_authority_scope_registry()`, deterministic subject/constraint/scope/registry hashes, source-label truth, and closed-world validation. Declarative authority scope only without permission, resolver, sandbox policy, filesystem access, or enforcement.
 

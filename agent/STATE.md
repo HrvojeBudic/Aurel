@@ -1,15 +1,36 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.7 — Untrusted Content Boundary Model)_
+_Last updated: 2026-06-26 (P1.7.8 — Source Provenance & Evidence Binding Seed)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.7 — Untrusted Content Boundary Model
-- Current active: **P1.7.8 — Source Provenance & Evidence Binding Seed (planned)**
-- Next planned: P1.7.8 — Source Provenance & Evidence Binding Seed
+- Last completed: P1.7.8 — Source Provenance & Evidence Binding Seed
+- Current active: **P1.7.9 — Path/Source Risk Classification Model (planned)**
+- Next planned: P1.7.9 — Path/Source Risk Classification Model
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.8 Source Provenance & Evidence Binding Seed (COMPLETE — binding seed only)
+
+- `path_governance/`: `SourceProvenanceKind`, `EvidenceBindingKind`, `EvidenceConfidence`, `SourceClaimKind`, `SourceEvidenceRef`, `SourceClaimRef`, `SourceProvenanceRef`, `ProvenanceBinding`, `ProvenanceBindingRegistry`, `build_source_evidence_ref()`, `build_source_claim_ref()`, `build_source_provenance_ref()`, `build_provenance_binding()`, `build_provenance_binding_registry()`.
+- SourceProvenanceKind status: **LIVE schema** — declared provenance kind only; does not assert truth or grant authority.
+- EvidenceBindingKind status: **LIVE schema** — declared evidence binding kind; does not resolve truth or write trace.
+- EvidenceConfidence status: **LIVE schema** — confidence marker only; not a truth guarantee or resolver output.
+- SourceClaimKind status: **LIVE schema** — claim classification only; does not accept, reject, execute, or enforce.
+- SourceEvidenceRef status: **LIVE schema** — deterministic `evidence_id` and `evidence_hash`, `SourceIdentity`, confidence, source label, JSON-safe metadata.
+- SourceClaimRef status: **LIVE schema** — deterministic `claim_id` and `claim_hash`, short `claim_summary`, confidence, source label, JSON-safe metadata.
+- SourceProvenanceRef status: **LIVE schema** — deterministic `provenance_id` and `provenance_hash`, optional `parent_source_id`, sorted `derived_from`, lineage seed without graph engine.
+- ProvenanceBinding status: **LIVE schema** — binds source identity, provenance/evidence/claim refs, optional `boundary_ref_id`, `authority_scope_id`, `path_identity_hash`, deterministic `binding_id` and `binding_hash`, `created_by_task="P1.7.8"`, `binding_version="source_provenance_binding.v1"`.
+- ProvenanceBindingRegistry status: **LIVE schema** — binds bindings with `created_by_task="P1.7.8"`, `registry_version="source_provenance_binding_registry.v1"`, explicit source label, notes, metadata, and deterministic order-insensitive `registry_hash`.
+- Evidence/claim/provenance/binding/registry hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — test fixtures use `DEV_FIXTURE`; production helper defaults remain `LIVE`.
+- Provenance/evidence boundary summary: provenance binding is not truth verification; evidence reference is not Ledger write; claim binding is not claim acceptance; confidence marker is not truth guarantee; binding registry is not audit ledger.
+- Known unavailable states: full provenance graph, graph query, replay, path/source risk classifier, path governance resolver, source trust resolver, truth verification, trace hooks, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, policy bridge, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.9 readiness: **READY** — next task is Path/Source Risk Classification Model.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.8_SOURCE_PROVENANCE_EVIDENCE_BINDING_SEED.md`
 
 ### P1.7.7 Untrusted Content Boundary Model (COMPLETE — declarative boundary model only)
 
