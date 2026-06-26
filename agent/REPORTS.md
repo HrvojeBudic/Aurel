@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.12 Path/Source Conflict & Precedence Rules](reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md) | 2026-06-26 | PathSourceConflictKind, PrecedenceRuleKind, ConflictPrecedenceInput, ConflictPrecedenceResult; shadow-only conflict signals and strictest-wins precedence; no enforcement/policy/approval/trace/Ledger/source mutation |
 | [P1.7.11 Source Trust Resolver v0 / Shadow Mode](reports/P1.7.11_SOURCE_TRUST_RESOLVER_SHADOW_MODE.md) | 2026-06-26 | SourceTrustShadowDecision, SourceTrustDecisionReason, SourceTrustResolverInput, SourceTrustResolverResult; shadow-only WOULD_* trust recommendations; advisory recommended_trust_label; no trust mutation/policy/approval/trace/Ledger/enforcement |
 | [P1.7.10 Path Governance Resolver v0 / Shadow Mode](reports/P1.7.10_PATH_GOVERNANCE_RESOLVER_SHADOW_MODE.md) | 2026-06-26 | PathGovernanceShadowDecision, PathGovernanceDecisionReason, PathGovernanceResolverInput, PathGovernanceResolverResult; shadow-only WOULD_* recommendations; no policy/approval/trace/Ledger/enforcement |
 | [P1.7.9 Path/Source Risk Classification Model](reports/P1.7.9_PATH_SOURCE_RISK_CLASSIFICATION_MODEL.md) | 2026-06-26 | PathSourceRiskLevel, PathSourceRiskSignalKind, RiskClassificationBasis, RiskClassificationPosture, PathSourceRiskSignal, PathSourceRiskClassification; classification-only; no resolver/policy/enforcement |

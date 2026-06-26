@@ -1,15 +1,39 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.11 — Source Trust Resolver v0 / Shadow Mode)_
+_Last updated: 2026-06-26 (P1.7.12 — Path/Source Conflict & Precedence Rules)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.11 — Source Trust Resolver v0 / Shadow Mode
-- Current active: **P1.7.12 — Path/Source Conflict & Precedence Rules (planned)**
-- Next planned: P1.7.12 — Path/Source Conflict & Precedence Rules
+- Last completed: P1.7.12 — Path/Source Conflict & Precedence Rules
+- Current active: **P1.7.13 — Path Resolution Trace Hook (planned)**
+- Next planned: P1.7.13 — Path Resolution Trace Hook
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.12 Path/Source Conflict & Precedence Rules (COMPLETE — shadow conflict/precedence only)
+
+- `path_governance/`: `PathSourceConflictKind`, `PrecedenceRuleKind`, `ConflictSeverity`, `ConflictPrecedencePosture`, `PathSourceConflictSignal`, `PrecedenceRule`, `ConflictPrecedenceInput`, `ConflictPrecedenceResult`, `resolve_path_source_conflicts_shadow()`.
+- PathSourceConflictKind status: **LIVE schema** — deterministic conflict classification vocabulary; does not resolve or enforce.
+- PrecedenceRuleKind status: **LIVE schema** — precedence recommendation vocabulary; does not apply runtime action.
+- ConflictSeverity status: **LIVE schema** — severity marker only; does not block or enforce.
+- ConflictPrecedencePosture status: **LIVE schema** — posture recommendation only; not runtime action.
+- PathSourceConflictSignal status: **LIVE schema** — deterministic `signal_id`, conflict kind, severity, reason, source label, JSON-safe metadata.
+- PrecedenceRule status: **LIVE schema** — deterministic `rule_id`, rule kind, applies_to, severity, recommended posture, reason, source label, JSON-safe metadata.
+- ConflictPrecedenceInput status: **LIVE schema** — optional references to P1.7.6–P1.7.11 objects; deterministic `input_id` and `input_hash`.
+- ConflictPrecedenceResult status: **LIVE schema** — conflict signals, precedence rules, `final_shadow_posture`, advisory `recommended_shadow_decision`, deterministic `result_id` and `result_hash`, `created_by_task="P1.7.12"`, `resolver_version="path_source_conflict_precedence.v0.shadow"`.
+- ConflictPrecedenceReport status: **NOT IMPLEMENTED** — intentionally skipped to keep P1.7.12 narrow; markdown report is the trace/evidence/report binding for this task.
+- `resolve_path_source_conflicts_shadow()` status: **LIVE backend helper** — produces deterministic non-enforcing conflict signals and precedence recommendations from supplied P1.7 context.
+- Shadow-only/enforced truth status: **PASS** — every result has `shadow_only=true` and `enforced=false`.
+- Recommended shadow decision status: **ADVISORY ONLY** — `recommended_shadow_decision` uses WOULD_* vocabulary only; does not mutate source identity, source trust label, or source trust taxonomy.
+- Signal/rule/input/result hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation status: **PASS** — conflict/precedence input/result/signal/rule reject unknown fields with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — conflict/precedence objects preserve `ProjectionSourceLabel`; test fixtures use `DEV_FIXTURE`.
+- Conflict/precedence boundary summary: conflict detection is not conflict enforcement; precedence rule is not runtime authority; strictest-wins is shadow-only; recommended_shadow_decision is advisory only.
+- Known unavailable states: path resolution trace hook, path violation/drift trace hook, policy engine integration, policy bridge, real conflict enforcement, real precedence enforcement, source trust mutation, source taxonomy mutation, source identity mutation, trust promotion/demotion, source blocking, runtime quarantine, memory canonization, approval activation, trace hooks, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.13 readiness: **READY** — next task is Path Resolution Trace Hook.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md`
 
 ### P1.7.11 Source Trust Resolver v0 / Shadow Mode (COMPLETE — shadow trust resolver only)
 

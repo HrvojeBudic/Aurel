@@ -1,22 +1,22 @@
-# Active Task: P1.7.12 (planned)
+# Active Task: P1.7.13 (planned)
 
-**Status:** P1.7.11 COMPLETE; P1.7.12 PLANNED
+**Status:** P1.7.12 COMPLETE; P1.7.13 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.11 — Source Trust Resolver v0 / Shadow Mode**
-- Next planned task: **P1.7.12 — Path/Source Conflict & Precedence Rules**
+- Current completed task: **P1.7.12 — Path/Source Conflict & Precedence Rules**
+- Next planned task: **P1.7.13 — Path Resolution Trace Hook**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — shadow-mode source trust resolver added; broader P1.7 path/source governance remains in progress.
+**IN PROGRESS** — shadow conflict/precedence rules added; broader P1.7 path/source governance remains in progress.
 
-P1.7.11 adds `SourceTrustShadowDecision`, `SourceTrustDecisionReason`, `SourceTrustResolverInput`, `SourceTrustResolverResult`, `resolve_source_trust_shadow()`, deterministic input/result identifiers and hashes, closed-world validation, source-label truth, advisory `recommended_trust_label`, and shadow-only/non-mutating resolver boundary semantics.
+P1.7.12 adds `PathSourceConflictKind`, `PrecedenceRuleKind`, `ConflictSeverity`, `ConflictPrecedencePosture`, `PathSourceConflictSignal`, `PrecedenceRule`, `ConflictPrecedenceInput`, `ConflictPrecedenceResult`, `resolve_path_source_conflicts_shadow()`, deterministic signal/rule/input/result identifiers and hashes, closed-world validation, source-label truth, advisory `recommended_shadow_decision`, and shadow-only/non-enforcing conflict/precedence boundary semantics.
 
-Source Trust Resolver v0 is shadow-only. Trust recommendation is not trust mutation. `WOULD_TRUST` is not `TRUSTED`. `WOULD_DISTRUST` is not source blocking. `WOULD_QUARANTINE` is not quarantine action. Every resolver result has `shadow_only=true` and `enforced=false`.
+Conflict detection is not conflict enforcement. Precedence rule is not runtime authority. Strictest-wins recommendation is shadow-only. Every result has `shadow_only=true` and `enforced=false`.
 
-No path/source conflict rules, precedence rules, policy engine integration, real source trust mutation, source taxonomy mutation, source identity mutation, trust promotion, source blocking, runtime quarantine, memory canonization, approval activation, trace event emission, Ledger write, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem access, network access, sandbox hardening, runtime enforcement, CLI/TUI binding, Shell UI, or policy bridge was added.
+No path resolution trace hook, path violation/drift trace hook, policy engine integration, real conflict enforcement, real precedence enforcement, source trust mutation, source taxonomy mutation, source identity mutation, trust promotion, source blocking, runtime quarantine, memory canonization, approval activation, trace event emission, Ledger write, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem access, network access, sandbox hardening, runtime enforcement, CLI/TUI binding, Shell UI, or policy bridge was added.
 
 Git status: committed locally, no push performed.
 
@@ -34,3 +34,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.9_PATH_SOURCE_RISK_CLASSIFICATION_MODEL.md`
 - `agent/reports/P1.7.10_PATH_GOVERNANCE_RESOLVER_SHADOW_MODE.md`
 - `agent/reports/P1.7.11_SOURCE_TRUST_RESOLVER_SHADOW_MODE.md`
+- `agent/reports/P1.7.12_PATH_SOURCE_CONFLICT_PRECEDENCE_RULES.md`

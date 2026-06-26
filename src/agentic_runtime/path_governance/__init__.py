@@ -13,6 +13,7 @@ P1.7.8 adds deterministic source provenance and evidence binding seed objects wi
 P1.7.9 adds deterministic path/source risk classification model objects without resolver or enforcement behavior.
 P1.7.10 adds deterministic path governance resolver v0 shadow recommendations without enforcement behavior.
 P1.7.11 adds deterministic source trust resolver v0 shadow recommendations without trust mutation.
+P1.7.12 adds deterministic path/source conflict and precedence shadow rules without enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -251,6 +252,28 @@ from .source_trust_resolver import (
     compute_source_trust_resolver_result_id,
     resolve_source_trust_shadow,
 )
+from .conflict_precedence import (
+    CONFLICT_PRECEDENCE_INPUT_KNOWN_FIELDS,
+    CONFLICT_PRECEDENCE_RESULT_KNOWN_FIELDS,
+    CONFLICT_PRECEDENCE_TASK_ID,
+    CONFLICT_PRECEDENCE_VERSION,
+    PATH_SOURCE_CONFLICT_SIGNAL_KNOWN_FIELDS,
+    PRECEDENCE_RULE_KNOWN_FIELDS,
+    ConflictPrecedenceInput,
+    ConflictPrecedencePosture,
+    ConflictPrecedenceResult,
+    ConflictSeverity,
+    PathSourceConflictKind,
+    PathSourceConflictSignal,
+    PrecedenceRule,
+    PrecedenceRuleKind,
+    compute_conflict_precedence_input_hash,
+    compute_conflict_precedence_result_hash,
+    compute_conflict_precedence_result_id,
+    compute_conflict_signal_id,
+    compute_precedence_rule_id,
+    resolve_path_source_conflicts_shadow,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -269,6 +292,14 @@ __all__ = [
     "EvidenceConfidence",
     "FoundationPosture",
     "CANONICAL_PATH_REF_KNOWN_FIELDS",
+    "CONFLICT_PRECEDENCE_INPUT_KNOWN_FIELDS",
+    "CONFLICT_PRECEDENCE_RESULT_KNOWN_FIELDS",
+    "CONFLICT_PRECEDENCE_TASK_ID",
+    "CONFLICT_PRECEDENCE_VERSION",
+    "ConflictPrecedenceInput",
+    "ConflictPrecedencePosture",
+    "ConflictPrecedenceResult",
+    "ConflictSeverity",
     "PATH_GOVERNANCE_MODULE_NAME",
     "PATH_GOVERNANCE_MODULE_VERSION",
     "PATH_GOVERNANCE_RESOLVER_INPUT_KNOWN_FIELDS",
@@ -288,6 +319,7 @@ __all__ = [
     "PATH_ESCAPE_DETECTION_TASK_ID",
     "PATH_ESCAPE_DETECTION_VERSION",
     "PATH_GOVERNANCE_UNAVAILABLE_REASONS",
+    "PATH_SOURCE_CONFLICT_SIGNAL_KNOWN_FIELDS",
     "PATH_NORMALIZATION_RESULT_KNOWN_FIELDS",
     "PATH_NORMALIZATION_TASK_ID",
     "PATH_NORMALIZATION_VERSION",
@@ -365,6 +397,8 @@ __all__ = [
     "PATH_SOURCE_RISK_REGISTRY_VERSION",
     "PATH_SOURCE_RISK_SIGNAL_KNOWN_FIELDS",
     "PATH_SOURCE_RISK_TASK_ID",
+    "PathSourceConflictKind",
+    "PathSourceConflictSignal",
     "PathSourceRiskClassification",
     "PathSourceRiskLevel",
     "PathSourceRiskRegistry",
@@ -389,6 +423,9 @@ __all__ = [
     "SOURCE_PROVENANCE_BINDING_VERSION",
     "SOURCE_PROVENANCE_REF_KNOWN_FIELDS",
     "SOURCE_PROVENANCE_TASK_ID",
+    "PrecedenceRule",
+    "PrecedenceRuleKind",
+    "PRECEDENCE_RULE_KNOWN_FIELDS",
     "ProvenanceBinding",
     "ProvenanceBindingRegistry",
     "SourceClaimKind",
@@ -403,7 +440,11 @@ __all__ = [
     "build_source_provenance_ref",
     "compute_binding_hash",
     "compute_binding_id",
-    "compute_claim_hash",
+    "compute_conflict_precedence_input_hash",
+    "compute_conflict_precedence_result_hash",
+    "compute_conflict_precedence_result_id",
+    "compute_conflict_signal_id",
+    "compute_precedence_rule_id",
     "compute_claim_id",
     "compute_evidence_hash",
     "compute_evidence_id",
@@ -468,6 +509,7 @@ __all__ = [
     "normalize_path_for_governance",
     "normalize_path_string",
     "path_normalization_warnings",
+    "resolve_path_source_conflicts_shadow",
     "resolve_path_governance_shadow",
     "resolve_source_trust_shadow",
     "stable_hash",
