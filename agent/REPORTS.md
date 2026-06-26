@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.8.0 Delegation / Non-Repudiation / Agent Identity Mesh Foundation](reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md) | 2026-06-26 | Delegation foundation schema; DEV_FIXTURE test chain; side effects all false; DelegationRecord is not permission; no enforcement |
 | [CODEOPS-0A Agent-Native Hybrid Control Protocol](reports/CODEOPS_0A_AGENT_NATIVE_HYBRID_CONTROL_PROTOCOL.md) | 2026-06-26 | Installs Aurel CodeOps v1.6 upstream control protocol inside agent/; templates, no duplicate governance, no runtime changes |
 | [P1.7.20 Exit Seal + Live Integration Demo](reports/P1.7.20_EXIT_SEAL_LIVE_INTEGRATION_DEMO.md) | 2026-06-26 | Exit seal evidence layer; DEV_FIXTURE vertical slice; side effects all false; P1.7 sealed; no enforcement |
 | [P1.7.19 Docs / State / Reports Update](reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md) | 2026-06-26 | Truth-sync: P1.7.0–P1.7.18 inventory, boundaries, unavailable states, P1.7.20 readiness; no enforcement |

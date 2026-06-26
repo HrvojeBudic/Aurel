@@ -1,14 +1,33 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.20 — Exit Seal + Live Integration Demo)_
+_Last updated: 2026-06-26 (P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.20 — Exit Seal + Live Integration Demo
-- Current active: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh (planned)**
-- Next planned: P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh
+- Last completed: P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation
+- Current active: **P1.8.1 — Delegation Identity / DelegationRef Schema (planned)**
+- Next planned: P1.8.1 — Delegation Identity / DelegationRef Schema
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
+- P1.8 status: **in progress** (P1.8.0 complete)
+
+### P1.8.0 delegation foundation summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| Foundation schema | `delegation_foundation.v1` | LIVE | Schema only |
+| DelegationRecord | Deterministic `record_hash` | DEV_FIXTURE in tests | Not permission |
+| AuthorityRef | Reference context | DEV_FIXTURE | Not granted authority |
+| NonRepudiationRef | `REFERENCE_ONLY` default | DEV_FIXTURE | Not verified proof |
+| AgentIdentityMeshRef | Mesh context reference | DEV_FIXTURE | Not mesh activation |
+| Foundation status | `delegation_foundation_status.v1` | DEV_FIXTURE | Not runtime active |
+| Side-effect truth | All booleans false | LIVE schema | No enforcement |
+
+**Known UNAVAILABLE (P1.8.0):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, policy/Custos enforcement, approval activation, identity mesh resolver, crypto verifier, runtime delegation execution.
+
+**Explicit negatives:** No fake LIVE, no fake TRACE_VERIFIED, no policy/Custos/approval/Ledger/global trace/runtime mutation, no delegation resolver, no crypto signing/verification.
+
+Report: `agent/reports/P1.8.0_DELEGATION_NON_REPUDIATION_FOUNDATION.md`
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
 

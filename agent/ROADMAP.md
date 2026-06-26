@@ -16,14 +16,16 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P1.7 — Path Governance & Source Trust Foundation (SEALED)**
+**P1.8 — Delegation / Non-Repudiation / Agent Identity Mesh (IN PROGRESS)**
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.20 — Exit Seal + Live Integration Demo |
-| **Current active** | **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh (planned)** |
-| **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh |
+| **Last completed** | P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh Foundation |
+| **Current active** | **P1.8.1 — Delegation Identity / DelegationRef Schema (planned)** |
+| **Previous section** | P1.7 — Path Governance & Source Trust (**SEALED**) |
+| **Next planned** | P1.8.1 — Delegation Identity / DelegationRef Schema |
+
+**P1.8.0 complete** — Delegation foundation: `DelegationSourceLabel`, `DelegationActorKind`, `DelegationSubjectKind`, `DelegationAuthorityKind`, `DelegationConstraintKind`, `NonRepudiationProofStatus`, `DelegationFoundationCapability`, `DelegationActorRef`, `DelegationSubject`, `DelegationAuthorityRef`, `DelegationConstraint`, `NonRepudiationRef`, `AgentIdentityMeshRef`, `DelegationSideEffects`, `DelegationRecord`, `DelegationFoundationStatus`, `build_delegation_*()` helpers, `serialize_delegation_record()`, `hash_delegation_record()`, DEV_FIXTURE focused test chain, deterministic record/status hashes, unavailable surface reasons, side-effect truth all false, closed-world validation. Foundation schema only; DelegationRecord is not permission; AuthorityRef is not granted authority; NonRepudiationRef is not verified proof; AgentIdentityMeshRef is not live mesh activation; no delegation resolver, non-repudiation verifier, crypto signing, policy/Custos, approval, Ledger, global trace write, CLI/TUI/projection/API, runtime execution, or agent activation. P1.8 remains in progress. Next: **P1.8.1 — Delegation Identity / DelegationRef Schema**.
 
 **P1.7.20 complete** — Exit seal + live integration demo: `PathGovernanceExitSealCheckKind`, `PathGovernanceExitSealStatus`, `PathGovernanceExitSealSideEffects`, `PathGovernanceExitSealCheckResult`, `PathGovernanceExitSealDemoInput`, `PathGovernanceExitSealResult`, `build_path_governance_exit_seal_demo_input()`, `build_default_path_governance_exit_seal_checks()`, `run_path_governance_exit_seal()`, `render_path_governance_exit_seal_summary()`, DEV_FIXTURE vertical slice demo chain, deterministic seal hashes, unavailable state proof, side-effect truth all false, closed-world validation. Evidence-only seal; no policy engine, Custos, approval, Ledger, global trace write, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes. **P1.7 is sealed.** Next: **P1.8.0 — Delegation / Non-Repudiation / Agent Identity Mesh**.
 
