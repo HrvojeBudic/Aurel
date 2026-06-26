@@ -1,15 +1,40 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.16 — Policy Context Bridge)_
+_Last updated: 2026-06-26 (P1.7.17 — Path Governance Projection/API/Event Contract)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.16 — Policy Context Bridge
-- Current active: **P1.7.17 — Path Governance Projection/API/Event Contract (planned)**
-- Next planned: P1.7.17 — Path Governance Projection/API/Event Contract
+- Last completed: P1.7.17 — Path Governance Projection/API/Event Contract
+- Current active: **P1.7.18 — Path Governance CLI/TUI Binding (planned)**
+- Next planned: P1.7.18 — Path Governance CLI/TUI Binding
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.17 Path Governance Projection/API/Event Contract (COMPLETE — read-model only)
+
+- `path_governance/projection_contract.py`: `PathGovernanceCapabilityKind`, `PathGovernanceProjectionEventKind`, `PathGovernanceProjectionRecord`, `PathGovernanceReadModel`, `PathGovernanceProjectionEvent`, `PathGovernanceApiEnvelope`, `build_path_governance_projection_record()`, `build_path_governance_read_model()`, `build_path_governance_projection_event()`, `build_path_governance_api_envelope()`, `build_default_path_governance_capability_projection()`.
+- PathGovernanceCapabilityKind status: **LIVE schema** — P1.7.0–P1.7.18 capability taxonomy; not runtime action.
+- PathGovernanceProjectionEventKind status: **LIVE schema** — event contract vocabulary; not global trace emission.
+- PathGovernanceProjectionRecord status: **LIVE schema** — projection state card with deterministic `record_id` and `record_hash`; not source of truth.
+- PathGovernanceReadModel status: **LIVE schema** — aggregated projection with counts and `overall_state`; not source of truth.
+- PathGovernanceProjectionEvent status: **LIVE schema** — event contract object with deterministic `event_id` and `event_hash`; does not emit global trace.
+- PathGovernanceApiEnvelope status: **LIVE schema** — API-ready envelope with `unavailable_bindings`; not HTTP server.
+- PathGovernanceProjectionReport status: **NOT IMPLEMENTED** — intentionally skipped; markdown report is the trace/evidence/report binding for this task.
+- Default capability projection status: **LIVE** — 19 records covering P1.7.0–P1.7.17 plus CLI_TUI_BINDING UNAVAILABLE.
+- CLI/TUI binding status: **UNAVAILABLE** — `CLI_TUI_BINDING` record and envelope binding marked unavailable until P1.7.18.
+- Shell binding status: **UNAVAILABLE** — envelope `unavailable_bindings.shell` reports not implemented in P1.7.17.
+- HTTP server status: **UNAVAILABLE** — envelope `unavailable_bindings.http_server` reports not implemented in P1.7.17.
+- Policy runtime status: **UNAVAILABLE** — envelope reports policy runtime not called in P1.7.17.
+- Ledger write status: **UNAVAILABLE** — envelope reports Ledger write not part of P1.7.17.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, or filesystem-derived state.
+- Closed-world validation status: **PASS** — projection record/read model/event/envelope reject unknown fields with `UNKNOWN_FIELD`.
+- Source-label truth status: **PASS** — projection objects preserve `ProjectionSourceLabel`; no fake TRACE_VERIFIED in default projection.
+- Projection boundary summary: Projection contract exposes state; it does not execute state; read model is not source of truth.
+- Known unavailable states: CLI/TUI binding, Shell inspector, Shell UI, HTTP server, policy runtime, Ledger integration, global trace spine write, enforcement, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement.
+- P1.7.18 readiness: **READY** — next task is Path Governance CLI/TUI Binding.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md`
 
 ### P1.7.16 Policy Context Bridge (COMPLETE — context-only bridge)
 

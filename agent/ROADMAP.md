@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.16 — Policy Context Bridge |
-| **Current active** | **P1.7.17 — Path Governance Projection/API/Event Contract (planned)** |
+| **Last completed** | P1.7.17 — Path Governance Projection/API/Event Contract |
+| **Current active** | **P1.7.18 — Path Governance CLI/TUI Binding (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.17 — Path Governance Projection/API/Event Contract |
+| **Next planned** | P1.7.18 — Path Governance CLI/TUI Binding |
+
+**P1.7.17 complete** — Path governance projection/API/event contract: `PathGovernanceCapabilityKind`, `PathGovernanceProjectionEventKind`, `PathGovernanceProjectionRecord`, `PathGovernanceReadModel`, `PathGovernanceProjectionEvent`, `PathGovernanceApiEnvelope`, `build_path_governance_projection_record()`, `build_path_governance_read_model()`, `build_path_governance_projection_event()`, `build_path_governance_api_envelope()`, `build_default_path_governance_capability_projection()`, deterministic record/read-model/event/envelope identifiers and hashes, default P1.7.0–P1.7.17 capability projection, CLI_TUI_BINDING marked UNAVAILABLE, source-label truth, unavailable reason handling, and closed-world validation. Read-model only; projection exposes state and does not execute state; no CLI/TUI, Shell UI, HTTP server, policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, or runtime enforcement. P1.7 remains in progress. Next: **P1.7.18 — Path Governance CLI/TUI Binding**.
 
 **P1.7.16 complete** — Policy context bridge: `PathPolicyContextSubjectKind`, `PathPolicyDecisionSurface`, `PathPolicyRequirementKind`, `PathPolicyBridgeMode`, `PathPolicyBridgeDisposition`, `PathPolicyContextInput`, `PathPolicyContextSubjectRef`, `PathPolicyContextPacket`, `PathPolicyContextBridgeResult`, `build_path_policy_context_subject_ref()`, `derive_path_policy_requirements()`, `build_path_policy_context_packet()`, `bridge_path_governance_to_policy_context()`, deterministic input/subject/packet/bridge identifiers and hashes, advisory requirement derivation, source-label truth, and closed-world validation. Context-only bridge with `policy_called=false`, `policy_decision_made=false`, `approval_created=false`, `ledger_written=false`, `runtime_mutated=false`, and `enforcement_triggered=false`; no policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.17 — Path Governance Projection/API/Event Contract**.
 

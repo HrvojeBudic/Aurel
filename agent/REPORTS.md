@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.17 Path Governance Projection/API/Event Contract](reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md) | 2026-06-26 | PathGovernanceProjectionRecord/ReadModel/ProjectionEvent/ApiEnvelope; default capability projection; CLI/Shell/HTTP UNAVAILABLE; no policy/Ledger/enforcement |
 | [P1.7.16 Policy Context Bridge](reports/P1.7.16_POLICY_CONTEXT_BRIDGE.md) | 2026-06-26 | PathPolicyContextInput/SubjectRef/Packet/BridgeResult; advisory requirements; context-only bridge; no policy/Ledger/enforcement |
 | [P1.7.15 Path Governance Test Harness](reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md) | 2026-06-26 | PathGovernanceHarnessScenario/RunInput/StepResult/RunResult; default DEV_FIXTURE suite; shadow-chain harness; no policy/Ledger/enforcement |
 | [P1.7.14 Path Violation / Drift Trace Hook](reports/P1.7.14_PATH_VIOLATION_DRIFT_TRACE_HOOK.md) | 2026-06-26 | PathViolationTraceInput, PathViolationTracePayload, PathViolationTraceHookResult, PathSourceDriftSignal; expected/current drift detection; PAYLOAD_ONLY default; no correction/Ledger/enforcement |
