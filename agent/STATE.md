@@ -1,15 +1,61 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.18 — Path Governance CLI/TUI Binding)_
+_Last updated: 2026-06-26 (P1.7.19 — Docs / State / Reports Update)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.18 — Path Governance CLI/TUI Binding
-- Current active: **P1.7.19 — Docs/State/Reports Update (planned)**
-- Next planned: P1.7.19 — Docs/State/Reports Update
+- Last completed: P1.7.19 — Docs / State / Reports Update
+- Current active: **P1.7.20 — Exit Seal + Live Integration Demo (planned)**
+- Next planned: P1.7.20 — Exit Seal + Live Integration Demo
 - Roadmap version: **v5.1 Integration-First**
+- P1.7 section status: **PRE-SEAL** (P1.7.0–P1.7.19 complete; P1.7.20 pending)
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7 pre-seal summary (P1.7.0–P1.7.19)
+
+P1.7 Path Governance & Source Trust is **pre-seal** — all implementation patches through P1.7.18 plus docs truth-sync (P1.7.19) are complete; exit seal (P1.7.20) is next.
+
+| Phase | Summary | Boundary |
+|-------|---------|----------|
+| P1.7.0 | Foundation vocabulary, posture, closed-world validation | Schema only |
+| P1.7.1 | Path identity & canonical path schema | Schema only |
+| P1.7.2 | Source identity & SourceRef schema | Schema only |
+| P1.7.3 | Source trust label taxonomy | Taxonomy only |
+| P1.7.4 | Trusted root & scope registry seed | Registry only |
+| P1.7.5 | Path normalization & escape detection contract | Shadow candidate only |
+| P1.7.6 | Path authority scope model | Declarative only |
+| P1.7.7 | Untrusted content boundary model | Declarative only |
+| P1.7.8 | Source provenance & evidence binding seed | Reference/binding only |
+| P1.7.9 | Path/source risk classification model | Classification only |
+| P1.7.10 | Path governance resolver shadow | **Shadow-only** (`enforced=false`) |
+| P1.7.11 | Source trust resolver shadow | **Shadow-only** (`enforced=false`) |
+| P1.7.12 | Conflict & precedence shadow rules | **Shadow-only** (`enforced=false`) |
+| P1.7.13 | Path resolution trace hook | Payload/injected-sink; not Ledger |
+| P1.7.14 | Violation/drift trace hook | Evidence only; not correction |
+| P1.7.15 | Test harness | **DEV_FIXTURE** scenario harness; not runtime |
+| P1.7.16 | Policy context bridge | Context packet; not policy decision |
+| P1.7.17 | Projection/API/event contract | Read model; not HTTP server |
+| P1.7.18 | CLI/TUI binding | Read-only inspector; not control plane |
+| P1.7.19 | Docs/state/reports sync | Evidence metadata; not implementation |
+
+**Known UNAVAILABLE (P1.7):** Shell UI, HTTP API server, policy runtime/Custos enforcement, Ledger write, global trace spine write, runtime enforcement, source trust mutation, approval activation, real allow/deny/block decisions, P1.7.20 exit seal.
+
+**Explicit negatives:** No fake LIVE, no fake TRACE_VERIFIED, no enforcement, no policy runtime, no Ledger write, no global trace write, no Shell UI, no HTTP server, no runtime authority.
+
+**P1.7.20 readiness:** Exit seal + live integration demo must prove end-to-end vertical slice, projection inspectability, CLI read-only inspection, harness demo, policy context packet demo, trace/violation payload demo, and honest UNAVAILABLE reporting.
+
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md`
+
+### P1.7.19 Docs / State / Reports Update (COMPLETE — truth-sync only)
+
+- Synchronizes `agent/ACTIVE_TASK.md`, `agent/STATE.md`, `agent/ROADMAP.md`, `agent/TESTS.md`, `agent/REPORTS.md`, `agent/ARCHITECTURE.md`, `agent/DECISIONS.md`.
+- Indexes P1.7.0–P1.7.19 report chain; documents shadow-only, trace, policy, projection, and CLI boundaries.
+- Adds docs consistency test: `tests/path_governance/test_p1_7_19_docs_state_reports_sync.py`.
+- No runtime behavior, resolver, policy bridge, projection, or CLI changes.
+- P1.7.20 exit-seal checklist documented in P1.7.19 report; P1.7 is pre-seal for live integration demo.
+- Report: `agent/reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md`
 
 ### P1.7.18 Path Governance CLI/TUI Binding (COMPLETE — read-only projection binding)
 
@@ -440,7 +486,7 @@ Backend is source of truth. No unlabelled mock operational state. Shell UI remai
 - P1.6 section sealed with warnings (2026-06-25).
 - Exit seal module + 42 focused tests + 137 regression tests pass.
 - Known UNAVAILABLE: Shell UI, full Ledger trace write, policy enforcement.
-- Next path-governance task: P1.7.2 — Source Identity & SourceRef Schema.
+- Next path-governance task: P1.7.20 — Exit Seal + Live Integration Demo.
 
 ### P1.6.17 Policy Projection/API/Event Contract (COMPLETE — read model only)
 

@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.18 — Path Governance CLI/TUI Binding |
-| **Current active** | **P1.7.19 — Docs/State/Reports Update (planned)** |
+| **Last completed** | P1.7.19 — Docs / State / Reports Update |
+| **Current active** | **P1.7.20 — Exit Seal + Live Integration Demo (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.19 — Docs/State/Reports Update |
+| **Next planned** | P1.7.20 — Exit Seal + Live Integration Demo |
+
+**P1.7.19 complete** — Docs/state/reports truth sync: P1.7.0–P1.7.18 report inventory, shadow-only boundaries (P1.7.10–P1.7.12), trace/Ledger boundaries (P1.7.13–P1.7.14), DEV_FIXTURE harness boundary (P1.7.15), policy context packet boundary (P1.7.16), projection read-model boundary (P1.7.17), read-only CLI boundary (P1.7.18), source-label truth, known UNAVAILABLE states, P1.7.20 readiness checklist, docs consistency test. Evidence metadata sync only; no runtime behavior, policy runtime, Ledger write, global trace write, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes. P1.7 is **pre-seal** — not fully sealed until P1.7.20. Next: **P1.7.20 — Exit Seal + Live Integration Demo**.
 
 **P1.7.18 complete** — Path governance CLI/TUI binding: `PathGovernanceCliCommandKind`, `PathGovernanceCliOutputFormat`, `PathGovernanceCliBindingMode`, `PathGovernanceCliSideEffects`, `PathGovernanceCliRequest`, `PathGovernanceCliRenderedLine`, `PathGovernanceCliResponse`, `build_path_governance_cli_request()`, `render_path_governance_status_text()`, `render_path_governance_capability_table()`, `render_path_governance_json_payload()`, `render_path_governance_cli_response()`, `handle_path_governance_cli_request()`, read-only `path-governance` CLI subcommands, deterministic request/line/response hashes, source-label truth, unavailable reason visibility, side-effect truth booleans all false, and closed-world validation. Read-only projection binding; CLI exposes state and does not execute policy; no Shell UI, Web UI, HTTP server, policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, or runtime enforcement. P1.7 remains in progress. Next: **P1.7.19 — Docs/State/Reports Update**.
 
@@ -201,7 +203,22 @@ P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal 
 | P1.7.10 | **Path Governance Resolver v0 / Shadow Mode** |
 | P1.7.11 | **Source Trust Resolver v0 / Shadow Mode** |
 | P1.7.12 | **Path/Source Conflict & Precedence Rules** |
-| P1.7.13 | Path Resolution Trace Hook (next) |
+| P1.7.13 | **Path Resolution Trace Hook** |
+| P1.7.14 | **Path Violation / Drift Trace Hook** |
+| P1.7.15 | **Path Governance Test Harness** |
+| P1.7.16 | **Policy Context Bridge** |
+| P1.7.17 | **Path Governance Projection/API/Event Contract** |
+| P1.7.18 | **Path Governance CLI/TUI Binding** |
+| P1.7.19 | **Docs / State / Reports Update** |
+| P1.7.20 | **Exit Seal + Live Integration Demo** |
+
+### P1.7.19 handoff
+
+P1.7.19 is a consolidation/audit gate: P1.7 capability map, source-label doctrine, report index P1.7.0–P1.7.19, shadow-only and unavailable boundaries, and P1.7.20 exit-seal readiness checklist. It adds no governance semantics and does not mutate runtime. **P1.7 is pre-seal. P1.7.20 performs live integration demo and exit seal verification.**
+
+### P1.7.20 forward hook
+
+P1.7.20 — Exit Seal + Live Integration Demo: run checklist, produce seal report, demonstrate Integration-First vertical slice for path governance. Enforcement remains deferred to later phases (P9/P25). Expected: `path_governance/exit_seal.py` proof module (pattern from P1.6.20).
 
 ### P1.7.0 handoff
 

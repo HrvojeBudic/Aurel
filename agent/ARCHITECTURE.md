@@ -120,7 +120,7 @@ Architectural boundaries:
 - Registry applicability selects candidate lawbook cards; resolver adapters still produce judgments.
 - `AgenticRuntime.submit()` remains untouched; no command blocking, approval activation, or sandbox runtime bridge exists in P1.6.11.
 
-Next planned: P1.7.0 — Path Governance & Source Trust Foundation; active policy enforcement deferred to later phases (P9/P25).
+Next planned: P1.7.20 — Path Governance Exit Seal + Live Integration Demo (P1.7.0–P1.7.19 pre-seal); active policy enforcement deferred to later phases (P9/P25).
 
 
 ## Custos Shadow Runtime Projection (P1.6.12)
@@ -394,7 +394,7 @@ Key modules:
 | `cli_modules/policy_commands.py` | P1.6.18 — read-only operator CLI binding |
 | `policy_cards/exit_seal.py` | P1.6.20 — exit seal proof layer, deterministic report hash |
 
-P1.6 section **sealed with warnings** (2026-06-25). Next: P1.7.0 — Path Governance & Source Trust Foundation.
+P1.6 section **sealed with warnings** (2026-06-25). P1.7 Path Governance & Source Trust is **pre-seal** (P1.7.0–P1.7.19 complete). Next: P1.7.20 — Exit Seal + Live Integration Demo.
 
 ## LLM repository planning (P0.21)
 

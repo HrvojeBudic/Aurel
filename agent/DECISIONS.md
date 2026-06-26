@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-26 — P1.7.19 Docs / State / Reports Update
+
+### DEC-P1719-01: Truth-sync only; no runtime behavior
+**Decision:** P1.7.19 updates agent documentation, state canon, reports index, architecture pointer, and P1.7.20 readiness checklist only. No path governance backend, CLI, resolver, policy bridge, enforcement, Ledger, approval, or sandbox changes.
+**Why:** P1.7.19 is a governance truth gate before exit seal, not a feature phase.
+
+### DEC-P1719-02: P1.7 pre-seal; P1.7.20 next
+**Decision:** P1.7 section is **pre-seal** after P1.7.19. Next planned task is **P1.7.20 — Exit Seal + Live Integration Demo**. Do not mark P1.7 fully sealed until P1.7.20 completes.
+**Why:** Integration-First law requires exit seal proof, not docs-only completion, to seal a section.
+
 ## 2026-06-25 — P1.6.20 P1.6 Exit Seal + Live Integration Demo
 
 ### DEC-P1620-01: P1.6 sealed as Integration-First vertical slice

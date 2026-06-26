@@ -1,22 +1,22 @@
-# Active Task: P1.7.19 (planned)
+# Active Task: P1.7.20 (planned)
 
-**Status:** P1.7.18 COMPLETE; P1.7.19 PLANNED
+**Status:** P1.7.19 COMPLETE; P1.7.20 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.18 — Path Governance CLI/TUI Binding**
-- Next planned task: **P1.7.19 — Docs/State/Reports Update**
+- Current completed task: **P1.7.19 — Docs / State / Reports Update**
+- Next planned task: **P1.7.20 — Exit Seal + Live Integration Demo**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — CLI/TUI binding added; broader P1.7 path/source governance remains in progress.
+**PRE-SEAL** — P1.7.0–P1.7.19 complete; docs/state/report truth sync added; section awaiting exit seal (not sealed).
 
-P1.7.18 adds `PathGovernanceCliCommandKind`, `PathGovernanceCliOutputFormat`, `PathGovernanceCliBindingMode`, `PathGovernanceCliSideEffects`, `PathGovernanceCliRequest`, `PathGovernanceCliRenderedLine`, `PathGovernanceCliResponse`, `build_path_governance_cli_request()`, `render_path_governance_status_text()`, `render_path_governance_capability_table()`, `render_path_governance_json_payload()`, `render_path_governance_cli_response()`, `handle_path_governance_cli_request()`, read-only `path-governance` CLI subcommands, deterministic request/line/response hashes, closed-world validation, source-label truth, unavailable reason visibility, and read-only side-effect truth booleans (all false).
+P1.7.19 synchronizes documentation, state, roadmap, test index, and report index for Path Governance & Source Trust. It indexes P1.7.0–P1.7.18 reports, documents shadow-only boundaries, trace/Ledger boundaries, policy context boundaries, projection/CLI boundaries, source-label truth, and known UNAVAILABLE states. It prepares P1.7.20 exit seal readiness.
 
-Path Governance CLI/TUI Binding exposes projection state to the operator. It does not create authority. It does not execute policy. It does not mutate path/source governance state.
+P1.7.19 is evidence metadata sync only. It does not add new runtime behavior, policy runtime, Ledger integration, enforcement, source mutation, Shell UI, HTTP server, or sandbox changes.
 
-No Shell UI, Web UI, HTTP server, policy engine integration, approval activation, real enforcement, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem access, network access, sandbox hardening, or runtime enforcement was added.
+Boundary: no new runtime behavior, no policy runtime, no Ledger, no enforcement.
 
 Git status: committed locally, no push performed.
 
@@ -41,3 +41,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.16_POLICY_CONTEXT_BRIDGE.md`
 - `agent/reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md`
 - `agent/reports/P1.7.18_PATH_GOVERNANCE_CLI_TUI_BINDING.md`
+- `agent/reports/P1.7.19_DOCS_STATE_REPORTS_UPDATE.md`
