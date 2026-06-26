@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.15 — Path Governance Test Harness |
-| **Current active** | **P1.7.16 — Policy Context Bridge (planned)** |
+| **Last completed** | P1.7.16 — Policy Context Bridge |
+| **Current active** | **P1.7.17 — Path Governance Projection/API/Event Contract (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.16 — Policy Context Bridge |
+| **Next planned** | P1.7.17 — Path Governance Projection/API/Event Contract |
+
+**P1.7.16 complete** — Policy context bridge: `PathPolicyContextSubjectKind`, `PathPolicyDecisionSurface`, `PathPolicyRequirementKind`, `PathPolicyBridgeMode`, `PathPolicyBridgeDisposition`, `PathPolicyContextInput`, `PathPolicyContextSubjectRef`, `PathPolicyContextPacket`, `PathPolicyContextBridgeResult`, `build_path_policy_context_subject_ref()`, `derive_path_policy_requirements()`, `build_path_policy_context_packet()`, `bridge_path_governance_to_policy_context()`, deterministic input/subject/packet/bridge identifiers and hashes, advisory requirement derivation, source-label truth, and closed-world validation. Context-only bridge with `policy_called=false`, `policy_decision_made=false`, `approval_created=false`, `ledger_written=false`, `runtime_mutated=false`, and `enforcement_triggered=false`; no policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.17 — Path Governance Projection/API/Event Contract**.
 
 **P1.7.15 complete** — Path governance test harness: `PathGovernanceHarnessScenarioKind`, `PathGovernanceHarnessExpectation`, `PathGovernanceHarnessStatus`, `PathGovernanceHarnessScenario`, `PathGovernanceHarnessRunInput`, `PathGovernanceHarnessStepResult`, `PathGovernanceHarnessRunResult`, `build_path_governance_harness_scenario()`, `build_default_path_governance_harness_suite()`, `run_path_governance_harness_scenario()`, `run_path_governance_harness_suite()`, deterministic scenario/run/step/result identifiers and hashes, default DEV_FIXTURE scenario suite, advisory expectation checks, source-label truth, and closed-world validation. Shadow-chain harness only; harness pass is not allow and harness fail is not deny; no policy engine integration, approval activation, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.16 — Policy Context Bridge**.
 

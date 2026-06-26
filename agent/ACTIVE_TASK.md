@@ -1,22 +1,22 @@
-# Active Task: P1.7.16 (planned)
+# Active Task: P1.7.17 (planned)
 
-**Status:** P1.7.15 COMPLETE; P1.7.16 PLANNED
+**Status:** P1.7.16 COMPLETE; P1.7.17 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.15 — Path Governance Test Harness**
-- Next planned task: **P1.7.16 — Policy Context Bridge**
+- Current completed task: **P1.7.16 — Policy Context Bridge**
+- Next planned task: **P1.7.17 — Path Governance Projection/API/Event Contract**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — path governance test harness added; broader P1.7 path/source governance remains in progress.
+**IN PROGRESS** — policy context bridge added; broader P1.7 path/source governance remains in progress.
 
-P1.7.15 adds `PathGovernanceHarnessScenarioKind`, `PathGovernanceHarnessExpectation`, `PathGovernanceHarnessStatus`, `PathGovernanceHarnessScenario`, `PathGovernanceHarnessRunInput`, `PathGovernanceHarnessStepResult`, `PathGovernanceHarnessRunResult`, `build_path_governance_harness_scenario()`, `build_default_path_governance_harness_suite()`, `run_path_governance_harness_scenario()`, `run_path_governance_harness_suite()`, deterministic scenario/run/step/result identifiers and hashes, closed-world validation, source-label truth, default DEV_FIXTURE scenario suite, and shadow-chain-only harness boundary semantics.
+P1.7.16 adds `PathPolicyContextSubjectKind`, `PathPolicyDecisionSurface`, `PathPolicyRequirementKind`, `PathPolicyBridgeMode`, `PathPolicyBridgeDisposition`, `PathPolicyContextInput`, `PathPolicyContextSubjectRef`, `PathPolicyContextPacket`, `PathPolicyContextBridgeResult`, `build_path_policy_context_subject_ref()`, `derive_path_policy_requirements()`, `build_path_policy_context_packet()`, `bridge_path_governance_to_policy_context()`, deterministic input/subject/packet/bridge identifiers and hashes, closed-world validation, source-label truth, advisory requirement derivation, and context-only bridge boundary semantics.
 
-Path Governance Test Harness verifies shadow governance behavior. It must not become the governance runtime. Harness pass is not allow; harness fail is not deny.
+Policy Context Bridge prepares governance context. It does not decide policy. Context readiness is not authority. Policy bridge is input shaping, not enforcement.
 
-No policy context bridge, projection/API/event contract, CLI/TUI binding, Shell UI, policy engine integration, approval activation, real enforcement, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem access, network access, sandbox hardening, or runtime enforcement was added.
+No projection/API/event contract, CLI/TUI binding, Shell UI, policy engine integration, approval activation, real enforcement, Ledger write, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem access, network access, sandbox hardening, or runtime enforcement was added.
 
 Git status: committed locally, no push performed.
 
@@ -38,3 +38,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.13_PATH_RESOLUTION_TRACE_HOOK.md`
 - `agent/reports/P1.7.14_PATH_VIOLATION_DRIFT_TRACE_HOOK.md`
 - `agent/reports/P1.7.15_PATH_GOVERNANCE_TEST_HARNESS.md`
+- `agent/reports/P1.7.16_POLICY_CONTEXT_BRIDGE.md`

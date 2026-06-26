@@ -1,15 +1,47 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.15 — Path Governance Test Harness)_
+_Last updated: 2026-06-26 (P1.7.16 — Policy Context Bridge)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.15 — Path Governance Test Harness
-- Current active: **P1.7.16 — Policy Context Bridge (planned)**
-- Next planned: P1.7.16 — Policy Context Bridge
+- Last completed: P1.7.16 — Policy Context Bridge
+- Current active: **P1.7.17 — Path Governance Projection/API/Event Contract (planned)**
+- Next planned: P1.7.17 — Path Governance Projection/API/Event Contract
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.16 Policy Context Bridge (COMPLETE — context-only bridge)
+
+- `path_governance/policy_context_bridge.py`: `PathPolicyContextSubjectKind`, `PathPolicyDecisionSurface`, `PathPolicyRequirementKind`, `PathPolicyBridgeMode`, `PathPolicyBridgeDisposition`, `PathPolicyContextInput`, `PathPolicyContextSubjectRef`, `PathPolicyContextPacket`, `PathPolicyContextBridgeResult`, `build_path_policy_context_subject_ref()`, `derive_path_policy_requirements()`, `build_path_policy_context_packet()`, `bridge_path_governance_to_policy_context()`.
+- PathPolicyContextSubjectKind status: **LIVE schema** — subject classification vocabulary; not policy decision.
+- PathPolicyDecisionSurface status: **LIVE schema** — future policy surface vocabulary; descriptive only.
+- PathPolicyRequirementKind status: **LIVE schema** — advisory requirement vocabulary; not approval creation.
+- PathPolicyBridgeMode status: **LIVE schema** — default `CONTEXT_ONLY`; does not invoke policy runtime.
+- PathPolicyBridgeDisposition status: **LIVE schema** — bridge outcome disposition; not policy decision.
+- PathPolicyContextInput status: **LIVE schema** — optional references to P1.7.0–P1.7.15 objects; deterministic `input_id` and `input_hash`.
+- PathPolicyContextSubjectRef status: **LIVE schema** — lightweight upstream refs with `subject_ref_id`; not raw payload embedding.
+- PathPolicyContextPacket status: **LIVE schema** — advisory `advisory_summary`, subjects, requirements, decision surfaces, deterministic `packet_id` and `packet_hash`, `created_by_task="P1.7.16"`, `schema_version="path_policy_context_packet.v1"`.
+- PathPolicyContextBridgeResult status: **LIVE schema** — bridge mode, disposition, truth fields all false, deterministic `bridge_id` and `bridge_hash`, `created_by_task="P1.7.16"`, `bridge_version="path_policy_context_bridge.v1"`.
+- PathPolicyContextBridgeReport status: **NOT IMPLEMENTED** — intentionally skipped; markdown report is the trace/evidence/report binding for this task.
+- `build_path_policy_context_subject_ref()` status: **LIVE backend helper** — extracts ref_id/ref_hash from upstream objects without mutation.
+- `derive_path_policy_requirements()` status: **LIVE backend helper** — advisory requirement derivation from risk/provenance/source/conflict/authority/trace context.
+- `build_path_policy_context_packet()` status: **LIVE backend helper** — builds deterministic policy-ready context packet without policy call.
+- `bridge_path_governance_to_policy_context()` status: **LIVE backend helper** — default `CONTEXT_ONLY`; never calls policy engine or mutates runtime.
+- policy_called=false status: **PASS** — enforced in bridge result `__post_init__`.
+- policy_decision_made=false status: **PASS** — enforced in bridge result `__post_init__`.
+- approval_created=false status: **PASS** — enforced in bridge result `__post_init__`.
+- ledger_written=false status: **PASS** — enforced in bridge result `__post_init__`.
+- runtime_mutated=false status: **PASS** — enforced in bridge result `__post_init__`.
+- enforcement_triggered=false status: **PASS** — enforced in bridge result `__post_init__`.
+- Deterministic hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, or filesystem-derived state.
+- Closed-world validation status: **PASS** — policy context input/subject/packet/bridge result reject unknown fields with `UNKNOWN_FIELD`.
+- Source-label truth status: **PASS** — bridge objects preserve `ProjectionSourceLabel`; test fixtures use `DEV_FIXTURE`.
+- Bridge boundary summary: Policy Context Bridge prepares governance context; it does not decide policy; requirement is not approval.
+- Known unavailable states: projection/API/event contract, CLI/TUI binding, Shell inspector, policy engine integration, Custos runtime, real enforcement, Ledger integration, global trace spine write, source trust mutation, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement.
+- P1.7.17 readiness: **READY** — next task is Path Governance Projection/API/Event Contract.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.16_POLICY_CONTEXT_BRIDGE.md`
 
 ### P1.7.15 Path Governance Test Harness (COMPLETE — shadow-chain harness only)
 

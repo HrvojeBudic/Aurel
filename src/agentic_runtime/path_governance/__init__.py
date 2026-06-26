@@ -17,6 +17,7 @@ P1.7.12 adds deterministic path/source conflict and precedence shadow rules with
 P1.7.13 adds deterministic path resolution trace hook payload model without Ledger write or enforcement.
 P1.7.14 adds deterministic path violation/drift trace hook payload model without correction or enforcement.
 P1.7.15 adds deterministic path governance test harness without runtime enforcement.
+P1.7.16 adds deterministic policy context bridge without policy engine or enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -352,6 +353,32 @@ from .test_harness import (
     run_path_governance_harness_scenario,
     run_path_governance_harness_suite,
 )
+from .policy_context_bridge import (
+    PATH_POLICY_CONTEXT_BRIDGE_RESULT_KNOWN_FIELDS,
+    PATH_POLICY_CONTEXT_BRIDGE_TASK_ID,
+    PATH_POLICY_CONTEXT_BRIDGE_VERSION,
+    PATH_POLICY_CONTEXT_INPUT_KNOWN_FIELDS,
+    PATH_POLICY_CONTEXT_PACKET_KNOWN_FIELDS,
+    PATH_POLICY_CONTEXT_PACKET_SCHEMA,
+    PATH_POLICY_CONTEXT_SUBJECT_REF_KNOWN_FIELDS,
+    PathPolicyBridgeDisposition,
+    PathPolicyBridgeMode,
+    PathPolicyContextBridgeResult,
+    PathPolicyContextInput,
+    PathPolicyContextPacket,
+    PathPolicyContextSubjectKind,
+    PathPolicyContextSubjectRef,
+    PathPolicyDecisionSurface,
+    PathPolicyRequirementKind,
+    bridge_path_governance_to_policy_context,
+    build_path_policy_context_packet,
+    build_path_policy_context_subject_ref,
+    compute_path_policy_context_bridge_id,
+    compute_path_policy_context_input_hash,
+    compute_path_policy_context_packet_id,
+    compute_path_policy_context_subject_ref_id,
+    derive_path_policy_requirements,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -384,6 +411,30 @@ __all__ = [
     "PATH_GOVERNANCE_HARNESS_STEP_RESULT_KNOWN_FIELDS",
     "PATH_GOVERNANCE_TEST_HARNESS_TASK_ID",
     "PATH_GOVERNANCE_TEST_HARNESS_VERSION",
+    "PATH_POLICY_CONTEXT_BRIDGE_RESULT_KNOWN_FIELDS",
+    "PATH_POLICY_CONTEXT_BRIDGE_TASK_ID",
+    "PATH_POLICY_CONTEXT_BRIDGE_VERSION",
+    "PATH_POLICY_CONTEXT_INPUT_KNOWN_FIELDS",
+    "PATH_POLICY_CONTEXT_PACKET_KNOWN_FIELDS",
+    "PATH_POLICY_CONTEXT_PACKET_SCHEMA",
+    "PATH_POLICY_CONTEXT_SUBJECT_REF_KNOWN_FIELDS",
+    "PathPolicyBridgeDisposition",
+    "PathPolicyBridgeMode",
+    "PathPolicyContextBridgeResult",
+    "PathPolicyContextInput",
+    "PathPolicyContextPacket",
+    "PathPolicyContextSubjectKind",
+    "PathPolicyContextSubjectRef",
+    "PathPolicyDecisionSurface",
+    "PathPolicyRequirementKind",
+    "bridge_path_governance_to_policy_context",
+    "build_path_policy_context_packet",
+    "build_path_policy_context_subject_ref",
+    "compute_path_policy_context_bridge_id",
+    "compute_path_policy_context_input_hash",
+    "compute_path_policy_context_packet_id",
+    "compute_path_policy_context_subject_ref_id",
+    "derive_path_policy_requirements",
     "PATH_GOVERNANCE_MODULE_NAME",
     "PATH_GOVERNANCE_MODULE_VERSION",
     "PATH_GOVERNANCE_RESOLVER_INPUT_KNOWN_FIELDS",
