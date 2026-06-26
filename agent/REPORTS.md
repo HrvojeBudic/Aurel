@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.7.7 Untrusted Content Boundary Model](reports/P1.7.7_UNTRUSTED_CONTENT_BOUNDARY_MODEL.md) | 2026-06-25 | UntrustedContentKind, ContentInfluenceSurface, BoundaryRestrictionKind, UntrustedBoundaryPosture, BoundaryRestriction, UntrustedContentBoundary, declarative information-vs-instruction boundaries; no filtering/enforcement/network access |
 | [P1.7.6 Path Authority Scope Model](reports/P1.7.6_PATH_AUTHORITY_SCOPE_MODEL.md) | 2026-06-25 | PathAuthoritySubjectKind, PathAuthorityBasis, PathAuthorityConstraintKind, PathAuthoritySubject, PathAuthorityConstraint, PathAuthorityScope, PathAuthorityScopeRegistry, declarative authority scope only; no resolver/enforcement/filesystem access |
 | [P1.7.5 Path Normalization & Escape Detection Contract](reports/P1.7.5_PATH_NORMALIZATION_ESCAPE_DETECTION_CONTRACT.md) | 2026-06-25 | PathNormalizationStatus, PathEscapeSignal, PathNormalizationResult, PathBoundaryStatus, PathBoundaryCheckResult, EscapeDetectionContract, shadow-only escape candidate detection; no resolver/enforcement/filesystem access |
 | [P1.7.4 Trusted Root & Scope Registry Seed](reports/P1.7.4_TRUSTED_ROOT_SCOPE_REGISTRY_SEED.md) | 2026-06-25 | TrustedRootKind, PathScopeAction, PathScopeReason, TrustedRoot, PathScopeGrant, PathScopeDeny, TrustedRootRegistry, deterministic root/grant/deny/registry hashes, source-label truth; no resolver/enforcement/filesystem security |

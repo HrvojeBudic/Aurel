@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-25 (P1.7.6 — Path Authority Scope Model)_
+_Last updated: 2026-06-25 (P1.7.7 — Untrusted Content Boundary Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.6 — Path Authority Scope Model
-- Current active: **P1.7.7 — Untrusted Content Boundary Model (planned)**
-- Next planned: P1.7.7 — Untrusted Content Boundary Model
+- Last completed: P1.7.7 — Untrusted Content Boundary Model
+- Current active: **P1.7.8 — Source Provenance & Evidence Binding Seed (planned)**
+- Next planned: P1.7.8 — Source Provenance & Evidence Binding Seed
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.7 Untrusted Content Boundary Model (COMPLETE — declarative boundary model only)
+
+- `path_governance/`: `UntrustedContentKind`, `ContentInfluenceSurface`, `BoundaryRestrictionKind`, `UntrustedBoundaryPosture`, `BoundaryRestriction`, `UntrustedContentBoundary`, `UntrustedContentBoundaryRegistry`, `build_untrusted_content_boundary()`, `build_untrusted_content_boundary_registry()`, trust-label default declaration helpers.
+- UntrustedContentKind status: **LIVE schema** — declared content kind only; does not decide trust or authority.
+- ContentInfluenceSurface status: **LIVE schema** — declared influence surface; does not grant permission.
+- BoundaryRestrictionKind status: **LIVE schema** — future-governance restriction vocabulary; does not enforce.
+- UntrustedBoundaryPosture status: **LIVE schema** — declared posture; does not execute, block, or authorize.
+- BoundaryRestriction status: **LIVE schema** — deterministic `restriction_id`, surface, reason, source label, JSON-safe metadata.
+- UntrustedContentBoundary status: **LIVE schema** — binds `SourceIdentity`, `SourceTrustLabel`, posture, influence surfaces, restrictions, deterministic `boundary_id` and `boundary_hash`, `created_by_task="P1.7.7"`, `boundary_version="untrusted_content_boundary.v1"`.
+- UntrustedContentBoundaryRegistry status: **LIVE schema** — binds boundaries with `created_by_task="P1.7.7"`, `registry_version="untrusted_content_boundary_registry.v1"`, explicit source label, notes, metadata, and deterministic order-insensitive `registry_hash`.
+- Restriction/boundary/registry hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, content body scans, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — test fixtures use `DEV_FIXTURE`; production helper defaults remain `LIVE`.
+- Information vs instruction boundary summary: untrusted content may inform but must never command; content boundary model is not active firewall; restriction is not enforcement; TRUSTED does not imply command authority; QUARANTINED means restricted not deleted.
+- Known unavailable states: source provenance/evidence binding, path/source risk classifier, path governance resolver, source trust resolver, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, trace hooks, policy bridge, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.8 readiness: **READY** — next task is Source Provenance & Evidence Binding Seed.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.7_UNTRUSTED_CONTENT_BOUNDARY_MODEL.md`
 
 ### P1.7.6 Path Authority Scope Model (COMPLETE — declarative scope model only)
 

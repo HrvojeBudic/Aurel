@@ -8,6 +8,7 @@ P1.7.3 adds deterministic source trust label taxonomy objects without resolver b
 P1.7.4 adds deterministic trusted root registry seed objects without authority resolution.
 P1.7.5 adds deterministic path normalization and shadow escape candidate detection.
 P1.7.6 adds deterministic path authority scope declaration objects without resolver behavior.
+P1.7.7 adds deterministic untrusted content boundary declaration objects without filtering or enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -118,6 +119,30 @@ from .path_authority_scope import (
     compute_scope_id,
     compute_subject_id,
 )
+from .untrusted_content_boundary import (
+    BOUNDARY_RESTRICTION_KNOWN_FIELDS,
+    UNTRUSTED_CONTENT_BOUNDARY_KNOWN_FIELDS,
+    UNTRUSTED_CONTENT_BOUNDARY_REGISTRY_KNOWN_FIELDS,
+    UNTRUSTED_CONTENT_BOUNDARY_REGISTRY_VERSION,
+    UNTRUSTED_CONTENT_BOUNDARY_TASK_ID,
+    UNTRUSTED_CONTENT_BOUNDARY_VERSION,
+    BoundaryRestriction,
+    BoundaryRestrictionKind,
+    ContentInfluenceSurface,
+    UntrustedBoundaryPosture,
+    UntrustedContentBoundary,
+    UntrustedContentBoundaryRegistry,
+    UntrustedContentKind,
+    build_untrusted_content_boundary,
+    build_untrusted_content_boundary_registry,
+    compute_boundary_hash,
+    compute_boundary_id,
+    compute_restriction_id,
+    compute_untrusted_boundary_registry_hash,
+    default_influence_surfaces_for_trust_label,
+    default_posture_for_trust_label,
+    default_restrictions_for_trust_label,
+)
 from .trusted_roots import (
     PATH_SCOPE_DENY_KNOWN_FIELDS,
     PATH_SCOPE_GRANT_KNOWN_FIELDS,
@@ -151,6 +176,7 @@ from .validation import validate_known_fields
 
 __all__ = [
     "CAPABILITY_STATUS_KNOWN_FIELDS",
+    "BOUNDARY_RESTRICTION_KNOWN_FIELDS",
     "FoundationPosture",
     "CANONICAL_PATH_REF_KNOWN_FIELDS",
     "PATH_GOVERNANCE_MODULE_NAME",
@@ -190,8 +216,19 @@ __all__ = [
     "TRUSTED_ROOT_REGISTRY_KNOWN_FIELDS",
     "TRUSTED_ROOT_REGISTRY_TASK_ID",
     "TRUSTED_ROOT_REGISTRY_VERSION",
-    "TRAVERSAL_WARNING",
+    "UNTRUSTED_CONTENT_BOUNDARY_KNOWN_FIELDS",
+    "UNTRUSTED_CONTENT_BOUNDARY_REGISTRY_KNOWN_FIELDS",
+    "UNTRUSTED_CONTENT_BOUNDARY_REGISTRY_VERSION",
+    "UNTRUSTED_CONTENT_BOUNDARY_TASK_ID",
+    "UNTRUSTED_CONTENT_BOUNDARY_VERSION",
+    "UntrustedBoundaryPosture",
+    "UntrustedContentBoundary",
+    "UntrustedContentBoundaryRegistry",
+    "UntrustedContentKind",
+    "ContentInfluenceSurface",
     "EscapeDetectionContract",
+    "BoundaryRestriction",
+    "BoundaryRestrictionKind",
     "CanonicalPathRef",
     "CanonicalizationStatus",
     "PathAuthorityBasis",
@@ -235,6 +272,9 @@ __all__ = [
     "TrustedRoot",
     "TrustedRootKind",
     "TrustedRootRegistry",
+    "TRAVERSAL_WARNING",
+    "build_untrusted_content_boundary",
+    "build_untrusted_content_boundary_registry",
     "build_path_authority_scope",
     "build_path_authority_scope_registry",
     "build_path_identity",
@@ -242,6 +282,13 @@ __all__ = [
     "build_source_identity",
     "build_source_trust_taxonomy",
     "build_trusted_root_registry",
+    "compute_boundary_hash",
+    "compute_boundary_id",
+    "compute_restriction_id",
+    "compute_untrusted_boundary_registry_hash",
+    "default_influence_surfaces_for_trust_label",
+    "default_posture_for_trust_label",
+    "default_restrictions_for_trust_label",
     "compute_authority_scope_registry_hash",
     "compute_constraint_id",
     "compute_definition_hash",

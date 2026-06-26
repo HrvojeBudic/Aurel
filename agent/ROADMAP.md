@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.6 — Path Authority Scope Model |
-| **Current active** | **P1.7.7 — Untrusted Content Boundary Model (planned)** |
+| **Last completed** | P1.7.7 — Untrusted Content Boundary Model |
+| **Current active** | **P1.7.8 — Source Provenance & Evidence Binding Seed (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.7 — Untrusted Content Boundary Model |
+| **Next planned** | P1.7.8 — Source Provenance & Evidence Binding Seed |
 
-**P1.7.6 complete** — Path authority scope model: `PathAuthoritySubjectKind`, `PathAuthorityBasis`, `PathAuthorityConstraintKind`, `PathAuthoritySubject`, `PathAuthorityConstraint`, `PathAuthorityScope`, `PathAuthorityScopeRegistry`, `build_path_authority_scope()`, `build_path_authority_scope_registry()`, deterministic subject/constraint/scope/registry hashes, source-label truth, and closed-world validation. Declarative authority scope only without permission, resolver, sandbox policy, filesystem access, or enforcement. P1.7 remains in progress. Next: **P1.7.7 — Untrusted Content Boundary Model**.
+**P1.7.7 complete** — Untrusted content boundary model: `UntrustedContentKind`, `ContentInfluenceSurface`, `BoundaryRestrictionKind`, `UntrustedBoundaryPosture`, `BoundaryRestriction`, `UntrustedContentBoundary`, `UntrustedContentBoundaryRegistry`, `build_untrusted_content_boundary()`, `build_untrusted_content_boundary_registry()`, trust-label default declaration helpers, deterministic restriction/boundary/registry hashes, source-label truth, and closed-world validation. Declarative information-vs-instruction boundaries only without prompt filtering, memory gating, tool blocking, resolver, or enforcement. P1.7 remains in progress. Next: **P1.7.8 — Source Provenance & Evidence Binding Seed**.
+
+**P1.7.6 complete** — Path authority scope model: `PathAuthoritySubjectKind`, `PathAuthorityBasis`, `PathAuthorityConstraintKind`, `PathAuthoritySubject`, `PathAuthorityConstraint`, `PathAuthorityScope`, `PathAuthorityScopeRegistry`, `build_path_authority_scope()`, `build_path_authority_scope_registry()`, deterministic subject/constraint/scope/registry hashes, source-label truth, and closed-world validation. Declarative authority scope only without permission, resolver, sandbox policy, filesystem access, or enforcement.
 
 **P1.7.5 complete** — Path normalization and shadow escape detection contract: `PathNormalizationStatus`, `PathEscapeSignal`, `PathNormalizationResult`, `normalize_path_for_governance()`, `PathBoundaryStatus`, `PathBoundaryCheckResult`, `EscapeDetectionContract`, `detect_path_escape_candidates()`, deterministic hashes, source-label truth, segment-aware string comparison, and closed-world validation. Shadow-only candidate classification without permission, sandbox policy, filesystem access, or enforcement.
 

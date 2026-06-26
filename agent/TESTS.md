@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.7.7 Untrusted Content Boundary Model Validation (COMPLETE)
+
+Focused validation (2026-06-25):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_0_foundation.py tests/path_governance/test_p1_7_1_path_identity.py tests/path_governance/test_p1_7_2_source_identity.py tests/path_governance/test_p1_7_3_source_trust_taxonomy.py tests/path_governance/test_p1_7_4_trusted_roots.py tests/path_governance/test_p1_7_5_path_normalization_escape_contract.py tests/path_governance/test_p1_7_6_path_authority_scope.py tests/path_governance/test_p1_7_7_untrusted_content_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P1.7.0 + P1.7.1 + P1.7.2 + P1.7.3 + P1.7.4 + P1.7.5 + P1.7.6 + P1.7.7 **186 passed** (33 P1.7.7 focused); ruff **PASS**; mypy **PASS** (216 files).
+
+Report: `agent/reports/P1.7.7_UNTRUSTED_CONTENT_BOUNDARY_MODEL.md`
+
+Operator manual seal commands (optional, not run for P1.7.7):
+
+```bash
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
 ## P1.7.6 Path Authority Scope Model Validation (COMPLETE)
 
 Focused validation (2026-06-25):
