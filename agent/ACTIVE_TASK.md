@@ -1,22 +1,22 @@
-# Active Task: P1.7.9 (planned)
+# Active Task: P1.7.10 (planned)
 
-**Status:** P1.7.8 COMPLETE; P1.7.9 PLANNED
+**Status:** P1.7.9 COMPLETE; P1.7.10 PLANNED
 
 ## Roadmap Position
 
-- Current completed task: **P1.7.8 — Source Provenance & Evidence Binding Seed**
-- Next planned task: **P1.7.9 — Path/Source Risk Classification Model**
+- Current completed task: **P1.7.9 — Path/Source Risk Classification Model**
+- Next planned task: **P1.7.10 — Path Governance Resolver v0 / Shadow Mode**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.7 Status
 
-**IN PROGRESS** — source provenance and evidence binding seed added; broader P1.7 path/source governance remains in progress.
+**IN PROGRESS** — path/source risk classification model added; broader P1.7 path/source governance remains in progress.
 
-P1.7.8 adds `SourceProvenanceKind`, `EvidenceBindingKind`, `EvidenceConfidence`, `SourceClaimKind`, `SourceEvidenceRef`, `SourceClaimRef`, `SourceProvenanceRef`, `ProvenanceBinding`, `ProvenanceBindingRegistry`, `build_source_evidence_ref()`, `build_source_claim_ref()`, `build_source_provenance_ref()`, `build_provenance_binding()`, `build_provenance_binding_registry()`, deterministic evidence/claim/provenance/binding/registry hashes, closed-world validation, source-label truth, and provenance/evidence boundary semantics.
+P1.7.9 adds `PathSourceRiskLevel`, `PathSourceRiskSignalKind`, `RiskClassificationBasis`, `RiskClassificationPosture`, `PathSourceRiskSignal`, `PathSourceRiskClassification`, `PathSourceRiskRegistry`, `build_path_source_risk_signal()`, `build_path_source_risk_classification()`, `build_path_source_risk_registry()`, `derive_path_source_risk_classification()`, deterministic signal/classification/registry hashes, closed-world validation, source-label truth, and risk classification boundary semantics.
 
-Provenance binding is not truth verification. Evidence reference is not Ledger write. Claim binding is not claim acceptance. Source evidence is not resolver decision.
+Risk classification is not resolver. Risk level is not deny. Risk posture is not policy decision. Risk signal is not block.
 
-No path/source risk classification, path governance resolver, source trust resolver, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem access, network access, sandbox hardening, runtime enforcement, Ledger write, approval activation, CLI/TUI binding, Shell UI, trace hook, or policy bridge was added.
+No path governance resolver, source trust resolver, path/source conflict rules, policy engine integration, allow/deny/block decisions, approval activation, trace event emission, Ledger write, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem access, network access, sandbox hardening, runtime enforcement, CLI/TUI binding, Shell UI, or policy bridge was added.
 
 Git status: committed locally, no push performed.
 
@@ -31,3 +31,4 @@ Git status: committed locally, no push performed.
 - `agent/reports/P1.7.6_PATH_AUTHORITY_SCOPE_MODEL.md`
 - `agent/reports/P1.7.7_UNTRUSTED_CONTENT_BOUNDARY_MODEL.md`
 - `agent/reports/P1.7.8_SOURCE_PROVENANCE_EVIDENCE_BINDING_SEED.md`
+- `agent/reports/P1.7.9_PATH_SOURCE_RISK_CLASSIFICATION_MODEL.md`

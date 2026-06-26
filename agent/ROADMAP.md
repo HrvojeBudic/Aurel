@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.8 — Source Provenance & Evidence Binding Seed |
-| **Current active** | **P1.7.9 — Path/Source Risk Classification Model (planned)** |
+| **Last completed** | P1.7.9 — Path/Source Risk Classification Model |
+| **Current active** | **P1.7.10 — Path Governance Resolver v0 / Shadow Mode (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.9 — Path/Source Risk Classification Model |
+| **Next planned** | P1.7.10 — Path Governance Resolver v0 / Shadow Mode |
 
-**P1.7.8 complete** — Source provenance and evidence binding seed: `SourceProvenanceKind`, `EvidenceBindingKind`, `EvidenceConfidence`, `SourceClaimKind`, `SourceEvidenceRef`, `SourceClaimRef`, `SourceProvenanceRef`, `ProvenanceBinding`, `ProvenanceBindingRegistry`, `build_source_evidence_ref()`, `build_source_claim_ref()`, `build_source_provenance_ref()`, `build_provenance_binding()`, `build_provenance_binding_registry()`, deterministic evidence/claim/provenance/binding/registry hashes, source-label truth, and closed-world validation. Reference/binding objects only without truth verification, trace emission, Ledger writes, resolver, or enforcement. P1.7 remains in progress. Next: **P1.7.9 — Path/Source Risk Classification Model**.
+**P1.7.9 complete** — Path/source risk classification model: `PathSourceRiskLevel`, `PathSourceRiskSignalKind`, `RiskClassificationBasis`, `RiskClassificationPosture`, `PathSourceRiskSignal`, `PathSourceRiskClassification`, `PathSourceRiskRegistry`, `build_path_source_risk_signal()`, `build_path_source_risk_classification()`, `build_path_source_risk_registry()`, `derive_path_source_risk_classification()`, deterministic signal/classification/registry hashes, source-label truth, and closed-world validation. Classification-only without resolver, policy engine, approval, trace, Ledger, or enforcement. P1.7 remains in progress. Next: **P1.7.10 — Path Governance Resolver v0 / Shadow Mode**.
+
+**P1.7.8 complete** — Source provenance and evidence binding seed: `SourceProvenanceKind`, `EvidenceBindingKind`, `EvidenceConfidence`, `SourceClaimKind`, `SourceEvidenceRef`, `SourceClaimRef`, `SourceProvenanceRef`, `ProvenanceBinding`, `ProvenanceBindingRegistry`, `build_source_evidence_ref()`, `build_source_claim_ref()`, `build_source_provenance_ref()`, `build_provenance_binding()`, `build_provenance_binding_registry()`, deterministic evidence/claim/provenance/binding/registry hashes, source-label truth, and closed-world validation. Reference/binding objects only without truth verification, trace emission, Ledger writes, resolver, or enforcement. Next: **P1.7.9 — Path/Source Risk Classification Model**.
 
 **P1.7.7 complete** — Untrusted content boundary model: `UntrustedContentKind`, `ContentInfluenceSurface`, `BoundaryRestrictionKind`, `UntrustedBoundaryPosture`, `BoundaryRestriction`, `UntrustedContentBoundary`, `UntrustedContentBoundaryRegistry`, `build_untrusted_content_boundary()`, `build_untrusted_content_boundary_registry()`, trust-label default declaration helpers, deterministic restriction/boundary/registry hashes, source-label truth, and closed-world validation. Declarative information-vs-instruction boundaries only without prompt filtering, memory gating, tool blocking, resolver, or enforcement. Next: **P1.7.8 — Source Provenance & Evidence Binding Seed**.
 

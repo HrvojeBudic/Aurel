@@ -10,6 +10,7 @@ P1.7.5 adds deterministic path normalization and shadow escape candidate detecti
 P1.7.6 adds deterministic path authority scope declaration objects without resolver behavior.
 P1.7.7 adds deterministic untrusted content boundary declaration objects without filtering or enforcement.
 P1.7.8 adds deterministic source provenance and evidence binding seed objects without truth verification or trace/Ledger writes.
+P1.7.9 adds deterministic path/source risk classification model objects without resolver or enforcement behavior.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -119,6 +120,29 @@ from .path_authority_scope import (
     compute_scope_hash,
     compute_scope_id,
     compute_subject_id,
+)
+from .risk_classification import (
+    PATH_SOURCE_RISK_CLASSIFICATION_KNOWN_FIELDS,
+    PATH_SOURCE_RISK_CLASSIFICATION_VERSION,
+    PATH_SOURCE_RISK_REGISTRY_KNOWN_FIELDS,
+    PATH_SOURCE_RISK_REGISTRY_VERSION,
+    PATH_SOURCE_RISK_SIGNAL_KNOWN_FIELDS,
+    PATH_SOURCE_RISK_TASK_ID,
+    PathSourceRiskClassification,
+    PathSourceRiskLevel,
+    PathSourceRiskRegistry,
+    PathSourceRiskSignal,
+    PathSourceRiskSignalKind,
+    RiskClassificationBasis,
+    RiskClassificationPosture,
+    build_path_source_risk_classification,
+    build_path_source_risk_registry,
+    build_path_source_risk_signal,
+    compute_classification_hash,
+    compute_classification_id,
+    compute_path_source_risk_registry_hash,
+    compute_signal_id,
+    derive_path_source_risk_classification,
 )
 from .source_provenance import (
     PROVENANCE_BINDING_KNOWN_FIELDS,
@@ -293,6 +317,27 @@ __all__ = [
     "PathScopeAction",
     "PathScopeDeny",
     "PathScopeGrant",
+    "PATH_SOURCE_RISK_CLASSIFICATION_KNOWN_FIELDS",
+    "PATH_SOURCE_RISK_CLASSIFICATION_VERSION",
+    "PATH_SOURCE_RISK_REGISTRY_KNOWN_FIELDS",
+    "PATH_SOURCE_RISK_REGISTRY_VERSION",
+    "PATH_SOURCE_RISK_SIGNAL_KNOWN_FIELDS",
+    "PATH_SOURCE_RISK_TASK_ID",
+    "PathSourceRiskClassification",
+    "PathSourceRiskLevel",
+    "PathSourceRiskRegistry",
+    "PathSourceRiskSignal",
+    "PathSourceRiskSignalKind",
+    "RiskClassificationBasis",
+    "RiskClassificationPosture",
+    "build_path_source_risk_classification",
+    "build_path_source_risk_registry",
+    "build_path_source_risk_signal",
+    "compute_classification_hash",
+    "compute_classification_id",
+    "compute_path_source_risk_registry_hash",
+    "compute_signal_id",
+    "derive_path_source_risk_classification",
     "PathScopeReason",
     "PROVENANCE_BINDING_KNOWN_FIELDS",
     "PROVENANCE_BINDING_REGISTRY_KNOWN_FIELDS",

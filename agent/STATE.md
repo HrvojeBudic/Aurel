@@ -1,15 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.8 — Source Provenance & Evidence Binding Seed)_
+_Last updated: 2026-06-26 (P1.7.9 — Path/Source Risk Classification Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.8 — Source Provenance & Evidence Binding Seed
-- Current active: **P1.7.9 — Path/Source Risk Classification Model (planned)**
-- Next planned: P1.7.9 — Path/Source Risk Classification Model
+- Last completed: P1.7.9 — Path/Source Risk Classification Model
+- Current active: **P1.7.10 — Path Governance Resolver v0 / Shadow Mode (planned)**
+- Next planned: P1.7.10 — Path Governance Resolver v0 / Shadow Mode
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.9 Path/Source Risk Classification Model (COMPLETE — classification model only)
+
+- `path_governance/`: `PathSourceRiskLevel`, `PathSourceRiskSignalKind`, `RiskClassificationBasis`, `RiskClassificationPosture`, `PathSourceRiskSignal`, `PathSourceRiskClassification`, `PathSourceRiskRegistry`, `build_path_source_risk_signal()`, `build_path_source_risk_classification()`, `build_path_source_risk_registry()`, `derive_path_source_risk_classification()`.
+- PathSourceRiskLevel status: **LIVE schema** — declared risk level only; does not block, approve, or authorize.
+- PathSourceRiskSignalKind status: **LIVE schema** — declared risk signal kind; signal is not decision, block, or allow/deny.
+- RiskClassificationBasis status: **LIVE schema** — explains classification source; does not grant or deny anything.
+- RiskClassificationPosture status: **LIVE schema** — recommends future handling; does not enforce.
+- PathSourceRiskSignal status: **LIVE schema** — deterministic `signal_id`, basis, risk level, reason, source label, JSON-safe metadata.
+- PathSourceRiskClassification status: **LIVE schema** — binds signals, optional source/path/boundary/authority/provenance references, risk level, posture, deterministic `classification_id` and `classification_hash`, `created_by_task="P1.7.9"`, `classification_version="path_source_risk_classification.v1"`.
+- PathSourceRiskRegistry status: **LIVE schema** — binds classifications with `created_by_task="P1.7.9"`, `registry_version="path_source_risk_registry.v1"`, explicit source label, notes, metadata, and deterministic order-insensitive `registry_hash`.
+- Signal/classification/registry hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation: **PASS** — unknown fields reject with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — test fixtures use `DEV_FIXTURE`; production helper defaults remain `LIVE`.
+- Risk classification boundary summary: risk classification is not resolver; risk level is not deny; risk posture is not policy decision; risk signal is not block; classification does not activate approval, write trace, write Ledger, filter prompt, write memory, or block tools.
+- Known unavailable states: path governance resolver, source trust resolver, path/source conflict rules, policy engine integration, allow/deny/block decisions, approval activation, trace hooks, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, policy bridge, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.10 readiness: **READY** — next task is Path Governance Resolver v0 / Shadow Mode.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.9_PATH_SOURCE_RISK_CLASSIFICATION_MODEL.md`
 
 ### P1.7.8 Source Provenance & Evidence Binding Seed (COMPLETE — binding seed only)
 
