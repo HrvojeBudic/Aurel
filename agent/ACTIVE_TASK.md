@@ -1,12 +1,22 @@
-# Active Task: P1.8.6 (planned)
+# Active Task: P1.8.7 (planned)
 
-**Status:** P1.8.5 COMPLETE; P1.8.6 PLANNED
+**Status:** P1.8.6 COMPLETE; P1.8.7 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.5 — Non-RepudiationRef Binding / Evidence Hook**
-- Next planned task: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook**
+- Last completed task: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook**
+- Next planned task: **P1.8.7 — Delegation Scope / Boundary Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.6 Status
+
+**COMPLETE** — P1.8.6 agent identity mesh reference-binding layer verified after focused validation.
+
+P1.8.6 establishes a deterministic, versioned, JSON-safe, side-effect-free agent identity mesh reference-binding layer for delegation accountability. DelegationMeshParticipantKind (OPERATOR_REF/AGENT_REF/SYSTEM_REF/SERVICE_REF/ROLE_REF/SUBJECT_REF/UNKNOWN), DelegationMeshRelationshipKind (DELEGATOR_TO_DELEGATE/DELEGATE_TO_SUBJECT/OPERATOR_TO_AGENT/AGENT_TO_SERVICE/SYSTEM_TO_AGENT/ROLE_TO_AGENT/REFERENCE_ONLY/UNKNOWN), DelegationMeshScopeKind (DELEGATION_LOCAL/AGENT_LOCAL/SYSTEM_LOCAL/ORGANIZATION_LOCAL/TENANT_LOCAL/UNKNOWN), DelegationMeshRefStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationMeshResolutionStatus (REFERENCE_ONLY/RESOLUTION_UNAVAILABLE/RESOLVER_UNAVAILABLE/NOT_RESOLVED/UNAVAILABLE/ERROR/UNKNOWN), DelegationMeshParticipantRef, DelegationMeshRelationshipRef, DelegationMeshScopeRef, DelegationIdentityMeshEnvelope, DelegationMeshResolutionReadinessProfile, DelegationMeshRelationshipMap, DelegationIdentityMeshBinding, DelegationIdentityMeshBindingSet, DelegationIdentityMeshSideEffects (12 all-false booleans), DelegationIdentityMeshStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain (72 tests), and 18 unavailable surface reasons.
+
+Boundary: AgentIdentityMeshRef exists ≠ identity resolved. ParticipantRef exists ≠ participant authenticated. RelationshipRef exists ≠ trust verified. IdentityMeshEnvelope exists ≠ live mesh exists. MeshRelationshipMap exists ≠ graph engine exists. MeshResolutionReadinessProfile exists ≠ trust score. MeshScopeRef exists ≠ permission scope. AgentRef exists ≠ agent activated. Mesh hash exists ≠ TRACE_VERIFIED. identity_mesh_envelope_hash exists ≠ TRACE_VERIFIED. identity_mesh_binding_set_hash exists ≠ proof of identity resolution. No identity resolver, participant authenticator, relationship verifier, trust scoring, agent activation, permission/authority grant, policy/Custos, Ledger/global trace write, runtime mutation, graph engine, P1.8.7/P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.5 Status
 

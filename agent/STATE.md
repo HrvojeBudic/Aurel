@@ -1,15 +1,36 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.5 — Non-RepudiationRef Binding / Evidence Hook)_
+_Last updated: 2026-06-27 (P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.5 — Non-RepudiationRef Binding / Evidence Hook
-- Current active: **P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook (planned)**
-- Next planned: P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook
+- Last completed: P1.8.6 — AgentIdentityMeshRef Binding / Mesh Hook
+- Current active: **P1.8.7 — Delegation Scope / Boundary Model (planned)**
+- Next planned: P1.8.7 — Delegation Scope / Boundary Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6 complete)
+
+### P1.8.6 agent identity mesh reference-binding summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationMeshParticipantRef | Deterministic `participant_hash` | DEV_FIXTURE in tests | Not participant authentication |
+| DelegationMeshRelationshipRef | Deterministic `relationship_hash` | DEV_FIXTURE | Not relationship verification |
+| DelegationMeshScopeRef | Deterministic `mesh_scope_hash` | DEV_FIXTURE | Not permission scope |
+| DelegationIdentityMeshEnvelope | Deterministic `identity_mesh_envelope_hash` | DEV_FIXTURE | Not live mesh |
+| DelegationMeshResolutionReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not trust score |
+| DelegationMeshRelationshipMap | Deterministic `relationship_map_hash` | DEV_FIXTURE | Not graph engine |
+| DelegationIdentityMeshBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not authority/permission grant |
+| DelegationIdentityMeshBindingSet | Deterministic `identity_mesh_binding_set_hash` | DEV_FIXTURE | Not live agent mesh |
+| DelegationIdentityMeshSideEffects | 12 booleans all false | LIVE schema | Non-resolving, non-authenticating, non-activating, non-mutating |
+| Identity mesh status report | `delegation_identity_mesh_status_report.v1` | DEV_FIXTURE | Not runtime active |
+
+**Known UNAVAILABLE (P1.8.6):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, identity resolver, participant authenticator, relationship verifier, trust scoring, agent activator, permission grant, authority grant module, policy/Custos decision, runtime mesh engine, live agent network, graph database, P1.8.7 scope/boundary model, Output Passport/P1.9, runtime delegation execution.
+
+**Explicit negatives:** AgentIdentityMeshRef exists ≠ identity resolved. ParticipantRef exists ≠ participant authenticated. RelationshipRef exists ≠ trust verified. IdentityMeshEnvelope exists ≠ live mesh exists. MeshRelationshipMap exists ≠ graph engine exists. MeshResolutionReadinessProfile exists ≠ trust score. MeshScopeRef exists ≠ permission scope. AgentRef exists ≠ agent activated. Mesh hash exists ≠ TRACE_VERIFIED. identity_mesh_envelope_hash exists ≠ TRACE_VERIFIED. identity_mesh_binding_set_hash exists ≠ proof of identity resolution. No identity resolver, participant authenticator, relationship verifier, trust scoring, agent activation, permission/authority grant, policy/Custos, Ledger/global trace, runtime mutation, graph engine, P1.8.7, P1.9.
+
+Report: `agent/reports/P1.8.6_AGENT_IDENTITY_MESH_REF_BINDING.md`
 
 ### P1.8.5 delegation evidence / non-repudiation reference binding summary
 
