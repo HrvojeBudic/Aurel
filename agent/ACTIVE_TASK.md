@@ -1,12 +1,22 @@
-# Active Task: P1.8.3 (planned)
+# Active Task: P1.8.4 (planned)
 
-**Status:** P1.8.2 COMPLETE; P1.8.3 PLANNED
+**Status:** P1.8.3 COMPLETE; P1.8.4 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.2 — Delegator / Delegate / Subject Model**
-- Next planned task: **P1.8.3 — Delegation Constraint Model**
+- Last completed task: **P1.8.3 — Delegation Constraint Model**
+- Next planned task: **P1.8.4 — Delegation AuthorityRef Binding**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.3 Status
+
+**COMPLETE** — P1.8.3 constraint model verified after focused validation.
+
+P1.8.3 establishes a deterministic, versioned, JSON-safe, side-effect-free constraint model for declared constraints bound to DelegationRef / DelegationIdentity / DelegationRoleBindingSet without enforcing, approving, blocking, verifying, resolving, or mutating runtime behavior. DelegationConstraintSeverity (INFO/LOW/MEDIUM/HIGH/CRITICAL/UNKNOWN), DelegationConstraintStatus (DECLARED/REFERENCE_ONLY/UNAVAILABLE/ERROR/UNKNOWN), DelegationConstraintRef, DelegationConstraintBinding, DelegationConstraintSet, DelegationConstraintSideEffects (12 all-false booleans), DelegationConstraintStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain, and 17 unavailable surface reasons.
+
+Boundary: Constraint exists ≠ constraint enforced. Required review exists ≠ approval created. Risk bound exists ≠ policy/Custos decision. Tool bound exists ≠ tool permission changed. Data bound exists ≠ data access changed. Time bound exists ≠ scheduler changed. Constraint hash exists ≠ TRACE_VERIFIED. Constraint set exists ≠ runtime blocking. Constraint model exists ≠ resolver exists. Constraint binding exists ≠ authority granted. No delegation resolver, chain resolver, authority bridge, non-repudiation verifier, crypto signing, policy/Custos call, approval creation, Ledger write, global trace write, CLI/TUI/projection/API, agent activation, or identity mesh resolver.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.2 Status
 

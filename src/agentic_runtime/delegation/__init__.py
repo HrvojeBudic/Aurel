@@ -10,6 +10,10 @@ Role-binding layer (P1.8.2): typed, deterministic, JSON-safe role contracts for
 delegator/delegate/subject bound to DelegationRef/DelegationIdentity without
 approving, executing, enforcing, verifying, activating, or granting authority.
 
+Constraint model layer (P1.8.3): declared constraint contracts bound to
+DelegationRef / DelegationIdentity / DelegationRoleBindingSet without enforcing,
+approving, blocking, verifying, resolving, or mutating runtime behavior.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -28,6 +32,16 @@ Architectural law:
   - DelegationRoleBindingSet is not enforcement.
   - role_binding_hash is not TRACE_VERIFIED.
   - Role model exists ≠ resolver exists.
+  - Constraint exists ≠ constraint enforced.
+  - Required review exists ≠ approval created.
+  - Risk bound exists ≠ policy/Custos decision.
+  - Tool bound exists ≠ tool permission changed.
+  - Data bound exists ≠ data access changed.
+  - Time bound exists ≠ scheduler changed.
+  - Constraint hash exists ≠ TRACE_VERIFIED.
+  - Constraint set exists ≠ runtime blocking.
+  - Constraint model exists ≠ resolver exists.
+  - Constraint binding exists ≠ authority granted.
 """
 from __future__ import annotations
 
@@ -150,6 +164,36 @@ from .roles import (
     compute_subject_role_hash,
     hash_delegation_role_binding_set,
     serialize_delegation_role_binding_set,
+)
+
+from .constraints import (
+    CONSTRAINT_BINDING_KNOWN_FIELDS,
+    CONSTRAINT_REF_KNOWN_FIELDS,
+    CONSTRAINT_SET_KNOWN_FIELDS,
+    CONSTRAINT_SIDE_EFFECTS_KNOWN_FIELDS,
+    CONSTRAINT_STATUS_REPORT_KNOWN_FIELDS,
+    DELEGATION_CONSTRAINTS_TASK_ID,
+    DELEGATION_CONSTRAINTS_UNAVAILABLE_BINDINGS,
+    DELEGATION_CONSTRAINT_BINDING_VERSION,
+    DELEGATION_CONSTRAINT_REF_VERSION,
+    DELEGATION_CONSTRAINT_SET_VERSION,
+    DELEGATION_CONSTRAINT_SIDE_EFFECTS_VERSION,
+    DELEGATION_CONSTRAINT_STATUS_REPORT_VERSION,
+    DelegationConstraintBinding,
+    DelegationConstraintRef,
+    DelegationConstraintSet,
+    DelegationConstraintSeverity,
+    DelegationConstraintSideEffects,
+    DelegationConstraintStatus,
+    DelegationConstraintStatusReport,
+    build_delegation_constraint_binding,
+    build_delegation_constraint_ref,
+    build_delegation_constraint_set,
+    build_delegation_constraint_status_report,
+    hash_delegation_constraint_ref,
+    hash_delegation_constraint_set,
+    serialize_delegation_constraint_ref,
+    serialize_delegation_constraint_set,
 )
 
 __all__ = [
@@ -278,4 +322,35 @@ __all__ = [
     "compute_subject_role_hash",
     "hash_delegation_role_binding_set",
     "serialize_delegation_role_binding_set",
+    # P1.8.3 constraint constants
+    "CONSTRAINT_BINDING_KNOWN_FIELDS",
+    "CONSTRAINT_REF_KNOWN_FIELDS",
+    "CONSTRAINT_SET_KNOWN_FIELDS",
+    "CONSTRAINT_SIDE_EFFECTS_KNOWN_FIELDS",
+    "CONSTRAINT_STATUS_REPORT_KNOWN_FIELDS",
+    "DELEGATION_CONSTRAINTS_TASK_ID",
+    "DELEGATION_CONSTRAINTS_UNAVAILABLE_BINDINGS",
+    "DELEGATION_CONSTRAINT_BINDING_VERSION",
+    "DELEGATION_CONSTRAINT_REF_VERSION",
+    "DELEGATION_CONSTRAINT_SET_VERSION",
+    "DELEGATION_CONSTRAINT_SIDE_EFFECTS_VERSION",
+    "DELEGATION_CONSTRAINT_STATUS_REPORT_VERSION",
+    # P1.8.3 enums
+    "DelegationConstraintSeverity",
+    "DelegationConstraintStatus",
+    # P1.8.3 dataclasses
+    "DelegationConstraintBinding",
+    "DelegationConstraintRef",
+    "DelegationConstraintSet",
+    "DelegationConstraintSideEffects",
+    "DelegationConstraintStatusReport",
+    # P1.8.3 builders / helpers / hash functions
+    "build_delegation_constraint_binding",
+    "build_delegation_constraint_ref",
+    "build_delegation_constraint_set",
+    "build_delegation_constraint_status_report",
+    "hash_delegation_constraint_ref",
+    "hash_delegation_constraint_set",
+    "serialize_delegation_constraint_ref",
+    "serialize_delegation_constraint_set",
 ]

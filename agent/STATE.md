@@ -1,15 +1,31 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.8.2 — Delegator / Delegate / Subject Model)_
+_Last updated: 2026-06-27 (P1.8.3 — Delegation Constraint Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.2 — Delegator / Delegate / Subject Model
-- Current active: **P1.8.3 — Delegation Constraint Model (planned)**
-- Next planned: P1.8.3 — Delegation Constraint Model
+- Last completed: P1.8.3 — Delegation Constraint Model
+- Current active: **P1.8.4 — Delegation AuthorityRef Binding (planned)**
+- Next planned: P1.8.4 — Delegation AuthorityRef Binding
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3 complete)
+
+### P1.8.3 delegation constraint model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationConstraintRef | Deterministic `constraint_hash` | DEV_FIXTURE in tests | Not constraint enforcement |
+| DelegationConstraintBinding | Deterministic `binding_hash` | DEV_FIXTURE | Not authority grant |
+| DelegationConstraintSet | Deterministic `constraint_set_hash` | DEV_FIXTURE | Not runtime blocking |
+| DelegationConstraintSideEffects | 12 booleans all false | LIVE schema | Non-enforcing, non-mutating |
+| Constraint status report | `delegation_constraint_status_report.v1` | DEV_FIXTURE | Not runtime active |
+
+**Known UNAVAILABLE (P1.8.3):** Projection/API/event/read model, CLI/Shell/TUI, Ledger write, global trace write, policy/Custos enforcement, approval activation, constraint enforcement, runtime blocker, tool permission mutation, data access mutation, scheduler mutation, delegation resolver, delegation chain resolver, authority bridge, non-repudiation verifier, violation/drift detector, runtime delegation execution.
+
+**Explicit negatives:** Constraint exists ≠ constraint enforced. Required review exists ≠ approval created. Risk bound exists ≠ policy/Custos decision. Tool bound exists ≠ tool permission changed. Data bound exists ≠ data access changed. Time bound exists ≠ scheduler changed. Constraint hash exists ≠ TRACE_VERIFIED. Constraint set exists ≠ runtime blocking. Constraint model exists ≠ resolver exists. Constraint binding exists ≠ authority granted. No policy/Custos/approval/Ledger/global trace/runtime mutation.
+
+Report: `agent/reports/P1.8.3_DELEGATION_CONSTRAINT_MODEL.md`
 
 ### P1.8.2 delegation role model summary
 
