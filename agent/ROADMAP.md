@@ -20,10 +20,12 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.12 — Path/Source Conflict & Precedence Rules |
-| **Current active** | **P1.7.13 — Path Resolution Trace Hook (planned)** |
+| **Last completed** | P1.7.13 — Path Resolution Trace Hook |
+| **Current active** | **P1.7.14 — Path Violation / Drift Trace Hook (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.13 — Path Resolution Trace Hook |
+| **Next planned** | P1.7.14 — Path Violation / Drift Trace Hook |
+
+**P1.7.13 complete** — Path resolution trace hook: `PathResolutionTraceEventKind`, `PathResolutionTraceHookMode`, `PathResolutionTraceDisposition`, `PathResolutionTraceReason`, `PathResolutionTraceInput`, `PathResolutionTracePayload`, `PathResolutionTraceHookResult`, `build_path_resolution_trace_payload()`, `record_path_resolution_trace_hook()`, deterministic input/payload/hook identifiers and hashes, advisory `decision_summary`, source-label truth, and closed-world validation. Observability-only trace hook with `PAYLOAD_ONLY` default, optional injected sink, `ledger_written=false`, and `runtime_mutated=false`; no global trace spine write by default, fake TRACE_VERIFIED, policy engine integration, approval activation, Ledger write, source trust mutation, source blocking, runtime quarantine, memory canonization, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.14 — Path Violation / Drift Trace Hook**.
 
 **P1.7.12 complete** — Path/source conflict & precedence shadow rules: `PathSourceConflictKind`, `PrecedenceRuleKind`, `ConflictSeverity`, `ConflictPrecedencePosture`, `PathSourceConflictSignal`, `PrecedenceRule`, `ConflictPrecedenceInput`, `ConflictPrecedenceResult`, `resolve_path_source_conflicts_shadow()`, deterministic signal/rule/input/result identifiers and hashes, advisory `recommended_shadow_decision`, source-label truth, and closed-world validation. Shadow conflict/precedence only with `shadow_only=true` and `enforced=false`; no trace hooks, policy engine integration, approval activation, trace emission, Ledger write, source trust mutation, source blocking, runtime quarantine, memory canonization, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.13 — Path Resolution Trace Hook**.
 

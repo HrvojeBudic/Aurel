@@ -14,6 +14,7 @@ P1.7.9 adds deterministic path/source risk classification model objects without 
 P1.7.10 adds deterministic path governance resolver v0 shadow recommendations without enforcement behavior.
 P1.7.11 adds deterministic source trust resolver v0 shadow recommendations without trust mutation.
 P1.7.12 adds deterministic path/source conflict and precedence shadow rules without enforcement.
+P1.7.13 adds deterministic path resolution trace hook payload model without Ledger write or enforcement.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -274,6 +275,28 @@ from .conflict_precedence import (
     compute_precedence_rule_id,
     resolve_path_source_conflicts_shadow,
 )
+from .path_resolution_trace import (
+    PATH_RESOLUTION_TRACE_HOOK_RESULT_KNOWN_FIELDS,
+    PATH_RESOLUTION_TRACE_HOOK_VERSION,
+    PATH_RESOLUTION_TRACE_INPUT_KNOWN_FIELDS,
+    PATH_RESOLUTION_TRACE_PAYLOAD_KNOWN_FIELDS,
+    PATH_RESOLUTION_TRACE_PAYLOAD_SCHEMA,
+    PATH_RESOLUTION_TRACE_TASK_ID,
+    PathResolutionTraceDisposition,
+    PathResolutionTraceEventKind,
+    PathResolutionTraceHookMode,
+    PathResolutionTraceHookResult,
+    PathResolutionTraceInput,
+    PathResolutionTracePayload,
+    PathResolutionTraceReason,
+    build_path_resolution_trace_payload,
+    compute_path_resolution_trace_hook_hash,
+    compute_path_resolution_trace_hook_id,
+    compute_path_resolution_trace_input_hash,
+    compute_path_resolution_trace_payload_hash,
+    compute_path_resolution_trace_payload_id,
+    record_path_resolution_trace_hook,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -384,6 +407,19 @@ __all__ = [
     "PathGovernanceUnknownFieldError",
     "PathGovernanceValidationError",
     "PathGovernanceShadowDecision",
+    "PATH_RESOLUTION_TRACE_HOOK_RESULT_KNOWN_FIELDS",
+    "PATH_RESOLUTION_TRACE_HOOK_VERSION",
+    "PATH_RESOLUTION_TRACE_INPUT_KNOWN_FIELDS",
+    "PATH_RESOLUTION_TRACE_PAYLOAD_KNOWN_FIELDS",
+    "PATH_RESOLUTION_TRACE_PAYLOAD_SCHEMA",
+    "PATH_RESOLUTION_TRACE_TASK_ID",
+    "PathResolutionTraceDisposition",
+    "PathResolutionTraceEventKind",
+    "PathResolutionTraceHookMode",
+    "PathResolutionTraceHookResult",
+    "PathResolutionTraceInput",
+    "PathResolutionTracePayload",
+    "PathResolutionTraceReason",
     "PathIdentity",
     "PathKind",
     "PathRef",
@@ -433,6 +469,7 @@ __all__ = [
     "SourceEvidenceRef",
     "SourceProvenanceKind",
     "SourceProvenanceRef",
+    "build_path_resolution_trace_payload",
     "build_provenance_binding",
     "build_provenance_binding_registry",
     "build_source_claim_ref",
@@ -496,6 +533,11 @@ __all__ = [
     "compute_grant_id",
     "compute_lineage_hash",
     "compute_registry_hash",
+    "compute_path_resolution_trace_hook_hash",
+    "compute_path_resolution_trace_hook_id",
+    "compute_path_resolution_trace_input_hash",
+    "compute_path_resolution_trace_payload_hash",
+    "compute_path_resolution_trace_payload_id",
     "compute_path_governance_resolver_input_hash",
     "compute_path_governance_resolver_result_hash",
     "compute_path_governance_resolver_result_id",
@@ -509,6 +551,7 @@ __all__ = [
     "normalize_path_for_governance",
     "normalize_path_string",
     "path_normalization_warnings",
+    "record_path_resolution_trace_hook",
     "resolve_path_source_conflicts_shadow",
     "resolve_path_governance_shadow",
     "resolve_source_trust_shadow",

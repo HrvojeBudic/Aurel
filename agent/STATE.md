@@ -1,15 +1,42 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.12 — Path/Source Conflict & Precedence Rules)_
+_Last updated: 2026-06-26 (P1.7.13 — Path Resolution Trace Hook)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.12 — Path/Source Conflict & Precedence Rules
-- Current active: **P1.7.13 — Path Resolution Trace Hook (planned)**
-- Next planned: P1.7.13 — Path Resolution Trace Hook
+- Last completed: P1.7.13 — Path Resolution Trace Hook
+- Current active: **P1.7.14 — Path Violation / Drift Trace Hook (planned)**
+- Next planned: P1.7.14 — Path Violation / Drift Trace Hook
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.13 Path Resolution Trace Hook (COMPLETE — observability-only trace payload)
+
+- `path_governance/`: `PathResolutionTraceEventKind`, `PathResolutionTraceHookMode`, `PathResolutionTraceDisposition`, `PathResolutionTraceReason`, `PathResolutionTraceInput`, `PathResolutionTracePayload`, `PathResolutionTraceHookResult`, `build_path_resolution_trace_payload()`, `record_path_resolution_trace_hook()`.
+- PathResolutionTraceEventKind status: **LIVE schema** — trace event classification vocabulary; not Ledger finality.
+- PathResolutionTraceHookMode status: **LIVE schema** — `PAYLOAD_ONLY`, `INJECTED_SINK`, `TRACE_SPINE_UNAVAILABLE`, `ERROR`, `UNKNOWN`; does not imply enforcement.
+- PathResolutionTraceDisposition status: **LIVE schema** — hook outcome disposition; not runtime action.
+- PathResolutionTraceReason status: **LIVE schema** — trace payload construction reason vocabulary; does not enforce.
+- PathResolutionTraceInput status: **LIVE schema** — optional references to P1.7.6–P1.7.12 objects; deterministic `input_id` and `input_hash`.
+- PathResolutionTracePayload status: **LIVE schema** — advisory `decision_summary`, upstream refs, trace reasons, deterministic `payload_id` and `payload_hash`, `created_by_task="P1.7.13"`, `schema_version="path_resolution_trace_payload.v1"`.
+- PathResolutionTraceHookResult status: **LIVE schema** — hook mode, disposition, truth fields, deterministic `hook_id` and `hook_hash`, `created_by_task="P1.7.13"`, `hook_version="path_resolution_trace_hook.v1"`.
+- PathResolutionTraceReport status: **NOT IMPLEMENTED** — intentionally skipped to keep P1.7.13 narrow; markdown report is the trace/evidence/report binding for this task.
+- `build_path_resolution_trace_payload()` status: **LIVE backend helper** — produces deterministic observability payload without trace/Ledger write or runtime mutation.
+- `record_path_resolution_trace_hook()` status: **LIVE backend helper** — default `PAYLOAD_ONLY`; optional injected sink only; never writes Ledger or mutates runtime.
+- PAYLOAD_ONLY default status: **PASS** — no sink means `trace_written=false`, `ledger_written=false`, `runtime_mutated=false`.
+- INJECTED_SINK testability status: **PASS** — explicit sink callback receives payload; `trace_written=true` only on sink success.
+- TRACE_SPINE_UNAVAILABLE honesty status: **PASS** — trace reasons include `TRACE_SPINE_UNAVAILABLE`; no fake TRACE_VERIFIED.
+- ledger_written=false status: **PASS** — enforced in hook result `__post_init__`.
+- runtime_mutated=false status: **PASS** — enforced in hook result `__post_init__`.
+- Input/payload/hook hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation status: **PASS** — trace input/payload/hook result reject unknown fields with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — trace objects preserve `ProjectionSourceLabel`; test fixtures use `DEV_FIXTURE`.
+- Trace hook boundary summary: trace hook is observability, not authority; trace payload is not Ledger finality; trace hook result is not runtime enforcement.
+- Known unavailable states: path violation/drift trace hook, path governance test harness, policy engine integration, policy bridge, global trace spine write by default, fake TRACE_VERIFIED, real conflict enforcement, real precedence enforcement, source trust mutation, source taxonomy mutation, source identity mutation, trust promotion/demotion, source blocking, runtime quarantine, memory canonization, approval activation, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.14 readiness: **READY** — next task is Path Violation / Drift Trace Hook.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.13_PATH_RESOLUTION_TRACE_HOOK.md`
 
 ### P1.7.12 Path/Source Conflict & Precedence Rules (COMPLETE — shadow conflict/precedence only)
 
