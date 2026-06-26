@@ -20,12 +20,14 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 | Status | Module |
 |--------|--------|
-| **Last completed** | P1.7.10 — Path Governance Resolver v0 / Shadow Mode |
-| **Current active** | **P1.7.11 — Source Trust Resolver v0 / Shadow Mode (planned)** |
+| **Last completed** | P1.7.11 — Source Trust Resolver v0 / Shadow Mode |
+| **Current active** | **P1.7.12 — Path/Source Conflict & Precedence Rules (planned)** |
 | **Previous section** | P1.6 — Policy Cards & Behavioral Contracts (**SEALED WITH WARNINGS**) |
-| **Next planned** | P1.7.11 — Source Trust Resolver v0 / Shadow Mode |
+| **Next planned** | P1.7.12 — Path/Source Conflict & Precedence Rules |
 
-**P1.7.10 complete** — Path governance resolver v0 / shadow mode: `PathGovernanceShadowDecision`, `PathGovernanceDecisionReason`, `PathGovernanceResolverInput`, `PathGovernanceResolverResult`, `resolve_path_governance_shadow()`, deterministic input/result identifiers and hashes, source-label truth, and closed-world validation. Shadow resolver only with `WOULD_*` recommendations, `shadow_only=true`, and `enforced=false`; no source trust resolver, conflict rules, policy engine integration, approval activation, trace emission, Ledger write, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.11 — Source Trust Resolver v0 / Shadow Mode**.
+**P1.7.11 complete** — Source trust resolver v0 / shadow mode: `SourceTrustShadowDecision`, `SourceTrustDecisionReason`, `SourceTrustResolverInput`, `SourceTrustResolverResult`, `resolve_source_trust_shadow()`, deterministic input/result identifiers and hashes, advisory `recommended_trust_label`, source-label truth, and closed-world validation. Shadow trust resolver only with `WOULD_*` recommendations, `shadow_only=true`, and `enforced=false`; no path/source conflict rules, precedence rules, policy engine integration, approval activation, trace emission, Ledger write, source trust mutation, source taxonomy mutation, source identity mutation, source blocking, runtime quarantine, memory canonization, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI. P1.7 remains in progress. Next: **P1.7.12 — Path/Source Conflict & Precedence Rules**.
+
+**P1.7.10 complete** — Path governance resolver v0 / shadow mode: `PathGovernanceShadowDecision`, `PathGovernanceDecisionReason`, `PathGovernanceResolverInput`, `PathGovernanceResolverResult`, `resolve_path_governance_shadow()`, deterministic input/result identifiers and hashes, source-label truth, and closed-world validation. Shadow resolver only with `WOULD_*` recommendations, `shadow_only=true`, and `enforced=false`; no source trust resolver, conflict rules, policy engine integration, approval activation, trace emission, Ledger write, prompt filtering, memory/tool gating, filesystem/network access, sandbox hardening, runtime enforcement, CLI/TUI, or Shell UI.
 
 **P1.7.9 complete** — Path/source risk classification model: `PathSourceRiskLevel`, `PathSourceRiskSignalKind`, `RiskClassificationBasis`, `RiskClassificationPosture`, `PathSourceRiskSignal`, `PathSourceRiskClassification`, `PathSourceRiskRegistry`, `build_path_source_risk_signal()`, `build_path_source_risk_classification()`, `build_path_source_risk_registry()`, `derive_path_source_risk_classification()`, deterministic signal/classification/registry hashes, source-label truth, and closed-world validation. Classification-only without resolver, policy engine, approval, trace, Ledger, or enforcement.
 
@@ -183,7 +185,8 @@ P1.6.20 — P1.6 Exit Seal + Live Integration Demo: run checklist, produce seal 
 | P1.7.8 | **Source Provenance & Evidence Binding Seed** |
 | P1.7.9 | **Path/Source Risk Classification Model** |
 | P1.7.10 | **Path Governance Resolver v0 / Shadow Mode** |
-| P1.7.11 | Source Trust Resolver v0 / Shadow Mode (next) |
+| P1.7.11 | **Source Trust Resolver v0 / Shadow Mode** |
+| P1.7.12 | Path/Source Conflict & Precedence Rules (next) |
 
 ### P1.7.0 handoff
 

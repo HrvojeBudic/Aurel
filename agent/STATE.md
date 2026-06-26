@@ -1,15 +1,35 @@
 # Repository State
 
-_Last updated: 2026-06-26 (P1.7.10 — Path Governance Resolver v0 / Shadow Mode)_
+_Last updated: 2026-06-26 (P1.7.11 — Source Trust Resolver v0 / Shadow Mode)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.7.10 — Path Governance Resolver v0 / Shadow Mode
-- Current active: **P1.7.11 — Source Trust Resolver v0 / Shadow Mode (planned)**
-- Next planned: P1.7.11 — Source Trust Resolver v0 / Shadow Mode
+- Last completed: P1.7.11 — Source Trust Resolver v0 / Shadow Mode
+- Current active: **P1.7.12 — Path/Source Conflict & Precedence Rules (planned)**
+- Next planned: P1.7.12 — Path/Source Conflict & Precedence Rules
 - Roadmap version: **v5.1 Integration-First**
 
 **P1.6 section SEALED WITH WARNINGS** — Integration-First vertical slice verified.
+
+### P1.7.11 Source Trust Resolver v0 / Shadow Mode (COMPLETE — shadow trust resolver only)
+
+- `path_governance/`: `SourceTrustShadowDecision`, `SourceTrustDecisionReason`, `SourceTrustResolverInput`, `SourceTrustResolverResult`, `resolve_source_trust_shadow()`.
+- SourceTrustShadowDecision status: **LIVE schema** — `WOULD_TRUST`, `WOULD_REVIEW`, `WOULD_DISTRUST`, `WOULD_QUARANTINE`, `WOULD_REQUIRE_OPERATOR_REVIEW`, `WOULD_REQUIRE_POLICY_REVIEW`, `UNKNOWN`; vocabulary only, not source mutation or runtime action.
+- SourceTrustDecisionReason status: **LIVE schema** — deterministic explanation vocabulary for source identity, source label, boundary, provenance/evidence, risk, path resolver shadow output, policy bridge unavailable, and shadow-only reasons.
+- SourceTrustResolverInput status: **LIVE schema** — optional references to `SourceIdentity`, `SourceTrustLabel`, `SourceTrustTaxonomy`, `UntrustedContentBoundary`, `ProvenanceBinding`, `PathSourceRiskClassification`, and `PathGovernanceResolverResult`; deterministic `input_id` and `input_hash`.
+- SourceTrustResolverResult status: **LIVE schema** — shadow trust decision, deterministic ordered reasons, advisory `recommended_trust_label`, risk level, source label, advisory flags, deterministic `result_id` and `result_hash`, `created_by_task="P1.7.11"`, `resolver_version="source_trust_resolver.v0.shadow"`.
+- SourceTrustResolverReport status: **NOT IMPLEMENTED** — intentionally skipped to keep P1.7.11 narrow; markdown report is the trace/evidence/report binding for this task.
+- `resolve_source_trust_shadow()` status: **LIVE backend helper** — produces deterministic non-mutating `WOULD_*` trust recommendations from supplied P1.7 context.
+- Shadow-only/enforced truth status: **PASS** — every result has `shadow_only=true` and `enforced=false`.
+- Recommended trust label status: **ADVISORY ONLY** — `recommended_trust_label` is hash-ready output metadata; it does not mutate `SourceIdentity`, `SourceTrustLabel`, or `SourceTrustTaxonomy`.
+- Input/result hash readiness: **PASS** — stable SHA-256 over canonical JSON; no timestamps, UUIDs, random values, network data, file contents, filesystem stat/exists/resolve data, environment variables, or cwd-derived live state.
+- Closed-world validation status: **PASS** — resolver input/result reject unknown fields with `UNKNOWN_FIELD`; `shadow_authority_grant` is rejected.
+- Source-label truth status: **PASS** — resolver input/result preserve `ProjectionSourceLabel`; test fixtures use `DEV_FIXTURE`.
+- Shadow trust resolver boundary summary: Source Trust Resolver v0 is shadow-only; trust recommendation is not trust mutation; `WOULD_TRUST` is not `TRUSTED`; `WOULD_DISTRUST` is not source blocking; `WOULD_QUARANTINE` is not quarantine action.
+- Known unavailable states: path/source conflict rules, precedence rules, policy engine integration, policy bridge, real source trust mutation, source taxonomy mutation, source identity mutation, trust promotion/demotion, source blocking, runtime quarantine, memory canonization, approval activation, trace hooks, Ledger integration, active prompt filtering, prompt rewriting, memory write gating, tool argument blocking, filesystem security, network access, sandbox hardening, runtime enforcement, projection/API/event contract, CLI/TUI binding, and Shell UI.
+- P1.7.12 readiness: **READY** — next task is Path/Source Conflict & Precedence Rules.
+- Local commit status: committed locally, no push performed.
+- Report: `agent/reports/P1.7.11_SOURCE_TRUST_RESOLVER_SHADOW_MODE.md`
 
 ### P1.7.10 Path Governance Resolver v0 / Shadow Mode (COMPLETE — shadow resolver only)
 

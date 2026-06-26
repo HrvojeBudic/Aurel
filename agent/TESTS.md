@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.7.11 Source Trust Resolver v0 / Shadow Mode Validation (COMPLETE)
+
+Focused validation (2026-06-26):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_0_foundation.py tests/path_governance/test_p1_7_1_path_identity.py tests/path_governance/test_p1_7_2_source_identity.py tests/path_governance/test_p1_7_3_source_trust_taxonomy.py tests/path_governance/test_p1_7_4_trusted_roots.py tests/path_governance/test_p1_7_5_path_normalization_escape_contract.py tests/path_governance/test_p1_7_6_path_authority_scope.py tests/path_governance/test_p1_7_7_untrusted_content_boundary.py tests/path_governance/test_p1_7_8_source_provenance_evidence_binding.py tests/path_governance/test_p1_7_9_path_source_risk_classification.py tests/path_governance/test_p1_7_10_path_governance_resolver_shadow.py tests/path_governance/test_p1_7_11_source_trust_resolver_shadow.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P1.7.0 + P1.7.1 + P1.7.2 + P1.7.3 + P1.7.4 + P1.7.5 + P1.7.6 + P1.7.7 + P1.7.8 + P1.7.9 + P1.7.10 + P1.7.11 **335 passed** (40 P1.7.11 focused); ruff **PASS**; mypy **PASS** (220 files).
+
+Report: `agent/reports/P1.7.11_SOURCE_TRUST_RESOLVER_SHADOW_MODE.md`
+
+Operator manual seal commands (optional, not run for P1.7.11):
+
+```bash
+.venv/bin/python -m pytest -q --tb=line
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+```
+
+Full pytest/coverage/Bandit remain manual unless runtime/security/sandbox/network/subprocess/secrets paths are touched or the operator requests full validation. P1.7.11 touched backend shadow trust resolver schema/helper, focused tests, and docs only; it did not touch runtime/security/sandbox/network/subprocess/secrets paths.
+
 ## P1.7.10 Path Governance Resolver v0 / Shadow Mode Validation (COMPLETE)
 
 Focused validation (2026-06-26):

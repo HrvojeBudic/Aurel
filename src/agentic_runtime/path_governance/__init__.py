@@ -12,6 +12,7 @@ P1.7.7 adds deterministic untrusted content boundary declaration objects without
 P1.7.8 adds deterministic source provenance and evidence binding seed objects without truth verification or trace/Ledger writes.
 P1.7.9 adds deterministic path/source risk classification model objects without resolver or enforcement behavior.
 P1.7.10 adds deterministic path governance resolver v0 shadow recommendations without enforcement behavior.
+P1.7.11 adds deterministic source trust resolver v0 shadow recommendations without trust mutation.
 
 Architectural law:
   - Projection source labels describe operator-visible truth.
@@ -236,6 +237,20 @@ from .path_resolver import (
     compute_path_governance_resolver_result_id,
     resolve_path_governance_shadow,
 )
+from .source_trust_resolver import (
+    SOURCE_TRUST_RESOLVER_INPUT_KNOWN_FIELDS,
+    SOURCE_TRUST_RESOLVER_RESULT_KNOWN_FIELDS,
+    SOURCE_TRUST_RESOLVER_TASK_ID,
+    SOURCE_TRUST_RESOLVER_VERSION,
+    SourceTrustDecisionReason,
+    SourceTrustResolverInput,
+    SourceTrustResolverResult,
+    SourceTrustShadowDecision,
+    compute_source_trust_resolver_input_hash,
+    compute_source_trust_resolver_result_hash,
+    compute_source_trust_resolver_result_id,
+    resolve_source_trust_shadow,
+)
 from .serialization import stable_hash, to_canonical_dict, to_canonical_json
 from .types import (
     CAPABILITY_STATUS_KNOWN_FIELDS,
@@ -290,6 +305,10 @@ __all__ = [
     "SOURCE_TRUST_TAXONOMY_KNOWN_FIELDS",
     "SOURCE_TRUST_TAXONOMY_TASK_ID",
     "SOURCE_TRUST_TAXONOMY_VERSION",
+    "SOURCE_TRUST_RESOLVER_INPUT_KNOWN_FIELDS",
+    "SOURCE_TRUST_RESOLVER_RESULT_KNOWN_FIELDS",
+    "SOURCE_TRUST_RESOLVER_TASK_ID",
+    "SOURCE_TRUST_RESOLVER_VERSION",
     "TRUST_LABEL_DEFINITION_KNOWN_FIELDS",
     "TRUSTED_ROOT_KNOWN_FIELDS",
     "TRUSTED_ROOT_REGISTRY_KNOWN_FIELDS",
@@ -400,6 +419,10 @@ __all__ = [
     "SourceRef",
     "SourceTrustLabel",
     "SourceTrustTaxonomy",
+    "SourceTrustDecisionReason",
+    "SourceTrustResolverInput",
+    "SourceTrustResolverResult",
+    "SourceTrustShadowDecision",
     "TrustLabelDefinition",
     "TrustPosture",
     "TrustedRoot",
@@ -437,12 +460,16 @@ __all__ = [
     "compute_path_governance_resolver_result_id",
     "compute_root_id",
     "compute_source_id",
+    "compute_source_trust_resolver_input_hash",
+    "compute_source_trust_resolver_result_hash",
+    "compute_source_trust_resolver_result_id",
     "compute_taxonomy_hash",
     "get_path_governance_foundation_status",
     "normalize_path_for_governance",
     "normalize_path_string",
     "path_normalization_warnings",
     "resolve_path_governance_shadow",
+    "resolve_source_trust_shadow",
     "stable_hash",
     "to_canonical_dict",
     "to_canonical_json",
