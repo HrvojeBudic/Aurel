@@ -1,12 +1,22 @@
-# Active Task: P1.8.9 (planned)
+# Active Task: P1.8.10 (planned)
 
-**Status:** P1.8.8 COMPLETE; P1.8.9 PLANNED
+**Status:** P1.8.9 COMPLETE; P1.8.10 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.8 — Delegation Expiry / RevocationRef Model**
-- Next planned task: **P1.8.9 — Delegation Chain / HandoffRef Model**
+- Last completed task: **P1.8.9 — Delegation Chain / HandoffRef Model**
+- Next planned task: **P1.8.10 — Shadow Resolver / Consistency Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.9 Status
+
+**COMPLETE** — P1.8.9 delegation chain / handoff reference model verified after focused validation.
+
+P1.8.9 establishes a deterministic, versioned, JSON-safe, side-effect-free delegation chain and handoff reference layer. DelegationChainLinkKind (ROOT/PREDECESSOR/SUCCESSOR/DERIVED_FROM/CONTINUED_BY/SUPERSEDED_BY/HANDOFF/UNKNOWN), DelegationHandoffKind (OPERATOR_TO_OPERATOR/OPERATOR_TO_AGENT/AGENT_TO_AGENT/AGENT_TO_SERVICE/SERVICE_TO_AGENT/SYSTEM_TO_AGENT/REFERENCE_ONLY/UNKNOWN), DelegationChainReferenceStatus (REFERENCE_ONLY/CHAIN_REFERENCED/PREDECESSOR_REFERENCED/SUCCESSOR_REFERENCED/HANDOFF_REFERENCED/HANDOFF_CLAIM_REFERENCED/ACCEPTANCE_CLAIM_REFERENCED/TRANSFER_CLAIM_REFERENCED/CHAIN_VERIFIER_UNAVAILABLE/HANDOFF_EXECUTOR_UNAVAILABLE/UNAVAILABLE/ERROR/UNKNOWN), DelegationChainStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationChainRef, DelegationPredecessorRef, DelegationSuccessorRef, DelegationHandoffRef, DelegationHandoffClaimRef, DelegationHandoffAcceptanceClaimRef, DelegationResponsibilityTransferClaimRef, DelegationLineageMap, DelegationChainContinuityReadinessProfile, DelegationChainEnvelope, DelegationChainBinding, DelegationChainBindingSet, DelegationChainSideEffects (15 all-false booleans), DelegationChainStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain (78 tests), and 17 unavailable surface reasons.
+
+Boundary: DelegationChainRef exists ≠ chain verified. DelegationHandoffRef exists ≠ handoff executed. DelegationPredecessorRef exists ≠ predecessor valid. DelegationSuccessorRef exists ≠ successor activated. DelegationHandoffClaimRef exists ≠ handoff occurred. DelegationHandoffAcceptanceClaimRef exists ≠ acceptance verified. DelegationResponsibilityTransferClaimRef exists ≠ responsibility transferred. DelegationLineageMap exists ≠ graph engine. DelegationChainContinuityReadinessProfile exists ≠ continuity proven. chain_envelope_hash exists ≠ TRACE_VERIFIED. chain_binding_set_hash exists ≠ proof of transfer, handoff, or chain validity. No live handoff, responsibility transfer, authority transfer, acceptance verification, predecessor/successor verification, chain verification, lineage graph engine, runtime owner mutation, policy/Custos decisioning, trace write, Ledger write, runtime mutation, P1.8.10, or P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.8 Status
 

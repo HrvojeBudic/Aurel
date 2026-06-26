@@ -1,15 +1,35 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.8 — Delegation Expiry / RevocationRef Model)_
+_Last updated: 2026-06-27 (P1.8.9 — Delegation Chain / HandoffRef Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.8 — Delegation Expiry / RevocationRef Model
-- Current active: **P1.8.9 — Delegation Chain / HandoffRef Model (planned)**
-- Next planned: P1.8.9 — Delegation Chain / HandoffRef Model
+- Last completed: P1.8.9 — Delegation Chain / HandoffRef Model
+- Current active: **P1.8.10 — Shadow Resolver / Consistency Model (planned)**
+- Next planned: P1.8.10 — Shadow Resolver / Consistency Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9 complete)
+
+### P1.8.9 delegation chain / handoff model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationChainRef | Deterministic `chain_hash` | DEV_FIXTURE in tests | Not chain verified |
+| DelegationPredecessorRef | Deterministic `predecessor_hash` | DEV_FIXTURE | Not predecessor valid |
+| DelegationSuccessorRef | Deterministic `successor_hash` | DEV_FIXTURE | Not successor activated |
+| DelegationHandoffRef | Deterministic `handoff_hash` | DEV_FIXTURE | Not handoff executed |
+| DelegationHandoffClaimRef | Deterministic `handoff_claim_hash` | DEV_FIXTURE | Not handoff occurred |
+| DelegationHandoffAcceptanceClaimRef | Deterministic `acceptance_claim_hash` | DEV_FIXTURE | Not acceptance verified |
+| DelegationResponsibilityTransferClaimRef | Deterministic `transfer_claim_hash` | DEV_FIXTURE | Not responsibility transferred |
+| DelegationLineageMap | Deterministic `lineage_map_hash` | DEV_FIXTURE | Not graph engine |
+| DelegationChainContinuityReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not continuity proven |
+| DelegationChainEnvelope | Deterministic `chain_envelope_hash` | DEV_FIXTURE | Not TRACE_VERIFIED |
+| DelegationChainBindingSet | Deterministic `chain_binding_set_hash` | DEV_FIXTURE | Not proof of transfer or validity |
+
+**Known UNAVAILABLE (P1.8.9):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Live Handoff Executor, Responsibility Transfer Engine, Authority Transfer Engine, Handoff Acceptance Verifier, Predecessor/Successor Verifier, Chain Verifier, Lineage Graph Engine, Runtime Owner Mutation, Policy/Custos Decision, Approval Creation, P1.8.10 Shadow Resolver / Consistency Model, Output Passport/P1.9, Runtime Delegation Execution.
+
+**Explicit negatives:** DelegationChainRef exists ≠ chain verified. DelegationHandoffRef exists ≠ handoff executed. DelegationPredecessorRef exists ≠ predecessor valid. DelegationSuccessorRef exists ≠ successor activated. DelegationHandoffClaimRef exists ≠ handoff occurred. DelegationHandoffAcceptanceClaimRef exists ≠ acceptance verified. DelegationResponsibilityTransferClaimRef exists ≠ responsibility transferred. DelegationLineageMap exists ≠ graph engine. DelegationChainContinuityReadinessProfile exists ≠ continuity proven. chain_envelope_hash exists ≠ TRACE_VERIFIED. chain_binding_set_hash exists ≠ proof of transfer, handoff, or chain validity. No live handoff, responsibility transfer, authority transfer, acceptance verification, predecessor/successor verification, chain verification, lineage graph engine, runtime owner mutation, policy/Custos decisioning, trace write, Ledger write, runtime mutation, P1.8.10, or P1.9.
 
 ### P1.8.8 delegation lifecycle / expiry / revocation model summary
 
