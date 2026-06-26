@@ -1,12 +1,22 @@
-# Active Task: P1.8.8 (planned)
+# Active Task: P1.8.9 (planned)
 
-**Status:** P1.8.7 COMPLETE; P1.8.8 PLANNED
+**Status:** P1.8.8 COMPLETE; P1.8.9 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.7 — Delegation Scope / Boundary Model**
-- Next planned task: **P1.8.8 — Delegation Expiry / RevocationRef Model**
+- Last completed task: **P1.8.8 — Delegation Expiry / RevocationRef Model**
+- Next planned task: **P1.8.9 — Delegation Chain / HandoffRef Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.8 Status
+
+**COMPLETE** — P1.8.8 delegation lifecycle / expiry / revocation reference model verified after focused validation.
+
+P1.8.8 establishes a deterministic, versioned, JSON-safe, side-effect-free delegation lifecycle reference layer. DelegationLifecycleEventKind (EXPIRY/REVOCATION/SUSPENSION/RENEWAL/SUPERSESSION/REASON/UNKNOWN), DelegationLifecycleReferenceStatus (REFERENCE_ONLY/EXPIRY_REFERENCED/REVOCATION_REFERENCED/SUSPENSION_REFERENCED/RENEWAL_REFERENCED/SUPERSESSION_REFERENCED/ENFORCEMENT_UNAVAILABLE/SCHEDULER_UNAVAILABLE/UNAVAILABLE/ERROR/UNKNOWN), DelegationLifecycleStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationRevocationReasonKind (OPERATOR_DECLARED/POLICY_CONTEXT/AUTHORITY_CONTEXT/SCOPE_CONTEXT/RISK_CONTEXT/EVIDENCE_CONTEXT/UNKNOWN), DelegationExpiryRef, DelegationRevocationRef, DelegationSuspensionRef, DelegationRenewalRef, DelegationSupersessionRef, DelegationRevocationReasonRef, DelegationLifecycleReadinessProfile, DelegationLifecycleEnvelope, DelegationLifecycleBinding, DelegationLifecycleBindingSet, DelegationLifecycleSideEffects (14 all-false booleans), DelegationLifecycleStatusReport with deterministic hashing, closed-world validation, DEV_FIXTURE focused test chain (68 tests), and 17 unavailable surface reasons.
+
+Boundary: ExpiryRef exists ≠ delegation expired. RevocationRef exists ≠ delegation revoked. SuspensionRef exists ≠ runtime paused. RenewalRef exists ≠ authority renewed. SupersessionRef exists ≠ old delegation invalidated. ReasonRef exists ≠ reason verified. LifecycleEnvelope exists ≠ lifecycle enforced. LifecycleReadinessProfile exists ≠ scheduler active. Lifecycle hash exists ≠ TRACE_VERIFIED. lifecycle_envelope_hash exists ≠ TRACE_VERIFIED. lifecycle_binding_set_hash exists ≠ proof of revocation or expiry. No runtime expiry/revocation/suspension/cancellation, no permission removal, no authority mutation, no scheduler/timer, no policy/Custos, no approval, no Ledger/global trace write, no P1.8.9, no P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.7 Status
 

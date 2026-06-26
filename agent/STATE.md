@@ -1,15 +1,35 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.7 — Delegation Scope / Boundary Model)_
+_Last updated: 2026-06-27 (P1.8.8 — Delegation Expiry / RevocationRef Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.7 — Delegation Scope / Boundary Model
-- Current active: **P1.8.8 — Delegation Expiry / RevocationRef Model (planned)**
-- Next planned: P1.8.8 — Delegation Expiry / RevocationRef Model
+- Last completed: P1.8.8 — Delegation Expiry / RevocationRef Model
+- Current active: **P1.8.9 — Delegation Chain / HandoffRef Model (planned)**
+- Next planned: P1.8.9 — Delegation Chain / HandoffRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8 complete)
+
+### P1.8.8 delegation lifecycle / expiry / revocation model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationExpiryRef | Deterministic `expiry_hash` | DEV_FIXTURE in tests | Not runtime expiry |
+| DelegationRevocationRef | Deterministic `revocation_hash` | DEV_FIXTURE | Not runtime revocation |
+| DelegationSuspensionRef | Deterministic `suspension_hash` | DEV_FIXTURE | Not runtime pause |
+| DelegationRenewalRef | Deterministic `renewal_hash` | DEV_FIXTURE | Not authority renewal |
+| DelegationSupersessionRef | Deterministic `supersession_hash` | DEV_FIXTURE | Not old delegation invalidation |
+| DelegationRevocationReasonRef | Deterministic `reason_hash` | DEV_FIXTURE | Not verified reason |
+| DelegationLifecycleReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not scheduler active or enforcement guarantee |
+| DelegationLifecycleEnvelope | Deterministic `lifecycle_envelope_hash` | DEV_FIXTURE | Not lifecycle enforcement |
+| DelegationLifecycleBindingSet | Deterministic `lifecycle_binding_set_hash` | DEV_FIXTURE | Does not expire/revoke delegations |
+
+**Known UNAVAILABLE (P1.8.8):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Runtime Expiry Engine, Runtime Revocation Engine, Runtime Suspension Engine, Authority Renewal, Supersession Enforcement, Permission Removal, Scheduler/Timer Activation, Runtime Cancellation, Policy/Custos Decision, Approval Creation, P1.8.9 Chain/Handoff Model, Output Passport/P1.9, Runtime Delegation Execution.
+
+**Explicit negatives:** ExpiryRef exists ≠ delegation expired. RevocationRef exists ≠ delegation revoked. SuspensionRef exists ≠ runtime paused. RenewalRef exists ≠ authority renewed. SupersessionRef exists ≠ old delegation invalidated. ReasonRef exists ≠ reason verified. LifecycleEnvelope exists ≠ lifecycle enforced. LifecycleReadinessProfile exists ≠ scheduler active. Lifecycle hash ≠ TRACE_VERIFIED. lifecycle_envelope_hash ≠ TRACE_VERIFIED. lifecycle_binding_set_hash ≠ proof of revocation or expiry. No runtime expiry/revocation/suspension/cancellation, no scheduler/timer, no permission/authority mutation, no policy/Custos/approval/Ledger/trace, no P1.8.9, no P1.9.
+
+Report: `agent/reports/P1.8.8_DELEGATION_EXPIRY_REVOCATION_REF_MODEL.md`
 
 ### P1.8.7 delegation scope / boundary model summary
 
