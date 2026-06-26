@@ -71,6 +71,8 @@ Focused validation (2026-06-26):
 
 Report: `agent/reports/P1.7.17_PATH_GOVERNANCE_PROJECTION_API_EVENT_CONTRACT.md`
 
+Results: compileall **PASS**; focused P1.7.0–P1.7.17 **591 passed** (38 P1.7.17 focused); ruff **PASS**; mypy **PASS**.
+
 Operator manual seal commands (optional, not run for P1.7.17):
 
 ```bash
