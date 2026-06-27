@@ -4,12 +4,12 @@ _Last updated: 2026-06-27 (P1.8.11 — Delegation Operator Review / ApprovalInte
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model
-- Current active: **P1.8.13 — Delegation Runtime/Execution ReadinessRef Model (planned)**
-- Next planned: P1.8.13 — Delegation Runtime/Execution ReadinessRef Model
+- Last completed: P1.8.13 — Delegation Runtime/Execution ReadinessRef Model
+- Current active: **P1.8.14 — Delegation Trace/Audit BridgeRef Model (planned)**
+- Next planned: P1.8.14 — Delegation Trace/Audit BridgeRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9, P1.8.10, P1.8.11 complete)
+- P1.8 status: **in progress** (P1.8.0–P1.8.13 complete)
 
 ## Golden Thread — P1.8 Delegation
 
@@ -19,29 +19,55 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.11 → P1.8.12 → P1.8.13
+### Chain: P1.8.12 → P1.8.13 → P1.8.14
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model | `agent/reports/P1.8.11_DELEGATION_OPERATOR_REVIEW_APPROVAL_INTENT_REF_MODEL.md` | 65 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
-| Current | P1.8.12 — Delegation Policy/Custos BridgeRef Model | `agent/reports/P1.8.12_DELEGATION_POLICY_CUSTOS_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
-| Next | P1.8.13 — Delegation Runtime/Execution ReadinessRef Model | (planned) | (planned) |
+| Previous | P1.8.12 — Delegation Policy/Custos BridgeRef Model | `agent/reports/P1.8.12_DELEGATION_POLICY_CUSTOS_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
+| Current | P1.8.13 — Delegation Runtime/Execution ReadinessRef Model | `agent/reports/P1.8.13_DELEGATION_RUNTIME_EXECUTION_READINESS_REF_MODEL.md` | 61 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
+| Next | P1.8.14 — Delegation Trace/Audit BridgeRef Model | (planned) | (planned) |
 
 **Semantic bridge:**
-P1.8.11 OperatorReviewBindingSet
-→ P1.8.12 PolicyCustosBridgeEnvelope
-→ P1.8.12 PolicyCustosBridgeBindingSet
-→ P1.8.13 Runtime/Execution ReadinessRef handoff
+P1.8.12 PolicyCustosBridgeBindingSet
+→ P1.8.13 RuntimeExecutionReadinessEnvelope
+→ P1.8.13 RuntimeExecutionReadinessBindingSet
+→ P1.8.14 Trace/Audit BridgeRef handoff
 
-**P1.8.12 validation proof:**
+**P1.8.13 validation proof:**
 ```bash
 .venv/bin/python -m compileall src tests         # PASS
-.venv/bin/python -m pytest tests/delegation/test_p1_8_12_policy_bridge.py -q  # 65 passed
-.venv/bin/python -m ruff check src/agentic_runtime/delegation/policy_bridge.py tests/delegation/test_p1_8_12_policy_bridge.py  # PASS
+.venv/bin/python -m pytest tests/delegation/test_p1_8_13_runtime_readiness.py -q  # 61 passed
+.venv/bin/python -m ruff check src/agentic_runtime/delegation/runtime_readiness.py tests/delegation/test_p1_8_13_runtime_readiness.py  # PASS
 .venv/bin/python -m mypy src/agentic_runtime      # PASS
 ```
 
-**Truth:** P1.8.12 is reference-only. PolicyBridgeRef is not policy evaluation. CustosBridgeRef is not Custos call. PolicyContextRef is not policy compliance. CustosContextRef is not Custos approval. DecisionRequestIntentRef is not decision request. DecisionResponsePlaceholderRef is not decision response. CompatibilityMatrix is not policy evaluation. BridgeReadinessProfile is not decision readiness. BridgeEnvelope is not policy decision. No policy engine call, Custos runtime call, decision request execution, allow/deny emission, approval/rejection creation, authority grant/deny, runtime allow/block, enforcement, trace write, Ledger write, or runtime mutation occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remains UNAVAILABLE. P1.8.13 is not implemented.
+**Truth:** P1.8.13 is reference-only. RuntimeReadinessRef is not runtime ready. ExecutionPreconditionRef is not precondition satisfied. ExecutionBlockerRef is not runtime blocked. RuntimeAdmissionIntentRef is not runtime admitted. RuntimeAdmissionPlaceholderRef is not admission result. RuntimeContextRef is not runtime initialized. ToolExecutionContextRef is not tool dispatch. RuntimeSessionPlaceholderRef is not session creation. ExecutionTargetRef is not dispatch target selected. ReadinessMatrix is not execution readiness. ReadinessProfile is not execution readiness proof. ReadinessEnvelope is not runtime admission. No runtime engine call, execution engine call, admission gate call, runtime admission, runtime block, execution allow/block, tool dispatch, runtime session creation, execution target selection, policy/Custos call, enforcement, trace write, Ledger write, or runtime mutation occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remain UNAVAILABLE. P1.8.14 is not implemented. PolicyBridgeRef is not policy evaluation. CustosBridgeRef is not Custos call. PolicyContextRef is not policy compliance. CustosContextRef is not Custos approval. DecisionRequestIntentRef is not decision request. DecisionResponsePlaceholderRef is not decision response. CompatibilityMatrix is not policy evaluation. BridgeReadinessProfile is not decision readiness. BridgeEnvelope is not policy decision. No policy engine call, Custos runtime call, decision request execution, allow/deny emission, approval/rejection creation, authority grant/deny, runtime allow/block, enforcement, trace write, Ledger write, or runtime mutation occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remains UNAVAILABLE. P1.8.13 is not implemented.
+
+### P1.8.13 delegation runtime/execution readiness reference model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationRuntimeReadinessRef | Deterministic `runtime_readiness_hash` | DEV_FIXTURE in tests | Not runtime ready |
+| DelegationExecutionPreconditionRef | Deterministic `precondition_hash` | DEV_FIXTURE | Not precondition satisfied |
+| DelegationExecutionBlockerRef | Deterministic `blocker_hash` | DEV_FIXTURE | Not runtime blocked |
+| DelegationRuntimeAdmissionIntentRef | Deterministic `admission_intent_hash` | DEV_FIXTURE | Not runtime admitted |
+| DelegationRuntimeAdmissionPlaceholderRef | Deterministic `admission_placeholder_hash` | DEV_FIXTURE | Not admission result |
+| DelegationRuntimeContextRef | Deterministic `runtime_context_hash` | DEV_FIXTURE | Not runtime initialized |
+| DelegationToolExecutionContextRef | Deterministic `tool_context_hash` | DEV_FIXTURE | Not tool dispatch |
+| DelegationRuntimeSessionPlaceholderRef | Deterministic `session_placeholder_hash` | DEV_FIXTURE | Not session creation |
+| DelegationExecutionTargetRef | Deterministic `execution_target_hash` | DEV_FIXTURE | Not dispatch target selected |
+| DelegationRuntimeExecutionReadinessMatrix | Deterministic `matrix_hash` | DEV_FIXTURE | Not execution readiness |
+| DelegationRuntimeExecutionReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not execution readiness proof |
+| DelegationRuntimeExecutionReadinessEnvelope | Deterministic `runtime_execution_readiness_envelope_hash` | DEV_FIXTURE | Not runtime admission |
+| DelegationRuntimeExecutionReadinessBindingSet | Deterministic `runtime_execution_readiness_binding_set_hash` | DEV_FIXTURE | Not proof of execution or admission |
+| DelegationRuntimeExecutionReadinessSideEffects | 16 booleans all false | LIVE schema | Non-admitting, non-executing, non-dispatching, non-mutating |
+| DelegationRuntimeExecutionReadinessStatusReport | Deterministic `status_hash` | DEV_FIXTURE | Reference-only metadata reporting |
+
+**Known UNAVAILABLE (P1.8.13):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Runtime Engine, Execution Engine, Admission Gate, Tool Dispatcher, Runtime Session Runtime, Execution Target Selector, Runtime Allow/Block, Enforcement Engine, Policy/Custos Evaluator, Trace Writer, P1.8.14 Trace/Audit BridgeRef Model, Output Passport/P1.9, Runtime Delegation Execution.
+
+**Explicit negatives:** RuntimeReadinessRef exists ≠ runtime ready. ExecutionPreconditionRef exists ≠ precondition satisfied. ExecutionBlockerRef exists ≠ runtime blocked. RuntimeAdmissionIntentRef exists ≠ runtime admitted. RuntimeAdmissionPlaceholderRef exists ≠ admission result. RuntimeContextRef exists ≠ runtime initialized. ToolExecutionContextRef exists ≠ tool dispatched. RuntimeSessionPlaceholderRef exists ≠ runtime session created. ExecutionTargetRef exists ≠ dispatch target selected. ReadinessMatrix exists ≠ execution readiness. ReadinessProfile exists ≠ execution readiness proof. ReadinessEnvelope exists ≠ runtime admission. Readiness hash exists ≠ TRACE_VERIFIED. No runtime/execution/admission/dispatch/session/target selection/policy/Custos/enforcement/trace/Ledger/mutation. No P1.8.14, no P1.9.
+
+Report: `agent/reports/P1.8.13_DELEGATION_RUNTIME_EXECUTION_READINESS_REF_MODEL.md`
 
 ### P1.8.11 delegation operator review / approval-intent reference model summary
 
