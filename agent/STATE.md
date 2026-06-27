@@ -19,19 +19,30 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.13 → P1.8.14 → P1.8.15
+### Chain: P1.8.14 → P1.8.15 → P1.8.16
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.13 — Delegation Runtime/Execution ReadinessRef Model | `agent/reports/P1.8.13_DELEGATION_RUNTIME_EXECUTION_READINESS_REF_MODEL.md` | 61 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
-| Current | P1.8.14 — Delegation Trace/Audit BridgeRef Model | `agent/reports/P1.8.14_DELEGATION_TRACE_AUDIT_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
-| Next | P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model | (planned) | (planned) |
+| Previous | P1.8.14 — Delegation Trace/Audit BridgeRef Model | `agent/reports/P1.8.14_DELEGATION_TRACE_AUDIT_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
+| Current | P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model | `agent/reports/P1.8.15_DELEGATION_ACCOUNTABILITY_PACKET_INTEGRATION_SUMMARY_REF_MODEL.md` | 76 focused tests, deterministic hashes, 18 all-false side effects, clean validation (compileall, pytest, ruff, mypy all pass) |
+| Next | P1.8.16 — Pre-Projection Readiness / Surface Contract Seed | (planned) | (planned) |
 
 **Semantic bridge:**
-P1.8.13 RuntimeExecutionReadinessBindingSet
-→ P1.8.14 TraceAuditBridgeEnvelope
-→ P1.8.14 TraceAuditBridgeBindingSet
-→ P1.8.15 Accountability Packet / Integration SummaryRef handoff
+P1.8.14 TraceAuditBridgeBindingSet
+→ P1.8.15 IntegrationSummaryEnvelope (wraps trace_audit_bridge_binding_set_hash)
+→ P1.8.15 AccountabilityPacketEnvelope (wraps integration_summary_envelope_hash)
+→ P1.8.15 AccountabilityPacketBindingSet (wraps accountability_packet_envelope_hash)
+→ P1.8.16 Pre-Projection Readiness / Surface Contract Seed handoff
+
+**Boundary declarations:**
+- `accountability_packet_envelope_hash` exists does not mean proof, verification, compliance, projection, approval, execution, trace, Ledger, audit, Output Passport, or section seal.
+- `integration_summary_envelope_hash` exists does not mean system integrated.
+- `AccountabilityPacketEnvelope` exists does not mean accountability proven.
+- `AccountabilityComponentRef` exists does not mean component verified.
+- `CoverageMatrix` exists does not mean compliance proof.
+- `AccountabilityProfile` exists does not mean trust score.
+- `SummaryHash` exists does not mean TRACE_VERIFIED.
+- `Golden Thread` exists does not mean trace verification.
 
 **P1.8.14 validation proof:**
 ```bash

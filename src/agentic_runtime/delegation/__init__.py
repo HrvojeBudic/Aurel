@@ -144,6 +144,15 @@ Architectural law:
   - Trace/audit hash exists does not mean TRACE_VERIFIED.
   - TraceAuditBridgeEnvelope exists does not mean trace write, audit finality, or Ledger write.
   - trace_audit_bridge_binding_set_hash exists does not mean trace/audit/Ledger proof.
+  - AccountabilityPacketEnvelope exists does not mean accountability proven.
+  - IntegrationSummaryEnvelope exists does not mean system integrated.
+  - AccountabilityComponentRef exists does not mean component verified.
+  - CoverageMatrix exists does not mean compliance proof.
+  - AccountabilityProfile exists does not mean trust score.
+  - ComponentPresent exists does not mean verified.
+  - MissingComponent exists does not mean runtime failure.
+  - SummaryHash exists does not mean TRACE_VERIFIED.
+  - Golden Thread exists does not mean trace verification.
 """
 from __future__ import annotations
 
@@ -969,6 +978,77 @@ from .runtime_readiness import (
     # serializers
     serialize_delegation_runtime_execution_readiness_binding_set,
     serialize_delegation_runtime_execution_readiness_envelope,
+)
+
+from .accountability_packet import (
+    DELEGATION_ACCOUNTABILITY_PACKET_TASK_ID,
+    DELEGATION_ACCOUNTABILITY_COMPONENT_REF_VERSION,
+    DELEGATION_ACCOUNTABILITY_COVERAGE_MATRIX_ENTRY_VERSION,
+    DELEGATION_ACCOUNTABILITY_COVERAGE_MATRIX_VERSION,
+    DELEGATION_ACCOUNTABILITY_PROFILE_VERSION,
+    DELEGATION_INTEGRATION_SUMMARY_REF_VERSION,
+    DELEGATION_INTEGRATION_SUMMARY_ENVELOPE_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_ENVELOPE_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_BINDING_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_BINDING_SET_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_SIDE_EFFECTS_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_STATUS_REPORT_VERSION,
+    DELEGATION_ACCOUNTABILITY_PACKET_UNAVAILABLE_BINDINGS,
+    # known fields
+    ACCOUNTABILITY_COMPONENT_REF_KNOWN_FIELDS,
+    COVERAGE_MATRIX_ENTRY_KNOWN_FIELDS,
+    COVERAGE_MATRIX_KNOWN_FIELDS,
+    ACCOUNTABILITY_PROFILE_KNOWN_FIELDS,
+    INTEGRATION_SUMMARY_REF_KNOWN_FIELDS,
+    INTEGRATION_SUMMARY_ENVELOPE_KNOWN_FIELDS,
+    ACCOUNTABILITY_PACKET_ENVELOPE_KNOWN_FIELDS,
+    PACKET_BINDING_KNOWN_FIELDS,
+    PACKET_BINDING_SET_KNOWN_FIELDS,
+    PACKET_SIDE_EFFECTS_KNOWN_FIELDS,
+    PACKET_STATUS_REPORT_KNOWN_FIELDS,
+    # enums
+    DelegationAccountabilityPacketKind,
+    DelegationAccountabilityPacketReferenceStatus,
+    DelegationAccountabilityPacketStatus,
+    DelegationAccountabilityComponentFamily,
+    # dataclasses
+    DelegationAccountabilityComponentRef,
+    DelegationAccountabilityCoverageMatrixEntry,
+    DelegationAccountabilityCoverageMatrix,
+    DelegationAccountabilityProfile,
+    DelegationIntegrationSummaryRef,
+    DelegationIntegrationSummaryEnvelope,
+    DelegationAccountabilityPacketEnvelope,
+    DelegationAccountabilityPacketBinding,
+    DelegationAccountabilityPacketBindingSet,
+    DelegationAccountabilityPacketSideEffects,
+    DelegationAccountabilityPacketStatusReport,
+    # builders
+    build_delegation_accountability_component_ref,
+    build_delegation_accountability_coverage_matrix_entry,
+    build_delegation_accountability_coverage_matrix,
+    build_delegation_accountability_profile,
+    build_delegation_integration_summary_ref,
+    build_delegation_integration_summary_envelope,
+    build_delegation_accountability_packet_envelope,
+    build_delegation_accountability_packet_binding,
+    build_delegation_accountability_packet_binding_set,
+    build_delegation_accountability_packet_status_report,
+    # hash functions
+    hash_delegation_accountability_component_ref,
+    hash_delegation_accountability_coverage_matrix_entry,
+    hash_delegation_accountability_coverage_matrix,
+    hash_delegation_accountability_profile,
+    hash_delegation_integration_summary_ref,
+    hash_delegation_integration_summary_envelope,
+    hash_delegation_accountability_packet_envelope,
+    hash_delegation_accountability_packet_binding,
+    hash_delegation_accountability_packet_binding_set,
+    hash_delegation_accountability_packet_status_report,
+    # serializers
+    serialize_delegation_integration_summary_envelope,
+    serialize_delegation_accountability_packet_envelope,
+    serialize_delegation_accountability_packet_binding_set,
 )
 
 from .trace_audit_bridge import (
@@ -2011,4 +2091,73 @@ __all__ = [
     # P1.8.14 serializers
     "serialize_delegation_trace_audit_bridge_envelope",
     "serialize_delegation_trace_audit_bridge_binding_set",
+    # P1.8.15 accountability packet constants
+    "DELEGATION_ACCOUNTABILITY_PACKET_TASK_ID",
+    "DELEGATION_ACCOUNTABILITY_COMPONENT_REF_VERSION",
+    "DELEGATION_ACCOUNTABILITY_COVERAGE_MATRIX_ENTRY_VERSION",
+    "DELEGATION_ACCOUNTABILITY_COVERAGE_MATRIX_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PROFILE_VERSION",
+    "DELEGATION_INTEGRATION_SUMMARY_REF_VERSION",
+    "DELEGATION_INTEGRATION_SUMMARY_ENVELOPE_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_ENVELOPE_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_BINDING_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_BINDING_SET_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_SIDE_EFFECTS_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_STATUS_REPORT_VERSION",
+    "DELEGATION_ACCOUNTABILITY_PACKET_UNAVAILABLE_BINDINGS",
+    # P1.8.15 known fields
+    "ACCOUNTABILITY_COMPONENT_REF_KNOWN_FIELDS",
+    "COVERAGE_MATRIX_ENTRY_KNOWN_FIELDS",
+    "COVERAGE_MATRIX_KNOWN_FIELDS",
+    "ACCOUNTABILITY_PROFILE_KNOWN_FIELDS",
+    "INTEGRATION_SUMMARY_REF_KNOWN_FIELDS",
+    "INTEGRATION_SUMMARY_ENVELOPE_KNOWN_FIELDS",
+    "ACCOUNTABILITY_PACKET_ENVELOPE_KNOWN_FIELDS",
+    "PACKET_BINDING_KNOWN_FIELDS",
+    "PACKET_BINDING_SET_KNOWN_FIELDS",
+    "PACKET_SIDE_EFFECTS_KNOWN_FIELDS",
+    "PACKET_STATUS_REPORT_KNOWN_FIELDS",
+    # P1.8.15 enums
+    "DelegationAccountabilityPacketKind",
+    "DelegationAccountabilityPacketReferenceStatus",
+    "DelegationAccountabilityPacketStatus",
+    "DelegationAccountabilityComponentFamily",
+    # P1.8.15 dataclasses
+    "DelegationAccountabilityComponentRef",
+    "DelegationAccountabilityCoverageMatrixEntry",
+    "DelegationAccountabilityCoverageMatrix",
+    "DelegationAccountabilityProfile",
+    "DelegationIntegrationSummaryRef",
+    "DelegationIntegrationSummaryEnvelope",
+    "DelegationAccountabilityPacketEnvelope",
+    "DelegationAccountabilityPacketBinding",
+    "DelegationAccountabilityPacketBindingSet",
+    "DelegationAccountabilityPacketSideEffects",
+    "DelegationAccountabilityPacketStatusReport",
+    # P1.8.15 builders
+    "build_delegation_accountability_component_ref",
+    "build_delegation_accountability_coverage_matrix_entry",
+    "build_delegation_accountability_coverage_matrix",
+    "build_delegation_accountability_profile",
+    "build_delegation_integration_summary_ref",
+    "build_delegation_integration_summary_envelope",
+    "build_delegation_accountability_packet_envelope",
+    "build_delegation_accountability_packet_binding",
+    "build_delegation_accountability_packet_binding_set",
+    "build_delegation_accountability_packet_status_report",
+    # P1.8.15 hash functions
+    "hash_delegation_accountability_component_ref",
+    "hash_delegation_accountability_coverage_matrix_entry",
+    "hash_delegation_accountability_coverage_matrix",
+    "hash_delegation_accountability_profile",
+    "hash_delegation_integration_summary_ref",
+    "hash_delegation_integration_summary_envelope",
+    "hash_delegation_accountability_packet_envelope",
+    "hash_delegation_accountability_packet_binding",
+    "hash_delegation_accountability_packet_binding_set",
+    "hash_delegation_accountability_packet_status_report",
+    # P1.8.15 serializers
+    "serialize_delegation_integration_summary_envelope",
+    "serialize_delegation_accountability_packet_envelope",
+    "serialize_delegation_accountability_packet_binding_set",
 ]
