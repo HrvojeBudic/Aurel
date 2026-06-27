@@ -1,11 +1,11 @@
-# Active Task: P1.8.12 (planned)
+# Active Task: P1.8.13 (planned)
 
-**Status:** P1.8.11 COMPLETE; P1.8.12 PLANNED
+**Status:** P1.8.12 COMPLETE; P1.8.13 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model**
-- Next planned task: **P1.8.12 — Delegation Policy/Custos BridgeRef Model**
+- Last completed task: **P1.8.12 — Delegation Policy/Custos BridgeRef Model**
+- Next planned task: **P1.8.13 — Delegation Runtime/Execution ReadinessRef Model**
 - Roadmap version: **v5.1 Integration-First**
 
 ## P1.8.11 Status

@@ -5,8 +5,8 @@ _Last updated: 2026-06-27 (P1.8.11 — Delegation Operator Review / ApprovalInte
 ## Current Roadmap Pointer
 
 - Last completed: P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model
-- Current active: **P1.8.12 — Delegation Policy/Custos BridgeRef Model (planned)**
-- Next planned: P1.8.12 — Delegation Policy/Custos BridgeRef Model
+- Current active: **P1.8.13 — Delegation Runtime/Execution ReadinessRef Model (planned)**
+- Next planned: P1.8.13 — Delegation Runtime/Execution ReadinessRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9, P1.8.10, P1.8.11 complete)
@@ -19,29 +19,29 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.10 → P1.8.11 → P1.8.12
+### Chain: P1.8.11 → P1.8.12 → P1.8.13
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.10 — Delegation Shadow Resolver / Consistency Model | `agent/reports/P1.8.10_DELEGATION_SHADOW_RESOLVER_CONSISTENCY_MODEL.md` | Commit `4da6afc`, 70 tests, clean git status |
-| Current | P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model | `agent/reports/P1.8.11_DELEGATION_OPERATOR_REVIEW_APPROVAL_INTENT_REF_MODEL.md` | 65 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
-| Next | P1.8.12 — Delegation Policy/Custos BridgeRef Model | (planned) | (planned) |
+| Previous | P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model | `agent/reports/P1.8.11_DELEGATION_OPERATOR_REVIEW_APPROVAL_INTENT_REF_MODEL.md` | 65 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
+| Current | P1.8.12 — Delegation Policy/Custos BridgeRef Model | `agent/reports/P1.8.12_DELEGATION_POLICY_CUSTOS_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
+| Next | P1.8.13 — Delegation Runtime/Execution ReadinessRef Model | (planned) | (planned) |
 
 **Semantic bridge:**
-P1.8.10 ShadowResolverResult
-→ P1.8.11 OperatorReviewEnvelope
-→ P1.8.11 OperatorReviewBindingSet
-→ P1.8.12 Policy/Custos BridgeRef handoff
+P1.8.11 OperatorReviewBindingSet
+→ P1.8.12 PolicyCustosBridgeEnvelope
+→ P1.8.12 PolicyCustosBridgeBindingSet
+→ P1.8.13 Runtime/Execution ReadinessRef handoff
 
-**P1.8.11 validation proof:**
+**P1.8.12 validation proof:**
 ```bash
 .venv/bin/python -m compileall src tests         # PASS
-.venv/bin/python -m pytest tests/delegation/test_p1_8_11_operator_review.py -q  # 65 passed
-.venv/bin/python -m ruff check src/agentic_runtime/delegation/operator_review.py tests/delegation/test_p1_8_11_operator_review.py  # PASS
+.venv/bin/python -m pytest tests/delegation/test_p1_8_12_policy_bridge.py -q  # 65 passed
+.venv/bin/python -m ruff check src/agentic_runtime/delegation/policy_bridge.py tests/delegation/test_p1_8_12_policy_bridge.py  # PASS
 .venv/bin/python -m mypy src/agentic_runtime      # PASS
 ```
 
-**Truth:** P1.8.11 is reference-only. ApprovalIntentRef is not approval. RejectionIntentRef is not denial. EscalationIntentRef is not escalation execution. ReviewRationaleRef is not rationale verification. OperatorReviewEnvelope is not an approval record. No approval, rejection, escalation, signature verification, HITL workflow, authority grant-deny, policy/Custos decision, runtime allow-block, Ledger write, or global trace write occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remains UNAVAILABLE. P1.8.12 is not implemented.
+**Truth:** P1.8.12 is reference-only. PolicyBridgeRef is not policy evaluation. CustosBridgeRef is not Custos call. PolicyContextRef is not policy compliance. CustosContextRef is not Custos approval. DecisionRequestIntentRef is not decision request. DecisionResponsePlaceholderRef is not decision response. CompatibilityMatrix is not policy evaluation. BridgeReadinessProfile is not decision readiness. BridgeEnvelope is not policy decision. No policy engine call, Custos runtime call, decision request execution, allow/deny emission, approval/rejection creation, authority grant/deny, runtime allow/block, enforcement, trace write, Ledger write, or runtime mutation occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remains UNAVAILABLE. P1.8.13 is not implemented.
 
 ### P1.8.11 delegation operator review / approval-intent reference model summary
 
