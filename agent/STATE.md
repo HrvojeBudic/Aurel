@@ -1,15 +1,69 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.10 — Delegation Shadow Resolver / Consistency Model)_
+_Last updated: 2026-06-27 (P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.10 — Delegation Shadow Resolver / Consistency Model
-- Current active: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model (planned)**
-- Next planned: P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model
+- Last completed: P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model
+- Current active: **P1.8.12 — Delegation Policy/Custos BridgeRef Model (planned)**
+- Next planned: P1.8.12 — Delegation Policy/Custos BridgeRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9, P1.8.10 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9, P1.8.10, P1.8.11 complete)
+
+## Golden Thread — P1.8 Delegation
+
+Golden Thread is continuity/evidence linkage only.
+Golden Thread is not approval.
+Golden Thread is not policy decision.
+Golden Thread is not Ledger finality.
+Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
+
+### Chain: P1.8.10 → P1.8.11 → P1.8.12
+
+| Step | Task | Report | Evidence |
+|------|------|--------|----------|
+| Previous | P1.8.10 — Delegation Shadow Resolver / Consistency Model | `agent/reports/P1.8.10_DELEGATION_SHADOW_RESOLVER_CONSISTENCY_MODEL.md` | Commit `4da6afc`, 70 tests, clean git status |
+| Current | P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model | `agent/reports/P1.8.11_DELEGATION_OPERATOR_REVIEW_APPROVAL_INTENT_REF_MODEL.md` | 65 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
+| Next | P1.8.12 — Delegation Policy/Custos BridgeRef Model | (planned) | (planned) |
+
+**Semantic bridge:**
+P1.8.10 ShadowResolverResult
+→ P1.8.11 OperatorReviewEnvelope
+→ P1.8.11 OperatorReviewBindingSet
+→ P1.8.12 Policy/Custos BridgeRef handoff
+
+**P1.8.11 validation proof:**
+```bash
+.venv/bin/python -m compileall src tests         # PASS
+.venv/bin/python -m pytest tests/delegation/test_p1_8_11_operator_review.py -q  # 65 passed
+.venv/bin/python -m ruff check src/agentic_runtime/delegation/operator_review.py tests/delegation/test_p1_8_11_operator_review.py  # PASS
+.venv/bin/python -m mypy src/agentic_runtime      # PASS
+```
+
+**Truth:** P1.8.11 is reference-only. ApprovalIntentRef is not approval. RejectionIntentRef is not denial. EscalationIntentRef is not escalation execution. ReviewRationaleRef is not rationale verification. OperatorReviewEnvelope is not an approval record. No approval, rejection, escalation, signature verification, HITL workflow, authority grant-deny, policy/Custos decision, runtime allow-block, Ledger write, or global trace write occurred. Projection/API/CLI remain UNAVAILABLE. Trace/Ledger write remains UNAVAILABLE. P1.8.12 is not implemented.
+
+### P1.8.11 delegation operator review / approval-intent reference model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationOperatorReviewRef | Deterministic `review_hash` | DEV_FIXTURE in tests | Not review completed |
+| DelegationApprovalIntentRef | Deterministic `approval_intent_hash` | DEV_FIXTURE | Not approval granted |
+| DelegationRejectionIntentRef | Deterministic `rejection_intent_hash` | DEV_FIXTURE | Not denial |
+| DelegationEscalationIntentRef | Deterministic `escalation_intent_hash` | DEV_FIXTURE | Not escalation executed |
+| DelegationMoreContextIntentRef | Deterministic `more_context_intent_hash` | DEV_FIXTURE | Not runtime block |
+| DelegationReviewRationaleRef | Deterministic `rationale_hash` | DEV_FIXTURE | Not rationale verified |
+| DelegationOperatorReviewReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not approval readiness |
+| DelegationOperatorReviewEnvelope | Deterministic `operator_review_envelope_hash` | DEV_FIXTURE | Not approval record |
+| DelegationOperatorReviewBindingSet | Deterministic `operator_review_binding_set_hash` | DEV_FIXTURE | Not proof of approval or denial |
+| DelegationOperatorReviewSideEffects | 17 booleans all false | LIVE schema | Non-approving, non-rejecting, non-HITL, non-mutating |
+| DelegationOperatorReviewStatusReport | Deterministic `status_hash` | DEV_FIXTURE | Reference-only metadata reporting |
+
+**Known UNAVAILABLE (P1.8.11):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Approval Engine, Rejection Engine, Operator Decision System, Signature Verifier, HITL Workflow Executor, Authority Grant/Deny, Policy/Custos Bridge, Policy/Custos Decision, Runtime Authorization, Runtime Allow/Block, Trace Writer, P1.8.12 Policy/Custos BridgeRef Model, Output Passport/P1.9, Runtime Delegation Execution.
+
+**Explicit negatives:** OperatorReviewRef exists ≠ review completed. ApprovalIntentRef exists ≠ approval granted. RejectionIntentRef exists ≠ request denied. EscalationIntentRef exists ≠ escalation executed. MoreContextIntentRef exists ≠ runtime blocked. ReviewRationaleRef exists ≠ rationale verified. OperatorReviewEnvelope exists ≠ approval record. OperatorReviewReadinessProfile exists ≠ approval readiness. Review hash exists ≠ TRACE_VERIFIED. Intent exists ≠ operator decision. REVIEW_REFERENCED ≠ completed. APPROVAL_INTENT_REFERENCED ≠ approved. REJECTION_INTENT_REFERENCED ≠ denied. ESCALATION_INTENT_REFERENCED ≠ escalated. MORE_CONTEXT_INTENT_REFERENCED ≠ runtime block. No approval/rejection/escalation/signature/HITL/authority grant-deny/policy/Custos/runtime allow-block/trace/Ledger/mutation. No P1.8.12, no P1.9.
+
+Report: `agent/reports/P1.8.11_DELEGATION_OPERATOR_REVIEW_APPROVAL_INTENT_REF_MODEL.md`
 
 ### P1.8.10 delegation shadow resolver / consistency model summary
 

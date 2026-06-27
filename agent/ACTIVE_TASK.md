@@ -1,12 +1,22 @@
-# Active Task: P1.8.11 (planned)
+# Active Task: P1.8.12 (planned)
 
-**Status:** P1.8.10 COMPLETE; P1.8.11 PLANNED
+**Status:** P1.8.11 COMPLETE; P1.8.12 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.10 — Delegation Shadow Resolver / Consistency Model**
-- Next planned task: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model**
+- Last completed task: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model**
+- Next planned task: **P1.8.12 — Delegation Policy/Custos BridgeRef Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.11 Status
+
+**COMPLETE** — P1.8.11 delegation operator review / approval-intent reference model verified after focused validation.
+
+P1.8.11 establishes a deterministic, versioned, JSON-safe, side-effect-free, reference-only operator review and approval-intent metadata layer over P1.8.0–P1.8.10 delegation context. DelegationOperatorReviewKind (OPERATOR_REVIEW/CONSISTENCY_REVIEW/AUTHORITY_REVIEW/SCOPE_REVIEW/RISK_REVIEW/EVIDENCE_REVIEW/REFERENCE_ONLY/UNKNOWN), DelegationOperatorReviewIntentKind (APPROVAL_INTENT/REJECTION_INTENT/ESCALATION_INTENT/MORE_CONTEXT_INTENT/COMMENT_ONLY/REFERENCE_ONLY/UNKNOWN), DelegationOperatorReviewReferenceStatus (REFERENCE_ONLY/REVIEW_REFERENCED/APPROVAL_INTENT_REFERENCED/REJECTION_INTENT_REFERENCED/ESCALATION_INTENT_REFERENCED/MORE_CONTEXT_INTENT_REFERENCED/APPROVAL_ENGINE_UNAVAILABLE/SIGNATURE_VERIFIER_UNAVAILABLE/HITL_WORKFLOW_UNAVAILABLE/UNAVAILABLE/ERROR/UNKNOWN), DelegationOperatorReviewStatus (REFERENCE_ONLY/DECLARED/UNAVAILABLE/ERROR/UNKNOWN), DelegationReviewRationaleKind (CONSISTENCY_CONTEXT/AUTHORITY_CONTEXT/SCOPE_CONTEXT/LIFECYCLE_CONTEXT/CHAIN_CONTEXT/RISK_CONTEXT/OPERATOR_NOTE/UNKNOWN), DelegationOperatorReviewRef/ApprovalIntentRef/RejectionIntentRef/EscalationIntentRef/MoreContextIntentRef/RationaleRef/ReadinessProfile/Envelope/Binding/BindingSet/SideEffects/StatusReport, 17 all-false side-effects, deterministic hashing for all 12 contracts, closed-world validation, DEV_FIXTURE focused test chain (65 tests), 18 unavailable surface reasons.
+
+Boundary: OperatorReviewRef exists ≠ review completed. ApprovalIntentRef exists ≠ approval granted. RejectionIntentRef exists ≠ request denied. EscalationIntentRef exists ≠ escalation executed. MoreContextIntentRef exists ≠ runtime blocked. ReviewRationaleRef exists ≠ rationale verified. OperatorReviewEnvelope exists ≠ approval record. OperatorReviewReadinessProfile exists ≠ approval readiness. Review hash exists ≠ TRACE_VERIFIED. Intent exists ≠ operator decision. REVIEW_REFERENCED ≠ completed. APPROVAL_INTENT_REFERENCED ≠ approved. REJECTION_INTENT_REFERENCED ≠ denied. ESCALATION_INTENT_REFERENCED ≠ escalated. MORE_CONTEXT_INTENT_REFERENCED ≠ runtime block. No approval/rejection/escalation/signature/HITL/authority grant-deny/policy/Custos/runtime allow-block/trace/Ledger/mutation. No P1.8.12, no P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.10 Status
 
