@@ -1,12 +1,22 @@
-# Active Task: P1.8.16 (planned)
+# Active Task: P1.8.17 (planned)
 
-**Status:** P1.8.15 COMPLETE; P1.8.16 PLANNED
+**Status:** P1.8.16 COMPLETE; P1.8.17 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model**
-- Next planned task: **P1.8.16 — Pre-Projection Readiness / Surface Contract Seed**
+- Last completed task: **P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model**
+- Next planned task: **P1.8.17 — Delegation Projection/API/Event Contract Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.16 Status
+
+**COMPLETE** — P1.8.16 delegation pre-projection readiness / surface contract seed model verified after focused validation.
+
+P1.8.16 establishes a deterministic, versioned, JSON-safe, side-effect-free, reference-only pre-projection readiness / surface contract seed metadata layer over P1.8.15 accountability packet context. DelegationPreProjectionSeedKind (9 values), DelegationPreProjectionSeedReferenceStatus (18 values), DelegationPreProjectionSeedStatus (5 values), DelegationSurfaceExposureClass (9 values), DelegationProjectionSeedFamily (12 values), plus DelegationPreProjectionReadinessRef/SurfaceContractSeedRef/ReadModelSeedRef/APIContractSeedRef/EventContractSeedRef/SurfaceEligibilityEntry/SurfaceEligibilityProfile/ProjectionGapMatrixEntry/ProjectionGapMatrix/PreProjectionSeedEnvelope/PreProjectionSeedBinding/PreProjectionSeedBindingSet/SideEffects/StatusReport, 17 all-false side-effects, deterministic hashing for all 14 contracts, closed-world validation, DEV_FIXTURE focused test chain (71 tests), 25 unavailable surface reasons.
+
+Boundary: PreProjectionReadinessRef exists ≠ projection ready. SurfaceContractSeedRef exists ≠ surface contract. ReadModelSeedRef exists ≠ read model. APIContractSeedRef exists ≠ API contract. EventContractSeedRef exists ≠ event contract. SurfaceEligibilityProfile exists ≠ surface approval. Operator-visible candidate ≠ projected field. Redacted candidate ≠ policy enforcement. ProjectionGapMatrix exists ≠ projection validation. Gap present ≠ runtime failure. Context present ≠ contract readiness. PreProjectionSeedEnvelope exists ≠ Projection/API/Event Contract. SeedHash ≠ TRACE_VERIFIED. No projection/API/event/read model contract, CLI/Shell/TUI binding, UI surface, field exposure, redaction enforcement, policy/Custos decision, runtime execution, trace write, Ledger write, Output Passport/P1.9 behavior, P1.8.17/P1.8.18/P1.8.19/P1.8.20 behaviors, TRACE_VERIFIED claim, runtime mutation.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.15 Status
 

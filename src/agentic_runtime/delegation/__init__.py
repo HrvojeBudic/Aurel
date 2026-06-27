@@ -22,12 +22,16 @@ runtime actions, writing trace, or writing Ledger.
 
 Evidence / non-repudiation reference binding layer (P1.8.5): deterministic,
 versioned, JSON-safe, side-effect-free evidence hook for delegation
-accountability. Binds reference-only evidence, claim, attestation, signature,
-and trace refs to DelegationRef / DelegationIdentity /
-DelegationRoleBindingSet / DelegationConstraintSet /
-DelegationAuthorityBindingSet without verifying evidence, proving claims,
-verifying signatures, verifying trace, claiming legal finality,
-writing Ledger, writing global trace, or creating Output Passport behavior.
+accountability.
+
+Pre-projection readiness / surface contract seed layer (P1.8.16): deterministic,
+versioned, JSON-safe, side-effect-free pre-projection readiness / surface
+contract seed metadata over P1.8.15 accountability packet context. Produces
+pre-projection readiness refs, surface/read model/API/event contract seed refs,
+surface eligibility entries/profile, projection gap matrix entries/matrix,
+pre-projection seed envelopes/bindings/binding sets without creating projection/
+API/event contract, read model, surface contract, CLI/Shell/TUI binding,
+UI surface, field exposure, redaction enforcement, or Output Passport behavior.
 
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
@@ -153,6 +157,19 @@ Architectural law:
   - MissingComponent exists does not mean runtime failure.
   - SummaryHash exists does not mean TRACE_VERIFIED.
   - Golden Thread exists does not mean trace verification.
+  - PreProjectionReadinessRef exists does not mean projection ready.
+  - SurfaceContractSeedRef exists does not mean surface contract.
+  - ReadModelSeedRef exists does not mean read model.
+  - APIContractSeedRef exists does not mean API contract.
+  - EventContractSeedRef exists does not mean event contract.
+  - SurfaceEligibilityProfile exists does not mean surface approval.
+  - Operator-visible candidate is not projected field.
+  - Redacted candidate is not policy enforcement.
+  - ProjectionGapMatrix exists does not mean projection validation.
+  - Gap present does not mean runtime failure.
+  - Context present does not mean contract readiness.
+  - PreProjectionSeedEnvelope exists does not mean Projection/API/Event Contract.
+  - SeedHash is not TRACE_VERIFIED.
 """
 from __future__ import annotations
 
@@ -1151,6 +1168,92 @@ from .trace_audit_bridge import (
     # serializers
     serialize_delegation_trace_audit_bridge_envelope,
     serialize_delegation_trace_audit_bridge_binding_set,
+)
+
+from .pre_projection import (
+    DELEGATION_PRE_PROJECTION_SEED_TASK_ID,
+    DELEGATION_PRE_PROJECTION_READINESS_REF_VERSION,
+    DELEGATION_SURFACE_CONTRACT_SEED_REF_VERSION,
+    DELEGATION_READ_MODEL_SEED_REF_VERSION,
+    DELEGATION_API_CONTRACT_SEED_REF_VERSION,
+    DELEGATION_EVENT_CONTRACT_SEED_REF_VERSION,
+    DELEGATION_SURFACE_ELIGIBILITY_ENTRY_VERSION,
+    DELEGATION_SURFACE_ELIGIBILITY_PROFILE_VERSION,
+    DELEGATION_PROJECTION_GAP_MATRIX_ENTRY_VERSION,
+    DELEGATION_PROJECTION_GAP_MATRIX_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_ENVELOPE_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_BINDING_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_BINDING_SET_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_SIDE_EFFECTS_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_STATUS_REPORT_VERSION,
+    DELEGATION_PRE_PROJECTION_SEED_UNAVAILABLE_BINDINGS,
+    # known fields
+    PRE_PROJECTION_READINESS_REF_KNOWN_FIELDS,
+    SURFACE_CONTRACT_SEED_REF_KNOWN_FIELDS,
+    READ_MODEL_SEED_REF_KNOWN_FIELDS,
+    API_CONTRACT_SEED_REF_KNOWN_FIELDS,
+    EVENT_CONTRACT_SEED_REF_KNOWN_FIELDS,
+    SURFACE_ELIGIBILITY_ENTRY_KNOWN_FIELDS,
+    SURFACE_ELIGIBILITY_PROFILE_KNOWN_FIELDS,
+    PROJECTION_GAP_MATRIX_ENTRY_KNOWN_FIELDS,
+    PROJECTION_GAP_MATRIX_KNOWN_FIELDS,
+    PRE_PROJECTION_SEED_ENVELOPE_KNOWN_FIELDS,
+    PRE_PROJECTION_SEED_BINDING_KNOWN_FIELDS,
+    PRE_PROJECTION_SEED_BINDING_SET_KNOWN_FIELDS,
+    PRE_PROJECTION_SEED_SIDE_EFFECTS_KNOWN_FIELDS,
+    PRE_PROJECTION_SEED_STATUS_REPORT_KNOWN_FIELDS,
+    # enums
+    DelegationPreProjectionSeedKind,
+    DelegationPreProjectionSeedReferenceStatus,
+    DelegationPreProjectionSeedStatus,
+    DelegationSurfaceExposureClass,
+    DelegationProjectionSeedFamily,
+    # dataclasses
+    DelegationPreProjectionReadinessRef,
+    DelegationSurfaceContractSeedRef,
+    DelegationReadModelSeedRef,
+    DelegationAPIContractSeedRef,
+    DelegationEventContractSeedRef,
+    DelegationSurfaceEligibilityEntry,
+    DelegationSurfaceEligibilityProfile,
+    DelegationProjectionGapMatrixEntry,
+    DelegationProjectionGapMatrix,
+    DelegationPreProjectionSeedEnvelope,
+    DelegationPreProjectionSeedBinding,
+    DelegationPreProjectionSeedBindingSet,
+    DelegationPreProjectionSeedSideEffects,
+    DelegationPreProjectionSeedStatusReport,
+    # builders
+    build_delegation_pre_projection_readiness_ref,
+    build_delegation_surface_contract_seed_ref,
+    build_delegation_read_model_seed_ref,
+    build_delegation_api_contract_seed_ref,
+    build_delegation_event_contract_seed_ref,
+    build_delegation_surface_eligibility_entry,
+    build_delegation_surface_eligibility_profile,
+    build_delegation_projection_gap_matrix_entry,
+    build_delegation_projection_gap_matrix,
+    build_delegation_pre_projection_seed_envelope,
+    build_delegation_pre_projection_seed_binding,
+    build_delegation_pre_projection_seed_binding_set,
+    build_delegation_pre_projection_seed_status_report,
+    # hash functions
+    hash_delegation_pre_projection_readiness_ref,
+    hash_delegation_surface_contract_seed_ref,
+    hash_delegation_read_model_seed_ref,
+    hash_delegation_api_contract_seed_ref,
+    hash_delegation_event_contract_seed_ref,
+    hash_delegation_surface_eligibility_entry,
+    hash_delegation_surface_eligibility_profile,
+    hash_delegation_projection_gap_matrix_entry,
+    hash_delegation_projection_gap_matrix,
+    hash_delegation_pre_projection_seed_envelope,
+    hash_delegation_pre_projection_seed_binding,
+    hash_delegation_pre_projection_seed_binding_set,
+    hash_delegation_pre_projection_seed_status_report,
+    # serializers
+    serialize_delegation_pre_projection_seed_envelope,
+    serialize_delegation_pre_projection_seed_binding_set,
 )
 
 __all__ = [
@@ -2160,4 +2263,88 @@ __all__ = [
     "serialize_delegation_integration_summary_envelope",
     "serialize_delegation_accountability_packet_envelope",
     "serialize_delegation_accountability_packet_binding_set",
+    # P1.8.16 pre-projection seed constants
+    "DELEGATION_PRE_PROJECTION_SEED_TASK_ID",
+    "DELEGATION_PRE_PROJECTION_READINESS_REF_VERSION",
+    "DELEGATION_SURFACE_CONTRACT_SEED_REF_VERSION",
+    "DELEGATION_READ_MODEL_SEED_REF_VERSION",
+    "DELEGATION_API_CONTRACT_SEED_REF_VERSION",
+    "DELEGATION_EVENT_CONTRACT_SEED_REF_VERSION",
+    "DELEGATION_SURFACE_ELIGIBILITY_ENTRY_VERSION",
+    "DELEGATION_SURFACE_ELIGIBILITY_PROFILE_VERSION",
+    "DELEGATION_PROJECTION_GAP_MATRIX_ENTRY_VERSION",
+    "DELEGATION_PROJECTION_GAP_MATRIX_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_ENVELOPE_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_BINDING_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_BINDING_SET_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_SIDE_EFFECTS_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_STATUS_REPORT_VERSION",
+    "DELEGATION_PRE_PROJECTION_SEED_UNAVAILABLE_BINDINGS",
+    # P1.8.16 known fields
+    "PRE_PROJECTION_READINESS_REF_KNOWN_FIELDS",
+    "SURFACE_CONTRACT_SEED_REF_KNOWN_FIELDS",
+    "READ_MODEL_SEED_REF_KNOWN_FIELDS",
+    "API_CONTRACT_SEED_REF_KNOWN_FIELDS",
+    "EVENT_CONTRACT_SEED_REF_KNOWN_FIELDS",
+    "SURFACE_ELIGIBILITY_ENTRY_KNOWN_FIELDS",
+    "SURFACE_ELIGIBILITY_PROFILE_KNOWN_FIELDS",
+    "PROJECTION_GAP_MATRIX_ENTRY_KNOWN_FIELDS",
+    "PROJECTION_GAP_MATRIX_KNOWN_FIELDS",
+    "PRE_PROJECTION_SEED_ENVELOPE_KNOWN_FIELDS",
+    "PRE_PROJECTION_SEED_BINDING_KNOWN_FIELDS",
+    "PRE_PROJECTION_SEED_BINDING_SET_KNOWN_FIELDS",
+    "PRE_PROJECTION_SEED_SIDE_EFFECTS_KNOWN_FIELDS",
+    "PRE_PROJECTION_SEED_STATUS_REPORT_KNOWN_FIELDS",
+    # P1.8.16 enums
+    "DelegationPreProjectionSeedKind",
+    "DelegationPreProjectionSeedReferenceStatus",
+    "DelegationPreProjectionSeedStatus",
+    "DelegationSurfaceExposureClass",
+    "DelegationProjectionSeedFamily",
+    # P1.8.16 dataclasses
+    "DelegationPreProjectionReadinessRef",
+    "DelegationSurfaceContractSeedRef",
+    "DelegationReadModelSeedRef",
+    "DelegationAPIContractSeedRef",
+    "DelegationEventContractSeedRef",
+    "DelegationSurfaceEligibilityEntry",
+    "DelegationSurfaceEligibilityProfile",
+    "DelegationProjectionGapMatrixEntry",
+    "DelegationProjectionGapMatrix",
+    "DelegationPreProjectionSeedEnvelope",
+    "DelegationPreProjectionSeedBinding",
+    "DelegationPreProjectionSeedBindingSet",
+    "DelegationPreProjectionSeedSideEffects",
+    "DelegationPreProjectionSeedStatusReport",
+    # P1.8.16 builders
+    "build_delegation_pre_projection_readiness_ref",
+    "build_delegation_surface_contract_seed_ref",
+    "build_delegation_read_model_seed_ref",
+    "build_delegation_api_contract_seed_ref",
+    "build_delegation_event_contract_seed_ref",
+    "build_delegation_surface_eligibility_entry",
+    "build_delegation_surface_eligibility_profile",
+    "build_delegation_projection_gap_matrix_entry",
+    "build_delegation_projection_gap_matrix",
+    "build_delegation_pre_projection_seed_envelope",
+    "build_delegation_pre_projection_seed_binding",
+    "build_delegation_pre_projection_seed_binding_set",
+    "build_delegation_pre_projection_seed_status_report",
+    # P1.8.16 hash functions
+    "hash_delegation_pre_projection_readiness_ref",
+    "hash_delegation_surface_contract_seed_ref",
+    "hash_delegation_read_model_seed_ref",
+    "hash_delegation_api_contract_seed_ref",
+    "hash_delegation_event_contract_seed_ref",
+    "hash_delegation_surface_eligibility_entry",
+    "hash_delegation_surface_eligibility_profile",
+    "hash_delegation_projection_gap_matrix_entry",
+    "hash_delegation_projection_gap_matrix",
+    "hash_delegation_pre_projection_seed_envelope",
+    "hash_delegation_pre_projection_seed_binding",
+    "hash_delegation_pre_projection_seed_binding_set",
+    "hash_delegation_pre_projection_seed_status_report",
+    # P1.8.16 serializers
+    "serialize_delegation_pre_projection_seed_envelope",
+    "serialize_delegation_pre_projection_seed_binding_set",
 ]

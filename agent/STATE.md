@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.14 — Delegation Trace/Audit BridgeRef Model)_
+_Last updated: 2026-06-27 (P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.14 — Delegation Trace/Audit BridgeRef Model
-- Current active: **P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model (planned)**
-- Next planned: P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model
+- Last completed: P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model
+- Current active: **P1.8.17 — Delegation Projection/API/Event Contract Model (planned)**
+- Next planned: P1.8.17 — Delegation Projection/API/Event Contract Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0–P1.8.14 complete)
+- P1.8 status: **in progress** (P1.8.0–P1.8.16 complete)
 
 ## Golden Thread — P1.8 Delegation
 
@@ -19,22 +19,39 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.14 → P1.8.15 → P1.8.16
+### Chain: P1.8.15 → P1.8.16 → P1.8.17
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.14 — Delegation Trace/Audit BridgeRef Model | `agent/reports/P1.8.14_DELEGATION_TRACE_AUDIT_BRIDGE_REF_MODEL.md` | 65 focused tests, deterministic hashes, 16 all-false side effects, clean validation |
-| Current | P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model | `agent/reports/P1.8.15_DELEGATION_ACCOUNTABILITY_PACKET_INTEGRATION_SUMMARY_REF_MODEL.md` | 76 focused tests, deterministic hashes, 18 all-false side effects, clean validation (compileall, pytest, ruff, mypy all pass) |
-| Next | P1.8.16 — Pre-Projection Readiness / Surface Contract Seed | (planned) | (planned) |
+| Previous | P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model | `agent/reports/P1.8.15_DELEGATION_ACCOUNTABILITY_PACKET_INTEGRATION_SUMMARY_REF_MODEL.md` | 76 focused tests, deterministic hashes, 18 all-false side effects, clean validation |
+| Current | P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model | `agent/reports/P1.8.16_DELEGATION_PRE_PROJECTION_READINESS_SURFACE_CONTRACT_SEED_MODEL.md` | 71 focused tests, deterministic hashes, 17 all-false side effects, clean validation (compileall, pytest, ruff, mypy all pass) |
+| Next | P1.8.17 — Delegation Projection/API/Event Contract Model | (planned) | (planned) |
 
 **Semantic bridge:**
-P1.8.14 TraceAuditBridgeBindingSet
-→ P1.8.15 IntegrationSummaryEnvelope (wraps trace_audit_bridge_binding_set_hash)
-→ P1.8.15 AccountabilityPacketEnvelope (wraps integration_summary_envelope_hash)
-→ P1.8.15 AccountabilityPacketBindingSet (wraps accountability_packet_envelope_hash)
-→ P1.8.16 Pre-Projection Readiness / Surface Contract Seed handoff
+P1.8.15 AccountabilityPacketBindingSet
+→ P1.8.15 AccountabilityPacketEnvelope (wraps accountability_packet_binding_set_hash)
+→ P1.8.16 PreProjectionSeedEnvelope (wraps accountability_packet_binding_set_hash, integration_summary_envelope_hash, accountability_packet_envelope_hash)
+→ P1.8.16 PreProjectionSeedBinding (wraps pre_projection_seed_envelope_hash)
+→ P1.8.16 PreProjectionSeedBindingSet (wraps bindings)
+→ P1.8.17 Projection/API/Event Contract handoff
 
-**Boundary declarations:**
+**P1.8.16 boundary declarations:**
+- `PreProjectionReadinessRef` exists does not mean projection ready.
+- `SurfaceContractSeedRef` exists does not mean surface contract.
+- `ReadModelSeedRef` exists does not mean read model.
+- `APIContractSeedRef` exists does not mean API contract.
+- `EventContractSeedRef` exists does not mean event contract.
+- `SurfaceEligibilityProfile` exists does not mean surface approval.
+- `Operator-visible candidate` is not projected field.
+- `Redacted candidate` is not policy enforcement.
+- `ProjectionGapMatrix` exists does not mean projection validation.
+- `Gap present` does not mean runtime failure.
+- `Context present` does not mean contract readiness.
+- `PreProjectionSeedEnvelope` exists does not mean Projection/API/Event Contract.
+- `SeedHash` is not TRACE_VERIFIED.
+- `Golden Thread` exists does not mean trace verification.
+
+**P1.8.15 boundary declarations:**
 - `accountability_packet_envelope_hash` exists does not mean proof, verification, compliance, projection, approval, execution, trace, Ledger, audit, Output Passport, or section seal.
 - `integration_summary_envelope_hash` exists does not mean system integrated.
 - `AccountabilityPacketEnvelope` exists does not mean accountability proven.
