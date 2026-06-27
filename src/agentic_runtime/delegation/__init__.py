@@ -88,6 +88,17 @@ Architectural law:
   - DelegationChainContinuityReadinessProfile exists ≠ continuity proven.
   - chain_envelope_hash exists ≠ TRACE_VERIFIED.
   - chain_binding_set_hash exists ≠ proof of transfer, handoff, or chain validity.
+  - ShadowResolverResult exists ≠ policy decision.
+  - ConsistencySnapshot exists ≠ delegation verified.
+  - ConsistencyMatrix exists ≠ approval matrix.
+  - ConsistencyFinding exists ≠ enforcement action.
+  - CONFLICT_REFERENCED exists ≠ runtime denial.
+  - PRESENT exists ≠ verified.
+  - MISSING exists ≠ failed.
+  - ReadinessProfile exists ≠ approval readiness.
+  - Resolver hash exists ≠ TRACE_VERIFIED.
+  - Shadow pass does not mean allowed.
+  - Shadow fail does not mean blocked.
 """
 from __future__ import annotations
 
@@ -516,6 +527,62 @@ from .lifecycle import (
     hash_delegation_suspension_ref,
     serialize_delegation_lifecycle_binding_set,
     serialize_delegation_lifecycle_envelope,
+)
+
+from .shadow_resolver import (
+    CONSISTENCY_MATRIX_KNOWN_FIELDS,
+    DELEGATION_CONSISTENCY_FINDING_VERSION,
+    DELEGATION_CONSISTENCY_MATRIX_ENTRY_VERSION,
+    DELEGATION_CONSISTENCY_MATRIX_VERSION,
+    DELEGATION_CONSISTENCY_SNAPSHOT_VERSION,
+    DELEGATION_SHADOW_RESOLVER_INPUT_ENVELOPE_VERSION,
+    DELEGATION_SHADOW_RESOLVER_READINESS_PROFILE_VERSION,
+    DELEGATION_SHADOW_RESOLVER_RESULT_VERSION,
+    DELEGATION_SHADOW_RESOLVER_SIDE_EFFECTS_VERSION,
+    DELEGATION_SHADOW_RESOLVER_STATUS_REPORT_VERSION,
+    DELEGATION_SHADOW_RESOLVER_TASK_ID,
+    DELEGATION_SHADOW_RESOLVER_UNAVAILABLE_BINDINGS,
+    FINDING_KNOWN_FIELDS,
+    INPUT_ENVELOPE_KNOWN_FIELDS,
+    MATRIX_ENTRY_KNOWN_FIELDS,
+    READINESS_PROFILE_KNOWN_FIELDS as SHADOW_READINESS_PROFILE_KNOWN_FIELDS,
+    SHADOW_RESULT_KNOWN_FIELDS,
+    SIDE_EFFECTS_KNOWN_FIELDS as SHADOW_SIDE_EFFECTS_KNOWN_FIELDS,
+    SNAPSHOT_KNOWN_FIELDS,
+    STATUS_REPORT_KNOWN_FIELDS as SHADOW_STATUS_REPORT_KNOWN_FIELDS,
+    DelegationConsistencyFamily,
+    DelegationConsistencyFinding,
+    DelegationConsistencyFindingKind,
+    DelegationConsistencyMatrix,
+    DelegationConsistencyMatrixEntry,
+    DelegationConsistencySeverity,
+    DelegationConsistencySnapshot,
+    DelegationShadowResolverInputEnvelope,
+    DelegationShadowResolverMode,
+    DelegationShadowResolverReadinessProfile,
+    DelegationShadowResolverResult,
+    DelegationShadowResolverSideEffects,
+    DelegationShadowResolverStatus,
+    DelegationShadowResolverStatusReport,
+    build_delegation_consistency_finding,
+    build_delegation_consistency_matrix,
+    build_delegation_consistency_matrix_entry,
+    build_delegation_consistency_snapshot,
+    build_delegation_shadow_resolver_input_envelope,
+    build_delegation_shadow_resolver_readiness_profile,
+    build_delegation_shadow_resolver_result,
+    build_delegation_shadow_resolver_status_report,
+    hash_delegation_consistency_finding,
+    hash_delegation_consistency_matrix,
+    hash_delegation_consistency_matrix_entry,
+    hash_delegation_consistency_snapshot,
+    hash_delegation_shadow_resolver_input_envelope,
+    hash_delegation_shadow_resolver_readiness_profile,
+    hash_delegation_shadow_resolver_result,
+    hash_delegation_shadow_resolver_status_report,
+    serialize_delegation_consistency_matrix,
+    serialize_delegation_shadow_resolver_input_envelope,
+    serialize_delegation_shadow_resolver_result,
 )
 
 from .chain import (
@@ -1113,4 +1180,61 @@ __all__ = [
     "hash_delegation_chain_binding_set",
     "serialize_delegation_chain_envelope",
     "serialize_delegation_chain_binding_set",
+    # P1.8.10 shadow resolver constants
+    "CONSISTENCY_MATRIX_KNOWN_FIELDS",
+    "DELEGATION_CONSISTENCY_FINDING_VERSION",
+    "DELEGATION_CONSISTENCY_MATRIX_ENTRY_VERSION",
+    "DELEGATION_CONSISTENCY_MATRIX_VERSION",
+    "DELEGATION_CONSISTENCY_SNAPSHOT_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_INPUT_ENVELOPE_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_READINESS_PROFILE_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_RESULT_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_SIDE_EFFECTS_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_STATUS_REPORT_VERSION",
+    "DELEGATION_SHADOW_RESOLVER_TASK_ID",
+    "DELEGATION_SHADOW_RESOLVER_UNAVAILABLE_BINDINGS",
+    "FINDING_KNOWN_FIELDS",
+    "INPUT_ENVELOPE_KNOWN_FIELDS",
+    "MATRIX_ENTRY_KNOWN_FIELDS",
+    "SHADOW_READINESS_PROFILE_KNOWN_FIELDS",
+    "SHADOW_RESULT_KNOWN_FIELDS",
+    "SHADOW_SIDE_EFFECTS_KNOWN_FIELDS",
+    "SNAPSHOT_KNOWN_FIELDS",
+    "SHADOW_STATUS_REPORT_KNOWN_FIELDS",
+    # P1.8.10 enums
+    "DelegationConsistencyFamily",
+    "DelegationConsistencyFindingKind",
+    "DelegationConsistencySeverity",
+    "DelegationShadowResolverMode",
+    "DelegationShadowResolverStatus",
+    # P1.8.10 dataclasses
+    "DelegationConsistencyFinding",
+    "DelegationConsistencyMatrix",
+    "DelegationConsistencyMatrixEntry",
+    "DelegationConsistencySnapshot",
+    "DelegationShadowResolverInputEnvelope",
+    "DelegationShadowResolverReadinessProfile",
+    "DelegationShadowResolverResult",
+    "DelegationShadowResolverSideEffects",
+    "DelegationShadowResolverStatusReport",
+    # P1.8.10 builders / helpers / hash functions / serializers
+    "build_delegation_consistency_finding",
+    "build_delegation_consistency_matrix",
+    "build_delegation_consistency_matrix_entry",
+    "build_delegation_consistency_snapshot",
+    "build_delegation_shadow_resolver_input_envelope",
+    "build_delegation_shadow_resolver_readiness_profile",
+    "build_delegation_shadow_resolver_result",
+    "build_delegation_shadow_resolver_status_report",
+    "hash_delegation_consistency_finding",
+    "hash_delegation_consistency_matrix",
+    "hash_delegation_consistency_matrix_entry",
+    "hash_delegation_consistency_snapshot",
+    "hash_delegation_shadow_resolver_input_envelope",
+    "hash_delegation_shadow_resolver_readiness_profile",
+    "hash_delegation_shadow_resolver_result",
+    "hash_delegation_shadow_resolver_status_report",
+    "serialize_delegation_consistency_matrix",
+    "serialize_delegation_shadow_resolver_input_envelope",
+    "serialize_delegation_shadow_resolver_result",
 ]

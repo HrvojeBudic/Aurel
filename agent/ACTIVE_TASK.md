@@ -1,12 +1,22 @@
-# Active Task: P1.8.10 (planned)
+# Active Task: P1.8.11 (planned)
 
-**Status:** P1.8.9 COMPLETE; P1.8.10 PLANNED
+**Status:** P1.8.10 COMPLETE; P1.8.11 PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.9 — Delegation Chain / HandoffRef Model**
-- Next planned task: **P1.8.10 — Shadow Resolver / Consistency Model**
+- Last completed task: **P1.8.10 — Delegation Shadow Resolver / Consistency Model**
+- Next planned task: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model**
 - Roadmap version: **v5.1 Integration-First**
+
+## P1.8.10 Status
+
+**COMPLETE** — P1.8.10 delegation shadow resolver / consistency model verified after focused validation.
+
+P1.8.10 establishes a deterministic, versioned, JSON-safe, side-effect-free, shadow-only diagnostic consistency layer over P1.8.0–P1.8.9 reference context hashes. DelegationShadowResolverMode (SHADOW_ONLY/DIAGNOSTIC_ONLY/REFERENCE_ONLY/UNAVAILABLE/UNKNOWN), DelegationConsistencyFamily (FOUNDATION/IDENTITY/ROLES/CONSTRAINTS/AUTHORITY/NON_REPUDIATION/IDENTITY_MESH/SCOPE/LIFECYCLE/CHAIN/UNKNOWN), DelegationConsistencyFindingKind (PRESENT/MISSING/MISMATCH/CONFLICT_REFERENCED/UNAVAILABLE/REFERENCE_ONLY/UNKNOWN), DelegationConsistencySeverity (INFO/NOTICE/WARNING/ERROR/UNKNOWN), DelegationShadowResolverStatus (REFERENCE_ONLY/DIAGNOSTIC_ONLY/SHADOW_EVALUATED/UNAVAILABLE/ERROR/UNKNOWN), DelegationShadowResolverInputEnvelope/ConsistencyFinding/ConsistencyMatrixEntry/ConsistencyMatrix/ShadowResolverReadinessProfile/ConsistencySnapshot/ShadowResolverResult/SideEffects/StatusReport, 13 all-false side-effects, deterministic input_envelope/finding/entry/matrix/readiness/snapshot/result/status hashes, closed-world validation, DEV_FIXTURE focused test chain (70 tests), 20 unavailable surface reasons.
+
+Boundary: ShadowResolverResult exists ≠ policy decision. ConsistencySnapshot exists ≠ delegation verified. ConsistencyMatrix exists ≠ approval matrix. ConsistencyFinding exists ≠ enforcement action. CONFLICT_REFERENCED exists ≠ runtime denial. PRESENT exists ≠ verified. MISSING exists ≠ failed. ReadinessProfile exists ≠ approval readiness. Resolver hash exists ≠ TRACE_VERIFIED. Shadow pass does not mean allowed. Shadow fail does not mean blocked. No policy decision, Custos call, approval creation, authority grant/deny, runtime allow/block, enforcement, delegation execution, trace write, Ledger write, runtime mutation, P1.8.11 operator approval intent, or P1.9.
+
+Git status: committed locally, no push performed.
 
 ## P1.8.9 Status
 

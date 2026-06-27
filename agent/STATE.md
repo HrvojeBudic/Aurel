@@ -1,15 +1,35 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.9 — Delegation Chain / HandoffRef Model)_
+_Last updated: 2026-06-27 (P1.8.10 — Delegation Shadow Resolver / Consistency Model)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.9 — Delegation Chain / HandoffRef Model
-- Current active: **P1.8.10 — Shadow Resolver / Consistency Model (planned)**
-- Next planned: P1.8.10 — Shadow Resolver / Consistency Model
+- Last completed: P1.8.10 — Delegation Shadow Resolver / Consistency Model
+- Current active: **P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model (planned)**
+- Next planned: P1.8.11 — Delegation Operator Review / ApprovalIntentRef Model
 - Roadmap version: **v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9 complete)
+- P1.8 status: **in progress** (P1.8.0, P1.8.1, P1.8.2, P1.8.3, P1.8.4, P1.8.5, P1.8.6, P1.8.7, P1.8.8, P1.8.9, P1.8.10 complete)
+
+### P1.8.10 delegation shadow resolver / consistency model summary
+
+| Component | Status | Source label | Boundary |
+|-----------|--------|--------------|----------|
+| DelegationShadowResolverInputEnvelope | Deterministic `input_envelope_hash` | DEV_FIXTURE in tests | Not approval request |
+| DelegationConsistencyFinding | Deterministic `finding_hash` | DEV_FIXTURE | Not enforcement action |
+| DelegationConsistencyMatrixEntry | Deterministic `entry_hash` | DEV_FIXTURE | Not verification |
+| DelegationConsistencyMatrix | Deterministic `matrix_hash` | DEV_FIXTURE | Not approval matrix |
+| DelegationShadowResolverReadinessProfile | Deterministic `readiness_hash` | DEV_FIXTURE | Not approval/execution readiness |
+| DelegationConsistencySnapshot | Deterministic `snapshot_hash` | DEV_FIXTURE | Not delegation verification |
+| DelegationShadowResolverResult | Deterministic `result_hash` | DEV_FIXTURE | Not policy decision |
+| DelegationShadowResolverSideEffects | 13 booleans all false | LIVE schema | Non-decisioning, non-executing, non-mutating |
+| DelegationShadowResolverStatusReport | Deterministic `status_hash` | DEV_FIXTURE | Diagnostic capability metadata only |
+
+**Known UNAVAILABLE (P1.8.10):** Projection/API/Event/Read Model, CLI/Shell/TUI Binding, Ledger Write, Global Trace Write, Policy Decision Engine, Custos Resolver, Approval System, Authority Grant/Deny, Runtime Allow/Block, Enforcement Engine, Delegation Executor, Trace Writer, P1.8.11 Operator Approval Intent Model, Output Passport/P1.9, Runtime Delegation Execution, Chain Verifier, Evidence Verifier, Identity Resolver, Scope Enforcer, Lifecycle Enforcer.
+
+**Explicit negatives:** ShadowResolverResult exists ≠ policy decision. ConsistencySnapshot exists ≠ delegation verified. ConsistencyMatrix exists ≠ approval matrix. ConsistencyFinding exists ≠ enforcement action. CONFLICT_REFERENCED exists ≠ runtime denial. PRESENT exists ≠ verified. MISSING exists ≠ failed. ReadinessProfile exists ≠ approval readiness. Resolver hash exists ≠ TRACE_VERIFIED. Shadow pass ≠ allowed. Shadow fail ≠ blocked. No policy/Custos/approval/authority grant-deny/enforcement/execution/trace/Ledger/mutation. No P1.8.11, no P1.9.
+
+Report: `agent/reports/P1.8.10_DELEGATION_SHADOW_RESOLVER_CONSISTENCY_MODEL.md`
 
 ### P1.8.9 delegation chain / handoff model summary
 
