@@ -109,6 +109,41 @@ Architectural law:
   - OperatorReviewReadinessProfile exists does not mean approval readiness.
   - Review hash exists does not mean TRACE_VERIFIED.
   - Intent exists does not mean operator decision.
+  - PolicyBridgeRef exists ≠ policy evaluated.
+  - CustosBridgeRef exists ≠ Custos called.
+  - PolicyContextRef exists ≠ policy compliance.
+  - CustosContextRef exists ≠ Custos approval.
+  - DecisionRequestIntentRef exists ≠ decision request.
+  - DecisionResponsePlaceholderRef exists ≠ decision response.
+  - CompatibilityMatrix exists ≠ policy evaluation.
+  - BridgeReadinessProfile exists ≠ decision readiness.
+  - BridgeEnvelope exists ≠ policy decision.
+  - RuntimeReadinessRef exists does not mean runtime ready.
+  - ExecutionPreconditionRef exists does not mean precondition satisfied.
+  - ExecutionBlockerRef exists does not mean runtime blocked.
+  - RuntimeAdmissionIntentRef exists does not mean runtime admitted.
+  - RuntimeAdmissionPlaceholderRef exists does not mean admission result.
+  - RuntimeContextRef exists does not mean runtime initialized.
+  - ToolExecutionContextRef exists does not mean tool dispatched.
+  - RuntimeSessionPlaceholderRef exists does not mean runtime session created.
+  - ExecutionTargetRef exists does not mean dispatch target selected.
+  - ReadinessMatrix exists does not mean execution readiness.
+  - RuntimeExecutionReadinessProfile exists does not mean execution readiness proof.
+  - Runtime readiness hash exists does not mean TRACE_VERIFIED.
+  - TraceBridgeRef exists does not mean trace written.
+  - AuditBridgeRef exists does not mean audit completed.
+  - LedgerBridgeRef exists does not mean Ledger entry written.
+  - TraceEventIntentRef exists does not mean trace event emitted.
+  - AuditEventIntentRef exists does not mean audit event emitted.
+  - LedgerEntryPlaceholderRef exists does not mean Ledger entry exists.
+  - ReplayContextRef exists does not mean replay executed.
+  - ForkContextRef exists does not mean fork created.
+  - CausalChainContextRef exists does not mean causal chain verified.
+  - TraceAuditReadinessMatrix exists does not mean TRACE_VERIFIED.
+  - TraceAuditReadinessProfile exists does not mean audit readiness proof.
+  - Trace/audit hash exists does not mean TRACE_VERIFIED.
+  - TraceAuditBridgeEnvelope exists does not mean trace write, audit finality, or Ledger write.
+  - trace_audit_bridge_binding_set_hash exists does not mean trace/audit/Ledger proof.
 """
 from __future__ import annotations
 
@@ -934,6 +969,108 @@ from .runtime_readiness import (
     # serializers
     serialize_delegation_runtime_execution_readiness_binding_set,
     serialize_delegation_runtime_execution_readiness_envelope,
+)
+
+from .trace_audit_bridge import (
+    DELEGATION_TRACE_AUDIT_BRIDGE_TASK_ID,
+    DELEGATION_TRACE_BRIDGE_REF_VERSION,
+    DELEGATION_AUDIT_BRIDGE_REF_VERSION,
+    DELEGATION_LEDGER_BRIDGE_REF_VERSION,
+    DELEGATION_TRACE_EVENT_INTENT_REF_VERSION,
+    DELEGATION_AUDIT_EVENT_INTENT_REF_VERSION,
+    DELEGATION_LEDGER_ENTRY_PLACEHOLDER_REF_VERSION,
+    DELEGATION_REPLAY_CONTEXT_REF_VERSION,
+    DELEGATION_FORK_CONTEXT_REF_VERSION,
+    DELEGATION_CAUSAL_CHAIN_CONTEXT_REF_VERSION,
+    DELEGATION_TRACE_AUDIT_READINESS_MATRIX_ENTRY_VERSION,
+    DELEGATION_TRACE_AUDIT_READINESS_MATRIX_VERSION,
+    DELEGATION_TRACE_AUDIT_READINESS_PROFILE_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_ENVELOPE_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_BINDING_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_BINDING_SET_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_SIDE_EFFECTS_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_STATUS_REPORT_VERSION,
+    DELEGATION_TRACE_AUDIT_BRIDGE_UNAVAILABLE_BINDINGS,
+    # known fields
+    TRACE_BRIDGE_REF_KNOWN_FIELDS,
+    AUDIT_BRIDGE_REF_KNOWN_FIELDS,
+    LEDGER_BRIDGE_REF_KNOWN_FIELDS,
+    TRACE_EVENT_INTENT_REF_KNOWN_FIELDS,
+    AUDIT_EVENT_INTENT_REF_KNOWN_FIELDS,
+    LEDGER_ENTRY_PLACEHOLDER_REF_KNOWN_FIELDS,
+    REPLAY_CONTEXT_REF_KNOWN_FIELDS,
+    FORK_CONTEXT_REF_KNOWN_FIELDS,
+    CAUSAL_CHAIN_CONTEXT_REF_KNOWN_FIELDS,
+    READINESS_MATRIX_ENTRY_KNOWN_FIELDS,
+    READINESS_MATRIX_KNOWN_FIELDS,
+    TRACE_AUDIT_READINESS_PROFILE_KNOWN_FIELDS,
+    BRIDGE_ENVELOPE_KNOWN_FIELDS,
+    BRIDGE_BINDING_KNOWN_FIELDS,
+    BRIDGE_BINDING_SET_KNOWN_FIELDS,
+    BRIDGE_SIDE_EFFECTS_KNOWN_FIELDS,
+    BRIDGE_STATUS_REPORT_KNOWN_FIELDS,
+    # enums
+    DelegationTraceAuditBridgeKind,
+    DelegationTraceAuditBridgeReferenceStatus,
+    DelegationTraceAuditBridgeStatus,
+    DelegationTraceContextKind,
+    DelegationAuditContextKind,
+    DelegationTraceAuditReadinessFamily,
+    # dataclasses
+    DelegationTraceBridgeRef,
+    DelegationAuditBridgeRef,
+    DelegationLedgerBridgeRef,
+    DelegationTraceEventIntentRef,
+    DelegationAuditEventIntentRef,
+    DelegationLedgerEntryPlaceholderRef,
+    DelegationReplayContextRef,
+    DelegationForkContextRef,
+    DelegationCausalChainContextRef,
+    DelegationTraceAuditReadinessMatrixEntry,
+    DelegationTraceAuditReadinessMatrix,
+    DelegationTraceAuditReadinessProfile,
+    DelegationTraceAuditBridgeEnvelope,
+    DelegationTraceAuditBridgeBinding,
+    DelegationTraceAuditBridgeBindingSet,
+    DelegationTraceAuditBridgeSideEffects,
+    DelegationTraceAuditBridgeStatusReport,
+    # builders
+    build_delegation_trace_bridge_ref,
+    build_delegation_audit_bridge_ref,
+    build_delegation_ledger_bridge_ref,
+    build_delegation_trace_event_intent_ref,
+    build_delegation_audit_event_intent_ref,
+    build_delegation_ledger_entry_placeholder_ref,
+    build_delegation_replay_context_ref,
+    build_delegation_fork_context_ref,
+    build_delegation_causal_chain_context_ref,
+    build_delegation_trace_audit_readiness_matrix_entry,
+    build_delegation_trace_audit_readiness_matrix,
+    build_delegation_trace_audit_readiness_profile,
+    build_delegation_trace_audit_bridge_envelope,
+    build_delegation_trace_audit_bridge_binding,
+    build_delegation_trace_audit_bridge_binding_set,
+    build_delegation_trace_audit_bridge_status_report,
+    # hash functions
+    hash_delegation_trace_bridge_ref,
+    hash_delegation_audit_bridge_ref,
+    hash_delegation_ledger_bridge_ref,
+    hash_delegation_trace_event_intent_ref,
+    hash_delegation_audit_event_intent_ref,
+    hash_delegation_ledger_entry_placeholder_ref,
+    hash_delegation_replay_context_ref,
+    hash_delegation_fork_context_ref,
+    hash_delegation_causal_chain_context_ref,
+    hash_delegation_trace_audit_readiness_matrix_entry,
+    hash_delegation_trace_audit_readiness_matrix,
+    hash_delegation_trace_audit_readiness_profile,
+    hash_delegation_trace_audit_bridge_envelope,
+    hash_delegation_trace_audit_bridge_binding,
+    hash_delegation_trace_audit_bridge_binding_set,
+    hash_delegation_trace_audit_bridge_status_report,
+    # serializers
+    serialize_delegation_trace_audit_bridge_envelope,
+    serialize_delegation_trace_audit_bridge_binding_set,
 )
 
 __all__ = [
@@ -1774,4 +1911,104 @@ __all__ = [
     # P1.8.13 serializers
     "serialize_delegation_runtime_execution_readiness_binding_set",
     "serialize_delegation_runtime_execution_readiness_envelope",
+    # P1.8.14 trace/audit bridge constants
+    "DELEGATION_TRACE_AUDIT_BRIDGE_TASK_ID",
+    "DELEGATION_TRACE_BRIDGE_REF_VERSION",
+    "DELEGATION_AUDIT_BRIDGE_REF_VERSION",
+    "DELEGATION_LEDGER_BRIDGE_REF_VERSION",
+    "DELEGATION_TRACE_EVENT_INTENT_REF_VERSION",
+    "DELEGATION_AUDIT_EVENT_INTENT_REF_VERSION",
+    "DELEGATION_LEDGER_ENTRY_PLACEHOLDER_REF_VERSION",
+    "DELEGATION_REPLAY_CONTEXT_REF_VERSION",
+    "DELEGATION_FORK_CONTEXT_REF_VERSION",
+    "DELEGATION_CAUSAL_CHAIN_CONTEXT_REF_VERSION",
+    "DELEGATION_TRACE_AUDIT_READINESS_MATRIX_ENTRY_VERSION",
+    "DELEGATION_TRACE_AUDIT_READINESS_MATRIX_VERSION",
+    "DELEGATION_TRACE_AUDIT_READINESS_PROFILE_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_ENVELOPE_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_BINDING_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_BINDING_SET_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_SIDE_EFFECTS_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_STATUS_REPORT_VERSION",
+    "DELEGATION_TRACE_AUDIT_BRIDGE_UNAVAILABLE_BINDINGS",
+    # P1.8.14 known fields
+    "TRACE_BRIDGE_REF_KNOWN_FIELDS",
+    "AUDIT_BRIDGE_REF_KNOWN_FIELDS",
+    "LEDGER_BRIDGE_REF_KNOWN_FIELDS",
+    "TRACE_EVENT_INTENT_REF_KNOWN_FIELDS",
+    "AUDIT_EVENT_INTENT_REF_KNOWN_FIELDS",
+    "LEDGER_ENTRY_PLACEHOLDER_REF_KNOWN_FIELDS",
+    "REPLAY_CONTEXT_REF_KNOWN_FIELDS",
+    "FORK_CONTEXT_REF_KNOWN_FIELDS",
+    "CAUSAL_CHAIN_CONTEXT_REF_KNOWN_FIELDS",
+    "READINESS_MATRIX_ENTRY_KNOWN_FIELDS",
+    "READINESS_MATRIX_KNOWN_FIELDS",
+    "TRACE_AUDIT_READINESS_PROFILE_KNOWN_FIELDS",
+    "BRIDGE_ENVELOPE_KNOWN_FIELDS",
+    "BRIDGE_BINDING_KNOWN_FIELDS",
+    "BRIDGE_BINDING_SET_KNOWN_FIELDS",
+    "BRIDGE_SIDE_EFFECTS_KNOWN_FIELDS",
+    "BRIDGE_STATUS_REPORT_KNOWN_FIELDS",
+    # P1.8.14 enums
+    "DelegationTraceAuditBridgeKind",
+    "DelegationTraceAuditBridgeReferenceStatus",
+    "DelegationTraceAuditBridgeStatus",
+    "DelegationTraceContextKind",
+    "DelegationAuditContextKind",
+    "DelegationTraceAuditReadinessFamily",
+    # P1.8.14 dataclasses
+    "DelegationTraceBridgeRef",
+    "DelegationAuditBridgeRef",
+    "DelegationLedgerBridgeRef",
+    "DelegationTraceEventIntentRef",
+    "DelegationAuditEventIntentRef",
+    "DelegationLedgerEntryPlaceholderRef",
+    "DelegationReplayContextRef",
+    "DelegationForkContextRef",
+    "DelegationCausalChainContextRef",
+    "DelegationTraceAuditReadinessMatrixEntry",
+    "DelegationTraceAuditReadinessMatrix",
+    "DelegationTraceAuditReadinessProfile",
+    "DelegationTraceAuditBridgeEnvelope",
+    "DelegationTraceAuditBridgeBinding",
+    "DelegationTraceAuditBridgeBindingSet",
+    "DelegationTraceAuditBridgeSideEffects",
+    "DelegationTraceAuditBridgeStatusReport",
+    # P1.8.14 builders
+    "build_delegation_trace_bridge_ref",
+    "build_delegation_audit_bridge_ref",
+    "build_delegation_ledger_bridge_ref",
+    "build_delegation_trace_event_intent_ref",
+    "build_delegation_audit_event_intent_ref",
+    "build_delegation_ledger_entry_placeholder_ref",
+    "build_delegation_replay_context_ref",
+    "build_delegation_fork_context_ref",
+    "build_delegation_causal_chain_context_ref",
+    "build_delegation_trace_audit_readiness_matrix_entry",
+    "build_delegation_trace_audit_readiness_matrix",
+    "build_delegation_trace_audit_readiness_profile",
+    "build_delegation_trace_audit_bridge_envelope",
+    "build_delegation_trace_audit_bridge_binding",
+    "build_delegation_trace_audit_bridge_binding_set",
+    "build_delegation_trace_audit_bridge_status_report",
+    # P1.8.14 hash functions
+    "hash_delegation_trace_bridge_ref",
+    "hash_delegation_audit_bridge_ref",
+    "hash_delegation_ledger_bridge_ref",
+    "hash_delegation_trace_event_intent_ref",
+    "hash_delegation_audit_event_intent_ref",
+    "hash_delegation_ledger_entry_placeholder_ref",
+    "hash_delegation_replay_context_ref",
+    "hash_delegation_fork_context_ref",
+    "hash_delegation_causal_chain_context_ref",
+    "hash_delegation_trace_audit_readiness_matrix_entry",
+    "hash_delegation_trace_audit_readiness_matrix",
+    "hash_delegation_trace_audit_readiness_profile",
+    "hash_delegation_trace_audit_bridge_envelope",
+    "hash_delegation_trace_audit_bridge_binding",
+    "hash_delegation_trace_audit_bridge_binding_set",
+    "hash_delegation_trace_audit_bridge_status_report",
+    # P1.8.14 serializers
+    "serialize_delegation_trace_audit_bridge_envelope",
+    "serialize_delegation_trace_audit_bridge_binding_set",
 ]
