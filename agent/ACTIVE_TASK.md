@@ -1,11 +1,11 @@
-# Active Task: P1.9.30-SEAL-CRITERIA-REPAIR (complete)
+# Active Task: P1-PRE-P2-AUDIT RERUN (complete)
 
-**Status:** P1.9.30-SEAL-CRITERIA-REPAIR COMPLETE; sealed for P1 contract scope; P2 coding still gated
+**Status:** P1-PRE-P2-AUDIT RERUN COMPLETE; SEALED_FOR_P1_CONTRACT_SCOPE; P2 readiness READY_FOR_P2_REVIEW; P2 coding still gated
 
 ## Roadmap Position
 
-- Last completed task: **P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary**
-- Next planned task: **Re-run P1-PRE-P2-AUDIT; P2 remains review-only unless audit accepts readiness**
+- Last completed task: **P1-PRE-P2-AUDIT RERUN — Full Audit / Test / Truth Seal after P1.9.30 Criteria Repair**
+- Next planned task: **P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry (contract foundation; dispatch when operator authorizes)**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P1.9.30 Seal Criteria Repair Status

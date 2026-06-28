@@ -1,12 +1,12 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary)_
+_Last updated: 2026-06-28 (P1-PRE-P2-AUDIT RERUN — Full Audit / Test / Truth Seal after P1.9.30 Criteria Repair)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary
-- Current active: **Re-run P1-PRE-P2-AUDIT after criteria repair**
-- Next planned: Follow-up pre-P2 audit; P2 remains review-only unless audit accepts readiness
+- Last completed: P1-PRE-P2-AUDIT RERUN — Full Audit / Test / Truth Seal after P1.9.30 Criteria Repair
+- Current active: **P2.0-A dispatch review — Shell Foundation + Surface Registry**
+- Next planned: P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry (contract foundation only)
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
