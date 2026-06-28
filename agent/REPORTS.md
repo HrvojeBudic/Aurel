@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P1.9.30 Seal Repair](reports/P1_9_30_SEAL_REPAIR.md) | 2026-06-28 | Exit seal focused repair: added explicit live-demo statuses, unavailable LIVE/trace reasons, P1.9-D report-chain check, seal decision derivation, P2 readiness derivation, and 15 focused tests; final seal decision remains PARTIAL; P2 NOT_READY_FOR_P2 |
 | [P1-PRE-P2 Repair Matrix](reports/P1_PRE_P2_REPAIR_MATRIX.md) | 2026-06-28 | Repair matrix for stopped pre-P2 audit: P1.9-D exit seal PARTIAL, P2 NOT_READY_FOR_P2, full validation not run after seal stop condition, broad truth-label adjudication incomplete |
 | [P1-PRE-P2 Full Audit and Seal](reports/P1_PRE_P2_FULL_AUDIT_AND_SEAL.md) | 2026-06-28 | Stopped pre-P2 audit: clean preflight on master, P1.9-A/B/C reports present, P1.9-D report present but exit seal PARTIAL and P2 NOT_READY_FOR_P2; validation NOT_RUN due stop gate; final verdict NOT_SEALED |
 | [P1.9-D Integration Tail Pack](reports/P1_9_D_INTEGRATION_TAIL_PACK.md) | 2026-06-28 | Contract-only P1.9.27-P1.9.30 integration tail; projection/API/event contracts; read-only CLI inspect; TUI UNAVAILABLE; exit seal PARTIAL; DEV_FIXTURE live demo; 28 all-false side effects; P2 NOT_READY_FOR_P2; ROADMAP_SYNC_DRIFT noted; 21 focused tests (127 total passport); next OMNI seal review |

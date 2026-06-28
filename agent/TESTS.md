@@ -2185,6 +2185,23 @@ PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation objects exam
 
 **P1.5 is sealed. Next: P1.6.0 Policy Cards & Behavioral Contracts.**
 
+### P1.9.30 Exit Seal Focused Repair
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/output_passport/test_passport_exit_seal_repair.py -q
+.venv/bin/python -m pytest tests/output_passport -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest tests -q -k "output_passport or passport"
+```
+
+Report: `agent/reports/P1_9_30_SEAL_REPAIR.md`
+
+**Expected P1.9.30 repair local result:** focused repair **15 passed**; output_passport **136 passed**; optional passport selector **142 passed**; compileall **PASS**; ruff **PASS**; mypy **PASS** (265 files).
+
+**Seal result:** PARTIAL — production `LIVE_TESTED` path and actual `TRACE_VERIFIED` proof remain unavailable. P2 remains `NOT_READY_FOR_P2`.
+
 ### P1.9-B Output Passport Read Model / Test Harness / Binding Pack
 
 ```bash

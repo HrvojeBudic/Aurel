@@ -481,7 +481,6 @@ def build_p1_9_d_integration_tail_pack_result(
     repo_root: Path | None = None,
 ) -> P19DIntegrationTailPackResult:
     from .exit_seal import (
-        P19ExitSealDecision,
         build_p1_9_exit_seal_checklist,
         build_p1_9_live_integration_demo_result,
         run_p1_9_exit_seal_checklist,
@@ -519,22 +518,13 @@ def build_p1_9_d_integration_tail_pack_result(
         f"checks={len(seal_result.checklist.checks)}"
     )
     live_summary = (
-        f"status={live_demo.demo_status}; "
+        f"status={live_demo.demo_status.value}; "
         f"truth={live_demo.truth_label.value}; "
         f"passed={live_demo.demo_passed}"
     )
 
-    p2_status = P19P2ReadinessStatus.NOT_READY_FOR_P2
-    p2_reason = (
-        "P1.9 exit seal is PARTIAL/NOT_SEALED; LIVE and TRACE_VERIFIED unavailable; "
-        "OMNI seal review required before P2"
-    )
-    if not seal_result.checklist_passed:
-        p2_status = P19P2ReadinessStatus.BLOCKED
-        p2_reason = seal_result.p2_readiness_reason
-    elif seal_result.decision is P19ExitSealDecision.SEALED:
-        p2_status = P19P2ReadinessStatus.READY_FOR_P2_REVIEW
-        p2_reason = "P1.9 exit seal SEALED with evidence; OMNI review still required"
+    p2_status = seal_result.p2_readiness_status
+    p2_reason = seal_result.p2_readiness_reason
 
     checkpoint_reads = _default_p1_9_d_checkpoint_reads()
     checkpoint_statuses = {

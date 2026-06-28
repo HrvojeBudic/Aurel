@@ -20,6 +20,7 @@ from .foundation import (
 )
 from .integration_tail import (
     P19_REPORT_CHAIN,
+    P19P2ReadinessStatus,
     handle_output_passport_cli_inspect,
     OUTPUT_PASSPORT_P1_9_D_PACK_TASK_ID,
 )
@@ -37,6 +38,14 @@ OUTPUT_PASSPORT_EXIT_SEAL_CHECKLIST_VERSION = (
 OUTPUT_PASSPORT_LIVE_DEMO_VERSION = "output_passport_live_demo.v1"
 
 P19_FULL_CHECKPOINT_RANGE = "P1.9.0-P1.9.30"
+LIVE_PATH_UNAVAILABLE_REASON = (
+    "UNAVAILABLE_LIVE_PATH: production LIVE operator path is not implemented "
+    "or tested in P1.9.30"
+)
+TRACE_VERIFICATION_UNAVAILABLE_REASON = (
+    "UNAVAILABLE_TRACE_VERIFICATION: P1.9.30 has TraceRef/read-model "
+    "boundaries only; no actual trace verification runtime proof"
+)
 
 
 class P19ExitSealDecision(str, Enum):
@@ -60,10 +69,16 @@ class P19ExitSealCheckStatus(str, Enum):
 class P19LiveDemoStatus(str, Enum):
     """Live integration demo status."""
 
-    DEV_FIXTURE = "DEV_FIXTURE"
+    LIVE_TESTED = "LIVE_TESTED"
+    DEV_FIXTURE_TESTED = "DEV_FIXTURE_TESTED"
+    PROJECTION_ONLY_TESTED = "PROJECTION_ONLY_TESTED"
+    CLI_READ_ONLY_TESTED = "CLI_READ_ONLY_TESTED"
     UNAVAILABLE_LIVE_PATH = "UNAVAILABLE_LIVE_PATH"
     NOT_RUN = "NOT_RUN"
-    LIVE = "LIVE"
+    FAILED = "FAILED"
+    # Backwards-compatible aliases. New code should use the explicit *_TESTED names.
+    DEV_FIXTURE = "DEV_FIXTURE_TESTED"
+    LIVE = "LIVE_TESTED"
 
 
 class _CanonicalMixin:
@@ -161,6 +176,7 @@ class P19ExitSeal(_CanonicalMixin):
     checklist: P19ExitSealChecklist
     live_demo: P19LiveIntegrationDemoResult
     checklist_passed: bool
+    p2_readiness_status: P19P2ReadinessStatus
     p2_readiness_blocked: bool
     p2_readiness_reason: str
     truth_label: OutputPassportTruthLabel
@@ -204,10 +220,18 @@ def _reports_exist(repo_root: Path, filenames: Sequence[str]) -> tuple[bool, tup
 def build_p1_9_live_integration_demo_result(
     *,
     source_label: OutputPassportSourceLabel | str = OutputPassportSourceLabel.DEV_FIXTURE,
+    demo_status: P19LiveDemoStatus | str = P19LiveDemoStatus.DEV_FIXTURE_TESTED,
 ) -> P19LiveIntegrationDemoResult:
-    """Run in-process DEV_FIXTURE demo chain; not LIVE production path."""
+    """Run an honest in-process demo chain; not LIVE production path."""
     if isinstance(source_label, str):
         source_label = OutputPassportSourceLabel(source_label)
+    if isinstance(demo_status, str):
+        demo_status = P19LiveDemoStatus(demo_status)
+    if demo_status is P19LiveDemoStatus.LIVE_TESTED:
+        raise ValueError(
+            "LIVE_TESTED is unavailable in P1.9.30; production LIVE path "
+            "requires separate runtime evidence"
+        )
 
     projection = build_output_passport_projection_contract(source_label=source_label)
     cli_result = handle_output_passport_cli_inspect(
@@ -222,24 +246,77 @@ def build_p1_9_live_integration_demo_result(
         and cli_result.get("read_only") is True
         and harness.all_passed
     )
+    projection_demo = True
+    cli_inspect_demo = True
+    harness_demo = harness.all_passed
+    truth_label = OutputPassportTruthLabel.DEV_FIXTURE
+    unavailable_reason = (
+        f"{LIVE_PATH_UNAVAILABLE_REASON}; {TRACE_VERIFICATION_UNAVAILABLE_REASON}; "
+        "DEV_FIXTURE vertical slice only"
+    )
+    summary = (
+        f"DEV_FIXTURE vertical slice: projection={projection.contract_hash[:12]}, "
+        f"cli_read_only={cli_result.get('read_only')}, "
+        f"harness_passed={harness.all_passed}"
+    )
+
+    if demo_status is P19LiveDemoStatus.PROJECTION_ONLY_TESTED:
+        demo_passed = projection.contract_hash != ""
+        cli_inspect_demo = False
+        harness_demo = False
+        truth_label = OutputPassportTruthLabel.CONTRACT_ONLY
+        unavailable_reason = (
+            f"{LIVE_PATH_UNAVAILABLE_REASON}; projection-only test is not "
+            "a CLI/operator/live integration path"
+        )
+        summary = f"PROJECTION_ONLY_TESTED: projection={projection.contract_hash[:12]}"
+    elif demo_status is P19LiveDemoStatus.CLI_READ_ONLY_TESTED:
+        demo_passed = cli_result.get("read_only") is True
+        projection_demo = False
+        harness_demo = False
+        truth_label = OutputPassportTruthLabel.CONTRACT_ONLY
+        unavailable_reason = (
+            f"{LIVE_PATH_UNAVAILABLE_REASON}; CLI_READ_ONLY_TESTED does not "
+            "grant authority or prove product LIVE"
+        )
+        summary = (
+            "CLI_READ_ONLY_TESTED: "
+            f"read_only={cli_result.get('read_only')}; "
+            f"authority_granted={cli_result.get('authority_granted')}"
+        )
+    elif demo_status is P19LiveDemoStatus.UNAVAILABLE_LIVE_PATH:
+        demo_passed = False
+        projection_demo = False
+        cli_inspect_demo = False
+        harness_demo = False
+        truth_label = OutputPassportTruthLabel.UNAVAILABLE
+        unavailable_reason = LIVE_PATH_UNAVAILABLE_REASON
+        summary = "UNAVAILABLE_LIVE_PATH: production LIVE path not tested"
+    elif demo_status is P19LiveDemoStatus.NOT_RUN:
+        demo_passed = False
+        projection_demo = False
+        cli_inspect_demo = False
+        harness_demo = False
+        truth_label = OutputPassportTruthLabel.UNAVAILABLE
+        unavailable_reason = "NOT_RUN: live integration demo was not executed"
+        summary = "NOT_RUN: no demo evidence"
+    elif demo_status is P19LiveDemoStatus.FAILED:
+        demo_passed = False
+        truth_label = OutputPassportTruthLabel.NOT_SEAL
+        unavailable_reason = "FAILED: live integration demo failed"
+        summary = "FAILED: demo evidence did not satisfy seal preconditions"
+
     side_effects = _all_false_side_effects()
     body = {
         "schema_version": OUTPUT_PASSPORT_LIVE_DEMO_VERSION,
-        "demo_status": P19LiveDemoStatus.DEV_FIXTURE,
+        "demo_status": demo_status,
         "demo_passed": demo_passed,
-        "truth_label": OutputPassportTruthLabel.DEV_FIXTURE,
-        "unavailable_reason": (
-            "UNAVAILABLE_LIVE_PATH: in-process DEV_FIXTURE only; "
-            "not production LIVE path"
-        ),
-        "projection_demo": True,
-        "cli_inspect_demo": True,
-        "harness_demo": harness.all_passed,
-        "summary": (
-            f"DEV_FIXTURE vertical slice: projection={projection.contract_hash[:12]}, "
-            f"cli_read_only={cli_result.get('read_only')}, "
-            f"harness_passed={harness.all_passed}"
-        ),
+        "truth_label": truth_label,
+        "unavailable_reason": unavailable_reason,
+        "projection_demo": projection_demo,
+        "cli_inspect_demo": cli_inspect_demo,
+        "harness_demo": harness_demo,
+        "summary": summary,
         "source_label": source_label,
         "side_effects": side_effects,
     }
@@ -302,6 +379,17 @@ def build_p1_9_exit_seal_checklist(
         )
     )
 
+    d_exists, d_refs = _reports_exist(root, (P19_REPORT_CHAIN[3],))
+    checks.append(
+        _check_item(
+            check_id="p1_9_d_report",
+            check_label="P1.9-D report chain",
+            status=P19ExitSealCheckStatus.PASS if d_exists else P19ExitSealCheckStatus.FAIL,
+            summary="P1.9-D integration tail report present on disk",
+            evidence_refs=d_refs,
+        )
+    )
+
     projection = build_output_passport_projection_contract(source_label=source_label)
     checks.append(
         _check_item(
@@ -334,6 +422,28 @@ def build_p1_9_exit_seal_checklist(
             status=P19ExitSealCheckStatus.PASS,
             summary=EVENT_RUNTIME_UNAVAILABLE_REASON,
             evidence_refs=(projection.event_contract.unavailable_reason,),
+        )
+    )
+
+    checks.append(
+        _check_item(
+            check_id="live_path_unavailable",
+            check_label="Production LIVE path unavailable",
+            status=P19ExitSealCheckStatus.UNAVAILABLE,
+            summary=LIVE_PATH_UNAVAILABLE_REASON,
+            evidence_refs=(LIVE_PATH_UNAVAILABLE_REASON,),
+            unavailable_reason=LIVE_PATH_UNAVAILABLE_REASON,
+        )
+    )
+
+    checks.append(
+        _check_item(
+            check_id="trace_verification_unavailable",
+            check_label="Trace verification unavailable",
+            status=P19ExitSealCheckStatus.UNAVAILABLE,
+            summary=TRACE_VERIFICATION_UNAVAILABLE_REASON,
+            evidence_refs=(TRACE_VERIFICATION_UNAVAILABLE_REASON,),
+            unavailable_reason=TRACE_VERIFICATION_UNAVAILABLE_REASON,
         )
     )
 
@@ -425,6 +535,73 @@ def build_p1_9_exit_seal_checklist(
     )
 
 
+def derive_p1_9_exit_seal_decision(
+    *,
+    checklist_passed: bool,
+    unavailable_count: int,
+    live_demo: P19LiveIntegrationDemoResult,
+) -> tuple[P19ExitSealDecision, str]:
+    """Derive the seal decision from explicit evidence; never infer LIVE."""
+    if not checklist_passed:
+        return (
+            P19ExitSealDecision.BLOCKED,
+            "Exit seal checklist has failures or forbidden truth labels",
+        )
+    if live_demo.demo_status in {
+        P19LiveDemoStatus.NOT_RUN,
+        P19LiveDemoStatus.FAILED,
+        P19LiveDemoStatus.UNAVAILABLE_LIVE_PATH,
+    }:
+        return (
+            P19ExitSealDecision.NOT_SEALED,
+            "P1.9 exit seal evidence incomplete: live demo unavailable, failed, or not run",
+        )
+    if unavailable_count > 0:
+        return (
+            P19ExitSealDecision.PARTIAL,
+            (
+                "P1.9 is PARTIAL: contract/projection/CLI/docs evidence present, "
+                "but production LIVE path or trace verification remains unavailable. "
+                "Not EXIT_SEALED; OMNI review required before P2."
+            ),
+        )
+    if live_demo.demo_status is not P19LiveDemoStatus.LIVE_TESTED:
+        return (
+            P19ExitSealDecision.PARTIAL,
+            (
+                "P1.9 is PARTIAL: demo evidence is not LIVE_TESTED. "
+                "DEV_FIXTURE/projection/CLI evidence cannot become LIVE."
+            ),
+        )
+    return (
+        P19ExitSealDecision.SEALED,
+        "P1.9 exit seal SEALED with explicit LIVE_TESTED evidence and no unavailable gates",
+    )
+
+
+def derive_p1_9_p2_readiness(
+    decision: P19ExitSealDecision,
+) -> tuple[P19P2ReadinessStatus, bool, str]:
+    """Derive P2 review readiness from seal outcome only."""
+    if decision is P19ExitSealDecision.SEALED:
+        return (
+            P19P2ReadinessStatus.READY_FOR_P2_REVIEW,
+            False,
+            "P2 may enter review/brainstorm after sealed P1.9; coding still gated",
+        )
+    if decision is P19ExitSealDecision.BLOCKED:
+        return (
+            P19P2ReadinessStatus.BLOCKED,
+            True,
+            "P2 readiness blocked: P1.9 exit seal is BLOCKED",
+        )
+    return (
+        P19P2ReadinessStatus.NOT_READY_FOR_P2,
+        True,
+        f"P2 readiness blocked: P1.9 exit seal is {decision.value}, not SEALED",
+    )
+
+
 def run_p1_9_exit_seal_checklist(
     checklist: P19ExitSealChecklist | None = None,
     *,
@@ -447,31 +624,16 @@ def run_p1_9_exit_seal_checklist(
         and not resolved.fake_exit_sealed_detected
     )
 
-    if not checklist_passed:
-        decision = P19ExitSealDecision.BLOCKED
-        reason = "Exit seal checklist has failures or forbidden truth labels"
-    elif live_demo.demo_status is P19LiveDemoStatus.UNAVAILABLE_LIVE_PATH:
-        decision = P19ExitSealDecision.PARTIAL
-        reason = (
-            "P1.9 is PARTIAL: contract/projection/CLI/docs evidence present. "
-            "LIVE path unavailable; TRACE_VERIFIED unavailable. "
-            "API/event runtime contract-only. TUI unavailable. "
-            "DEV_FIXTURE demo passed in-process. "
-            "Not EXIT_SEALED; OMNI review required before P2."
-        )
-    else:
-        decision = P19ExitSealDecision.PARTIAL
-        reason = (
-            "P1.9 is PARTIAL: all P1.9.0-P1.9.30 checkpoints have contract evidence. "
-            "CLI read-only inspect available; TUI UNAVAILABLE. "
-            "API/event contract-only; no LIVE or TRACE_VERIFIED claims. "
-            "DEV_FIXTURE live demo only. Next: OMNI seal review; P2 gated."
-        )
-
-    p2_blocked = decision is not P19ExitSealDecision.SEALED
-    p2_reason = (
-        "P2 readiness blocked: exit seal is not SEALED; "
-        "LIVE and TRACE_VERIFICATION unavailable"
+    decision, reason = derive_p1_9_exit_seal_decision(
+        checklist_passed=checklist_passed,
+        unavailable_count=resolved.unavailable_count,
+        live_demo=live_demo,
+    )
+    p2_status, p2_blocked, p2_reason = derive_p1_9_p2_readiness(decision)
+    truth_label = (
+        OutputPassportTruthLabel.EXIT_SEALED
+        if decision is P19ExitSealDecision.SEALED
+        else OutputPassportTruthLabel.NOT_SEAL
     )
 
     side_effects = _all_false_side_effects()
@@ -483,9 +645,10 @@ def run_p1_9_exit_seal_checklist(
         "checklist": resolved,
         "live_demo": live_demo,
         "checklist_passed": checklist_passed,
+        "p2_readiness_status": p2_status,
         "p2_readiness_blocked": p2_blocked,
         "p2_readiness_reason": p2_reason,
-        "truth_label": OutputPassportTruthLabel.NOT_SEAL,
+        "truth_label": truth_label,
         "source_label": source_label,
         "side_effects": side_effects,
     }
@@ -502,7 +665,12 @@ def serialize_p1_9_exit_seal_result(seal: P19ExitSeal) -> str:
 def assert_seal_honest(seal: P19ExitSeal) -> None:
     """Raise if seal claims forbidden operational truth."""
     if seal.decision is P19ExitSealDecision.SEALED:
-        raise ValueError("SEALED decision requires explicit evidence; not allowed by default")
+        if seal.truth_label is not OutputPassportTruthLabel.EXIT_SEALED:
+            raise ValueError("SEALED decision requires EXIT_SEALED truth label")
+        if seal.checklist.unavailable_count > 0:
+            raise ValueError("SEALED decision cannot carry unavailable seal gates")
+        if seal.live_demo.demo_status is not P19LiveDemoStatus.LIVE_TESTED:
+            raise ValueError("SEALED decision requires LIVE_TESTED demo evidence")
     if seal.live_demo.truth_label is OutputPassportTruthLabel.LIVE:
         raise ValueError("LIVE truth label forbidden without production proof")
     if seal.live_demo.truth_label is OutputPassportTruthLabel.TRACE_VERIFIED:

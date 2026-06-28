@@ -1,16 +1,28 @@
-# Active Task: P1.9-D (complete)
+# Active Task: P1.9.30-SEAL-REPAIR (complete)
 
-**Status:** P1.9-D COMPLETE; OMNI Seal Review for P1.9-D; P2 gated
+**Status:** P1.9.30-SEAL-REPAIR COMPLETE; seal remains PARTIAL; P2 gated
 
 ## Roadmap Position
 
-- Last completed task: **P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack**
-- Next planned task: **OMNI Seal Review for P1.9-D; P2 only if seal review allows**
+- Last completed task: **P1.9.30-SEAL-REPAIR — Exit Seal Focused Repair**
+- Next planned task: **OMNI Review for P1.9.30 repair; follow-up pre-P2 audit only if allowed**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.9.30 Seal Repair Status
+
+**DONE — PARTIAL** — The exit seal gate is repaired and stricter, but P1.9.30 is still not SEALED.
+
+Repair added explicit live-demo statuses (`LIVE_TESTED`, `DEV_FIXTURE_TESTED`, `PROJECTION_ONLY_TESTED`, `CLI_READ_ONLY_TESTED`, `UNAVAILABLE_LIVE_PATH`, `NOT_RUN`, `FAILED`), explicit production LIVE and trace-verification unavailable reasons, P1.9-D report-chain checking, seal decision derivation, and P2 readiness derivation. Default repo state remains PARTIAL because production LIVE path and actual TRACE_VERIFIED proof are unavailable.
+
+Validation: focused repair pytest 15 passed; focused P1.9-D pytest 21 passed; compileall PASS; output_passport 136 passed; ruff PASS; mypy PASS; optional passport selector 142 passed.
+
+Report: `agent/reports/P1_9_30_SEAL_REPAIR.md`
+
+Boundary: DEV_FIXTURE_TESTED is not LIVE_TESTED. Projection-only is not LIVE. CLI read-only is not authority. PARTIAL/NOT_SEALED/BLOCKED all block P2 readiness. SEALED would only allow READY_FOR_P2_REVIEW, not P2 coding.
 
 ## P1.9-D Status
 
-**DONE** — P1.9-D integration tail pack verified after focused validation.
+**DONE / REPAIRED GATE PARTIAL** — P1.9-D integration tail pack verified after focused validation; P1.9.30 seal gate repaired in a follow-up focused repair.
 
 P1.9-D establishes projection/API/event contracts (P1.9.27), read-only CLI inspect binding with TUI UNAVAILABLE (P1.9.28), docs/state/reports sync (P1.9.29), and exit seal checklist with DEV_FIXTURE live demo (P1.9.30). `P19DIntegrationTailPackResult` with `P19ExitSeal` decision PARTIAL. All 28 P1.9-D side-effect booleans false.
 
