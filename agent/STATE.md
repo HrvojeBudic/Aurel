@@ -1,16 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.9-C — Truth Boundary / Failure / Readiness Pack)_
+_Last updated: 2026-06-28 (P1.9-D — Integration Tail Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack
-- Current active: **P1.9-D (planned)**
-- Next planned: P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack
+- Last completed: P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack
+- Current active: **OMNI Seal Review for P1.9-D**
+- Next planned: P2 only if OMNI seal review allows
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
-- P1.9 status: **in progress** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D planned)
+- P1.9 status: **integration tail complete (SEAL_PARTIAL)** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete)
+
+## P1.9-D Output Passport Integration Tail
+
+Contract-only projection/API/event contracts, read-only CLI inspect binding, docs/state/reports sync, exit seal checklist, and DEV_FIXTURE live demo. Modules: `projection.py`, `integration_tail.py`, `exit_seal.py`, `cli_modules/output_passport.py`. Truth labels: CONTRACT_ONLY, DEV_FIXTURE, NOT_SEAL. CLI_READ_ONLY; TUI UNAVAILABLE. API/event UNAVAILABLE_RUNTIME. Exit seal PARTIAL. P2 NOT_READY_FOR_P2. All 28 side effects false. Report: `agent/reports/P1_9_D_INTEGRATION_TAIL_PACK.md`.
 
 ## P1.9-C Output Passport Truth Boundary / Failure / Readiness
 

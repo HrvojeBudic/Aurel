@@ -1,12 +1,26 @@
-# Active Task: P1.9-C (complete)
+# Active Task: P1.9-D (complete)
 
-**Status:** P1.9-C COMPLETE; P1.9-D PLANNED
+**Status:** P1.9-D COMPLETE; OMNI Seal Review for P1.9-D; P2 gated
 
 ## Roadmap Position
 
-- Last completed task: **P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack**
-- Next planned task: **P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack**
+- Last completed task: **P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack**
+- Next planned task: **OMNI Seal Review for P1.9-D; P2 only if seal review allows**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.9-D Status
+
+**DONE** — P1.9-D integration tail pack verified after focused validation.
+
+P1.9-D establishes projection/API/event contracts (P1.9.27), read-only CLI inspect binding with TUI UNAVAILABLE (P1.9.28), docs/state/reports sync (P1.9.29), and exit seal checklist with DEV_FIXTURE live demo (P1.9.30). `P19DIntegrationTailPackResult` with `P19ExitSeal` decision PARTIAL. All 28 P1.9-D side-effect booleans false.
+
+Boundary: Projection is not execution. API contract is not API server. Event contract is not emitted event. CLI inspect is not authority. TUI UNAVAILABLE. Exit seal PARTIAL not SEALED. Live demo DEV_FIXTURE not LIVE. P2 readiness NOT_READY_FOR_P2.
+
+Validation: compileall PASS; focused P1.9-D pytest 21 passed; total output passport 127 passed; ruff PASS; mypy PASS (265 files).
+
+Report: `agent/reports/P1_9_D_INTEGRATION_TAIL_PACK.md`
+
+ROADMAP_SYNC_DRIFT: YES — local roadmap listed P1.9.0-P1.9.20 without v5.5 pack groupings; mirror updated.
 
 ## P1.9-C Status
 

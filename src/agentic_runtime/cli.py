@@ -480,6 +480,11 @@ from .cli_modules.path_governance import (
     cmd_path_governance_unavailable,
     cmd_path_governance_violation_drift_summary,
 )
+from .cli_modules.output_passport import (
+    cmd_output_passport_inspect,
+    cmd_output_passport_projection,
+    cmd_output_passport_unavailable,
+)
 
 def cmd_config_validate(args: argparse.Namespace) -> int:
     from .model_config import ModelConfigError, ProviderConfigLoader
@@ -1096,6 +1101,43 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_pg_violation.add_argument("--json", action="store_true")
     p_pg_violation.set_defaults(func=cmd_path_governance_violation_drift_summary)
+
+    # P1.9.28 — output passport read-only inspect CLI binding
+    p_op = sub.add_parser(
+        "output-passport",
+        help="P1.9 output passport projection inspect (read-only)",
+    )
+    op_sub = p_op.add_subparsers(dest="output_passport_command", required=True)
+
+    p_op_inspect = op_sub.add_parser(
+        "inspect",
+        help="inspect DEV_FIXTURE output passport projection (read-only)",
+    )
+    p_op_inspect.add_argument(
+        "--dev-fixture",
+        action="store_true",
+        default=True,
+        help="use DEV_FIXTURE projection payload",
+    )
+    p_op_inspect.add_argument("--json", action="store_true")
+    p_op_inspect.add_argument("--text", action="store_true")
+    p_op_inspect.set_defaults(func=cmd_output_passport_inspect)
+
+    p_op_projection = op_sub.add_parser(
+        "projection",
+        help="show output passport projection/API/event contract",
+    )
+    p_op_projection.add_argument("--json", action="store_true")
+    p_op_projection.add_argument("--text", action="store_true")
+    p_op_projection.set_defaults(func=cmd_output_passport_projection)
+
+    p_op_unavailable = op_sub.add_parser(
+        "unavailable",
+        help="list unavailable output passport bindings",
+    )
+    p_op_unavailable.add_argument("--json", action="store_true")
+    p_op_unavailable.add_argument("--text", action="store_true")
+    p_op_unavailable.set_defaults(func=cmd_output_passport_unavailable)
 
     p_identity = sub.add_parser("identity", help="identity kernel commands")
     identity_sub = p_identity.add_subparsers(dest="identity_command", required=True)
