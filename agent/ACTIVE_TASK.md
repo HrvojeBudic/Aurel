@@ -1,12 +1,26 @@
-# Active Task: P1.9-B (complete)
+# Active Task: P1.9-C (complete)
 
-**Status:** P1.9-B COMPLETE; P1.9-C PLANNED
+**Status:** P1.9-C COMPLETE; P1.9-D PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack**
-- Next planned task: **P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack**
+- Last completed task: **P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack**
+- Next planned task: **P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.9-C Status
+
+**DONE** — P1.9-C truth boundary / failure / readiness pack verified after focused validation.
+
+P1.9-C establishes contract-only truth boundaries for P1.9.17-P1.9.26: trace payload vs verification boundary, MOCK/DEV_FIXTURE/SIMULATED disclosure, heretic/quarantine disclosure, LoRA/adapter influence disclosure, surface read models (CRO/HQ/CORP/HUB/IDE), operator test path, revision/replay/failure handling, and readiness audit with `P19CTruthBoundaryFailureReadinessPackResult`. All 27 side-effect booleans are false.
+
+Boundary: Trace payload is not verification. Mock is not live. Heretic/quarantine is not trusted/accepted. LoRA influence is not approval. Surface read model is not UI. Test path is not CLI. Replay seed is not replay execution. Readiness audit is not exit seal. CLI/TUI UNAVAILABLE (P1.9.28). No fake LIVE, TRACE_VERIFIED, or SEAL.
+
+Validation: compileall PASS; focused P1.9-C pytest 29 passed; total output passport 106 passed; ruff PASS; mypy PASS (261 files).
+
+Report: `agent/reports/P1_9_C_TRUTH_BOUNDARY_FAILURE_READINESS_PACK.md`
+
+ROADMAP_SYNC_DRIFT: YES — local roadmap listed P1.9.0-P1.9.20 without v5.5 pack groupings; mirror updated.
 
 ## P1.9-B Status
 

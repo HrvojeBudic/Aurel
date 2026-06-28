@@ -184,10 +184,31 @@ class OutputPassportTruthLabel(str, Enum):
     VERIFICATION_CONTRACT_ONLY = "VERIFICATION_CONTRACT_ONLY"
     TEST_HARNESS_ONLY = "TEST_HARNESS_ONLY"
     REVIEW_STATE_ONLY = "REVIEW_STATE_ONLY"
+    PAYLOAD_ONLY = "PAYLOAD_ONLY"
+    MOCK = "MOCK"
+    SIMULATED = "SIMULATED"
+    NOT_LIVE = "NOT_LIVE"
+    NOT_TRUSTED = "NOT_TRUSTED"
+    QUARANTINED = "QUARANTINED"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    NOT_APPROVAL = "NOT_APPROVAL"
+    NOT_PROMOTION = "NOT_PROMOTION"
+    TEST_PATH_ONLY = "TEST_PATH_ONLY"
+    REVISION_HISTORY_ONLY = "REVISION_HISTORY_ONLY"
+    REPLAY_SEED_ONLY = "REPLAY_SEED_ONLY"
+    NOT_REPLAY_EXECUTION = "NOT_REPLAY_EXECUTION"
+    FAILURE_DISCLOSURE = "FAILURE_DISCLOSURE"
+    READINESS_AUDIT_ONLY = "READINESS_AUDIT_ONLY"
+    NOT_SEAL = "NOT_SEAL"
+    CONDITIONAL_READY_FOR_INTEGRATION_TAIL = (
+        "CONDITIONAL_READY_FOR_INTEGRATION_TAIL"
+    )
     LIVE = "LIVE"
     TRACE_VERIFIED = "TRACE_VERIFIED"
     LEDGER_VERIFIED = "LEDGER_VERIFIED"
     EVIDENCE_FINAL = "EVIDENCE_FINAL"
+    SEALED = "SEALED"
+    EXIT_SEALED = "EXIT_SEALED"
 
 
 FORBIDDEN_DEFAULT_TRUTH_LABELS: frozenset[OutputPassportTruthLabel] = frozenset({
@@ -195,6 +216,8 @@ FORBIDDEN_DEFAULT_TRUTH_LABELS: frozenset[OutputPassportTruthLabel] = frozenset(
     OutputPassportTruthLabel.TRACE_VERIFIED,
     OutputPassportTruthLabel.LEDGER_VERIFIED,
     OutputPassportTruthLabel.EVIDENCE_FINAL,
+    OutputPassportTruthLabel.SEALED,
+    OutputPassportTruthLabel.EXIT_SEALED,
 })
 
 
@@ -426,6 +449,17 @@ class OutputPassportSideEffectProof(_CanonicalMixin):
     agent_executed: bool = False
     agent_authority_created: bool = False
     tool_permission_granted: bool = False
+    heretic_executed: bool = False
+    heretic_accepted: bool = False
+    quarantine_released: bool = False
+    lora_activated: bool = False
+    lora_promoted: bool = False
+    adapter_promoted: bool = False
+    model_route_mutated: bool = False
+    surface_ui_created: bool = False
+    cli_binding_created: bool = False
+    replay_executed: bool = False
+    exit_sealed: bool = False
 
 
 @dataclass(frozen=True)

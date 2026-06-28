@@ -1,16 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.9-B — Read Model / Test Harness / Binding Pack)_
+_Last updated: 2026-06-28 (P1.9-C — Truth Boundary / Failure / Readiness Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack
-- Current active: **P1.9-C (planned)**
-- Next planned: P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack
+- Last completed: P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack
+- Current active: **P1.9-D (planned)**
+- Next planned: P1.9-D — P1.9.27-P1.9.30 Integration Tail Pack
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
-- P1.9 status: **in progress** (P1.9-A complete; P1.9-B complete; P1.9-C planned)
+- P1.9 status: **in progress** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D planned)
+
+## P1.9-C Output Passport Truth Boundary / Failure / Readiness
+
+Contract-only truth boundary, disclosure, surface read model, operator test path, revision/replay/failure, and readiness audit pack. Modules: `truth_boundary.py`, `disclosure_states.py`, `surface_read_model.py`, `revision_replay_failure.py`, `readiness_audit.py`. Truth labels: PAYLOAD_ONLY, MOCK, DEV_FIXTURE, SIMULATED, DISCLOSURE_ONLY, READ_MODEL_ONLY, TEST_PATH_ONLY, REPLAY_SEED_ONLY, READINESS_AUDIT_ONLY, NOT_SEAL. All 27 side effects false. No verification, no replay execution, no surface UI. Report: `agent/reports/P1_9_C_TRUTH_BOUNDARY_FAILURE_READINESS_PACK.md`.
 
 ## P1.9-B Output Passport Read Model / Harness / Bindings
 
