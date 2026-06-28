@@ -1,12 +1,24 @@
-# Active Task: P1.8-C (planned)
+# Active Task: P1.9-A (planned)
 
-**Status:** P1.8-B COMPLETE; P1.8-C PLANNED
+**Status:** P1.8-C COMPLETE; P1.9-A PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack**
-- Next planned task: **P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack**
+- Last completed task: **P1.8-C — P1.8.27-P1.8.30 Delegation Integration Tail Pack**
+- Next planned task: **P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.8-C Status
+
+**DONE** — P1.8-C delegation integration tail pack verified after focused and broader delegation validation.
+
+P1.8-C composes P1.8-A actor boundaries and P1.8-B action boundaries into a unified projection/read-model/event contract. It establishes `DelegationSectionReadModel`, `DelegationSectionProjectionPayload`, `DelegationEventPayload`, `DelegationOperatorDemoResult`, and `DelegationExitSealResult` with deterministic hashing, JSON-safe serialization, and honest truth labels. All 13 side-effect booleans are false.
+
+Boundary: CLI/TUI binding is explicitly UNAVAILABLE (P1.8.28) with honest reason. Runtime enforcement is UNAVAILABLE. Trace verification is UNAVAILABLE. Event bus dispatch is UNAVAILABLE. No fake LIVE, no fake TRACE_VERIFIED. P1.8 is SEAL_PARTIAL. Next: P1.9-A Output Passport.
+
+Validation: compileall PASS; focused projection pytest 50 passed (83 total with A+B); broader delegation selector 1094 passed, 4453 deselected; ruff PASS; mypy PASS (250 files).
+
+Report: `agent/reports/P1_8_C_DELEGATION_INTEGRATION_TAIL_PACK.md`
 
 ## P1.8-B Status
 

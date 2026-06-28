@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.8-B — Proposal / Permission / Execution / Operator Review Pack)_
+_Last updated: 2026-06-28 (P1.8-C — Delegation Integration Tail Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack
-- Current active: **P1.8-C (planned)**
-- Next planned: P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack
+- Last completed: P1.8-C — P1.8.27-P1.8.30 Delegation Integration Tail Pack
+- Current active: **P1.9-A (planned)**
+- Next planned: P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete)
+- P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 
 ## Golden Thread — P1.8 Delegation
 
@@ -24,8 +24,9 @@ Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
 | Previous | P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack | `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md` | 17 focused tests, broader delegation selector 1028 passed, deterministic hashes, all-false side effects, contract-only truth |
-| Current | P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack | `agent/reports/P1_8_B_PROPOSAL_PERMISSION_EXECUTION_OPERATOR_REVIEW_PACK.md` | 16 focused tests, broader delegation selector 1044 passed, deterministic hashes, all-false side effects, contract-only truth |
-| Next | P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack | (planned) | (planned) |
+| Previous | P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack | `agent/reports/P1_8_B_PROPOSAL_PERMISSION_EXECUTION_OPERATOR_REVIEW_PACK.md` | 16 focused tests, broader delegation selector 1044 passed, deterministic hashes, all-false side effects, contract-only truth |
+| Current | P1.8-C — P1.8.27-P1.8.30 Delegation Integration Tail Pack | `agent/reports/P1_8_C_DELEGATION_INTEGRATION_TAIL_PACK.md` | 50 focused tests, broader delegation selector 1094 passed, deterministic hashes, all-false side effects, DEV_FIXTURE truth, SEAL_PARTIAL, CLI UNAVAILABLE |
+| Next | P1.9-A — P1.9.0-P1.9.7 Output Passport | (planned) | (planned) |
 
 **Semantic bridge:**
 P1.8.16 PreProjectionSeedEnvelope
@@ -35,7 +36,25 @@ P1.8.16 PreProjectionSeedEnvelope
 -> P1.8-A DelegationActorBoundaryReadModel (six checkpoint evidence rows)
 -> P1.8-B DelegationActionBoundaryPackResult (wraps P1.8.23-P1.8.26 action-boundary contract hashes)
 -> P1.8-B DelegationActionBoundaryReadModel (four checkpoint evidence rows)
--> P1.8-C handoff
+-> P1.8-C DelegationSectionReadModel (unified P1.8.17-P1.8.30 projection)
+-> P1.8-C DelegationSectionProjectionPayload
+-> P1.8-C DelegationExitSealResult (SEAL_PARTIAL)
+-> P1.9-A handoff
+
+**P1.8-C boundary declarations:**
+- P1.8-C composes P1.8-A and P1.8-B into a unified projection.
+- `DelegationSectionReadModel` exists does not grant authority or execute.
+- `DelegationSectionProjectionPayload` exists does not mutate runtime.
+- `DelegationEventPayload` exists does not dispatch to event bus.
+- `DelegationOperatorDemoResult` is DEV_FIXTURE_ONLY, not LIVE.
+- `DelegationExitSealResult` is SEAL_PARTIAL, not SEAL_READY.
+- CLI/TUI binding is explicitly UNAVAILABLE (P1.8.28).
+- Runtime enforcement is UNAVAILABLE; this pack is contract/projection-only and enforcement belongs to later runtime/policy layers.
+- Trace verification is UNAVAILABLE; projection hashes are contract evidence, not trace-verified proof.
+- Event bus dispatch is UNAVAILABLE; EventPayload shape is a versioned contract seed only.
+- No fake LIVE, no fake TRACE_VERIFIED.
+- Golden Thread exists does not mean trace verification.
+- All 13 projection side-effect booleans are false.
 
 **P1.8-B boundary declarations:**
 - `DelegationProposalBoundary` exists does not grant permission.
