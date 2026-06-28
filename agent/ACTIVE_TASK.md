@@ -1,11 +1,11 @@
-# Active Task: P2.0-A (complete)
+# Active Task: P2.0-B (complete)
 
-**Status:** P2.0-A COMPLETE — Shell Foundation + Surface Registry; contract-only seven-surface registry; next P2.0-B
+**Status:** P2.0-B COMPLETE — Navigation + Boundary Contracts; contract-only nav/boundary semantics; next P2.0-C
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry**
-- Next planned task: **P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts**
+- Last completed task: **P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts**
+- Next planned task: **P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P1.9.30 Seal Criteria Repair Status

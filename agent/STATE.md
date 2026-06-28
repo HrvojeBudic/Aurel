@@ -1,14 +1,14 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P2.0-A — Shell Foundation + Surface Registry)_
+_Last updated: 2026-06-29 (P2.0-B — Navigation + Boundary Contracts)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry
-- Current active: **P2.0-B dispatch review — Navigation + Boundary Contracts**
-- Next planned: P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts
+- Last completed: P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts
+- Current active: **P2.0-C dispatch review — Floating Window + Handoff + Context Carryover**
+- Next planned: P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **P2.0-A complete** (shell contract + seven-surface registry foundation)
+- P2.0 status: **P2.0-B complete** (navigation + boundary contracts); **P2.0-A complete** (shell contract + seven-surface registry foundation)
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 - P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)

@@ -16,7 +16,9 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P2.0-A complete** — Shell foundation + seven-surface registry (Aurel CRO, HQ, CORP, HUB, IDE, SYSTEM, Settings); contract-only; 28 focused tests; SURFACE_TAXONOMY_DRIFT noted. Report: `agent/reports/P2_0_A_SHELL_FOUNDATION_SURFACE_REGISTRY.md`. Next: **P2.0-B — Navigation + Boundary Contracts**.
+**P2.0-B complete** — Navigation + boundary contracts (no universal left nav, per-surface nav, Logo→CRO route binding, source-of-truth, SYSTEM no-agent-access, Settings vs SYSTEM, HUB tool entry); contract-only; 41 focused tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_B_NAVIGATION_BOUNDARY_CONTRACTS.md`. Next: **P2.0-C — Floating Window + Handoff + Context Carryover**.
+
+**P2.0-A complete** — Shell foundation + seven-surface registry (Aurel CRO, HQ, CORP, HUB, IDE, SYSTEM, Settings); contract-only; 28 focused tests; SURFACE_TAXONOMY_DRIFT noted. Report: `agent/reports/P2_0_A_SHELL_FOUNDATION_SURFACE_REGISTRY.md`.
 
 **P1-PRE-P2-AUDIT rerun complete** — Post-criteria-repair full audit: SEALED_FOR_P1_CONTRACT_SCOPE accepted; programmatic exit seal SEALED; output_passport 147 passed; compileall/ruff/mypy PASS; full suite 5679 passed with 12 repo-path-drift failures (`/Desktop/GG` hardcoded path vs current `/Desktop/Aurel`); coverage 82.71%; bandit warnings pre-existing; pip-audit clean; P2 readiness **READY_FOR_P2_REVIEW**. Report: `agent/reports/P1_PRE_P2_FULL_AUDIT_AND_SEAL_RERUN.md`.
 
