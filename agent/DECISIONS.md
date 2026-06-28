@@ -1,5 +1,11 @@
 # Decisions Log
 
+## 2026-06-29 - P2.0-E Operator Waiver Boundary
+
+### DEC-P20E-01: Missing P2.0-D OMNI marker waived for P2.0-E dispatch only
+**Decision:** The operator explicitly waived the missing local P2.0-D OMNI acceptance marker for the P2.0-E implementation dispatch. P2.0-E reports this as an operator waiver, not as false OMNI acceptance evidence.
+**Why:** P2.0-D implementation, report, commit hash, clean git evidence, and validation evidence are present locally, but the exact OMNI acceptance marker was not found in repo state. The waiver unblocks this dispatch without rewriting evidence history.
+
 ## 2026-06-28 - P1.9.30 Seal Criteria Repair
 
 ### DEC-P1930-01: P1.9.30 seals P1 contract scope only

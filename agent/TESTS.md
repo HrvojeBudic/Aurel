@@ -58,6 +58,24 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.0-E Operator Demo + Snapshot + Regression Validation (COMPLETE)
+
+Focused validation (2026-06-29):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_operator_demo_snapshot_regression.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Report: `agent/reports/P2_0_E_OPERATOR_DEMO_SNAPSHOT_REGRESSION.md`
+
+Results: compileall **PASS**; focused P2.0-E **33 passed**; AurelShell **188 passed**; ruff **PASS**; mypy **PASS** (286 files).
+
+P2.0-E is contract/read-model/regression-harness only. It does NOT add product UI, web/desktop/mobile clients, CLI/TUI, route runtime, browser tests, live shell, source-of-truth store, permission enforcement, Custos integration, memory writes, trace writes, P2.0-F implementation, or P2.1 authorization.
+
 ## P1.7.20 Exit Seal + Live Integration Demo Validation (COMPLETE)
 
 Focused validation (2026-06-26):

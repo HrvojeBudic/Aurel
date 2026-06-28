@@ -2,6 +2,7 @@
 
 | Report | Date | Summary |
 |--------|------|---------|
+| [P2.0-E Operator Demo + Multi-Client Snapshot + Regression Harness](reports/P2_0_E_OPERATOR_DEMO_SNAPSHOT_REGRESSION.md) | 2026-06-29 | P2.0.22-P2.0.26 operator-testable shell snapshot pack: demo/read-model cards, multi-client parity contract, shell state snapshot, route invariant harness, readiness review; 23 all-false side effects; 33 focused tests, 188 AurelShell tests; next P2.0-F |
 | [P2.0-D Truth Labels + Permission Matrix + Fixture Discipline](reports/P2_0_D_TRUTH_PERMISSION_FIXTURE_CONTRACTS.md) | 2026-06-29 | P2.0.18–P2.0.21 shell honesty contracts: guarded truth labels, contract-only permission meaning matrix, explicit unavailable states, DEV_FIXTURE/MOCK/SIMULATED disclosures; 21 all-false side effects; 38 focused tests, 155 AurelShell tests; next P2.0-E |
 | [P2.0-C Floating Window + Handoff + Context Carryover](reports/P2_0_C_FLOATING_WINDOW_HANDOFF_CONTEXT.md) | 2026-06-29 | P2.0.15–P2.0.17 shell continuity contracts: floating window descriptor, cross-surface handoff intents (CRO→HQ, HQ→CORP, HUB→IDE DEV_FIXTURE), context carryover payload with scoped refs; 18 all-false side effects; 48 focused tests; next P2.0-D |
 | [P2.0-B Navigation + Boundary Contracts](reports/P2_0_B_NAVIGATION_BOUNDARY_CONTRACTS.md) | 2026-06-29 | P2.0.9–P2.0.14 contract boundaries: no universal left nav, per-surface nav, Logo→CRO route binding, source-of-truth, SYSTEM no-agent-access, Settings vs SYSTEM, HUB tool entry; 22 all-false side effects; 41 focused tests; next P2.0-C |

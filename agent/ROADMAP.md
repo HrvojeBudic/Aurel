@@ -16,7 +16,9 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P2.0-D complete** — Truth labels + permission matrix + fixture discipline contracts (guarded truth claims, permission meaning matrix, explicit unavailable states, DEV_FIXTURE/MOCK/SIMULATED disclosures); contract-only; 38 focused tests; 155 AurelShell tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_D_TRUTH_PERMISSION_FIXTURE_CONTRACTS.md`. Next: **P2.0-E — Operator Demo + Multi-Client Snapshot + Regression Harness**.
+**P2.0-E complete** — Operator Demo + Multi-Client Snapshot + Regression Harness contracts (operator-testable demo cards, client parity contract, shell state snapshot, route invariant harness, readiness review); contract-only; 33 focused tests; 188 AurelShell tests; SURFACE_TAXONOMY_DRIFT inherited; P2.0-D OMNI marker explicitly waived by operator for this dispatch. Report: `agent/reports/P2_0_E_OPERATOR_DEMO_SNAPSHOT_REGRESSION.md`. Next: **P2.0-F — Projection/API/CLI/Docs/Exit Seal Integration Tail**.
+
+**P2.0-D complete** — Truth labels + permission matrix + fixture discipline contracts (guarded truth claims, permission meaning matrix, explicit unavailable states, DEV_FIXTURE/MOCK/SIMULATED disclosures); contract-only; 38 focused tests; 155 AurelShell tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_D_TRUTH_PERMISSION_FIXTURE_CONTRACTS.md`.
 
 **P2.0-C complete** — Shell continuity contracts (floating window descriptor, cross-surface handoff intents, context carryover payload); contract-only DEV_FIXTURE examples; 48 focused tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_C_FLOATING_WINDOW_HANDOFF_CONTEXT.md`.
 

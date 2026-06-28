@@ -1,12 +1,24 @@
-# Active Task: P2.0-D (complete)
+# Active Task: P2.0-E (complete)
 
-**Status:** P2.0-D COMPLETE — Truth Labels + Permission Matrix + Fixture Discipline; contract-only shell honesty; next P2.0-E
+**Status:** P2.0-E COMPLETE — Operator Demo + Multi-Client Snapshot + Regression Harness; contract-only shell snapshot/read-model; next P2.0-F
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline**
-- Next planned task: **P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness**
+- Last completed task: **P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness**
+- Next planned task: **P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.0-E Status
+
+**DONE** — P2.0.22-P2.0.26 operator demo, multi-client consistency, shell snapshot, route regression harness, and readiness review are implemented as contract-only AurelShell objects.
+
+P2.0-E establishes `OperatorTestableSurfaceDemoState`, `MultiClientConsistencyContract`, `ShellStateSnapshot`, `SurfaceRegressionRouteTestHarness`, `P20CognitiveOSLockReadiness`, and `P20EOperatorDemoSnapshotRegressionPackResult`. All 23 side-effect/no-authority booleans remain false.
+
+Boundary: operator-testable demo is not LIVE or product UI; multi-client consistency is not client implementation; shell snapshot is not source of truth; route harness is not route runtime; readiness is not P2.0 exit seal, not LIVE, does not start P2.0-F, and does not authorize P2.1. Operator explicitly waived the missing local P2.0-D OMNI acceptance marker for this P2.0-E dispatch; the report records the waiver rather than claiming false acceptance evidence.
+
+Validation: compileall PASS; focused P2.0-E pytest 33 passed; aurel_shell 188 passed; ruff PASS; mypy PASS (286 files).
+
+Report: `agent/reports/P2_0_E_OPERATOR_DEMO_SNAPSHOT_REGRESSION.md`
 
 ## P2.0-D Status
 

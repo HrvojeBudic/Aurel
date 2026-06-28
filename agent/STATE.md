@@ -1,17 +1,27 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.0-D — Truth Labels + Permission Matrix + Fixture Discipline)_
+_Last updated: 2026-06-29 (P2.0-E — Operator Demo + Multi-Client Snapshot + Regression Harness)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline
-- Current active: **P2.0-E dispatch review — Operator Demo + Multi-Client Snapshot + Regression Harness**
-- Next planned: P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness
+- Last completed: P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness
+- Current active: **P2.0-F dispatch review — Projection/API/CLI/Docs/Exit Seal Integration Tail**
+- Next planned: P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
+- P2.0 status: **P2.0-E complete** (operator demo + multi-client snapshot + regression harness); **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 - P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)
+
+## P2.0-E AurelShell Operator Demo / Snapshot / Regression Harness
+
+P2.0-E adds contract-only operator demo, client parity, shell snapshot, route regression harness, readiness, and pack result objects under `src/agentic_runtime/aurel_shell/`: `operator_demo.py`, `client_consistency.py`, `shell_snapshot.py`, `regression_harness.py`, and `readiness.py`.
+
+Boundary: `OperatorTestableSurfaceDemoState` is an inspectable DEV_FIXTURE/read-model state, not product UI or LIVE behavior. `MultiClientConsistencyContract` describes future client projection parity but creates no web, desktop, mobile, CLI, or TUI client. `ShellStateSnapshot` is read-model only and not source of truth. `SurfaceRegressionRouteTestHarness` checks route/surface invariants only and creates no route runtime, frontend route test, or browser test. `P20CognitiveOSLockReadiness` may return `READY_FOR_P2_0_F_REVIEW`, but it is not a P2.0 exit seal, not LIVE, does not start P2.0-F, and does not authorize P2.1.
+
+Operator waiver: the missing local P2.0-D OMNI acceptance marker was explicitly waived by operator instruction for this P2.0-E dispatch. This is recorded as a waiver, not as false OMNI acceptance evidence.
+
+Validation: compileall PASS; P2.0-E focused tests 33 passed; `tests/aurel_shell` 188 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_0_E_OPERATOR_DEMO_SNAPSHOT_REGRESSION.md`.
 
 ## P2.0-D AurelShell Truth Labels / Permission Matrix / Fixture Discipline
 
