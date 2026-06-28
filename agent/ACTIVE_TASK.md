@@ -1,12 +1,24 @@
-# Active Task: P1.8.17 (planned)
+# Active Task: P1.8-B (planned)
 
-**Status:** P1.8.16 COMPLETE; P1.8.17 PLANNED
+**Status:** P1.8-A COMPLETE; P1.8-B PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model**
-- Next planned task: **P1.8.17 — Delegation Projection/API/Event Contract Model**
-- Roadmap version: **v5.1 Integration-First**
+- Last completed task: **P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack**
+- Next planned task: **P1.8-B**
+- Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.8-A Status
+
+**COMPLETE** — P1.8-A actor boundary pack verified after focused and broader delegation validation.
+
+P1.8-A establishes a deterministic, versioned, JSON-safe, side-effect-free, contract-only actor boundary pack for P1.8.17-P1.8.22: AurelStateActorBoundary, AgentWorkerBoundary, CROAuthorityStateBridge, SystemRootBoundaryReference, BusinessEnvironmentActorBoundary, TriggerProposalBoundary, DelegationActorBoundaryReadModel, and DelegationActorBoundaryPackResult. Default contracts use CONTRACT_ONLY truth and DEV_FIXTURE source labels; all side-effect booleans are false.
+
+Boundary: Aurel state actor can own state; agent worker cannot. Agent worker is worker-only, cannot self-authorize, and cannot enter SYSTEM. CRO bridge depends on operator/Custos/runtime/SYSTEM and cannot self-authorize or activate evolution. SYSTEM root is operator-only; agent/tool/workflow entry is unavailable. BusinessEnvironment can hold bounded state refs but cannot grant permission or execute high-impact actions. Tool/workflow/memory triggers are proposal-only and cannot grant permission, execute, or write memory. CLI/Shell/TUI binding is UNAVAILABLE and owned by P1.8.28 Delegation Shell/CLI/TUI Binding. Runtime enforcement is UNAVAILABLE; this pack is contract-only and enforcement belongs to later runtime/policy layers. No policy/Custos decision, approval, permission, execution, trace/Ledger write, memory write, tool/workflow execution, SYSTEM mutation, runtime mutation, LIVE claim, TRACE_VERIFIED claim, or P1.8-B behavior.
+
+Validation: compileall PASS; focused actor-boundary pytest 17 passed; broader delegation selector 1028 passed, 4453 deselected; ruff PASS; mypy PASS.
+
+Report: `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md`
 
 ## P1.8.16 Status
 
@@ -184,6 +196,7 @@ Git status: committed locally, no push performed.
 
 ## Completed Reports
 
+- `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md`
 - `agent/reports/P1.8.7_DELEGATION_SCOPE_BOUNDARY_MODEL.md`
 - `agent/reports/P1.8.6_AGENT_IDENTITY_MESH_REF_BINDING.md`
 - `agent/reports/P1.8.5_NON_REPUDIATION_REF_BINDING.md`

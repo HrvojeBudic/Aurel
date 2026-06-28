@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-27 — P1.8-A Actor Boundary Pack
+
+### DEC-P18A-01: Operator-authorized v5.5 remap
+**Decision:** The local v5.1 pointer from P1.8.16 to P1.8.17 Projection/API/Event Contract is superseded for this run by the operator-authorized v5.5 remap: **P1.8.16 -> P1.8-A -> P1.8-B**. P1.8-A covers P1.8.17-P1.8.22 as the Actor Boundary Pack.
+**Why:** The actor boundary pack must be canonized before projection/API/event binding so agents, tools, workflows, BusinessEnvironment, CRO, and SYSTEM root boundaries cannot be overclaimed by later surfaces.
+
+### DEC-P18A-02: Actor boundary pack is contract-only
+**Decision:** P1.8-A adds pure deterministic contracts and a compact read model only. It does not implement runtime enforcement, policy/Custos decisions, approvals, permission grants, execution, trace/Ledger writes, memory writes, tool/workflow execution, SYSTEM mutation, Shell/CLI/TUI binding, or P1.8-B behavior.
+**Why:** Actor boundary contracts must separate declared authority from active authority. Enforcement belongs to later runtime/policy layers.
+
+### DEC-P18A-03: Package-level authority builder compatibility
+**Decision:** `agentic_runtime.delegation.build_delegation_authority_ref` now preserves both historical call styles: P1.8.0 foundation calls `(authority_kind, authority_basis)` and P1.8.4 authority-binding calls `(delegation_ref_id, authority_kind, authority_basis)`.
+**Why:** The broad delegation validation selector exercises both package-level APIs. The compatibility wrapper keeps existing P1.8.0 and P1.8.4 tests passing without changing either underlying module.
+
 ## 2026-06-26 — P1.7.19 Docs / State / Reports Update
 
 ### DEC-P1719-01: Truth-sync only; no runtime behavior

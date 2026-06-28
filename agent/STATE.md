@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model)_
+_Last updated: 2026-06-27 (P1.8-A — Actor Boundary Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model
-- Current active: **P1.8.17 — Delegation Projection/API/Event Contract Model (planned)**
-- Next planned: P1.8.17 — Delegation Projection/API/Event Contract Model
-- Roadmap version: **v5.1 Integration-First**
+- Last completed: P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack
+- Current active: **P1.8-B (planned)**
+- Next planned: P1.8-B
+- Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0–P1.8.16 complete)
+- P1.8 status: **in progress** (P1.8.0-P1.8.16 complete; P1.8-A complete)
 
 ## Golden Thread — P1.8 Delegation
 
@@ -19,21 +19,39 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.15 → P1.8.16 → P1.8.17
+### Chain: P1.8.16 -> P1.8-A -> P1.8-B
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.15 — Delegation Accountability Packet / Integration SummaryRef Model | `agent/reports/P1.8.15_DELEGATION_ACCOUNTABILITY_PACKET_INTEGRATION_SUMMARY_REF_MODEL.md` | 76 focused tests, deterministic hashes, 18 all-false side effects, clean validation |
-| Current | P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model | `agent/reports/P1.8.16_DELEGATION_PRE_PROJECTION_READINESS_SURFACE_CONTRACT_SEED_MODEL.md` | 71 focused tests, deterministic hashes, 17 all-false side effects, clean validation (compileall, pytest, ruff, mypy all pass) |
-| Next | P1.8.17 — Delegation Projection/API/Event Contract Model | (planned) | (planned) |
+| Previous | P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model | `agent/reports/P1.8.16_DELEGATION_PRE_PROJECTION_READINESS_SURFACE_CONTRACT_SEED_MODEL.md` | 71 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
+| Current | P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack | `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md` | 17 focused tests, broader delegation selector 1028 passed, deterministic hashes, all-false side effects, contract-only truth |
+| Next | P1.8-B | (planned) | (planned) |
 
 **Semantic bridge:**
-P1.8.15 AccountabilityPacketBindingSet
-→ P1.8.15 AccountabilityPacketEnvelope (wraps accountability_packet_binding_set_hash)
-→ P1.8.16 PreProjectionSeedEnvelope (wraps accountability_packet_binding_set_hash, integration_summary_envelope_hash, accountability_packet_envelope_hash)
-→ P1.8.16 PreProjectionSeedBinding (wraps pre_projection_seed_envelope_hash)
-→ P1.8.16 PreProjectionSeedBindingSet (wraps bindings)
-→ P1.8.17 Projection/API/Event Contract handoff
+P1.8.16 PreProjectionSeedEnvelope
+-> P1.8.16 PreProjectionSeedBinding
+-> P1.8.16 PreProjectionSeedBindingSet
+-> P1.8-A ActorBoundaryPackResult (wraps P1.8.17-P1.8.22 actor-boundary contract hashes)
+-> P1.8-A DelegationActorBoundaryReadModel (six checkpoint evidence rows)
+-> P1.8-B handoff
+
+**P1.8-A boundary declarations:**
+- `AurelStateActorBoundary` exists does not mean runtime state enforcement.
+- Aurel state actor can own state; agent worker cannot own state.
+- `AgentWorkerBoundary` exists does not grant self-authorization or SYSTEM entry.
+- Agent worker is worker-only and cannot enter SYSTEM.
+- `CROAuthorityStateBridge` exists does not authorize CRO or activate evolution.
+- CRO bridge depends on operator, Custos, runtime, and SYSTEM root.
+- `SystemRootBoundaryReference` exists does not make SYSTEM enterable by agents, tools, or workflows.
+- SYSTEM root is operator-only.
+- `BusinessEnvironmentActorBoundary` exists does not grant permission or execute high-impact actions.
+- BusinessEnvironment can hold bounded state references only.
+- `TriggerProposalBoundary` exists does not grant permission, execute, or write memory.
+- Tool, workflow, and memory triggers are proposal-only.
+- CLI/Shell/TUI binding is UNAVAILABLE; owned by P1.8.28 Delegation Shell/CLI/TUI Binding.
+- Runtime enforcement is UNAVAILABLE; this pack is contract-only and enforcement belongs to later runtime/policy layers.
+- Actor-boundary hashes are not LIVE or TRACE_VERIFIED.
+- Golden Thread exists does not mean trace verification.
 
 **P1.8.16 boundary declarations:**
 - `PreProjectionReadinessRef` exists does not mean projection ready.

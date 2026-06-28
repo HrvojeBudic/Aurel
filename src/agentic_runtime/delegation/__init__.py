@@ -33,6 +33,13 @@ pre-projection seed envelopes/bindings/binding sets without creating projection/
 API/event contract, read model, surface contract, CLI/Shell/TUI binding,
 UI surface, field exposure, redaction enforcement, or Output Passport behavior.
 
+Actor boundary pack (P1.8-A / P1.8.17-P1.8.22): deterministic, versioned,
+JSON-safe, side-effect-free actor/state/proposal boundary contracts for Aurel
+state actor, agent worker, CRO authority/state bridge, SYSTEM root,
+BusinessEnvironment, and trigger proposal boundaries. Contract-only; no runtime
+enforcement, approval, permission grant, tool/workflow execution, memory write,
+SYSTEM entry, trace/Ledger write, or runtime mutation.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -170,8 +177,16 @@ Architectural law:
   - Context present does not mean contract readiness.
   - PreProjectionSeedEnvelope exists does not mean Projection/API/Event Contract.
   - SeedHash is not TRACE_VERIFIED.
+  - AurelStateActorBoundary exists does not mean runtime state enforcement.
+  - AgentWorkerBoundary exists does not grant self-authorization or SYSTEM entry.
+  - CROAuthorityStateBridge exists does not authorize CRO or activate evolution.
+  - SystemRootBoundaryReference exists does not make SYSTEM enterable by agents/tools/workflows.
+  - BusinessEnvironmentActorBoundary exists does not grant permission or execute high-impact actions.
+  - TriggerProposalBoundary exists does not grant permission, execute, or write memory.
 """
 from __future__ import annotations
+
+from typing import Any
 
 from .foundation import (
     ACTOR_REF_KNOWN_FIELDS,
@@ -212,7 +227,7 @@ from .foundation import (
     NonRepudiationRef,
     build_agent_identity_mesh_ref,
     build_delegation_actor_ref,
-    build_delegation_authority_ref,
+    build_delegation_authority_ref as build_delegation_foundation_authority_ref,
     build_delegation_constraint,
     build_delegation_foundation_status,
     build_delegation_record,
@@ -346,7 +361,7 @@ from .authority import (
     DelegationAuthorityStatusReport,
     build_delegation_authority_binding,
     build_delegation_authority_binding_set,
-    build_delegation_authority_ref,
+    build_delegation_authority_ref as build_delegation_authority_ref_v1_8_4,
     build_delegation_authority_status_report,
     hash_delegation_authority_binding_set,
     hash_delegation_authority_ref,
@@ -1255,6 +1270,82 @@ from .pre_projection import (
     serialize_delegation_pre_projection_seed_envelope,
     serialize_delegation_pre_projection_seed_binding_set,
 )
+
+from .actor_boundary import (
+    ACTOR_BOUNDARY_CHECKPOINT_READ_KNOWN_FIELDS,
+    ACTOR_BOUNDARY_PACK_RESULT_KNOWN_FIELDS,
+    ACTOR_BOUNDARY_READ_MODEL_KNOWN_FIELDS,
+    ACTOR_BOUNDARY_SIDE_EFFECTS_KNOWN_FIELDS,
+    AGENT_WORKER_BOUNDARY_KNOWN_FIELDS,
+    AUREL_STATE_ACTOR_BOUNDARY_KNOWN_FIELDS,
+    BUSINESS_ENVIRONMENT_ACTOR_BOUNDARY_KNOWN_FIELDS,
+    CRO_AUTHORITY_STATE_BRIDGE_KNOWN_FIELDS,
+    DEFAULT_DELEGATION_ACTOR_BOUNDARY_UNAVAILABLE_REASONS,
+    DELEGATION_ACTOR_BOUNDARY_CHECKPOINT_READ_VERSION,
+    DELEGATION_ACTOR_BOUNDARY_PACK_CHECKPOINT_IDS,
+    DELEGATION_ACTOR_BOUNDARY_PACK_RESULT_VERSION,
+    DELEGATION_ACTOR_BOUNDARY_PACK_TASK_ID,
+    DELEGATION_ACTOR_BOUNDARY_READ_MODEL_VERSION,
+    DELEGATION_ACTOR_BOUNDARY_UNAVAILABLE_REASON_DETAILS,
+    DELEGATION_AGENT_WORKER_BOUNDARY_VERSION,
+    DELEGATION_AUREL_STATE_ACTOR_BOUNDARY_VERSION,
+    DELEGATION_BUSINESS_ENVIRONMENT_ACTOR_BOUNDARY_VERSION,
+    DELEGATION_CRO_AUTHORITY_STATE_BRIDGE_VERSION,
+    DELEGATION_SYSTEM_ROOT_BOUNDARY_REFERENCE_VERSION,
+    DELEGATION_TRIGGER_PROPOSAL_BOUNDARY_VERSION,
+    SYSTEM_ROOT_BOUNDARY_REFERENCE_KNOWN_FIELDS,
+    TRIGGER_PROPOSAL_BOUNDARY_KNOWN_FIELDS,
+    AgentWorkerBoundary,
+    AurelStateActorBoundary,
+    BusinessEnvironmentActorBoundary,
+    CROAuthorityStateBridge,
+    DelegationActorBoundaryActorKind,
+    DelegationActorBoundaryCheckpointRead,
+    DelegationActorBoundaryKind,
+    DelegationActorBoundaryPackResult,
+    DelegationActorBoundaryReadModel,
+    DelegationActorBoundarySideEffects,
+    DelegationActorBoundaryStatus,
+    DelegationActorStateRole,
+    DelegationAuthorityScope,
+    DelegationBoundaryTruthLabel,
+    DelegationBoundaryUnavailableReason,
+    DelegationProposalOriginKind,
+    SystemRootBoundaryReference,
+    TriggerProposalBoundary,
+    build_agent_worker_boundary,
+    build_aurel_state_actor_boundary,
+    build_business_environment_actor_boundary,
+    build_cro_authority_state_bridge,
+    build_default_delegation_actor_boundary_read_model,
+    build_p1_8_a_actor_boundary_pack_result,
+    build_system_root_boundary_reference,
+    build_trigger_proposal_boundary,
+    hash_delegation_actor_boundary_pack_result,
+    hash_delegation_actor_boundary_read_model,
+    hash_delegation_agent_worker_boundary,
+    hash_delegation_aurel_state_actor_boundary,
+    hash_delegation_business_environment_actor_boundary,
+    hash_delegation_cro_authority_state_bridge,
+    hash_delegation_system_root_boundary_reference,
+    hash_delegation_trigger_proposal_boundary,
+    serialize_delegation_actor_boundary_pack_result,
+    serialize_delegation_actor_boundary_read_model,
+)
+
+
+def build_delegation_authority_ref(*args: Any, **kwargs: Any) -> Any:
+    """Compatibility export for P1.8.0 and P1.8.4 authority refs.
+
+    P1.8.0 foundation calls use (authority_kind, authority_basis). P1.8.4
+    authority-binding calls use (delegation_ref_id, authority_kind,
+    authority_basis). The package-level name historically exposed both.
+    """
+    if "delegation_ref_id" not in kwargs and (
+        len(args) == 2 or (not args and {"authority_kind", "authority_basis"} <= set(kwargs))
+    ):
+        return build_delegation_foundation_authority_ref(*args, **kwargs)
+    return build_delegation_authority_ref_v1_8_4(*args, **kwargs)
 
 __all__ = [
     # P1.8.0 foundation constants
@@ -2347,4 +2438,70 @@ __all__ = [
     # P1.8.16 serializers
     "serialize_delegation_pre_projection_seed_envelope",
     "serialize_delegation_pre_projection_seed_binding_set",
+    # P1.8-A actor boundary constants
+    "DELEGATION_ACTOR_BOUNDARY_PACK_TASK_ID",
+    "DELEGATION_ACTOR_BOUNDARY_PACK_CHECKPOINT_IDS",
+    "DELEGATION_AUREL_STATE_ACTOR_BOUNDARY_VERSION",
+    "DELEGATION_AGENT_WORKER_BOUNDARY_VERSION",
+    "DELEGATION_CRO_AUTHORITY_STATE_BRIDGE_VERSION",
+    "DELEGATION_SYSTEM_ROOT_BOUNDARY_REFERENCE_VERSION",
+    "DELEGATION_BUSINESS_ENVIRONMENT_ACTOR_BOUNDARY_VERSION",
+    "DELEGATION_TRIGGER_PROPOSAL_BOUNDARY_VERSION",
+    "DELEGATION_ACTOR_BOUNDARY_CHECKPOINT_READ_VERSION",
+    "DELEGATION_ACTOR_BOUNDARY_READ_MODEL_VERSION",
+    "DELEGATION_ACTOR_BOUNDARY_PACK_RESULT_VERSION",
+    "DELEGATION_ACTOR_BOUNDARY_UNAVAILABLE_REASON_DETAILS",
+    "DEFAULT_DELEGATION_ACTOR_BOUNDARY_UNAVAILABLE_REASONS",
+    # P1.8-A known fields
+    "ACTOR_BOUNDARY_SIDE_EFFECTS_KNOWN_FIELDS",
+    "AUREL_STATE_ACTOR_BOUNDARY_KNOWN_FIELDS",
+    "AGENT_WORKER_BOUNDARY_KNOWN_FIELDS",
+    "CRO_AUTHORITY_STATE_BRIDGE_KNOWN_FIELDS",
+    "SYSTEM_ROOT_BOUNDARY_REFERENCE_KNOWN_FIELDS",
+    "BUSINESS_ENVIRONMENT_ACTOR_BOUNDARY_KNOWN_FIELDS",
+    "TRIGGER_PROPOSAL_BOUNDARY_KNOWN_FIELDS",
+    "ACTOR_BOUNDARY_CHECKPOINT_READ_KNOWN_FIELDS",
+    "ACTOR_BOUNDARY_READ_MODEL_KNOWN_FIELDS",
+    "ACTOR_BOUNDARY_PACK_RESULT_KNOWN_FIELDS",
+    # P1.8-A enums
+    "DelegationActorBoundaryActorKind",
+    "DelegationActorBoundaryKind",
+    "DelegationAuthorityScope",
+    "DelegationActorStateRole",
+    "DelegationProposalOriginKind",
+    "DelegationBoundaryTruthLabel",
+    "DelegationBoundaryUnavailableReason",
+    "DelegationActorBoundaryStatus",
+    # P1.8-A dataclasses
+    "DelegationActorBoundarySideEffects",
+    "AurelStateActorBoundary",
+    "AgentWorkerBoundary",
+    "CROAuthorityStateBridge",
+    "SystemRootBoundaryReference",
+    "BusinessEnvironmentActorBoundary",
+    "TriggerProposalBoundary",
+    "DelegationActorBoundaryCheckpointRead",
+    "DelegationActorBoundaryReadModel",
+    "DelegationActorBoundaryPackResult",
+    # P1.8-A builders
+    "build_aurel_state_actor_boundary",
+    "build_agent_worker_boundary",
+    "build_cro_authority_state_bridge",
+    "build_system_root_boundary_reference",
+    "build_business_environment_actor_boundary",
+    "build_trigger_proposal_boundary",
+    "build_default_delegation_actor_boundary_read_model",
+    "build_p1_8_a_actor_boundary_pack_result",
+    # P1.8-A hash functions
+    "hash_delegation_aurel_state_actor_boundary",
+    "hash_delegation_agent_worker_boundary",
+    "hash_delegation_cro_authority_state_bridge",
+    "hash_delegation_system_root_boundary_reference",
+    "hash_delegation_business_environment_actor_boundary",
+    "hash_delegation_trigger_proposal_boundary",
+    "hash_delegation_actor_boundary_read_model",
+    "hash_delegation_actor_boundary_pack_result",
+    # P1.8-A serializers
+    "serialize_delegation_actor_boundary_read_model",
+    "serialize_delegation_actor_boundary_pack_result",
 ]
