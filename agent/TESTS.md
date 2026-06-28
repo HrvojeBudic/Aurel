@@ -58,6 +58,24 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.0-F Projection / API / CLI / Docs / Exit Seal Validation (COMPLETE)
+
+Focused validation (2026-06-29):
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_projection_cli_exit_seal.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Report: `agent/reports/P2_0_F_PROJECTION_CLI_EXIT_SEAL.md`
+
+Results: compileall **PASS**; focused P2.0-F **43 passed**; AurelShell **231 passed**; ruff **PASS**; mypy **PASS** (291 files).
+
+P2.0-F is contract/projection/read-model/exit-seal only. It does NOT add product UI, API server, HTTP routes, event bus, runtime event emission, live CLI/TUI product, route runtime, memory writes, trace writes, trace verification, runtime mutation, or P2.1 work. `P2_CONTRACT_SCOPE` seals separately from `PRODUCTION_LIVE_SCOPE`, `TRACE_VERIFIED_SCOPE`, and `RELEASE_SCOPE`. `READY_FOR_P2_1_REVIEW` is review-only.
+
 ## P2.0-E Operator Demo + Snapshot + Regression Validation (COMPLETE)
 
 Focused validation (2026-06-29):

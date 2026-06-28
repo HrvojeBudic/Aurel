@@ -1,12 +1,22 @@
-# Active Task: P2.0-E (complete)
+# Active Task: P2.0-F (complete)
 
-**Status:** P2.0-E COMPLETE — Operator Demo + Multi-Client Snapshot + Regression Harness; contract-only shell snapshot/read-model; next P2.0-F
+**Status:** P2.0-F COMPLETE — Projection/API/CLI/Docs/Exit Seal Integration Tail; P2.0 SEALED_FOR_P2_CONTRACT_SCOPE; next OMNI review of P2.0 exit seal + P2.1 readiness boundary
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness**
-- Next planned task: **P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail**
+- Last completed task: **P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail**
+- Next planned task: **OMNI review of P2.0 exit seal and P2.1 readiness boundary** (P2.1 not started, not authorized)
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.0-F Status
+
+**DONE — P2.0 SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0.27-P2.0.30 projection/API/event contracts, read-only CLI inspect binding, TUI UNAVAILABLE, docs/state/report sync, and the scope-aware P2.0 exit seal are implemented as contract-only AurelShell objects over the P2.0-A/B/C/D/E stack.
+
+P2.0-F establishes `ShellProjectionContract`/`ShellProjectionReadModel` (read-model over the shell state snapshot), `ShellAPIContract` (not a server, no HTTP routes), `ShellEventContract` (not emitted, no event bus), `ShellCLIBindingContract` (read-only inspect), `ShellTUIBindingContract` (explicit UNAVAILABLE), `P20DocsStateReportUpdate`, `P20ExitSeal` with `P20ExitSealChecklist`, `P20LiveIntegrationDemoResult`, `P20ReadinessForP21Review`, and `P20FProjectionCLIExitSealPackResult`. All 23 P2.0-F side-effect/no-authority booleans remain false.
+
+Boundary: projection is not runtime and not source of truth; API contract is not an API server and creates no HTTP routes; event contract is not an emitted runtime event and creates no event bus; CLI inspect is read-only and grants no authority; TUI is UNAVAILABLE (no fake TUI product); docs are not proof; `P2_CONTRACT_SCOPE` seals separately from `PRODUCTION_LIVE_SCOPE`, `TRACE_VERIFIED_SCOPE`, and `RELEASE_SCOPE`, which cannot seal without real live/trace/release evidence; `READY_FOR_P2_1_REVIEW` is review-only and does not start or authorize P2.1. Operator explicitly waived the missing local P2.0-E OMNI acceptance marker for this P2.0-F dispatch; the report records the waiver rather than claiming false acceptance evidence.
+
+Report: `agent/reports/P2_0_F_PROJECTION_CLI_EXIT_SEAL.md`
 
 ## P2.0-E Status
 

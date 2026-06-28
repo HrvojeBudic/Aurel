@@ -1,14 +1,24 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.0-E — Operator Demo + Multi-Client Snapshot + Regression Harness)_
+_Last updated: 2026-06-29 (P2.0-F — Projection/API/CLI/Docs/Exit Seal Integration Tail; P2.0 SEALED_FOR_P2_CONTRACT_SCOPE)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness
-- Current active: **P2.0-F dispatch review — Projection/API/CLI/Docs/Exit Seal Integration Tail**
-- Next planned: P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail
+- Last completed: P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail
+- Current active: **OMNI review of P2.0 exit seal + P2.1 readiness boundary** (P2.1 not started, not authorized)
+- Next planned: OMNI review of P2.0 exit seal and P2.1 readiness boundary
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **P2.0-E complete** (operator demo + multi-client snapshot + regression harness); **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
+- P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — **P2.0-F complete** (projection/API/event contracts + read-only CLI inspect + TUI UNAVAILABLE + docs sync + scope-aware exit seal); **P2.0-E complete** (operator demo + multi-client snapshot + regression harness); **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
+
+## P2.0-F AurelShell Projection / API / CLI / Docs / Exit Seal Integration Tail
+
+P2.0-F adds contract-only projection, API contract, event contract, CLI/TUI inspect binding, docs sync, and exit seal objects under `src/agentic_runtime/aurel_shell/`: `projection.py`, `api_contract.py`, `event_contract.py`, `cli_binding.py`, and `exit_seal.py`.
+
+Boundary: `ShellProjectionReadModel`/`ShellProjectionContract` is a read model over the P2.0-E shell state snapshot, not source of truth and not runtime. `ShellAPIContract` describes a read-only projection API shape; it is not an API server, creates no HTTP routes, and handles no network requests. `ShellEventContract` describes an event payload shape; it is not an emitted runtime event and creates no event bus. `ShellCLIBindingContract` is a read-only inspect contract that grants no authority; `ShellTUIBindingContract` is explicitly UNAVAILABLE. `P20DocsStateReportUpdate` records docs sync without overriding roadmap canon. `P20ExitSeal` issues `SEALED_FOR_P2_CONTRACT_SCOPE` while `PRODUCTION_LIVE_SCOPE`, `TRACE_VERIFIED_SCOPE`, and `RELEASE_SCOPE` remain unsealed; `P20LiveIntegrationDemoResult` is DEV_FIXTURE/NOT_LIVE; `P20ReadinessForP21Review` returns `READY_FOR_P2_1_REVIEW` (review-only, does not start or authorize P2.1). All 23 P2.0-F side-effect/no-authority booleans remain false.
+
+Operator waiver: the missing local P2.0-E OMNI acceptance marker was explicitly waived by operator instruction for this P2.0-F dispatch. This is recorded as a waiver, not as false OMNI acceptance evidence.
+
+Report: `agent/reports/P2_0_F_PROJECTION_CLI_EXIT_SEAL.md`.
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 - P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)

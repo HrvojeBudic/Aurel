@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-06-29 - P2.0-F Projection / CLI / Exit Seal Boundary
+
+### DEC-P20F-01: Missing P2.0-E OMNI marker waived for P2.0-F dispatch only
+**Decision:** The operator explicitly waived the missing local P2.0-E OMNI acceptance marker for the P2.0-F implementation dispatch. P2.0-F records this as an operator waiver, not as false OMNI acceptance evidence. The waiver is scoped to this dispatch only and does not extend to later packs.
+**Why:** P2.0-E implementation, report, commit hash (`1f0f6a9`), clean git evidence, and DONE status are present locally, but no separate P2.0-E OMNI acceptance marker exists in repo state (the established convention records acceptance inline in the next pack's dependency evidence). The operator confirmed "Waive marker, proceed" so the dispatch unblocks without rewriting evidence history.
+
+### DEC-P20F-02: P2.0 seals only at contract scope
+**Decision:** P2.0-F may return `SEALED_FOR_P2_CONTRACT_SCOPE` only when the P2.0-A/B/C/D/E report chain, P2.0.27-P2.0.30 coverage, projection/API/event contract, read-only CLI inspect with explicit TUI/LIVE/trace unavailable boundaries, docs sync, and fake-truth guards all pass. `PRODUCTION_LIVE_SCOPE`, `TRACE_VERIFIED_SCOPE`, and `RELEASE_SCOPE` cannot seal without actual live-path, trace-verification, and release evidence respectively. The seal claims no production `LIVE`, actual `TRACE_VERIFIED`, `EXIT_SEALED`, or release readiness.
+**Why:** P2.0 is a contract/projection layer over the seven-surface cognitive OS lock. Production live runtime, trace verification, and release belong to later layers; the contract-scope seal must remain honest about what is unavailable.
+
+### DEC-P20F-03: P2.1 readiness is review-only and not coding authorization
+**Decision:** `READY_FOR_P2_1_REVIEW` derived from `SEALED_FOR_P2_CONTRACT_SCOPE` means OMNI review/brainstorm/planning only. It never means `READY_FOR_P2_1_CODING`, does not start P2.1, and does not authorize P2.1 implementation work.
+**Why:** Exit seal at contract scope prepares review, not execution. P2.1 coding requires a separate accepted dispatch after OMNI review.
+
 ## 2026-06-29 - P2.0-E Operator Waiver Boundary
 
 ### DEC-P20E-01: Missing P2.0-D OMNI marker waived for P2.0-E dispatch only
