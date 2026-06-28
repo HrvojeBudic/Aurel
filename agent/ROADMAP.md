@@ -16,7 +16,9 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 
 ## Current phase
 
-**P2.0-B complete** — Navigation + boundary contracts (no universal left nav, per-surface nav, Logo→CRO route binding, source-of-truth, SYSTEM no-agent-access, Settings vs SYSTEM, HUB tool entry); contract-only; 41 focused tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_B_NAVIGATION_BOUNDARY_CONTRACTS.md`. Next: **P2.0-C — Floating Window + Handoff + Context Carryover**.
+**P2.0-C complete** — Shell continuity contracts (floating window descriptor, cross-surface handoff intents, context carryover payload); contract-only DEV_FIXTURE examples; 48 focused tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_C_FLOATING_WINDOW_HANDOFF_CONTEXT.md`. Next: **P2.0-D — Truth Labels + Permission Matrix + Fixture Discipline**.
+
+**P2.0-B complete** — Navigation + boundary contracts (no universal left nav, per-surface nav, Logo→CRO route binding, source-of-truth, SYSTEM no-agent-access, Settings vs SYSTEM, HUB tool entry); contract-only; 41 focused tests; SURFACE_TAXONOMY_DRIFT inherited. Report: `agent/reports/P2_0_B_NAVIGATION_BOUNDARY_CONTRACTS.md`.
 
 **P2.0-A complete** — Shell foundation + seven-surface registry (Aurel CRO, HQ, CORP, HUB, IDE, SYSTEM, Settings); contract-only; 28 focused tests; SURFACE_TAXONOMY_DRIFT noted. Report: `agent/reports/P2_0_A_SHELL_FOUNDATION_SURFACE_REGISTRY.md`.
 

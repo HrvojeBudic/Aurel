@@ -1,14 +1,14 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.0-B — Navigation + Boundary Contracts)_
+_Last updated: 2026-06-29 (P2.0-C — Floating Window + Handoff + Context Carryover)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts
-- Current active: **P2.0-C dispatch review — Floating Window + Handoff + Context Carryover**
-- Next planned: P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover
+- Last completed: P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover
+- Current active: **P2.0-D dispatch review — Truth Labels + Permission Matrix + Fixture Discipline**
+- Next planned: P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **P2.0-B complete** (navigation + boundary contracts); **P2.0-A complete** (shell contract + seven-surface registry foundation)
+- P2.0 status: **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 - P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)

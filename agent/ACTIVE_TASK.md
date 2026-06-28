@@ -1,11 +1,11 @@
-# Active Task: P2.0-B (complete)
+# Active Task: P2.0-C (complete)
 
-**Status:** P2.0-B COMPLETE — Navigation + Boundary Contracts; contract-only nav/boundary semantics; next P2.0-C
+**Status:** P2.0-C COMPLETE — Floating Window + Handoff + Context Carryover; contract-only shell continuity; next P2.0-D
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts**
-- Next planned task: **P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover**
+- Last completed task: **P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover**
+- Next planned task: **P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P1.9.30 Seal Criteria Repair Status
