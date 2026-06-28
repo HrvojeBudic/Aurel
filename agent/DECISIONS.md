@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-28 — P1.8-B Proposal / Permission / Execution / Operator Review Pack
+
+### DEC-P18B-01: Action boundary pack is contract-only
+**Decision:** P1.8-B adds deterministic contracts, transition-collapse guards, and a compact read model for P1.8.23-P1.8.26 only. It does not implement runtime permission enforcement, policy/Custos decisions, approvals, execution dispatch, proof verification, trace/Ledger writes, memory writes, tool/workflow execution, SYSTEM mutation, Shell/CLI/TUI binding, or P1.8-C behavior.
+**Why:** Proposal, permission, execution, proof, and operator review must remain separate semantic states before later runtime/projection surfaces can consume them.
+
+### DEC-P18B-02: Operator decision state does not auto-execute
+**Decision:** `OperatorDelegationDecisionBinding` records explicit operator review states. Pending review blocks final claims; approved state permits only contract-state continuation and never dispatches execution; rejected/stopped states block continuation.
+**Why:** Operator review is a state boundary, not an implicit approval workflow or execution trigger.
+
 ## 2026-06-27 — P1.8-A Actor Boundary Pack
 
 ### DEC-P18A-01: Operator-authorized v5.5 remap

@@ -1,15 +1,15 @@
 # Repository State
 
-_Last updated: 2026-06-27 (P1.8-A — Actor Boundary Pack)_
+_Last updated: 2026-06-28 (P1.8-B — Proposal / Permission / Execution / Operator Review Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack
-- Current active: **P1.8-B (planned)**
-- Next planned: P1.8-B
+- Last completed: P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack
+- Current active: **P1.8-C (planned)**
+- Next planned: P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
-- P1.8 status: **in progress** (P1.8.0-P1.8.16 complete; P1.8-A complete)
+- P1.8 status: **in progress** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete)
 
 ## Golden Thread — P1.8 Delegation
 
@@ -19,13 +19,13 @@ Golden Thread is not policy decision.
 Golden Thread is not Ledger finality.
 Golden Thread is not TRACE_VERIFIED unless trace layer explicitly verifies it.
 
-### Chain: P1.8.16 -> P1.8-A -> P1.8-B
+### Chain: P1.8-A -> P1.8-B -> P1.8-C
 
 | Step | Task | Report | Evidence |
 |------|------|--------|----------|
-| Previous | P1.8.16 — Delegation Pre-Projection Readiness / Surface Contract Seed Model | `agent/reports/P1.8.16_DELEGATION_PRE_PROJECTION_READINESS_SURFACE_CONTRACT_SEED_MODEL.md` | 71 focused tests, deterministic hashes, 17 all-false side effects, clean validation |
-| Current | P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack | `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md` | 17 focused tests, broader delegation selector 1028 passed, deterministic hashes, all-false side effects, contract-only truth |
-| Next | P1.8-B | (planned) | (planned) |
+| Previous | P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack | `agent/reports/P1_8_A_ACTOR_BOUNDARY_PACK.md` | 17 focused tests, broader delegation selector 1028 passed, deterministic hashes, all-false side effects, contract-only truth |
+| Current | P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack | `agent/reports/P1_8_B_PROPOSAL_PERMISSION_EXECUTION_OPERATOR_REVIEW_PACK.md` | 16 focused tests, broader delegation selector 1044 passed, deterministic hashes, all-false side effects, contract-only truth |
+| Next | P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack | (planned) | (planned) |
 
 **Semantic bridge:**
 P1.8.16 PreProjectionSeedEnvelope
@@ -33,7 +33,24 @@ P1.8.16 PreProjectionSeedEnvelope
 -> P1.8.16 PreProjectionSeedBindingSet
 -> P1.8-A ActorBoundaryPackResult (wraps P1.8.17-P1.8.22 actor-boundary contract hashes)
 -> P1.8-A DelegationActorBoundaryReadModel (six checkpoint evidence rows)
--> P1.8-B handoff
+-> P1.8-B DelegationActionBoundaryPackResult (wraps P1.8.23-P1.8.26 action-boundary contract hashes)
+-> P1.8-B DelegationActionBoundaryReadModel (four checkpoint evidence rows)
+-> P1.8-C handoff
+
+**P1.8-B boundary declarations:**
+- `DelegationProposalBoundary` exists does not grant permission.
+- Proposal cannot execute, write memory, invoke tools/workflows, or claim proof.
+- `DelegationPermissionBoundary` exists does not start execution.
+- Permission can reference proposal but cannot produce execution result or proof.
+- `DelegationExecutionProofBoundary` exists does not verify proof.
+- Execution records remain proof-pending without evidence/trace verification.
+- `OperatorDelegationDecisionBinding` exists does not auto-execute.
+- Pending operator review blocks final claim; approved decision does not execute; rejected/stopped decisions block continuation; revision remains non-final.
+- CLI/Shell/TUI binding is UNAVAILABLE; owned by P1.8.28 Delegation Shell/CLI/TUI Binding.
+- Runtime enforcement is UNAVAILABLE; this pack is contract-only and enforcement belongs to later runtime/policy layers.
+- Trace verification is UNAVAILABLE; P1.8-B does not perform Ledger/global trace verification.
+- Action-boundary hashes are not LIVE or TRACE_VERIFIED.
+- Golden Thread exists does not mean trace verification.
 
 **P1.8-A boundary declarations:**
 - `AurelStateActorBoundary` exists does not mean runtime state enforcement.

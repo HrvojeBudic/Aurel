@@ -40,6 +40,12 @@ BusinessEnvironment, and trigger proposal boundaries. Contract-only; no runtime
 enforcement, approval, permission grant, tool/workflow execution, memory write,
 SYSTEM entry, trace/Ledger write, or runtime mutation.
 
+Action boundary pack (P1.8-B / P1.8.23-P1.8.26): deterministic, versioned,
+JSON-safe, side-effect-free proposal/permission/execution/proof/operator review
+boundary contracts. Proposal is not permission. Permission is not execution.
+Execution is not proof. Operator review is explicit state, not automatic
+execution.
+
 P1.8 does not authorize, enforce, verify, execute, or write trace/Ledger.
 
 Architectural law:
@@ -183,6 +189,10 @@ Architectural law:
   - SystemRootBoundaryReference exists does not make SYSTEM enterable by agents/tools/workflows.
   - BusinessEnvironmentActorBoundary exists does not grant permission or execute high-impact actions.
   - TriggerProposalBoundary exists does not grant permission, execute, or write memory.
+  - DelegationProposalBoundary exists does not grant permission.
+  - DelegationPermissionBoundary exists does not start execution.
+  - DelegationExecutionProofBoundary exists does not verify proof.
+  - OperatorDelegationDecisionBinding exists does not auto-execute.
 """
 from __future__ import annotations
 
@@ -1331,6 +1341,67 @@ from .actor_boundary import (
     hash_delegation_trigger_proposal_boundary,
     serialize_delegation_actor_boundary_pack_result,
     serialize_delegation_actor_boundary_read_model,
+)
+
+from .action_boundary import (
+    ACTION_BOUNDARY_CHECKPOINT_READ_KNOWN_FIELDS,
+    ACTION_BOUNDARY_PACK_RESULT_KNOWN_FIELDS,
+    ACTION_BOUNDARY_READ_MODEL_KNOWN_FIELDS,
+    ACTION_BOUNDARY_SIDE_EFFECTS_KNOWN_FIELDS,
+    ACTION_TRANSITION_CHECK_KNOWN_FIELDS,
+    DEFAULT_DELEGATION_ACTION_BOUNDARY_UNAVAILABLE_REASONS,
+    DELEGATION_ACTION_BOUNDARY_CHECKPOINT_READ_VERSION,
+    DELEGATION_ACTION_BOUNDARY_PACK_CHECKPOINT_IDS,
+    DELEGATION_ACTION_BOUNDARY_PACK_RESULT_VERSION,
+    DELEGATION_ACTION_BOUNDARY_PACK_TASK_ID,
+    DELEGATION_ACTION_BOUNDARY_READ_MODEL_VERSION,
+    DELEGATION_ACTION_BOUNDARY_UNAVAILABLE_REASON_DETAILS,
+    DELEGATION_ACTION_TRANSITION_CHECK_VERSION,
+    DELEGATION_EXECUTION_PROOF_BOUNDARY_KNOWN_FIELDS,
+    DELEGATION_EXECUTION_PROOF_BOUNDARY_VERSION,
+    DELEGATION_OPERATOR_DECISION_BINDING_VERSION,
+    DELEGATION_PERMISSION_BOUNDARY_KNOWN_FIELDS,
+    DELEGATION_PERMISSION_BOUNDARY_VERSION,
+    DELEGATION_PROPOSAL_BOUNDARY_KNOWN_FIELDS,
+    DELEGATION_PROPOSAL_BOUNDARY_VERSION,
+    OPERATOR_DELEGATION_DECISION_BINDING_KNOWN_FIELDS,
+    DelegationActionBoundaryCheckpointRead,
+    DelegationActionBoundaryKind,
+    DelegationActionBoundaryPackResult,
+    DelegationActionBoundaryReadModel,
+    DelegationActionBoundarySideEffects,
+    DelegationActionBoundaryStatus,
+    DelegationActionState,
+    DelegationActionTransitionCheck,
+    DelegationActionTransitionVerdict,
+    DelegationActionTruthLabel,
+    DelegationActionUnavailableReason,
+    DelegationExecutionProofBoundary,
+    DelegationOperatorDecisionState,
+    DelegationPermissionBoundary,
+    DelegationProposalBoundary,
+    OperatorDelegationDecisionBinding,
+    assert_execution_is_not_proof,
+    assert_operator_decision_is_not_auto_execution,
+    assert_permission_is_not_execution,
+    assert_proposal_is_not_permission,
+    build_default_delegation_action_boundary_read_model,
+    build_delegation_action_transition_check,
+    build_delegation_execution_proof_boundary,
+    build_delegation_permission_boundary,
+    build_delegation_proposal_boundary,
+    build_operator_delegation_decision_binding,
+    build_p1_8_b_action_boundary_pack_result,
+    hash_delegation_action_boundary_pack_result,
+    hash_delegation_action_boundary_read_model,
+    hash_delegation_action_transition_check,
+    hash_delegation_execution_proof_boundary,
+    hash_delegation_permission_boundary,
+    hash_delegation_proposal_boundary,
+    hash_operator_delegation_decision_binding,
+    serialize_delegation_action_boundary_pack_result,
+    serialize_delegation_action_boundary_read_model,
+    serialize_delegation_action_transition_check,
 )
 
 
@@ -2504,4 +2575,68 @@ __all__ = [
     # P1.8-A serializers
     "serialize_delegation_actor_boundary_read_model",
     "serialize_delegation_actor_boundary_pack_result",
+    # P1.8-B constants
+    "DELEGATION_ACTION_BOUNDARY_PACK_TASK_ID",
+    "DELEGATION_ACTION_BOUNDARY_PACK_CHECKPOINT_IDS",
+    "DELEGATION_PROPOSAL_BOUNDARY_VERSION",
+    "DELEGATION_PERMISSION_BOUNDARY_VERSION",
+    "DELEGATION_EXECUTION_PROOF_BOUNDARY_VERSION",
+    "DELEGATION_OPERATOR_DECISION_BINDING_VERSION",
+    "DELEGATION_ACTION_TRANSITION_CHECK_VERSION",
+    "DELEGATION_ACTION_BOUNDARY_CHECKPOINT_READ_VERSION",
+    "DELEGATION_ACTION_BOUNDARY_READ_MODEL_VERSION",
+    "DELEGATION_ACTION_BOUNDARY_PACK_RESULT_VERSION",
+    "DELEGATION_ACTION_BOUNDARY_UNAVAILABLE_REASON_DETAILS",
+    "DEFAULT_DELEGATION_ACTION_BOUNDARY_UNAVAILABLE_REASONS",
+    "ACTION_BOUNDARY_SIDE_EFFECTS_KNOWN_FIELDS",
+    "DELEGATION_PROPOSAL_BOUNDARY_KNOWN_FIELDS",
+    "DELEGATION_PERMISSION_BOUNDARY_KNOWN_FIELDS",
+    "DELEGATION_EXECUTION_PROOF_BOUNDARY_KNOWN_FIELDS",
+    "OPERATOR_DELEGATION_DECISION_BINDING_KNOWN_FIELDS",
+    "ACTION_TRANSITION_CHECK_KNOWN_FIELDS",
+    "ACTION_BOUNDARY_CHECKPOINT_READ_KNOWN_FIELDS",
+    "ACTION_BOUNDARY_READ_MODEL_KNOWN_FIELDS",
+    "ACTION_BOUNDARY_PACK_RESULT_KNOWN_FIELDS",
+    # P1.8-B enums
+    "DelegationActionBoundaryKind",
+    "DelegationActionState",
+    "DelegationOperatorDecisionState",
+    "DelegationActionTransitionVerdict",
+    "DelegationActionTruthLabel",
+    "DelegationActionUnavailableReason",
+    "DelegationActionBoundaryStatus",
+    # P1.8-B dataclasses
+    "DelegationActionBoundarySideEffects",
+    "DelegationProposalBoundary",
+    "DelegationPermissionBoundary",
+    "DelegationExecutionProofBoundary",
+    "OperatorDelegationDecisionBinding",
+    "DelegationActionTransitionCheck",
+    "DelegationActionBoundaryCheckpointRead",
+    "DelegationActionBoundaryReadModel",
+    "DelegationActionBoundaryPackResult",
+    # P1.8-B builders / guards
+    "build_delegation_proposal_boundary",
+    "build_delegation_permission_boundary",
+    "build_delegation_execution_proof_boundary",
+    "build_operator_delegation_decision_binding",
+    "build_delegation_action_transition_check",
+    "assert_proposal_is_not_permission",
+    "assert_permission_is_not_execution",
+    "assert_execution_is_not_proof",
+    "assert_operator_decision_is_not_auto_execution",
+    "build_default_delegation_action_boundary_read_model",
+    "build_p1_8_b_action_boundary_pack_result",
+    # P1.8-B hash functions
+    "hash_delegation_proposal_boundary",
+    "hash_delegation_permission_boundary",
+    "hash_delegation_execution_proof_boundary",
+    "hash_operator_delegation_decision_binding",
+    "hash_delegation_action_transition_check",
+    "hash_delegation_action_boundary_read_model",
+    "hash_delegation_action_boundary_pack_result",
+    # P1.8-B serializers
+    "serialize_delegation_action_transition_check",
+    "serialize_delegation_action_boundary_read_model",
+    "serialize_delegation_action_boundary_pack_result",
 ]

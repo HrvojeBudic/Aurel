@@ -1,12 +1,24 @@
-# Active Task: P1.8-B (planned)
+# Active Task: P1.8-C (planned)
 
-**Status:** P1.8-A COMPLETE; P1.8-B PLANNED
+**Status:** P1.8-B COMPLETE; P1.8-C PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8-A — P1.8.17-P1.8.22 Actor Boundary Pack**
-- Next planned task: **P1.8-B**
+- Last completed task: **P1.8-B — P1.8.23-P1.8.26 Proposal / Permission / Execution / Operator Review Pack**
+- Next planned task: **P1.8-C — P1.8.27-P1.8.30 Integration Tail Pack**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.8-B Status
+
+**COMPLETE** — P1.8-B proposal / permission / execution / operator review pack verified after focused and broader delegation validation.
+
+P1.8-B establishes a deterministic, versioned, JSON-safe, side-effect-free, contract-only action boundary pack for P1.8.23-P1.8.26: DelegationProposalBoundary, DelegationPermissionBoundary, DelegationExecutionProofBoundary, OperatorDelegationDecisionBinding, DelegationActionBoundaryReadModel, and DelegationActionBoundaryPackResult. Default contracts use PROPOSAL_ONLY, PERMISSION_ONLY, PROOF_PENDING, OPERATOR_DECISION_REQUIRED, CONTRACT_ONLY, and DEV_FIXTURE truth labels; all side-effect booleans are false.
+
+Boundary: Proposal is not permission. Permission is not execution. Execution is not proof. Operator review is explicit state, not automatic execution. CLI/Shell/TUI binding is UNAVAILABLE and owned by P1.8.28 Delegation Shell/CLI/TUI Binding. Runtime enforcement is UNAVAILABLE; this pack is contract-only and enforcement belongs to later runtime/policy layers. Trace verification is UNAVAILABLE; P1.8-B does not perform Ledger/global trace verification. No policy/Custos decision, approval activation, permission grant, execution dispatch, proof verification, trace/Ledger write, memory write, tool/workflow execution, SYSTEM mutation, runtime mutation, LIVE claim, TRACE_VERIFIED claim, or P1.8-C behavior.
+
+Validation: compileall PASS; focused action-boundary pytest 16 passed; broader delegation selector 1044 passed, 4453 deselected; ruff PASS; mypy PASS.
+
+Report: `agent/reports/P1_8_B_PROPOSAL_PERMISSION_EXECUTION_OPERATOR_REVIEW_PACK.md`
 
 ## P1.8-A Status
 
