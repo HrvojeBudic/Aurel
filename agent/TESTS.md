@@ -2185,6 +2185,24 @@ PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation objects exam
 
 **P1.5 is sealed. Next: P1.6.0 Policy Cards & Behavioral Contracts.**
 
+### P1.9.30 Seal Criteria Repair
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/output_passport/test_passport_exit_seal_criteria_repair.py -q
+.venv/bin/python -m pytest tests/output_passport/test_passport_exit_seal_repair.py -q
+.venv/bin/python -m pytest tests/output_passport -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest tests -q -k "output_passport or passport"
+```
+
+Report: `agent/reports/P1_9_30_SEAL_CRITERIA_REPAIR.md`
+
+**Expected P1.9.30 criteria repair local result:** focused criteria repair **11 passed**; focused seal repair **15 passed**; output_passport **147 passed**; optional passport selector **153 passed, 5541 deselected**; compileall **PASS**; ruff **PASS**; mypy **PASS** (265 files).
+
+**Seal result:** `SEALED` with qualification `SEALED_FOR_P1_CONTRACT_SCOPE` only. Production `LIVE` remains `UNAVAILABLE_LIVE_PATH`; actual `TRACE_VERIFIED` remains `UNAVAILABLE_TRACE_VERIFICATION`; P2 coding remains gated pending follow-up pre-P2 audit.
+
 ### P1.9.30 Exit Seal Focused Repair
 
 ```bash

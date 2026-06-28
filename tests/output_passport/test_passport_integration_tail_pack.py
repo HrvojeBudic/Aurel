@@ -15,6 +15,8 @@ from agentic_runtime.output_passport import (
     OUTPUT_PASSPORT_P1_9_D_CHECKPOINT_IDS,
     OUTPUT_PASSPORT_P1_9_D_PACK_TASK_ID,
     P19ExitSealDecision,
+    P19ExitSealQualification,
+    P19ExitSealScope,
     P19LiveDemoStatus,
     P19P2ReadinessStatus,
     OutputPassportAPIRuntimeStatus,
@@ -178,10 +180,19 @@ def test_p1_9_30_seal_checklist_fails_fake_exit_sealed():
     assert checklist.fake_exit_sealed_detected is True
 
 
-def test_p1_9_30_seal_not_sealed_blocks_p2():
+def test_p1_9_30_seal_sealed_for_p1_contract_scope_only():
     seal = run_p1_9_exit_seal_checklist(repo_root=REPO_ROOT)
-    assert seal.decision is not P19ExitSealDecision.SEALED
-    assert seal.p2_readiness_blocked is True
+    assert seal.decision is P19ExitSealDecision.SEALED
+    assert seal.seal_scope is P19ExitSealScope.P1_CONTRACT_SCOPE
+    assert (
+        seal.seal_qualification
+        is P19ExitSealQualification.SEALED_FOR_P1_CONTRACT_SCOPE
+    )
+    assert seal.p2_readiness_status is P19P2ReadinessStatus.READY_FOR_P2_REVIEW
+    assert seal.p2_readiness_blocked is False
+    assert seal.truth_label is not OutputPassportTruthLabel.EXIT_SEALED
+    assert seal.production_live_available is False
+    assert seal.trace_verification_available is False
     assert_seal_honest(seal)
     json.loads(serialize_p1_9_exit_seal_result(seal))
 
@@ -198,7 +209,7 @@ def test_p1_9_d_pack_result_coverage():
     assert result.covered_checkpoints == OUTPUT_PASSPORT_P1_9_D_CHECKPOINT_IDS
     for checkpoint_id in OUTPUT_PASSPORT_P1_9_D_CHECKPOINT_IDS:
         assert checkpoint_id in result.checkpoint_statuses
-    assert result.p2_readiness_status is P19P2ReadinessStatus.NOT_READY_FOR_P2
+    assert result.p2_readiness_status is P19P2ReadinessStatus.READY_FOR_P2_REVIEW
     assert_all_p19d_side_effects_false(result.side_effect_proof)
 
 

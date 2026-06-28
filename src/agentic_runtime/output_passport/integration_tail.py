@@ -434,7 +434,7 @@ def _default_p1_9_d_checkpoint_reads() -> tuple[OutputPassportCheckpointRead, ..
         "P1.9.27": OutputPassportTruthLabel.CONTRACT_ONLY,
         "P1.9.28": OutputPassportTruthLabel.CONTRACT_ONLY,
         "P1.9.29": OutputPassportTruthLabel.CONTRACT_ONLY,
-        "P1.9.30": OutputPassportTruthLabel.NOT_SEAL,
+        "P1.9.30": OutputPassportTruthLabel.CONTRACT_ONLY,
     }
     limitations_map = {
         "P1.9.27": (
@@ -452,8 +452,9 @@ def _default_p1_9_d_checkpoint_reads() -> tuple[OutputPassportCheckpointRead, ..
             "Roadmap mirror only.",
         ),
         "P1.9.30": (
-            "Exit seal is evidence-gated.",
-            "Live demo is DEV_FIXTURE unless proven LIVE.",
+            "P1 contract-scope seal is evidence-gated.",
+            "Live demo is DEV_FIXTURE/operator-testable unless proven production LIVE.",
+            "Trace verification remains unavailable unless actual verifier proof exists.",
         ),
     }
     reads: list[OutputPassportCheckpointRead] = []
@@ -514,6 +515,7 @@ def build_p1_9_d_integration_tail_pack_result(
     )
     seal_summary = (
         f"decision={seal_result.decision.value}; "
+        f"qualification={seal_result.seal_qualification.value}; "
         f"passed={seal_result.checklist_passed}; "
         f"checks={len(seal_result.checklist.checks)}"
     )
@@ -534,7 +536,6 @@ def build_p1_9_d_integration_tail_pack_result(
         OutputPassportTruthLabel.CONTRACT_ONLY,
         OutputPassportTruthLabel.DEV_FIXTURE,
         OutputPassportTruthLabel.NOT_VERIFIED,
-        OutputPassportTruthLabel.NOT_SEAL,
         OutputPassportTruthLabel.UNAVAILABLE,
     )
     unavailable_reasons = (

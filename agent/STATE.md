@@ -1,24 +1,24 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.9.30-SEAL-REPAIR — Exit Seal Focused Repair)_
+_Last updated: 2026-06-28 (P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.9.30-SEAL-REPAIR — Exit Seal Focused Repair
-- Current active: **OMNI Review for P1.9.30 seal repair**
-- Next planned: Follow-up pre-P2 audit only if OMNI review allows; P2 remains gated
+- Last completed: P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary
+- Current active: **Re-run P1-PRE-P2-AUDIT after criteria repair**
+- Next planned: Follow-up pre-P2 audit; P2 remains review-only unless audit accepts readiness
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
-- P1.9 status: **integration tail complete; seal gate repaired but still SEAL_PARTIAL** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 repair complete)
+- P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)
 
-## P1.9.30 Exit Seal Repair
+## P1.9.30 Seal Criteria Repair
 
-P1.9.30 seal gate now has explicit live-demo statuses, explicit unavailable production LIVE/trace reasons, P1.9-D report-chain checking, seal decision derivation, and P2 readiness derivation. Current decision remains PARTIAL because production `LIVE_TESTED` evidence and actual `TRACE_VERIFIED` proof are unavailable. P2 readiness remains `NOT_READY_FOR_P2`. Report: `agent/reports/P1_9_30_SEAL_REPAIR.md`.
+P1.9.30 seal criteria now distinguish P1 contract/projection/operator-testable scope from production LIVE, actual trace verification, and release scope. Current default decision is `SEALED` with qualification `SEALED_FOR_P1_CONTRACT_SCOPE`. Production `LIVE` remains `UNAVAILABLE_LIVE_PATH`; actual `TRACE_VERIFIED` remains `UNAVAILABLE_TRACE_VERIFICATION`; no `EXIT_SEALED` truth label is claimed. P2 readiness is `READY_FOR_P2_REVIEW` only after follow-up pre-P2 audit acceptance; P2 coding remains blocked. Report: `agent/reports/P1_9_30_SEAL_CRITERIA_REPAIR.md`.
 
 ## P1.9-D Output Passport Integration Tail
 
-Contract-only projection/API/event contracts, read-only CLI inspect binding, docs/state/reports sync, exit seal checklist, and DEV_FIXTURE_TESTED live-demo boundary. Modules: `projection.py`, `integration_tail.py`, `exit_seal.py`, `cli_modules/output_passport.py`. Truth labels: CONTRACT_ONLY, DEV_FIXTURE, NOT_SEAL. CLI_READ_ONLY; TUI UNAVAILABLE. API/event UNAVAILABLE_RUNTIME. Exit seal PARTIAL. P2 NOT_READY_FOR_P2. All 28 side effects false. Report: `agent/reports/P1_9_D_INTEGRATION_TAIL_PACK.md`.
+Contract-only projection/API/event contracts, read-only CLI inspect binding, docs/state/reports sync, exit seal checklist, and DEV_FIXTURE_TESTED live-demo boundary. Modules: `projection.py`, `integration_tail.py`, `exit_seal.py`, `cli_modules/output_passport.py`. Truth labels: CONTRACT_ONLY, DEV_FIXTURE, NOT_VERIFIED, UNAVAILABLE. CLI_READ_ONLY; TUI UNAVAILABLE. API/event UNAVAILABLE_RUNTIME. Exit seal decision `SEALED`, qualification `SEALED_FOR_P1_CONTRACT_SCOPE`; not production LIVE, not actual TRACE_VERIFIED, not release seal. P2 review readiness remains audit-gated. All 28 side effects false. Report: `agent/reports/P1_9_D_INTEGRATION_TAIL_PACK.md`.
 
 ## P1.9-C Output Passport Truth Boundary / Failure / Readiness
 

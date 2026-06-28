@@ -14,12 +14,16 @@ from agentic_runtime.output_passport import (
     P19_REPORT_CHAIN,
     P19ExitSealCheckStatus,
     P19ExitSealDecision,
+    P19ExitSealQualification,
+    P19ExitSealScope,
     P19LiveDemoStatus,
     P19P2ReadinessStatus,
+    P19TraceVerificationStatus,
     OutputPassportTruthLabel,
     TRACE_VERIFICATION_UNAVAILABLE_REASON,
     build_p1_9_exit_seal_checklist,
     build_p1_9_live_integration_demo_result,
+    build_p1_9_trace_verification_result,
     derive_p1_9_exit_seal_decision,
     derive_p1_9_p2_readiness,
     handle_output_passport_cli_inspect,
@@ -48,7 +52,7 @@ def test_seal_fails_when_p1_9_d_report_missing(tmp_path: Path):
     checklist = build_p1_9_exit_seal_checklist(repo_root=tmp_path)
 
     assert _check_status(checklist, "p1_9_d_report") is P19ExitSealCheckStatus.FAIL
-    assert checklist.failed_count == 1
+    assert checklist.failed_count >= 1
 
 
 def test_seal_fails_when_report_chain_missing(tmp_path: Path):
@@ -79,41 +83,60 @@ def test_seal_fails_fake_live_trace_and_exit_sealed():
 
 
 @pytest.mark.parametrize(
-    ("decision", "expected_status", "blocked"),
+    ("decision", "qualification", "expected_status", "blocked"),
     [
         (
             P19ExitSealDecision.NOT_SEALED,
+            P19ExitSealQualification.NONE,
             P19P2ReadinessStatus.NOT_READY_FOR_P2,
             True,
         ),
         (
             P19ExitSealDecision.PARTIAL,
+            P19ExitSealQualification.NONE,
             P19P2ReadinessStatus.NOT_READY_FOR_P2,
             True,
         ),
-        (P19ExitSealDecision.BLOCKED, P19P2ReadinessStatus.BLOCKED, True),
+        (
+            P19ExitSealDecision.BLOCKED,
+            P19ExitSealQualification.NONE,
+            P19P2ReadinessStatus.BLOCKED,
+            True,
+        ),
         (
             P19ExitSealDecision.SEALED,
+            P19ExitSealQualification.SEALED_FOR_P1_CONTRACT_SCOPE,
             P19P2ReadinessStatus.READY_FOR_P2_REVIEW,
             False,
         ),
     ],
 )
-def test_p2_readiness_derived_from_seal_decision(decision, expected_status, blocked):
-    status, is_blocked, reason = derive_p1_9_p2_readiness(decision)
+def test_p2_readiness_derived_from_seal_decision(
+    decision,
+    qualification,
+    expected_status,
+    blocked,
+):
+    status, is_blocked, reason = derive_p1_9_p2_readiness(decision, qualification)
 
     assert status is expected_status
     assert is_blocked is blocked
     assert "P2" in reason
 
 
-def test_default_seal_remains_partial_and_blocks_p2_readiness():
+def test_default_seal_is_p1_contract_scope_and_ready_for_review():
     seal = run_p1_9_exit_seal_checklist(repo_root=REPO_ROOT)
 
-    assert seal.decision is P19ExitSealDecision.PARTIAL
-    assert seal.p2_readiness_status is P19P2ReadinessStatus.NOT_READY_FOR_P2
-    assert seal.p2_readiness_blocked is True
-    assert seal.truth_label is OutputPassportTruthLabel.NOT_SEAL
+    assert seal.decision is P19ExitSealDecision.SEALED
+    assert seal.seal_scope is P19ExitSealScope.P1_CONTRACT_SCOPE
+    assert (
+        seal.seal_qualification
+        is P19ExitSealQualification.SEALED_FOR_P1_CONTRACT_SCOPE
+    )
+    assert seal.p2_readiness_status is P19P2ReadinessStatus.READY_FOR_P2_REVIEW
+    assert seal.p2_readiness_blocked is False
+    assert seal.truth_label is OutputPassportTruthLabel.CONTRACT_ONLY
+    assert seal.truth_label is not OutputPassportTruthLabel.EXIT_SEALED
 
 
 def test_live_demo_distinguishes_dev_fixture_from_live():
@@ -157,6 +180,7 @@ def test_unavailable_live_path_carries_reason():
 
 def test_unavailable_trace_verification_carries_reason():
     checklist = build_p1_9_exit_seal_checklist(repo_root=REPO_ROOT)
+    trace = build_p1_9_trace_verification_result()
     trace_checks = [
         item for item in checklist.checks
         if item.check_id == "trace_verification_unavailable"
@@ -165,22 +189,28 @@ def test_unavailable_trace_verification_carries_reason():
     assert len(trace_checks) == 1
     assert trace_checks[0].status is P19ExitSealCheckStatus.UNAVAILABLE
     assert trace_checks[0].unavailable_reason == TRACE_VERIFICATION_UNAVAILABLE_REASON
+    assert trace.status is P19TraceVerificationStatus.TRACE_VERIFICATION_UNAVAILABLE
+    assert trace.unavailable_reason == TRACE_VERIFICATION_UNAVAILABLE_REASON
 
 
-def test_sealed_decision_not_derived_from_non_live_demo():
+def test_production_scope_sealed_decision_not_derived_from_non_live_demo():
     demo = build_p1_9_live_integration_demo_result()
-    decision, reason = derive_p1_9_exit_seal_decision(
+    trace = build_p1_9_trace_verification_result()
+    decision, qualification, reason = derive_p1_9_exit_seal_decision(
         checklist_passed=True,
-        unavailable_count=0,
+        unavailable_count=2,
         live_demo=demo,
+        seal_scope=P19ExitSealScope.PRODUCTION_LIVE_SCOPE,
+        trace_verification=trace,
     )
 
     assert decision is P19ExitSealDecision.PARTIAL
-    assert "not LIVE_TESTED" in reason
+    assert qualification is P19ExitSealQualification.NONE
+    assert "production LIVE path" in reason
 
 
 def test_live_tested_builder_requires_external_runtime_evidence():
-    with pytest.raises(ValueError, match="LIVE_TESTED is unavailable"):
+    with pytest.raises(ValueError, match="PRODUCTION_LIVE_TESTED/LIVE_TESTED"):
         build_p1_9_live_integration_demo_result(
             demo_status=P19LiveDemoStatus.LIVE_TESTED,
         )

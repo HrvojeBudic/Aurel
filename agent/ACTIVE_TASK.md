@@ -1,34 +1,34 @@
-# Active Task: P1.9.30-SEAL-REPAIR (complete)
+# Active Task: P1.9.30-SEAL-CRITERIA-REPAIR (complete)
 
-**Status:** P1.9.30-SEAL-REPAIR COMPLETE; seal remains PARTIAL; P2 gated
+**Status:** P1.9.30-SEAL-CRITERIA-REPAIR COMPLETE; sealed for P1 contract scope; P2 coding still gated
 
 ## Roadmap Position
 
-- Last completed task: **P1.9.30-SEAL-REPAIR — Exit Seal Focused Repair**
-- Next planned task: **OMNI Review for P1.9.30 repair; follow-up pre-P2 audit only if allowed**
+- Last completed task: **P1.9.30-SEAL-CRITERIA-REPAIR - Live Demo / Trace Verification Unavailable Boundary**
+- Next planned task: **Re-run P1-PRE-P2-AUDIT; P2 remains review-only unless audit accepts readiness**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
-## P1.9.30 Seal Repair Status
+## P1.9.30 Seal Criteria Repair Status
 
-**DONE — PARTIAL** — The exit seal gate is repaired and stricter, but P1.9.30 is still not SEALED.
+**DONE - SEALED_FOR_P1_CONTRACT_SCOPE** - The exit seal criteria now distinguish P1 contract/projection/operator-testable scope from production LIVE, actual trace verification, and release scope.
 
-Repair added explicit live-demo statuses (`LIVE_TESTED`, `DEV_FIXTURE_TESTED`, `PROJECTION_ONLY_TESTED`, `CLI_READ_ONLY_TESTED`, `UNAVAILABLE_LIVE_PATH`, `NOT_RUN`, `FAILED`), explicit production LIVE and trace-verification unavailable reasons, P1.9-D report-chain checking, seal decision derivation, and P2 readiness derivation. Default repo state remains PARTIAL because production LIVE path and actual TRACE_VERIFIED proof are unavailable.
+Criteria repair selected Model B: P1.9.30 may seal only as `SEALED_FOR_P1_CONTRACT_SCOPE` when report chain, checkpoint coverage, projection/API/event contract, read-only CLI/operator-testable dev fixture path, docs sync, unavailable LIVE/trace disclosures, and fake truth guards pass. It does not claim production `LIVE`, actual `TRACE_VERIFIED`, `EXIT_SEALED`, release readiness, or P2 coding readiness.
 
-Validation: focused repair pytest 15 passed; focused P1.9-D pytest 21 passed; compileall PASS; output_passport 136 passed; ruff PASS; mypy PASS; optional passport selector 142 passed.
+Validation: compileall PASS; focused criteria repair pytest 11 passed; focused seal repair pytest 15 passed; output_passport 147 passed; ruff PASS; mypy PASS (265 files); optional passport selector 153 passed, 5541 deselected.
 
-Report: `agent/reports/P1_9_30_SEAL_REPAIR.md`
+Report: `agent/reports/P1_9_30_SEAL_CRITERIA_REPAIR.md`
 
-Boundary: DEV_FIXTURE_TESTED is not LIVE_TESTED. Projection-only is not LIVE. CLI read-only is not authority. PARTIAL/NOT_SEALED/BLOCKED all block P2 readiness. SEALED would only allow READY_FOR_P2_REVIEW, not P2 coding.
+Boundary: `P1_CONTRACT_SCOPE` seal is not production live seal, not trace-verified seal, not release seal, and not P2 coding readiness. Production LIVE remains `UNAVAILABLE_LIVE_PATH`. Actual trace verification remains `UNAVAILABLE_TRACE_VERIFICATION`. `READY_FOR_P2_REVIEW` requires follow-up pre-P2 audit acceptance.
 
 ## P1.9-D Status
 
-**DONE / REPAIRED GATE PARTIAL** — P1.9-D integration tail pack verified after focused validation; P1.9.30 seal gate repaired in a follow-up focused repair.
+**DONE / CONTRACT-SCOPE SEALED** - P1.9-D integration tail pack verified after focused validation; P1.9.30 criteria repair seals only the P1 contract/projection/operator-testable Output Passport scope.
 
-P1.9-D establishes projection/API/event contracts (P1.9.27), read-only CLI inspect binding with TUI UNAVAILABLE (P1.9.28), docs/state/reports sync (P1.9.29), and exit seal checklist with DEV_FIXTURE live demo (P1.9.30). `P19DIntegrationTailPackResult` with `P19ExitSeal` decision PARTIAL. All 28 P1.9-D side-effect booleans false.
+P1.9-D establishes projection/API/event contracts (P1.9.27), read-only CLI inspect binding with TUI UNAVAILABLE (P1.9.28), docs/state/reports sync (P1.9.29), and exit seal checklist with DEV_FIXTURE live demo (P1.9.30). `P19DIntegrationTailPackResult` now carries `P19ExitSeal` decision `SEALED` with qualification `SEALED_FOR_P1_CONTRACT_SCOPE`. All 28 P1.9-D side-effect booleans remain false.
 
-Boundary: Projection is not execution. API contract is not API server. Event contract is not emitted event. CLI inspect is not authority. TUI UNAVAILABLE. Exit seal PARTIAL not SEALED. Live demo DEV_FIXTURE not LIVE. P2 readiness NOT_READY_FOR_P2.
+Boundary: Projection is not execution. API contract is not API server. Event contract is not emitted event. CLI inspect is not authority. TUI UNAVAILABLE. Live demo DEV_FIXTURE not production LIVE. TraceRef/payload is not TRACE_VERIFIED. P2 readiness is `READY_FOR_P2_REVIEW` only after follow-up pre-P2 audit acceptance; P2 coding is not allowed.
 
-Validation: compileall PASS; focused P1.9-D pytest 21 passed; total output passport 127 passed; ruff PASS; mypy PASS (265 files).
+Validation: previous P1.9-D focused validation passed; current criteria repair validation passes output_passport 147, ruff, and mypy.
 
 Report: `agent/reports/P1_9_D_INTEGRATION_TAIL_PACK.md`
 

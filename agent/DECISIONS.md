@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-28 - P1.9.30 Seal Criteria Repair
+
+### DEC-P1930-01: P1.9.30 seals P1 contract scope only
+**Decision:** P1.9.30 may return `SEALED` only with qualification `SEALED_FOR_P1_CONTRACT_SCOPE` when the P1.9-A/B/C/D report chain, P1.9.0-P1.9.30 coverage, projection/API/event contract, read-only CLI/operator-testable dev fixture path, docs sync, unavailable LIVE/trace disclosures, and fake truth guards pass. This seal does not claim production `LIVE`, actual `TRACE_VERIFIED`, `EXIT_SEALED`, release readiness, or P2 coding readiness.
+**Why:** Actual trace verification belongs to a later AurelTrace truth layer, and production live runtime is not implemented in P1.9. Output Passport can seal its P1 contract/projection/operator-testable layer only if unavailable production-live and trace-verification states remain explicit and non-operational.
+
+### DEC-P1930-02: P2 readiness is review-only and audit-gated
+**Decision:** `SEALED_FOR_P1_CONTRACT_SCOPE` may derive `READY_FOR_P2_REVIEW`, meaning review, brainstorm, or planning only after the follow-up pre-P2 audit accepts the criteria repair. It never means `READY_FOR_P2_CODING` and does not authorize P2 implementation work.
+**Why:** Criteria repair is not the full pre-P2 validation sweep. P2 coding requires a separate accepted pre-P2 audit decision.
+
 ## 2026-06-28 — P1.8-B Proposal / Permission / Execution / Operator Review Pack
 
 ### DEC-P18B-01: Action boundary pack is contract-only
