@@ -1,17 +1,25 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.0-C — Floating Window + Handoff + Context Carryover)_
+_Last updated: 2026-06-29 (P2.0-D — Truth Labels + Permission Matrix + Fixture Discipline)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover
-- Current active: **P2.0-D dispatch review — Truth Labels + Permission Matrix + Fixture Discipline**
-- Next planned: P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline
+- Last completed: P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline
+- Current active: **P2.0-E dispatch review — Operator Demo + Multi-Client Snapshot + Regression Harness**
+- Next planned: P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
+- P2.0 status: **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
 - P1.9 status: **integration tail complete; P1 contract-scope seal criteria repaired** (P1.9-A complete; P1.9-B complete; P1.9-C complete; P1.9-D complete; P1.9.30 criteria repair complete)
+
+## P2.0-D AurelShell Truth Labels / Permission Matrix / Fixture Discipline
+
+P2.0-D adds contract-only truth, permission meaning, unavailable-state, and fixture/mock/simulated disclosure objects under `src/agentic_runtime/aurel_shell/`: `truth_labels.py`, `permission_matrix.py`, `unavailable_state.py`, `fixture_discipline.py`, and `truth_permission_fixture_read_model.py`.
+
+Boundary: `SurfaceTruthLabel` is a claim with evidence requirements, not proof. `LIVE` requires tested live path evidence. `TRACE_VERIFIED` requires actual verification evidence. `SurfacePermissionMatrixSnapshot` is a semantic affordance map, not authorization, execution, permission grant, or Custos replacement. `SurfaceUnavailableState` requires reason and next action and remains operator-visible. `SurfaceFixtureDisclosure` for DEV_FIXTURE/MOCK/SIMULATED requires source and scope/expiry, is not LIVE, and cannot be production truth.
+
+Validation: compileall PASS; P2.0-D focused tests 38 passed; `tests/aurel_shell` 155 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_0_D_TRUTH_PERMISSION_FIXTURE_CONTRACTS.md`.
 
 ## P1.9.30 Seal Criteria Repair
 

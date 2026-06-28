@@ -59,6 +59,7 @@ Ledger, Evidence, RuntimeState, Evaluation, Mneme, Shell and Reports are project
 | `status.py` | Lightweight runtime diagnostics |
 | `cli.py` | Minimal CLI (`status`, `demo`, `verify`, `repo-task`, `approve-demo`, `praxis-*`, `sandbox-status`, `demo-harness`, `config`, `models`, `providers`, `prompts`, `policy`, `identity doctrine`, `identity attestation`, `identity authority-delta`, `identity consent`, `identity seal-readiness`) |
 | `cli_modules/policy_commands.py` | P1.6.18 read-only policy projection CLI (`policy status`, `policy projection`, `policy unavailable`, `policy harness list/run`) consuming `PolicyProjectionContract v1` |
+| `aurel_shell/` | P2.0 AurelShell contract package: P2.0-A seven-surface registry, P2.0-B navigation/boundary contracts, P2.0-C continuity contracts, and P2.0-D truth label / permission meaning / unavailable-state / fixture disclosure contracts. Contract/read-model only; no live UI, permission enforcement, Custos integration, trace verification, memory writes, tool execution, or workflow execution |
 
 
 ## Custos v0 Policy Runtime Resolver — Shadow Mode (P1.6.10)

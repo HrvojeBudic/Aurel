@@ -1,12 +1,24 @@
-# Active Task: P2.0-C (complete)
+# Active Task: P2.0-D (complete)
 
-**Status:** P2.0-C COMPLETE — Floating Window + Handoff + Context Carryover; contract-only shell continuity; next P2.0-D
+**Status:** P2.0-D COMPLETE — Truth Labels + Permission Matrix + Fixture Discipline; contract-only shell honesty; next P2.0-E
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-C — P2.0.15–P2.0.17 Floating Window + Handoff + Context Carryover**
-- Next planned task: **P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline**
+- Last completed task: **P2.0-D — P2.0.18–P2.0.21 Truth Labels + Permission Matrix + Fixture Discipline**
+- Next planned task: **P2.0-E — P2.0.22–P2.0.26 Operator Demo + Multi-Client Snapshot + Regression Harness**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.0-D Status
+
+**DONE** — P2.0.18-P2.0.21 truth labels, permission matrix, unavailable states, and fixture/mock/simulated discipline are implemented as contract-only AurelShell objects.
+
+P2.0-D establishes `SurfaceTruthLabelContract`, guarded `SurfaceTruthClaim` snapshots over the seven-surface registry, `SurfacePermissionMatrixContract` entries that do not authorize or execute, explicit `SurfaceUnavailableState` objects with reason/next action, `SurfaceFixtureDisciplineContract` disclosures for DEV_FIXTURE/MOCK/SIMULATED, and `P20DTruthPermissionFixturePackResult`. All 21 side-effect/no-authority booleans remain false.
+
+Boundary: truth label is not proof; permission matrix is not authorization; unavailable is operator-visible and not hidden ERROR; DEV_FIXTURE/MOCK/SIMULATED are not LIVE and not production truth. No permission enforcement, Custos integration, trace verification, live UI, demo harness, production data, memory write, trace write, tool execution, workflow execution, P2.0-E behavior, or P2.1 behavior was implemented.
+
+Validation: compileall PASS; focused P2.0-D pytest 38 passed; aurel_shell 155 passed; ruff PASS; mypy PASS (281 files).
+
+Report: `agent/reports/P2_0_D_TRUTH_PERMISSION_FIXTURE_CONTRACTS.md`
 
 ## P1.9.30 Seal Criteria Repair Status
 
