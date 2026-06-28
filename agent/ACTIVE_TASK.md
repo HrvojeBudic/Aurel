@@ -1,12 +1,26 @@
-# Active Task: P1.9-A (planned)
+# Active Task: P1.9-A (complete)
 
-**Status:** P1.8-C COMPLETE; P1.9-A PLANNED
+**Status:** P1.9-A COMPLETE; P1.9-B PLANNED
 
 ## Roadmap Position
 
-- Last completed task: **P1.8-C — P1.8.27-P1.8.30 Delegation Integration Tail Pack**
-- Next planned task: **P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack**
+- Last completed task: **P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack**
+- Next planned task: **P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P1.9-A Status
+
+**DONE** — P1.9-A passport identity/attribution/hash pack verified after focused validation.
+
+P1.9-A establishes contract-only output passport foundation for P1.9.0-P1.9.7: `OutputPassportFoundation`, `OutputPassportIdentity`, `OutputPassportAttributionEnvelope`, `OutputAuthorityPolicyRiskDisclosure`, `MemoryInfluenceDisclosure`, `EvidenceTraceBinding`, `AssumptionLimitationUncertaintyEnvelope`, `OutputPassportHashContract`, `OutputPassportPayload`, and `P19APassportIdentityAttributionHashPackResult` with deterministic hashing, JSON-safe serialization, and honest truth labels. All 16 side-effect booleans are false.
+
+Boundary: Passport is disclosure, not proof. TraceRef is not TRACE_VERIFIED. EvidenceRef is not finality. Hash is not truth. Read model UNAVAILABLE (P1.9.8). Verification UNAVAILABLE (P1.9.9). CLI/TUI UNAVAILABLE (P1.9.28). No fake LIVE, no fake TRACE_VERIFIED. No memory read/write, trace/Ledger write, Custos/policy enforcement, or runtime passport generation.
+
+Validation: compileall PASS; focused output passport pytest 33 passed; broader passport selector 39 passed; ruff PASS; mypy PASS (252 files).
+
+Report: `agent/reports/P1_9_A_PASSPORT_IDENTITY_ATTRIBUTION_HASH_PACK.md`
+
+ROADMAP_SYNC_DRIFT: YES — local roadmap listed P1.9.0-P1.9.20 without v5.5 pack groupings; mirror updated.
 
 ## P1.8-C Status
 

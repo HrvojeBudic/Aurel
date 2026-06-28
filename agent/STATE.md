@@ -1,15 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.8-C — Delegation Integration Tail Pack)_
+_Last updated: 2026-06-28 (P1.9-A — Passport Identity / Attribution / Hash Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.8-C — P1.8.27-P1.8.30 Delegation Integration Tail Pack
-- Current active: **P1.9-A (planned)**
-- Next planned: P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack
+- Last completed: P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack
+- Current active: **P1.9-B (planned)**
+- Next planned: P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
+- P1.9 status: **in progress** (P1.9-A complete; P1.9-B planned)
+
+## P1.9-A Output Passport Foundation
+
+Contract-only output passport foundation pack. Module: `src/agentic_runtime/output_passport/`. Truth labels: CONTRACT_ONLY, DEV_FIXTURE, REFERENCE_ONLY, DISCLOSURE_ONLY, DETERMINISTIC_PAYLOAD_HASH. All side effects false. No verification, no memory access, no trace/Ledger writes. Report: `agent/reports/P1_9_A_PASSPORT_IDENTITY_ATTRIBUTION_HASH_PACK.md`.
 
 ## Golden Thread — P1.8 Delegation
 
