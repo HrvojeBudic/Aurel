@@ -239,8 +239,8 @@ started and not authorized.
 
 ## 23. Commit Hash
 
-Recorded in the final operator response after commit.
+`20c2ac9` — feat(aurel-shell): seal P2.0 shell contract scope
 
 ## 24. Final Git Status
 
-Recorded in the final operator response after commit (expected clean).
+Clean after commit (`git status --short` empty). No push performed.
