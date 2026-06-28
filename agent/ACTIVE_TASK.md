@@ -1,11 +1,11 @@
-# Active Task: P1-PRE-P2-AUDIT RERUN (complete)
+# Active Task: P2.0-A (complete)
 
-**Status:** P1-PRE-P2-AUDIT RERUN COMPLETE; SEALED_FOR_P1_CONTRACT_SCOPE; P2 readiness READY_FOR_P2_REVIEW; P2 coding still gated
+**Status:** P2.0-A COMPLETE — Shell Foundation + Surface Registry; contract-only seven-surface registry; next P2.0-B
 
 ## Roadmap Position
 
-- Last completed task: **P1-PRE-P2-AUDIT RERUN — Full Audit / Test / Truth Seal after P1.9.30 Criteria Repair**
-- Next planned task: **P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry (contract foundation; dispatch when operator authorizes)**
+- Last completed task: **P2.0-A — P2.0.0–P2.0.8 Shell Foundation + Surface Registry**
+- Next planned task: **P2.0-B — P2.0.9–P2.0.14 Navigation + Boundary Contracts**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P1.9.30 Seal Criteria Repair Status
