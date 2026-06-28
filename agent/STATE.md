@@ -1,16 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-28 (P1.9-A — Passport Identity / Attribution / Hash Pack)_
+_Last updated: 2026-06-28 (P1.9-B — Read Model / Test Harness / Binding Pack)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P1.9-A — P1.9.0-P1.9.7 Output Passport Identity / Attribution / Hash Pack
-- Current active: **P1.9-B (planned)**
-- Next planned: P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack
+- Last completed: P1.9-B — P1.9.8-P1.9.16 Read Model / Test Harness / Binding Pack
+- Current active: **P1.9-C (planned)**
+- Next planned: P1.9-C — P1.9.17-P1.9.26 Truth Boundary / Failure / Readiness Pack
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P1.7 status: **sealed** (P1.7.0–P1.7.20 complete)
 - P1.8 status: **sealed (SEAL_PARTIAL)** (P1.8.0-P1.8.16 complete; P1.8-A complete; P1.8-B complete; P1.8-C complete)
-- P1.9 status: **in progress** (P1.9-A complete; P1.9-B planned)
+- P1.9 status: **in progress** (P1.9-A complete; P1.9-B complete; P1.9-C planned)
+
+## P1.9-B Output Passport Read Model / Harness / Bindings
+
+Contract-only read model, verification boundary, invariant harness, operator review state, passive bindings, and memory-vs-evidence disclosure pack. Modules: `read_model.py`, `verification_contract.py`, `test_harness.py`, `bindings.py`. Truth labels: READ_MODEL_ONLY, VERIFICATION_CONTRACT_ONLY, TEST_HARNESS_ONLY, REVIEW_STATE_ONLY, REFERENCE_ONLY, DISCLOSURE_ONLY. All side effects false. No verification execution, no binding execution. Report: `agent/reports/P1_9_B_READ_MODEL_TEST_HARNESS_BINDING_PACK.md`.
 
 ## P1.9-A Output Passport Foundation
 

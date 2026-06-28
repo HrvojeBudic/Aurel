@@ -69,15 +69,6 @@ OUTPUT_PASSPORT_HASH_VOLATILE_FIELDS: frozenset[str] = frozenset({
 })
 
 OUTPUT_PASSPORT_UNAVAILABLE_BINDINGS: dict[str, str] = {
-    "Output Passport Read Model": (
-        "Read model scheduled for P1.9.8; not available in P1.9-A foundation"
-    ),
-    "Output Passport Verification": (
-        "Verification contract scheduled for P1.9.9; not available in P1.9-A"
-    ),
-    "Output Passport Test Harness": (
-        "Test harness scheduled for P1.9.10; not available in P1.9-A"
-    ),
     "CLI/Shell/TUI Binding": (
         "CLI/Shell/TUI binding scheduled for P1.9.28; not available in P1.9-A"
     ),
@@ -189,6 +180,10 @@ class OutputPassportTruthLabel(str, Enum):
     MEMORY_INFLUENCE_DECLARED = "MEMORY_INFLUENCE_DECLARED"
     MEMORY_INFLUENCE_UNAVAILABLE = "MEMORY_INFLUENCE_UNAVAILABLE"
     UNAVAILABLE_POLICY_CONTEXT = "UNAVAILABLE_POLICY_CONTEXT"
+    READ_MODEL_ONLY = "READ_MODEL_ONLY"
+    VERIFICATION_CONTRACT_ONLY = "VERIFICATION_CONTRACT_ONLY"
+    TEST_HARNESS_ONLY = "TEST_HARNESS_ONLY"
+    REVIEW_STATE_ONLY = "REVIEW_STATE_ONLY"
     LIVE = "LIVE"
     TRACE_VERIFIED = "TRACE_VERIFIED"
     LEDGER_VERIFIED = "LEDGER_VERIFIED"
@@ -210,6 +205,7 @@ class OutputPassportVerificationStatus(str, Enum):
     VERIFICATION_UNAVAILABLE = "VERIFICATION_UNAVAILABLE"
     REFERENCE_ONLY = "REFERENCE_ONLY"
     CONTRACT_ONLY = "CONTRACT_ONLY"
+    VERIFICATION_ERROR = "VERIFICATION_ERROR"
     VERIFIED = "VERIFIED"
 
 
@@ -228,6 +224,11 @@ class OutputPassportUnavailableReason(str, Enum):
     AUTHORITY_CONTEXT_UNAVAILABLE = "AUTHORITY_CONTEXT_UNAVAILABLE"
     RUNTIME_GENERATION_UNAVAILABLE = "RUNTIME_GENERATION_UNAVAILABLE"
     ATTRIBUTION_UNAVAILABLE = "ATTRIBUTION_UNAVAILABLE"
+    UNAVAILABLE_BUSINESS_CONTEXT = "UNAVAILABLE_BUSINESS_CONTEXT"
+    UNAVAILABLE_WORKFLOW_CONTEXT = "UNAVAILABLE_WORKFLOW_CONTEXT"
+    UNAVAILABLE_AGENT_CONTEXT = "UNAVAILABLE_AGENT_CONTEXT"
+    UNAVAILABLE_TOOL_CONTEXT = "UNAVAILABLE_TOOL_CONTEXT"
+    SUPPORT_DISCLOSURE_UNAVAILABLE = "SUPPORT_DISCLOSURE_UNAVAILABLE"
     UNAVAILABLE = "UNAVAILABLE"
     ERROR = "ERROR"
     UNKNOWN = "UNKNOWN"
@@ -420,6 +421,11 @@ class OutputPassportSideEffectProof(_CanonicalMixin):
     passport_verified: bool = False
     live_passport_generated: bool = False
     disclosure_grants_permission: bool = False
+    business_action_executed: bool = False
+    workflow_executed: bool = False
+    agent_executed: bool = False
+    agent_authority_created: bool = False
+    tool_permission_granted: bool = False
 
 
 @dataclass(frozen=True)

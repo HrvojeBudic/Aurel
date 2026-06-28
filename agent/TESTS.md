@@ -2184,3 +2184,30 @@ PYTHONPATH=src:. .venv/bin/python -m agentic_runtime.cli evaluation objects exam
 - `tests/evaluation/test_p15_integrated_invariants.py` — 17 invariant tests (no-promotion, verification gate, structural safety)
 
 **P1.5 is sealed. Next: P1.6.0 Policy Cards & Behavioral Contracts.**
+
+### P1.9-B Output Passport Read Model / Test Harness / Binding Pack
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/output_passport/test_passport_read_model_binding_pack.py -q
+.venv/bin/python -m pytest tests/output_passport/ -q
+.venv/bin/python -m pytest tests -q -k "output_passport or passport"
+.venv/bin/python -m ruff check src/agentic_runtime/output_passport tests/output_passport
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Report: `agent/reports/P1_9_B_READ_MODEL_TEST_HARNESS_BINDING_PACK.md`
+
+**Expected P1.9-B local result:** compileall **PASS**; focused P1.9-B **38 passed**; total output passport **71 passed**; broader passport selector **77 passed**; ruff **PASS**; mypy **PASS** (256 files).
+
+**Next:** P1.9-C — Truth Boundary / Failure / Readiness Pack.
+
+### P1.9-A Output Passport Identity / Attribution / Hash Pack
+
+```bash
+.venv/bin/python -m pytest tests/output_passport/test_passport_identity_attribution_hash.py -q
+```
+
+Report: `agent/reports/P1_9_A_PASSPORT_IDENTITY_ATTRIBUTION_HASH_PACK.md`
+
+**Expected P1.9-A local result:** focused P1.9-A **33 passed**.
