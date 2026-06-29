@@ -184,8 +184,8 @@ P2.2-D — likely P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding
 
 ## 23. Commit Hash
 
-_(recorded after commit)_
+`b33269202e267dcd6d101ade828c8ae3e35ac871`
 
 ## 24. Final Git Status
 
-_(recorded after commit)_
+Clean — `git status --short` empty after commit on `master`; no push performed.
