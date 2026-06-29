@@ -1,12 +1,22 @@
-# Active Task: P2.2-A (complete)
+# Active Task: P2.2-B (complete)
 
-**Status:** P2.2-A COMPLETE — Per-Surface Local Navigation Foundation; next P2.2-B planning
+**Status:** P2.2-B COMPLETE — Local Navigation Hierarchy / Interaction Constraints; next P2.2-C planning
 
 ## Roadmap Position
 
-- Last completed task: **P2.2-A — P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation**
-- Next planned task: **P2.2-B — likely P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints**
+- Last completed task: **P2.2-B — P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints**
+- Next planned task: **P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.2-B Status
+
+**DONE** — P2.2.6–P2.2.10 local navigation hierarchy, ordering, selection state, interaction constraints, and hierarchy projection implemented as contract-only AurelShell objects over the P2.2-A foundation.
+
+P2.2-B establishes `LocalNavHierarchyContract`, `LocalNavHierarchyEdge`, `LocalNavOrderingContract`, `LocalNavOrderingRule`, `LocalNavSelectionState`, `LocalNavInteractionConstraint`, `LocalNavHierarchyProjectionResult`, `P22BSideEffectProof`, and `P22BLocalNavigationHierarchyResult`. All 38 P2.2-B side-effect/no-authority booleans remain false.
+
+Boundary: hierarchy is structural metadata, not UI layout. Ordering is deterministic contract order, not drag/drop layout. Selection is read-model state, not route execution. Interaction constraint is intent constraint, not click handler. Protected nav is not permission enforcement. Hierarchy projection is not sidebar UI. No sidebar, global left nav, route runtime, command palette, floating windows, P2.2-C, or P2.3 work was created.
+
+Report: `agent/reports/P2_2_B_LOCAL_NAVIGATION_HIERARCHY.md`
 
 ## P2.2-A Status
 

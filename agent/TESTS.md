@@ -58,6 +58,18 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.2-B Local Navigation Hierarchy / Interaction Constraints Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_local_navigation_hierarchy.py -q
+```
+
+Results: compileall **PASS**; focused P2.2-B **20 passed**; AurelShell **460 passed**; ruff **PASS**; mypy **PASS** (297 files).
+
+P2.2-B is contract/read-model hierarchy/ordering/selection/interaction projection only. It does NOT add product UI, frontend sidebar, global left nav, frontend routes, clients, live CLI/TUI product, route runtime, route handler, click handlers, keyboard shortcuts, command palette, floating windows, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, production LIVE, TRACE_VERIFIED, release scope, P2.2-C, or P2.3 work.
+
+Report: `agent/reports/P2_2_B_LOCAL_NAVIGATION_HIERARCHY.md`
+
 ## P2.2-A Per-Surface Local Navigation Foundation Validation (COMPLETE)
 
 ```bash

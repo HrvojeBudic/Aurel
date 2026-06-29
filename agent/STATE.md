@@ -1,16 +1,24 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.2-A — Per-Surface Local Navigation Foundation)_
+_Last updated: 2026-06-29 (P2.2-B — Local Navigation Hierarchy / Interaction Constraints)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.2-A — P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation
-- Current active: **P2.2-A complete** — P2.2 contract foundation started
-- Next planned: P2.2-B — likely P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints
+- Last completed: P2.2-B — P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints
+- Current active: **P2.2-B complete** — hierarchy/ordering/selection/interaction contracts
+- Next planned: P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
-- P2.2 status: **P2.2-A foundation complete** — local nav contracts/projection seed; not UI, not route runtime
+- P2.2 status: **P2.2-A foundation + P2.2-B hierarchy complete** — contract/read-model only; not UI, not route runtime
+
+## P2.2-B AurelShell Local Navigation Hierarchy / Interaction Constraints
+
+P2.2-B adds contract-only hierarchy, ordering, selection, interaction, and hierarchy projection under `src/agentic_runtime/aurel_shell/local_navigation_hierarchy.py`.
+
+Boundary: `LocalNavHierarchyContract` is structural metadata over P2.2-A registries — not UI layout or sidebar. `LocalNavOrderingContract` is stable deterministic order — not drag/drop or layout engine. `LocalNavSelectionState` is read-model selection — not route execution or URL mutation. `LocalNavInteractionConstraint` is intent grammar — not click handler or permission enforcement. `LocalNavHierarchyProjectionResult` bundles P2.2.6–P2.2.10 outputs over P2.2-A foundation — not sidebar UI, does not start P2.2-C or P2.3.
+
+Validation: compileall PASS; P2.2-B focused tests 20 passed; `tests/aurel_shell` 460 passed; ruff PASS; mypy PASS (297 files). Report: `agent/reports/P2_2_B_LOCAL_NAVIGATION_HIERARCHY.md`.
 
 ## P2.2-A AurelShell Per-Surface Local Navigation Foundation
 
