@@ -260,10 +260,10 @@ P2.5-B — likely P2.5.6–P2.5.10 Handoff Context / Continuity / Conflict / Ava
 
 ## 32. Commit Hash
 
-(TBD after commit)
+`691acfe` — feat(aurel-shell): add P2.5 cross-surface handoff foundation
 
 ---
 
 ## 33. Final Git Status
 
-(TBD after commit)
+Clean — `git status --short` returns no output after commit.
