@@ -74,6 +74,18 @@ Portable cwd via `tests/repo_root.py` (`pyproject.toml` + `src/` discovery). No 
 
 Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
+## P2.2-D Local Navigation Integration Tail / Section Seal Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_local_navigation_integration_tail.py -q
+```
+
+Results: compileall **PASS**; focused P2.2-D **18 passed**; AurelShell **497 passed**; ruff **PASS**; mypy **PASS** (299 files).
+
+P2.2-D is contract/read-model integration tail / section seal only. It does NOT add product UI, frontend sidebar, global left nav, frontend routes, clients, live CLI/TUI product, route runtime, route handler, click handlers, keyboard shortcuts, command palette, floating windows, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, local/browser storage, production LIVE, TRACE_VERIFIED, release scope, or P2.3 implementation.
+
+Report: `agent/reports/P2_2_D_LOCAL_NAVIGATION_INTEGRATION_TAIL.md`
+
 ## P2.2-C Local Navigation Context / Surface-Specific Profiles Validation (COMPLETE)
 
 ```bash

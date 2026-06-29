@@ -1,6 +1,16 @@
-# Active Task: P2.2-C (complete)
+# Active Task: P2.2-D (complete)
 
-**Status:** P2.2-C COMPLETE — local navigation context / surface profiles; next P2.2-D planning
+**Status:** P2.2-D COMPLETE — P2.2 section sealed at contract scope; next P2.3-A planning
+
+## P2.2-D Status
+
+**DONE — SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2.16–P2.2.20 section integration snapshot, projection/API/event contract, shell/CLI/TUI binding contract, docs/state/report sync, P2.2 contract-scope exit seal, and P2.3 plan-readiness implemented as contract-only AurelShell objects over P2.2-A/B/C.
+
+P2.2-D establishes `P22LocalNavigationIntegrationSnapshot`, `P22LocalNavigationProjectionContract`, `P22LocalNavigationApiContractShape`, `P22LocalNavigationEventContractShape`, `P22LocalNavigationShellBindingContract`, `P22LocalNavigationCliInspectContract`, `P22LocalNavigationTuiBindingStatus`, `P22LocalNavigationDocsStateSync`, `P22LocalNavigationExitSeal`, `P22P23ReadinessResult`, `P22DSideEffectProof`, and `P22DLocalNavigationIntegrationTailResult`. All P2.2-D side-effect/no-authority booleans remain false.
+
+Boundary: P2.2 exit seal is contract scope only, not LIVE, not TRACE_VERIFIED, and not release scope. Projection/API/event contract is not API server, HTTP route, event bus, or emitted runtime event. Shell/CLI/TUI binding is read-only inspect contract or unavailable with reason, not route execution or interactive nav. P2.3 readiness is plan-only and does not implement floating windows.
+
+Report: `agent/reports/P2_2_D_LOCAL_NAVIGATION_INTEGRATION_TAIL.md`
 
 ## P2.2-C Status
 
@@ -20,8 +30,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.2-C — P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles**
-- Next planned task: **P2.2-D — likely P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal**
+- Last completed task: **P2.2-D — P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal**
+- Next planned task: **P2.3-A — likely P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

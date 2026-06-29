@@ -1,18 +1,26 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.2-C — Local Navigation Context / Surface-Specific Profiles)_
+_Last updated: 2026-06-29 (P2.2-D — Local Navigation Integration Tail / Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.2-C — P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles
-- Current active: **P2.2-C complete**
-- Next planned: P2.2-D — likely P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal
+- Last completed: P2.2-D — P2.2.16–P2.2.20 Local Navigation Integration Tail / Section Seal
+- Current active: **P2.2-D complete — SEALED_FOR_P2_2_CONTRACT_SCOPE**
+- Next planned: P2.3-A — likely P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
-- P2.2 status: **P2.2-A foundation + P2.2-B hierarchy + P2.2-C context complete** — contract/read-model only; not UI, not route runtime
-- AurelShell suite: **479 passed** (post P2.2-C)
+- P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
+- AurelShell suite: **497 passed** (post P2.2-D)
+
+## P2.2-D AurelShell Local Navigation Integration Tail / Section Seal
+
+P2.2-D adds contract-only section integration, projection/API/event contract, shell/CLI/TUI binding, docs sync, P2.2 contract-scope exit seal, and P2.3 plan-readiness under `src/agentic_runtime/aurel_shell/local_navigation_integration_tail.py`.
+
+Boundary: `P22LocalNavigationIntegrationSnapshot` integrates P2.2-A/B/C read models — not source of truth or UI. `P22LocalNavigationProjectionContract` and API/event shapes are contract-only; no server, HTTP routes, event bus, or runtime emission. `P22LocalNavigationShellBindingContract` declares read-only CLI inspect shapes and TUI UNAVAILABLE. `P22LocalNavigationExitSeal` returns `SEALED_FOR_P2_2_CONTRACT_SCOPE` only. `P22P23ReadinessResult` returns `READY_FOR_P2_3_PLAN` plan-only.
+
+Validation: compileall PASS; P2.2-D focused tests 18 passed; `tests/aurel_shell` 497 passed; ruff PASS; mypy PASS (299 files). Report: `agent/reports/P2_2_D_LOCAL_NAVIGATION_INTEGRATION_TAIL.md`.
 
 ## P2.2-C AurelShell Local Navigation Context / Surface-Specific Profiles
 
