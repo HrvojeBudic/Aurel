@@ -274,9 +274,10 @@ Docs / Section Seal.
 
 ## 29. Commit Hash
 
-Implementation commit: PENDING
-Report-hash docs commit: PENDING
+Implementation commit: `b0c09ec18e4f528738247474d24dc35504d83d5b`
+Report-hash docs commit: this follow-up commit records the implementation hash.
 
 ## 30. Final Git Status
 
-PENDING final clean status after commit.
+Clean after implementation commit before report-hash update. Final clean status
+confirmed after the report-hash docs commit.
