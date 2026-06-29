@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.4-B - Command Search / Ranking / Context / Result Read Model Foundation)_
+_Last updated: 2026-06-29 (P2.4-C - Command Proposal / Selection / Preview / No-Execution Boundary)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.4-B - P2.4.6-P2.4.10 Command Search / Ranking / Context / Result Read Model Foundation
-- Current active: **P2.4-B complete - P2.4 command discovery read model complete**
-- Next planned: P2.4-C - likely Command Proposal / Selection / Preview / No-Execution Boundary
+- Last completed: P2.4-C - P2.4.11-P2.4.15 Command Proposal / Selection / Preview / No-Execution Boundary
+- Current active: **P2.4-C complete - P2.4 command proposal boundary complete**
+- Next planned: P2.4-D - likely Command Palette Integration Tail / Projection / Binding / Docs / Section Seal
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -18,7 +18,17 @@ _Last updated: 2026-06-29 (P2.4-B - Command Search / Ranking / Context / Result 
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **592 passed** (post P2.4-B)
+- AurelShell suite: **612 passed** (post P2.4-C)
+
+## P2.4-C AurelShell Command Proposal / No-Execution Boundary
+
+P2.4-C adds a contract-only command proposal read model under `src/agentic_runtime/aurel_shell/global_command_proposal.py`: proposal gate over P2.4-B repo evidence, selection intent, command proposal, input preview, impact/requirement previews, no-execution boundary, proposal result read model, side-effect proof, and pack result.
+
+Boundary: selection is not execution or operator consent. Proposal is not approval or authorization. Input preview is not invocation. Impact preview is not runtime simulation. Requirement preview is not permission enforcement. No-execution boundary is mandatory. Proposal result is not command execution result. P2.4-C does not create command palette UI, selection UI, preview panel UI, confirmation modal, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-D, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.4-B repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.4-C focused tests 20 passed; `tests/aurel_shell` 612 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_4_C_COMMAND_PROPOSAL_NO_EXECUTION.md`.
 
 ## P2.4-B AurelShell Command Discovery Read Model Foundation
 

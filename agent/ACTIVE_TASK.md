@@ -1,6 +1,16 @@
-# Active Task: P2.4-B (complete)
+# Active Task: P2.4-C (complete)
 
-**Status:** P2.4-B COMPLETE — P2.4 command discovery read model implemented at contract/read-model scope; next P2.4-C planning
+**Status:** P2.4-C COMPLETE — P2.4 command proposal / selection / preview / no-execution boundary implemented at contract/read-model scope; next P2.4-D planning
+
+## P2.4-C Status
+
+**DONE** — P2.4.11–P2.4.15 command proposal / selection / preview / no-execution boundary implemented as contract-only AurelShell objects gated by P2.4-B repo evidence. OMNI review/acceptance evidence was explicitly ignored as a hard gate by operator instruction; this is recorded as an execution policy, not as false OMNI acceptance.
+
+P2.4-C establishes `GlobalCommandProposalGate`, `GlobalCommandSelectionIntent`, `GlobalCommandProposal`, `GlobalCommandInputPreview`, `GlobalCommandImpactPreview`, `GlobalCommandRequirementPreview`, `GlobalCommandNoExecutionBoundary`, `GlobalCommandProposalResult`, `P24CSideEffectProof`, and `P24CCommandProposalResult` under `src/agentic_runtime/aurel_shell/global_command_proposal.py`. All P2.4-C side-effect/no-authority booleans remain false.
+
+Boundary: selection is not execution or operator consent. Proposal is not approval or authorization. Input preview is not invocation. Impact preview is not runtime simulation. Requirement preview is not permission enforcement. No-execution boundary is mandatory. Proposal result is not command execution result. P2.4-C does not create command palette UI, selection UI, preview panel UI, confirmation modal, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-D, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_4_C_COMMAND_PROPOSAL_NO_EXECUTION.md`
 
 ## P2.4-B Status
 
