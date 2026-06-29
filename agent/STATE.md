@@ -1,24 +1,37 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.4-C - Command Proposal / Selection / Preview / No-Execution Boundary)_
+_Last updated: 2026-06-29 (P2.4-D - Command Palette Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.4-C - P2.4.11-P2.4.15 Command Proposal / Selection / Preview / No-Execution Boundary
-- Current active: **P2.4-C complete - P2.4 command proposal boundary complete**
-- Next planned: P2.4-D - likely Command Palette Integration Tail / Projection / Binding / Docs / Section Seal
+- Last completed: P2.4-D - P2.4.16-P2.4.20 Command Palette Integration Tail / Projection / Binding / Docs / Section Seal
+- Current active: **P2.4-D complete - P2.4 command palette contract/read-model section sealed**
+- Next planned: P2.5-A - likely P2.5.0-P2.5.5 Cross-Surface Handoff Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
+- P2.4 status: **SEALED_CONTRACT_SCOPE** — P2.4-A through P2.4-D complete; contract/read-model only; not command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos, route runtime, tool/workflow dispatch, storage, memory/trace writes, product behavior, or release scope
+- P2.4-D status: **complete** — command section gate, contract inventory, pack rollup, section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, section seal
+- P2.4-C status: **complete** — command proposal gate, selection intent, command proposal, input/impact/requirement previews, active no-execution boundary, proposal result read model
 - P2.4-B status: **complete** — command discovery gate, query/search request, match/filter, surface-aware context, deterministic ranking, result-set read model
 - P2.4-A status: **complete** — command section gate, global command identity, declarative registry, scope/surface target, availability/unavailable state, input/parameter contracts
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **612 passed** (post P2.4-C)
+- AurelShell suite: **628 passed** (post P2.4-D)
+
+## P2.4-D AurelShell Command Palette Section Seal
+
+P2.4-D adds a contract-only P2.4 section projection/seal module under `src/agentic_runtime/aurel_shell/global_command_section_projection.py`: section gate over P2.4-C repo evidence, contract inventory over P2.4-A/B/C/D, pack rollup, available contract-only capabilities, explicit unavailable product/runtime capabilities, UNAVAILABLE binding status, no-fake-product readiness audit, contract-scope demo, side-effect proof, and section result.
+
+Boundary: section projection is not live UI, not source of truth, not product behavior, not LIVE, not TRACE_VERIFIED, and not release scope. Binding is UNAVAILABLE unless a future safe read-only command section binding exists; it does not execute commands, invoke handlers, route commands, or mutate runtime. Readiness audit does not grant authority and marks UI/execution/approval/permission/Custos/trace/release unavailable. Contract-scope demo is DEV_FIXTURE/CONTRACT_ONLY serialization proof only. P2.4-D does not start P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.4-C repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.4-D focused tests 16 passed; `tests/aurel_shell` 628 passed; ruff PASS; mypy PASS (307 source files). Report: `agent/reports/P2_4_D_COMMAND_PALETTE_SECTION_SEAL.md`.
 
 ## P2.4-C AurelShell Command Proposal / No-Execution Boundary
 

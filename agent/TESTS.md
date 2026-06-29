@@ -74,6 +74,22 @@ P2.4-C is contract/read-model command proposal only. It does NOT add command pal
 
 Report: `agent/reports/P2_4_C_COMMAND_PROPOSAL_NO_EXECUTION.md`
 
+## P2.4-D Command Palette Integration Tail / Projection / Binding / Docs / Section Seal Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_global_command_section_projection.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.4-D **16 passed**; `tests/aurel_shell` **628 passed**; ruff **PASS**; mypy **PASS** (307 source files).
+
+P2.4-D is contract/read-model section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, and section seal only. It does NOT add command palette UI, selection UI, preview panel UI, confirmation modal, frontend UI, browser UI, Tauri app, desktop app, keyboard shortcut handling, keyboard listener, hotkey handler, live search, command execution, command router, command handlers, command invocation, tool invocation, workflow dispatch, approval activation, permission enforcement, Custos integration, surface runtime switch, route execution, route handlers, route runtime, API server, HTTP routes, event bus, runtime event emission, local/browser storage, memory writes, trace writes, runtime mutation, source-of-truth store, production LIVE, TRACE_VERIFIED, release scope, product behavior, P2.5, P2.6, P2.7, P2.10, or P2.13 work.
+
+Report: `agent/reports/P2_4_D_COMMAND_PALETTE_SECTION_SEAL.md`
+
 ## P2.4-B Command Discovery Read Model Validation (COMPLETE)
 
 ```bash

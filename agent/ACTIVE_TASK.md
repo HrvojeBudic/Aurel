@@ -1,6 +1,16 @@
-# Active Task: P2.4-C (complete)
+# Active Task: P2.4-D (complete)
 
-**Status:** P2.4-C COMPLETE — P2.4 command proposal / selection / preview / no-execution boundary implemented at contract/read-model scope; next P2.4-D planning
+**Status:** P2.4-D COMPLETE — P2.4 command palette / global commands section sealed at contract/read-model scope; next P2.5-A planning
+
+## P2.4-D Status
+
+**DONE — SEALED_CONTRACT_SCOPE** — P2.4.16–P2.4.20 command palette integration tail / projection / binding / docs / section seal implemented as contract-only AurelShell objects over P2.4-A, P2.4-B, and P2.4-C.
+
+P2.4-D establishes `GlobalCommandSectionGate`, `GlobalCommandContractInventory`, `GlobalCommandPackRollup`, `GlobalCommandSectionProjection`, `GlobalCommandBindingStatus`, `GlobalCommandSectionReadinessAudit`, `GlobalCommandSectionSeal`, `GlobalCommandContractScopeDemo`, `P24DSideEffectProof`, and `P24DCommandPaletteSectionResult` under `src/agentic_runtime/aurel_shell/global_command_section_projection.py`. All P2.4-D side-effect/no-authority booleans remain false.
+
+Boundary: section projection is not live UI or source of truth. Binding is explicit `UNAVAILABLE` by default and does not execute commands, invoke handlers, route commands, or mutate runtime. Readiness audit passes contract scope only and marks product UI, execution, approval, permission/Custos, trace verification, and release readiness unavailable. Exit seal is contract/read-model scope only, not LIVE, not TRACE_VERIFIED, not product behavior, and not release scope. P2.4-D does not start P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_4_D_COMMAND_PALETTE_SECTION_SEAL.md`
 
 ## P2.4-C Status
 
@@ -106,8 +116,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.4-A — P2.4.0–P2.4.5 Command Palette / Global Commands Foundation**
-- Next planned task: **P2.4-B — likely P2.4.6–P2.4.10 Command Search / Ranking / Context / Read Model Foundation**
+- Last completed task: **P2.4-D — P2.4.16–P2.4.20 Command Palette Integration Tail / Projection / Binding / Docs / Section Seal**
+- Next planned task: **P2.5-A — likely P2.5.0–P2.5.5 Cross-Surface Handoff Foundation**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

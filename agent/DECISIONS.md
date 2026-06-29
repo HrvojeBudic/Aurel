@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.4-D Command Palette Section Seal Boundary
+
+### DEC-P24D-01: P2.4 seals only at contract/read-model scope
+**Decision:** P2.4-D may return `SEALED_CONTRACT_SCOPE` only for the P2.4 Command Palette / Global Commands contract/read-model layer. The seal does not claim production `LIVE`, actual `TRACE_VERIFIED`, release scope, product command palette behavior, command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos integration, route runtime, tool/workflow dispatch, storage, memory/trace writes, P2.5, P2.6, P2.7, P2.10, or P2.13.
+**Why:** P2.4-D closes the command contracts and operator-inspection projection surface. Product UI, execution, authority, trace verification, and release evidence belong to future authorized sections and cannot be inferred from a contract-scope section seal.
+
+### DEC-P24D-02: Command section binding is explicit UNAVAILABLE by default
+**Decision:** P2.4-D represents the command section binding as `UNAVAILABLE` unless a future safe read-only binding surface is explicitly created. The binding does not execute commands, invoke handlers, route commands, mutate runtime, or imply product command palette behavior.
+**Why:** The repo has P2.4 command read models but no command palette product surface or safe read-only binding convention for command-section inspection. An explicit unavailable binding is more honest than a fake UI or CLI/TUI execution bridge.
+
 ## 2026-06-29 - P2.4-A Command Palette / Global Commands Foundation Boundary
 
 ### DEC-P24A-01: OMNI evidence ignored only as an execution gate
