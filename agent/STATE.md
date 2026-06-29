@@ -1,19 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.5-A - Cross-Surface Handoff Foundation)_
+_Last updated: 2026-06-30 (P2.5-B - Handoff Context / Availability Read Model)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.5-A - P2.5.0-P2.5.5 Cross-Surface Handoff Foundation
-- Current active: **P2.5-A complete - P2.5 cross-surface handoff foundation contracts implemented**
-- Next planned: P2.5-B - likely P2.5.6-P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model
+- Last completed: P2.5-B - P2.5.6-P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model
+- Current active: **P2.5-B complete - P2.5 handoff context / availability read-model contracts implemented**
+- Next planned: P2.5-C - likely P2.5.11-P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.4 status: **SEALED_CONTRACT_SCOPE** — P2.4-A through P2.4-D complete; contract/read-model only; not command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos, route runtime, tool/workflow dispatch, storage, memory/trace writes, product behavior, or release scope
+- P2.5-B status: **complete** — handoff context gate, read-only context snapshot/items, continuity/carry-forward metadata, conflict/collision records, availability/readiness read model, explanation/context result contract, side-effect proof
 - P2.5-A status: **complete** — cross-surface handoff section gate, handoff identity/intent, source/target endpoint, payload/reference envelope, eligibility/unavailable-state, no-route/no-runtime boundary, foundation result/read model, side-effect proof
 - P2.4-D status: **complete** — command section gate, contract inventory, pack rollup, section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, section seal
 - P2.4-C status: **complete** — command proposal gate, selection intent, command proposal, input/impact/requirement previews, active no-execution boundary, proposal result read model
@@ -22,7 +23,17 @@ _Last updated: 2026-06-30 (P2.5-A - Cross-Surface Handoff Foundation)_
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **628 passed** (post P2.4-D)
+- AurelShell suite: **730 passed** (post P2.5-B)
+
+## P2.5-B AurelShell Handoff Context / Availability Read Model
+
+P2.5-B adds a contract-only handoff context and availability read model under `src/agentic_runtime/aurel_shell/cross_surface_handoff_context.py`: context gate over P2.5-A repo evidence, read-only context snapshot/items, continuity/carry-forward metadata, conflict/collision records, availability/readiness explanation, explanation contracts, context result, pack result, and side-effect proof.
+
+Boundary: context snapshot is not context transfer, persistence, memory write, storage write, trace write, or runtime mutation. Continuity is metadata only and does not persist, mutate memory, copy/move objects, write storage, or write trace. Conflict records are diagnostic only and do not resolve conflicts, block runtime, mutate runtime, or create actions. Availability is read-model/explanation only and is not permission enforcement, authorization, approval activation, Custos, or runtime blocking. Explanation is not approval, not operator confirmation, and executes nothing. Context result is not transition result, route result, live UI, source of truth, context transfer, persistence, conflict resolution, permission enforcement, approval, confirmation, surface switch, route execution, runtime mutation, or memory/storage/trace write.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.5-A repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.5-B focused tests 18 passed; `tests/aurel_shell` 730 passed; ruff PASS; mypy PASS (309 source files). Report: `agent/reports/P2_5_B_HANDOFF_CONTEXT_AVAILABILITY_READ_MODEL.md`.
 
 ## P2.4-D AurelShell Command Palette Section Seal
 

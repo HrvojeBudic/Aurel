@@ -1,6 +1,16 @@
-# Active Task: P2.5-A (complete)
+# Active Task: P2.5-B (complete)
 
-**Status:** P2.5-A COMPLETE — P2.5 cross-surface handoff foundation contracts implemented; next P2.5-B planning
+**Status:** P2.5-B COMPLETE — P2.5 handoff context / continuity / conflict / availability read model implemented; next P2.5-C planning
+
+## P2.5-B Status
+
+**DONE — READ_MODEL_ONLY / CONTRACT_ONLY** — P2.5.6–P2.5.10 handoff context / continuity / conflict / availability read model implemented as contract-only AurelShell objects gated by P2.5-A repo evidence.
+
+P2.5-B establishes `CrossSurfaceHandoffContextGate`, `CrossSurfaceHandoffContextSnapshot`, `CrossSurfaceContextItem`, `CrossSurfaceHandoffContinuity`, `CrossSurfaceHandoffConflict`, `CrossSurfaceHandoffAvailability`, `CrossSurfaceHandoffExplanation`, `CrossSurfaceHandoffContextResult`, `P25BSideEffectProof`, and `P25BHandoffContextResult` under `src/agentic_runtime/aurel_shell/cross_surface_handoff_context.py`. All P2.5-B side-effect/no-authority booleans remain false.
+
+Boundary: context snapshot is read-only and is not context transfer, persistence, memory write, storage write, trace write, or runtime mutation. Continuity/carry-forward is metadata only, not persistence or object movement. Conflict records are diagnostic only, not resolution or runtime blocking. Availability is explanation/readiness only, not permission enforcement, approval activation, authorization, or Custos. Explanation is not approval, not operator confirmation, and executes nothing. Context result is not transition result, route result, live UI, source of truth, context transfer, persistence, conflict resolution, permission enforcement, approval, confirmation, surface switch, route execution, runtime mutation, or memory/storage/trace write.
+
+Report: `agent/reports/P2_5_B_HANDOFF_CONTEXT_AVAILABILITY_READ_MODEL.md`
 
 ## P2.5-A Status
 
@@ -126,8 +136,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.4-D — P2.4.16–P2.4.20 Command Palette Integration Tail / Projection / Binding / Docs / Section Seal**
-- Next planned task: **P2.5-A — likely P2.5.0–P2.5.5 Cross-Surface Handoff Foundation**
+- Last completed task: **P2.5-B — P2.5.6–P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model**
+- Next planned task: **P2.5-C — likely P2.5.11–P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

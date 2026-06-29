@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-30 - P2.5-B Handoff Context / Availability Boundary
+
+### DEC-P25B-01: Handoff context is snapshot/read model, not transfer or persistence
+**Decision:** P2.5-B represents handoff context as read-only context snapshot/items and continuity metadata over the P2.5-A foundation result. It does not transfer context, persist context, persist continuity, copy/move objects, write memory, write storage, write trace, mutate runtime, create source-of-truth storage, or integrate Mneme.
+**Why:** P2.5-B prepares an inspectable context/readiness layer for later handoff surfaces. Treating snapshot/continuity vocabulary as storage or transfer would overclaim memory/runtime behavior and bypass later governed persistence and handoff execution gates.
+
+### DEC-P25B-02: Availability and explanation grant no authority
+**Decision:** P2.5-B availability/readiness and explanation contracts are explanatory only. They do not enforce permissions, authorize handoffs, grant or deny permission, activate approvals, create operator confirmation, integrate Custos, block runtime, execute routes, switch surfaces, create UI/preview/explanation panels, or claim product behavior.
+**Why:** Availability can explain why a read model is available or unavailable, but permission enforcement, approval, operator confirmation, route runtime, and UI belong to later explicitly gated work.
+
 ## 2026-06-29 - P2.4-D Command Palette Section Seal Boundary
 
 ### DEC-P24D-01: P2.4 seals only at contract/read-model scope
