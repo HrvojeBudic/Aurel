@@ -238,10 +238,10 @@ P2.5-D — likely P2.5.16–P2.5.20 Handoff Projection / Binding / Docs / Sectio
 
 ## 33. Commit Hash
 
-_(recorded after commit)_
+`790f930` — feat(aurel-shell): add P2.5 handoff preview boundary
 
 ---
 
 ## 34. Final Git Status
 
-_(recorded after commit)_
+Clean after implementation commit.
