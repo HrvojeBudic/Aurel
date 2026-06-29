@@ -1,15 +1,23 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.1-B — Topbar Status Slots / Availability / Operator Context)_
+_Last updated: 2026-06-29 (P2.1-C — Topbar Route Visibility / Interaction Constraints / Registry Refinement)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.1-B — P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context
-- Current active: **P2.1-B complete** — next P2.1-C
-- Next planned: P2.1-C — likely P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement
+- Last completed: P2.1-C — P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement
+- Current active: **P2.1-C complete** — next P2.1-D
+- Next planned: P2.1-D — likely P2.1.16–P2.1.20 P2.1 Integration Tail / Docs / Readiness / Section Handoff
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
-- P2.1 status: **P2.1-B complete** — topbar registry foundation plus status-slot projection; P2.1-C not started
+- P2.1 status: **P2.1-C complete** — topbar registry foundation plus status-slot projection plus route visibility / interaction constraints / registry refinement; P2.1-D not started
+
+## P2.1-C AurelShell Topbar Route Visibility / Interaction Constraints / Registry Refinement
+
+P2.1-C adds contract-only topbar route visibility, interaction constraint, registry metadata consistency, blocked/deferred state, and route visibility projection objects under `src/agentic_runtime/aurel_shell/topbar_route_visibility.py`.
+
+Boundary: route visibility is an affordance map, not route runtime or execution. Interaction constraints are intent/display safety grammar, not permission, authority, click handlers, keyboard shortcuts, or action execution. Registry refinement checks coherence across P2.1-A registry/read model, P2.1-B status slots, and P2.1-C route/state metadata without rewriting roadmap canon, mutating registry truth, or promoting future refs. Blocked/deferred/error states require operator-facing reasons and do not create notifications, workflows, or runtime failure claims by default. The projection references P2.1-A/B read/status models and does not create UI, clients, route handlers, route runtime, local navigation, command palette, memory writes, trace writes, P2.1-D, or P2.2.
+
+Validation: compileall PASS; P2.1-C focused tests 52 passed; `tests/aurel_shell` 395 passed; ruff PASS; mypy PASS (294 files). Report: `agent/reports/P2_1_C_TOPBAR_ROUTE_VISIBILITY.md`.
 
 ## P2.1-B AurelShell Topbar Status Slots / Availability / Operator Context
 

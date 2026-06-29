@@ -1,12 +1,22 @@
-# Active Task: P2.1-B (complete)
+# Active Task: P2.1-C (complete)
 
-**Status:** P2.1-B COMPLETE — Topbar Status Slots / Availability / Operator Context; next P2.1-C
+**Status:** P2.1-C COMPLETE — Topbar Route Visibility / Interaction Constraints / Registry Refinement; next P2.1-D
 
 ## Roadmap Position
 
-- Last completed task: **P2.1-B — P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context**
-- Next planned task: **P2.1-C — likely P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement**
+- Last completed task: **P2.1-C — P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement**
+- Next planned task: **P2.1-D — likely P2.1.16–P2.1.20 P2.1 Integration Tail / Docs / Readiness / Section Handoff**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.1-C Status
+
+**DONE** — P2.1.11–P2.1.15 topbar route visibility / interaction constraints / registry refinement implemented as contract-only AurelShell objects over the P2.1-A registry/read-model foundation and P2.1-B status projection.
+
+P2.1-C establishes `TopbarRouteVisibilityContract`, `TopbarInteractionConstraint`, `TopbarRegistryRefinementResult`, `TopbarRegistryMetadataConsistencyCheck`, `TopbarBlockedDeferredState`, `TopbarRouteVisibilityProjection`, `TopbarRouteVisibilityUnavailableBinding`, `P21CSideEffectProof`, and `P21CTopbarRouteVisibilityPackResult`. All 36 P2.1-C side-effect/no-authority booleans remain false.
+
+Boundary: route visibility is not route execution; interaction constraint is not permission or authority; blocked/deferred state is not runtime failure unless proven; registry refinement validates metadata only and does not rewrite roadmap canon or mutate registry truth; projection is not live UI. No UI/client/runtime/local nav/command palette/route handler/permission enforcement/Custos/memory/trace/P2.1-D/P2.2 work was created.
+
+Report: `agent/reports/P2_1_C_TOPBAR_ROUTE_VISIBILITY.md`
 
 ## P2.1-B Status
 
