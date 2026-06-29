@@ -253,9 +253,11 @@ Docking Semantics.
 
 ## 26. Commit Hash
 
-Pending initial commit.
+Implementation/report/docs commit:
+`650dddfdd0ea4b83d4973c0bf90fc19b3bf1cfe9`
+
+Report-hash docs commit: this follow-up commit records the implementation hash.
 
 ## 27. Final Git Status
 
-Pending initial commit.
-
+Clean after report-hash docs commit on `master`; no push performed.
