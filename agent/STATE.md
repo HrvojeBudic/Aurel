@@ -1,18 +1,27 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.2-D — Local Navigation Integration Tail / Section Seal)_
+_Last updated: 2026-06-29 (P2.3-A — Workspace State Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.2-D — P2.2.16–P2.2.20 Local Navigation Integration Tail / Section Seal
-- Current active: **P2.2-D complete — SEALED_FOR_P2_2_CONTRACT_SCOPE**
-- Next planned: P2.3-A — likely P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation
+- Last completed: P2.3-A — P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation
+- Current active: **P2.3-A complete — contract/read-model workspace state foundation**
+- Next planned: P2.3-B — likely floating window interaction / workspace projection continuation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
-- AurelShell suite: **497 passed** (post P2.2-D)
+- P2.3-A status: **complete** — contract/read-model only; not UI, not storage, not runtime mutation
+- AurelShell suite: **509 passed** (post P2.3-A)
+
+## P2.3-A AurelShell Workspace State Foundation
+
+P2.3-A adds contract-only floating window identity, shell workspace state, lifecycle/availability representation, placement/layering intent, and workspace state projection seed under `src/agentic_runtime/aurel_shell/workspace_state.py`.
+
+Boundary: `P23SectionIntakeGate` is gated by AUDIT-REPAIR-001 and P2.2-D (`SEALED_FOR_P2_2_CONTRACT_SCOPE`, `READY_FOR_P2_3_PLAN`) and does not start runtime implementation. `FloatingWindowIdentityContract` declares window identity/ownership over canonical P2 surfaces without creating window instances, authority, source-of-truth ownership, or UI. `ShellWorkspaceStateContract` is a read-model coordinate frame and does not activate old `Workspace`, browser storage, local storage, route runtime, or source-of-truth state. Lifecycle and placement contracts are semantic hints only; no runtime lifecycle engine, event bus, CSS/layout, z-index runtime, drag/drop, API server, memory write, trace write, P2.3-B, P2.10, or P2.13 work is implemented.
+
+Validation: compileall PASS; P2.3-A focused tests 12 passed; `tests/aurel_shell` 509 passed; ruff PASS; mypy PASS (300 files). Report: `agent/reports/P2_3_A_WORKSPACE_STATE_FOUNDATION.md`.
 
 ## P2.2-D AurelShell Local Navigation Integration Tail / Section Seal
 

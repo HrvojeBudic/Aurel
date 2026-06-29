@@ -1,6 +1,16 @@
-# Active Task: P2.2-D (complete)
+# Active Task: P2.3-A (complete)
 
-**Status:** P2.2-D COMPLETE — P2.2 section sealed at contract scope; next P2.3-A planning
+**Status:** P2.3-A COMPLETE — workspace state foundation contract/read-model pack complete; next P2.3-B planning
+
+## P2.3-A Status
+
+**DONE** — P2.3.0–P2.3.5 floating windows / workspace state foundation implemented as contract-only AurelShell objects gated by AUDIT-REPAIR-001 and P2.2-D.
+
+P2.3-A establishes `P23SectionIntakeGate`, `FloatingWindowIdentityContract`, `ShellWorkspaceStateContract`, `FloatingWindowLifecycleContract`, `FloatingWindowPlacementIntentContract`, `WorkspaceStateProjectionSeed`, `P23ASideEffectProof`, and `P23AWorkspaceStateFoundationResult` under `src/agentic_runtime/aurel_shell/workspace_state.py`. All P2.3-A side-effect/no-authority booleans remain false.
+
+Boundary: workspace state is a shell read-model coordinate frame, not old `Workspace` as an active top-level surface. Floating window identity is contract metadata, not runtime window instances or draggable UI. Lifecycle/availability and placement/layering are semantic read-model contracts, not runtime lifecycle, CSS/layout, z-index, storage, API/event runtime, permission enforcement, memory/trace writes, P2.3-B, P2.10, or P2.13.
+
+Report: `agent/reports/P2_3_A_WORKSPACE_STATE_FOUNDATION.md`
 
 ## P2.2-D Status
 
@@ -30,8 +40,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.2-D — P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal**
-- Next planned task: **P2.3-A — likely P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation**
+- Last completed task: **P2.3-A — P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation**
+- Next planned task: **P2.3-B — likely floating window interaction / workspace projection continuation**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

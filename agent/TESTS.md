@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.3-A Floating Windows / Workspace State Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_workspace_state_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.3-A **12 passed**; `tests/aurel_shell` **509 passed**; ruff **PASS**; mypy **PASS** (300 files).
+
+P2.3-A is contract/read-model workspace state foundation only. It does NOT add product UI, browser/Tauri app, draggable windows, window manager, CSS/layout/z-index runtime, frontend routes, live CLI/TUI product, route runtime, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, local/browser storage, old `Workspace` top-level surface activation, production LIVE, TRACE_VERIFIED, release scope, P2.3-B, P2.10, or P2.13 work.
+
+Report: `agent/reports/P2_3_A_WORKSPACE_STATE_FOUNDATION.md`
+
 ## AUDIT-REPAIR-001 Test Portability Validation (COMPLETE)
 
 ```bash
