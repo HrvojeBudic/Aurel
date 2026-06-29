@@ -1,18 +1,26 @@
 # Repository State
 
-_Last updated: 2026-06-29 (AUDIT-REPAIR-001 — Test Portability + P2.2-B Canon Sync)_
+_Last updated: 2026-06-29 (P2.2-C — Local Navigation Context / Surface-Specific Profiles)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.2-B — P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints
-- Current active: **AUDIT-REPAIR-001 complete** — regression portability blocker cleared
-- Next planned: P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles (planning only; not dispatched)
+- Last completed: P2.2-C — P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles
+- Current active: **P2.2-C complete**
+- Next planned: P2.2-D — likely P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
-- P2.2 status: **P2.2-A foundation + P2.2-B hierarchy complete** — contract/read-model only; not UI, not route runtime
-- Full suite: **6151 passed, 3 skipped** (post AUDIT-REPAIR-001)
+- P2.2 status: **P2.2-A foundation + P2.2-B hierarchy + P2.2-C context complete** — contract/read-model only; not UI, not route runtime
+- AurelShell suite: **479 passed** (post P2.2-C)
+
+## P2.2-C AurelShell Local Navigation Context / Surface-Specific Profiles
+
+P2.2-C adds contract-only context carryover, surface profiles, restoration, degraded profiles, and context projection under `src/agentic_runtime/aurel_shell/local_navigation_context.py`.
+
+Boundary: `LocalNavContextCarryoverContract` is read-model continuity — not memory persistence or route execution. `SurfaceLocalNavProfileContract` is per-surface nav shape — not new surface taxonomy or UI. `LocalNavStateRestorationContract` is read-model restoration — not URL mutation or route execution. `LocalNavDegradedProfileContract` is honest capability disclosure — not runtime failure claim or repair automation. `LocalNavContextProjectionResult` bundles P2.2.11–P2.2.15 over P2.2-B hierarchy — not UI, does not start P2.2-D or P2.3.
+
+Validation: compileall PASS; P2.2-C focused tests 19 passed; `tests/aurel_shell` 479 passed; ruff PASS; mypy PASS (298 files). Report: `agent/reports/P2_2_C_LOCAL_NAVIGATION_CONTEXT.md`.
 
 ## AUDIT-REPAIR-001 Test Portability + P2.2-B Canon Sync
 

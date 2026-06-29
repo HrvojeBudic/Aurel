@@ -1,6 +1,16 @@
-# Active Task: AUDIT-REPAIR-001 (complete) / P2.2-B (complete)
+# Active Task: P2.2-C (complete)
 
-**Status:** AUDIT-REPAIR-001 COMPLETE — test portability restored; P2.2-B COMPLETE; next P2.2-C planning
+**Status:** P2.2-C COMPLETE — local navigation context / surface profiles; next P2.2-D planning
+
+## P2.2-C Status
+
+**DONE** — P2.2.11–P2.2.15 local navigation context carryover, surface-specific profiles, state restoration, degraded/unavailable profiles, and context projection implemented as contract-only AurelShell objects over P2.2-A/P2.2-B foundation.
+
+P2.2-C establishes `LocalNavContextCarryoverContract`, `SurfaceLocalNavProfileContract`, `SurfaceLocalNavProfileKind`, `LocalNavStateRestorationContract`, `LocalNavRestoreSource`, `LocalNavDegradedProfileContract`, `LocalNavContextProjectionResult`, `P22CSideEffectProof`, and `P22CLocalNavigationContextResult`. All 43 P2.2-C side-effect/no-authority booleans remain false.
+
+Boundary: context carryover is read-model continuity, not memory persistence. Surface profile is local nav shape, not new surface taxonomy. State restoration is read-model restoration, not route execution. Degraded profile is honest contract state, not runtime failure claim. Context projection bundles P2.2.11–P2.2.15 over P2.2-B hierarchy — not UI, does not start P2.2-D or P2.3.
+
+Report: `agent/reports/P2_2_C_LOCAL_NAVIGATION_CONTEXT.md`
 
 ## AUDIT-REPAIR-001 Status
 
@@ -10,8 +20,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.2-B — P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints**
-- Next planned task: **P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles**
+- Last completed task: **P2.2-C — P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles**
+- Next planned task: **P2.2-D — likely P2.2.16–P2.2.20 P2.2 Integration Tail / Projection / Binding / Docs / Section Seal**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

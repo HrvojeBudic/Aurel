@@ -74,6 +74,18 @@ Portable cwd via `tests/repo_root.py` (`pyproject.toml` + `src/` discovery). No 
 
 Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
+## P2.2-C Local Navigation Context / Surface-Specific Profiles Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_local_navigation_context.py -q
+```
+
+Results: compileall **PASS**; focused P2.2-C **19 passed**; AurelShell **479 passed**; ruff **PASS**; mypy **PASS** (298 files).
+
+P2.2-C is contract/read-model context/profile/restoration/degraded/context projection only. It does NOT add product UI, frontend sidebar, global left nav, frontend routes, clients, live CLI/TUI product, route runtime, route handler, click handlers, keyboard shortcuts, command palette, floating windows, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, local/browser storage, production LIVE, TRACE_VERIFIED, release scope, P2.2-D, or P2.3 work.
+
+Report: `agent/reports/P2_2_C_LOCAL_NAVIGATION_CONTEXT.md`
+
 ## P2.2-B Local Navigation Hierarchy / Interaction Constraints Validation (COMPLETE)
 
 ```bash
