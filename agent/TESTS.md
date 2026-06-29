@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.3-B Floating Window Focus / Stack / Grouping / Restore Semantics Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_workspace_window_semantics.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.3-B **15 passed**; `tests/aurel_shell` **524 passed**; ruff **PASS**; mypy **PASS** (301 files).
+
+P2.3-B is contract/read-model focus/stack/group/restore semantics only. It does NOT add product UI, browser UI, Tauri app, frontend components, browser focus, frontend activation, focus manager runtime, z-index runtime, CSS/frontend layout, layout engine, draggable/resizable windows, window manager runtime, keyboard shortcuts, command palette, route runtime, route execution, API server, HTTP routes, event bus, runtime event emission, local/browser storage, memory writes, trace writes, runtime mutation, permission enforcement, Custos integration, desktop workspace UI, frontend group UI, tabs UI, source-of-truth store, production LIVE, TRACE_VERIFIED, release scope, P2.3-C, P2.10, or P2.13 work.
+
+Report: `agent/reports/P2_3_B_WORKSPACE_WINDOW_SEMANTICS.md`
+
 ## P2.3-A Floating Windows / Workspace State Foundation Validation (COMPLETE)
 
 ```bash

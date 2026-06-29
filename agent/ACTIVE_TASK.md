@@ -1,6 +1,18 @@
-# Active Task: P2.3-A (complete)
+# Active Task: P2.3-B (complete)
 
-**Status:** P2.3-A COMPLETE — workspace state foundation contract/read-model pack complete; next P2.3-B planning
+**Status:** P2.3-B COMPLETE — workspace window semantics contract/read-model pack complete; next P2.3-C planning
+
+## P2.3-B Status
+
+**DONE** — P2.3.6–P2.3.10 floating window focus / stack / grouping / restore semantics implemented as contract-only AurelShell objects over the P2.3-A workspace state projection seed.
+
+P2.3-B establishes `FloatingWindowFocusIntentContract`, `FloatingWindowStackOrderContract`, `FloatingWindowGroupContract`, `FloatingWindowRestoreContract`, `WorkspaceFocusStackProjectionResult`, `P23BSideEffectProof`, and `P23BWorkspaceWindowSemanticsResult` under `src/agentic_runtime/aurel_shell/workspace_window_semantics.py`. All P2.3-B side-effect/no-authority booleans remain false.
+
+Boundary: focus intent is not browser focus or focus manager runtime. Stack/layer order is not z-index runtime, CSS, or layout engine. Window group is not desktop workspace UI, frontend group UI, or tabs UI. Restore/resume is not persistence, local/browser storage, memory write, trace write, route execution, or runtime mutation. Projection result is not frontend state store or product behavior and does not start P2.3-C, P2.10, or P2.13.
+
+Operator waiver: the missing local P2.3-A OMNI acceptance marker was explicitly waived by operator instruction for this P2.3-B dispatch. The report records this as a waiver, not as false OMNI acceptance evidence.
+
+Report: `agent/reports/P2_3_B_WORKSPACE_WINDOW_SEMANTICS.md`
 
 ## P2.3-A Status
 
@@ -41,7 +53,7 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 ## Roadmap Position
 
 - Last completed task: **P2.3-A — P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation**
-- Next planned task: **P2.3-B — likely floating window interaction / workspace projection continuation**
+- Next planned task: **P2.3-C — likely P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

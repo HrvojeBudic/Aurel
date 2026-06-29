@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.3-B Workspace Window Semantics Boundary
+
+### DEC-P23B-01: Missing P2.3-A OMNI marker waived for P2.3-B dispatch only
+**Decision:** The operator explicitly instructed this P2.3-B dispatch to ignore missing P2.3-A OMNI acceptance evidence and implement. P2.3-B records this as an operator waiver, not as false OMNI acceptance evidence. The waiver is scoped to this dispatch only and does not extend to later packs.
+**Why:** P2.3-A implementation, report, commit hash (`1271881`), report-hash docs commit (`2e3f6d1`), clean git evidence, projection seed, side-effect proof, and DONE status are present locally, but no separate P2.3-A OMNI acceptance marker was found in repo state.
+
+### DEC-P23B-02: P2.3-B is contract/read-model semantics only
+**Decision:** P2.3-B defines focus intent, stack/layer order, group/collection, restore/resume, and workspace focus/stack projection semantics only. It does not create browser focus, frontend activation, focus manager runtime, z-index runtime, CSS/layout engine, draggable/resizable windows, storage, route runtime, API/event runtime, product behavior, memory/trace writes, runtime mutation, P2.3-C, P2.10, or P2.13.
+**Why:** P2.3-B vocabulary sounds like real window-manager/product behavior. Keeping every contract side-effect false preserves the P2.3-A foundation boundary and prevents runtime overclaim.
+
 ## 2026-06-29 - P2.1-D Topbar Integration Tail / Section Seal Boundary
 
 ### DEC-P21D-01: P2.1 seals only at contract scope

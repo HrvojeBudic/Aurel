@@ -1,19 +1,29 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.3-A — Workspace State Foundation)_
+_Last updated: 2026-06-29 (P2.3-B — Workspace Window Semantics)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.3-A — P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation
-- Current active: **P2.3-A complete — contract/read-model workspace state foundation**
-- Next planned: P2.3-B — likely floating window interaction / workspace projection continuation
+- Last completed: P2.3-B — P2.3.6–P2.3.10 Floating Window Focus / Stack / Grouping / Restore Semantics
+- Current active: **P2.3-B complete — contract/read-model workspace window semantics**
+- Next planned: P2.3-C — likely P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
-- P2.3-A status: **complete** — contract/read-model only; not UI, not storage, not runtime mutation
-- AurelShell suite: **509 passed** (post P2.3-A)
+- P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
+- AurelShell suite: **524 passed** (post P2.3-B)
+
+## P2.3-B AurelShell Workspace Window Semantics
+
+P2.3-B adds contract-only floating window focus intent, stack/layer order, group/collection, restore/resume, and workspace focus/stack projection result objects under `src/agentic_runtime/aurel_shell/workspace_window_semantics.py`.
+
+Boundary: focus intent is declarative and does not set browser focus, activate frontend components, create a focus manager, mutate runtime, or write memory/trace. Stack/layer order is read-model ordering and does not create z-index runtime, layout engine, CSS, runtime mutation, or memory/trace writes. Window groups are logical collections and do not create desktop workspace UI, frontend group UI, tabs UI, runtime mutation, or memory/trace writes. Restore/resume is read-model reconstruction and does not use local/browser storage, persistence, memory writes, trace writes, runtime mutation, or route execution. `WorkspaceFocusStackProjectionResult` references the P2.3-A projection seed and is not a frontend state store or product behavior; it does not start P2.3-C, P2.10, or P2.13.
+
+Operator waiver: the missing local P2.3-A OMNI acceptance marker was explicitly waived by operator instruction for this P2.3-B dispatch. This is recorded as a waiver, not as false OMNI acceptance evidence.
+
+Validation: compileall PASS; P2.3-B focused tests 15 passed; `tests/aurel_shell` 524 passed; ruff PASS; mypy PASS (301 files). Report: `agent/reports/P2_3_B_WORKSPACE_WINDOW_SEMANTICS.md`.
 
 ## P2.3-A AurelShell Workspace State Foundation
 
