@@ -1,20 +1,32 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.3-C — Workspace Window Cross-Surface Semantics)_
+_Last updated: 2026-06-29 (P2.3-D — Workspace Window Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.3-C — P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics
-- Current active: **P2.3-C complete — contract/read-model cross-surface window semantics**
-- Next planned: P2.3-D — likely P2.3.16–P2.3.20 P2.3 Integration Tail / Projection / Binding / Docs / Section Seal
+- Last completed: P2.3-D — P2.3.16–P2.3.20 Floating Windows / Workspace State Integration Tail / Projection / Binding / Docs / Section Seal
+- Current active: **P2.3-D complete — P2.3 contract/read-model section sealed**
+- Next planned: P2.4 — Command Palette / Global Commands
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
+- P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
+- P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **539 passed** (post P2.3-C)
+- AurelShell suite: **553 passed** (post P2.3-D)
+
+## P2.3-D AurelShell Workspace Window Section Seal
+
+P2.3-D adds a contract-only P2.3 section projection, capability records, read-only binding status/render summary, docs/state/report sync representation, readiness audit, contract-scope exit seal, side-effect proof, and pack result under `src/agentic_runtime/aurel_shell/workspace_window_section_projection.py`.
+
+Boundary: `WorkspaceWindowSectionProjection` aggregates P2.3-A/B/C projection refs and is not frontend state, product behavior, LIVE, TRACE_VERIFIED, release scope, source of truth, or future-pack implementation. `WorkspaceWindowBindingStatus` is read-only inspection/render grammar only and does not execute commands, start command palette, create shell UI, mutate runtime, or write storage/memory/trace. `WorkspaceWindowSectionSeal` returns `SEALED_FOR_CONTRACT_SCOPE` only and does not seal product or release scope.
+
+Operator waiver: the missing local P2.3-C OMNI acceptance marker was explicitly waived by operator instruction for this P2.3-D dispatch. This is recorded as a waiver, not as false OMNI acceptance evidence.
+
+Validation: compileall PASS; P2.3-D focused tests 14 passed; `tests/aurel_shell` 553 passed; ruff PASS; mypy PASS (303 files). Report: `agent/reports/P2_3_D_WORKSPACE_WINDOW_SECTION_SEAL.md`.
 
 ## P2.3-C AurelShell Workspace Window Cross-Surface Semantics
 

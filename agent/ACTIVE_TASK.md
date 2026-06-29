@@ -1,6 +1,18 @@
-# Active Task: P2.3-C (complete)
+# Active Task: P2.3-D (complete)
 
-**Status:** P2.3-C COMPLETE — cross-surface window semantics contract/read-model pack complete; next P2.3-D planning
+**Status:** P2.3-D COMPLETE — P2.3 workspace window section sealed for contract/read-model scope; next P2.4 planning
+
+## P2.3-D Status
+
+**DONE — SEALED_FOR_CONTRACT_SCOPE** — P2.3.16–P2.3.20 workspace window section projection / binding / docs / readiness / seal implemented as contract-only AurelShell objects over P2.3-A, P2.3-B, and P2.3-C.
+
+P2.3-D establishes `WorkspaceWindowSectionProjection`, `WorkspaceWindowSectionCapabilityRecord`, `WorkspaceWindowBindingStatus`, `WorkspaceWindowDocsStateReportSync`, `WorkspaceWindowSectionReadinessAudit`, `WorkspaceWindowSectionSeal`, `P23DSideEffectProof`, and `P23DWorkspaceWindowSectionResult` under `src/agentic_runtime/aurel_shell/workspace_window_section_projection.py`. All P2.3-D side-effect/no-authority booleans remain false.
+
+Boundary: section projection is not frontend state. Read-only binding is not shell UI or command palette. Readiness audit is not product behavior. Exit seal is contract scope only, not LIVE, not TRACE_VERIFIED, and not release scope. P2.3-D does not implement P2.4, P2.10, or P2.13.
+
+Operator waiver: the missing local P2.3-C OMNI acceptance marker was explicitly waived by operator instruction for this P2.3-D dispatch. The report records this as a waiver, not as false OMNI acceptance evidence.
+
+Report: `agent/reports/P2_3_D_WORKSPACE_WINDOW_SECTION_SEAL.md`
 
 ## P2.3-C Status
 
@@ -64,8 +76,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.3-C — P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics**
-- Next planned task: **P2.3-D — likely P2.3.16–P2.3.20 P2.3 Integration Tail / Projection / Binding / Docs / Section Seal**
+- Last completed task: **P2.3-D — P2.3.16–P2.3.20 Floating Windows / Workspace State Integration Tail / Projection / Binding / Docs / Section Seal**
+- Next planned task: **P2.4 — Command Palette / Global Commands**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

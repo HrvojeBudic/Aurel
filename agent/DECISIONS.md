@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.3-D Workspace Window Section Seal Boundary
+
+### DEC-P23D-01: Missing P2.3-C OMNI marker waived for P2.3-D dispatch only
+**Decision:** The operator explicitly instructed this P2.3-D dispatch to ignore missing P2.3-C OMNI acceptance evidence and continue. P2.3-D records this as an operator waiver, not as false OMNI acceptance evidence. The waiver is scoped to this dispatch only and does not extend to later packs.
+**Why:** P2.3-C implementation, report, implementation commit (`b0c09ec`), report-hash docs commit (`9b48a2d`), clean git evidence, cross-surface window projection result, side-effect proof, and DONE status are present locally, but no separate P2.3-C OMNI acceptance marker was found in repo state.
+
+### DEC-P23D-02: P2.3 seals only at contract scope
+**Decision:** P2.3-D may return `SEALED_FOR_CONTRACT_SCOPE` only for the P2.3 Floating Windows / Workspace State contract/read-model layer. The seal does not claim production `LIVE`, actual `TRACE_VERIFIED`, release scope, visual floating-window implementation, route runtime, command palette, drag/drop, docking UI, layout engine, conflict resolver, permission enforcement, storage, memory/trace writes, product behavior, P2.4, P2.10, or P2.13.
+**Why:** P2.3-D closes the section projection/readiness/evidence surface. Product UI, command palette, local client foundation, product behavior, trace verification, and release evidence belong to later sections and cannot be inferred from a contract-scope seal.
+
 ## 2026-06-29 - P2.3-C Workspace Window Cross-Surface Boundary
 
 ### DEC-P23C-01: Missing P2.3-B OMNI marker waived for P2.3-C dispatch only
