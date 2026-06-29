@@ -223,10 +223,10 @@ P2.6-A — exact title pending roadmap/repo canon read.
 
 ## 29. Commit Hash
 
-Pending — recorded after implementation commit.
+`e27959012b71cd15d5be896dd5aa75e87ee00467` — feat(aurel-shell): seal P2.5 handoff contracts
 
 ---
 
 ## 30. Final Git Status
 
-Pending — expected clean after commit.
+Clean after implementation commit.
