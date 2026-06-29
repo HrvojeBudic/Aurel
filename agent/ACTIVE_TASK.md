@@ -1,12 +1,22 @@
-# Active Task: P2.1-D (complete)
+# Active Task: P2.2-A (complete)
 
-**Status:** P2.1-D COMPLETE — P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff; next P2.2 planning
+**Status:** P2.2-A COMPLETE — Per-Surface Local Navigation Foundation; next P2.2-B planning
 
 ## Roadmap Position
 
-- Last completed task: **P2.1-D — P2.1.16–P2.1.20 P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff**
-- Next planned task: **P2.2 planning — P2.2-A likely P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation**
+- Last completed task: **P2.2-A — P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation**
+- Next planned task: **P2.2-B — likely P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.2-A Status
+
+**DONE** — P2.2.0–P2.2.5 per-surface local navigation foundation implemented as contract-only AurelShell objects over the sealed P2.1 stack.
+
+P2.2-A establishes `P22SectionIntake`, `P22P21HandoffGate`, `LocalNavigationOwnershipContract`, `PerSurfaceLocalNavRegistry`, `LocalNavGroupContract`, `LocalNavItemContract`, `LocalNavVisibilityAvailabilityState`, `LocalNavProjectionSeed`, `P22ASideEffectProof`, and `P22ALocalNavigationFoundationResult`. All 38 P2.2-A side-effect/no-authority booleans remain false.
+
+Boundary: local navigation is surface-owned, not global topbar. Nav registry is read model, not source of truth. Nav item is semantic handle, not route execution or click handler. Visibility is not permission. Availability is not LIVE. Projection seed is not UI. No sidebar, global left nav, route runtime, command palette, floating windows, P2.2-B, or P2.3 work was created.
+
+Report: `agent/reports/P2_2_A_LOCAL_NAVIGATION_FOUNDATION.md`
 
 ## P2.1-D Status
 

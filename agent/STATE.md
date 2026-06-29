@@ -1,15 +1,24 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.1-D — P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff)_
+_Last updated: 2026-06-29 (P2.2-A — Per-Surface Local Navigation Foundation)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.1-D — P2.1.16–P2.1.20 P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff
-- Current active: **P2.1-D complete** — P2.1 sealed for contract scope
-- Next planned: P2.2 planning — P2.2-A likely P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation
+- Last completed: P2.2-A — P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation
+- Current active: **P2.2-A complete** — P2.2 contract foundation started
+- Next planned: P2.2-B — likely P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
-- P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — topbar registry foundation plus status-slot projection plus route visibility / interaction constraints / registry refinement plus P2.1-D integration tail/projection/binding/docs/seal; P2.2 not started
+- P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
+- P2.2 status: **P2.2-A foundation complete** — local nav contracts/projection seed; not UI, not route runtime
+
+## P2.2-A AurelShell Per-Surface Local Navigation Foundation
+
+P2.2-A adds contract-only local navigation foundation under `src/agentic_runtime/aurel_shell/local_navigation.py`.
+
+Boundary: `LocalNavigationOwnershipContract` declares surface-owned local nav, not global topbar/command palette/floating window/runtime router. `PerSurfaceLocalNavRegistry` is read model over official seven surfaces — not source of truth, not UI/sidebar. `LocalNavItemContract` is semantic handle — not action execution, route execution, click handler, or permission grant. `LocalNavVisibilityAvailabilityState` — visible does not grant permission; available does not mean LIVE. `LocalNavProjectionSeed` bundles intake/handoff/ownership/registries/items/states — not UI, not route runtime, does not start P2.2-B or P2.3.
+
+Validation: compileall PASS; P2.2-A focused tests 24 passed; `tests/aurel_shell` 440 passed; ruff PASS; mypy PASS (296 files). Report: `agent/reports/P2_2_A_LOCAL_NAVIGATION_FOUNDATION.md`.
 
 ## P2.1-D AurelShell Topbar Integration Tail / Projection / Binding / Docs / Section Handoff
 

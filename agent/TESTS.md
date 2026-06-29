@@ -58,6 +58,17 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.2-A Per-Surface Local Navigation Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_local_navigation_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+```
+
+Results: compileall **PASS**; focused P2.2-A **24 passed**; AurelShell **440 passed**; ruff **PASS**; mypy **PASS** (296 files).
+
+P2.2-A is contract/read-model local navigation foundation only. It does NOT add product UI, frontend sidebar, global left nav, frontend routes, clients, live CLI/TUI product, route runtime, route handler, click handlers, keyboard shortcuts, command palette, floating windows, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, production LIVE, TRACE_VERIFIED, release scope, P2.2-B, or P2.3 work.
+
 ## P2.1-D Topbar Integration Tail / Projection / Binding / Docs / Section Handoff Validation (COMPLETE)
 
 ```bash
