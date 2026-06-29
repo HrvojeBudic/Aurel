@@ -58,6 +58,20 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.1-D Topbar Integration Tail / Projection / Binding / Docs / Section Handoff Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_topbar_integration_tail.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.1-D **21 passed**; AurelShell **416 passed**; ruff **PASS**; mypy **PASS** (295 files).
+
+P2.1-D is contract/read-model section closure only. It does NOT add product UI, frontend topbar, clients, live CLI/TUI product, route runtime, route handler, local navigation, command palette, API server, HTTP route, event bus, runtime event emission, permission enforcement, Custos integration, memory writes, trace writes, production LIVE, TRACE_VERIFIED, release scope, P2.2-A, or P2.2 work.
+
 ## P2.1-C Topbar Route Visibility / Interaction Constraints / Registry Refinement Validation (COMPLETE)
 
 ```bash

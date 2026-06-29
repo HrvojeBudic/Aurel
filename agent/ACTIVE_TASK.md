@@ -1,12 +1,22 @@
-# Active Task: P2.1-C (complete)
+# Active Task: P2.1-D (complete)
 
-**Status:** P2.1-C COMPLETE — Topbar Route Visibility / Interaction Constraints / Registry Refinement; next P2.1-D
+**Status:** P2.1-D COMPLETE — P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff; next P2.2 planning
 
 ## Roadmap Position
 
-- Last completed task: **P2.1-C — P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement**
-- Next planned task: **P2.1-D — likely P2.1.16–P2.1.20 P2.1 Integration Tail / Docs / Readiness / Section Handoff**
+- Last completed task: **P2.1-D — P2.1.16–P2.1.20 P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff**
+- Next planned task: **P2.2 planning — P2.2-A likely P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.1-D Status
+
+**DONE — SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1.16–P2.1.20 section integration snapshot, capability map, projection/API/event contract, shell/CLI/TUI binding contract, docs/state/report sync, P2.1 contract-scope exit seal, and P2.2 plan-readiness are implemented as contract-only AurelShell objects over P2.1-A/B/C.
+
+P2.1-D establishes `P21TopbarIntegrationSnapshot`, `P21TopbarCapabilityMap`, `P21TopbarProjectionContract`, `P21TopbarApiContractShape`, `P21TopbarEventContractShape`, `P21TopbarShellBindingContract`, `P21TopbarCliInspectContract`, `P21TopbarTuiBindingStatus`, `P21TopbarDocsStateReportSync`, `P21TopbarExitSeal`, `P21P22ReadinessResult`, `P21DSideEffectProof`, and `P21DTopbarIntegrationTailPackResult`. All P2.1-D side-effect/no-authority booleans remain false.
+
+Boundary: P2.1 exit seal is contract scope only, not LIVE, not TRACE_VERIFIED, and not release scope. Projection/API/event contract is not API server, HTTP route, event bus, or emitted runtime event. Shell/CLI/TUI binding is read-only inspect or unavailable with reason, not route execution or surface switching. P2.2 readiness is plan-only and does not implement local navigation.
+
+Report: `agent/reports/P2_1_D_TOPBAR_INTEGRATION_TAIL.md`
 
 ## P2.1-C Status
 

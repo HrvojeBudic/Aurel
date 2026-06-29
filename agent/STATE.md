@@ -1,15 +1,23 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.1-C — Topbar Route Visibility / Interaction Constraints / Registry Refinement)_
+_Last updated: 2026-06-29 (P2.1-D — P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.1-C — P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement
-- Current active: **P2.1-C complete** — next P2.1-D
-- Next planned: P2.1-D — likely P2.1.16–P2.1.20 P2.1 Integration Tail / Docs / Readiness / Section Handoff
+- Last completed: P2.1-D — P2.1.16–P2.1.20 P2.1 Integration Tail / Projection / Binding / Docs / Section Handoff
+- Current active: **P2.1-D complete** — P2.1 sealed for contract scope
+- Next planned: P2.2 planning — P2.2-A likely P2.2.0–P2.2.5 Per-Surface Local Navigation Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
-- P2.1 status: **P2.1-C complete** — topbar registry foundation plus status-slot projection plus route visibility / interaction constraints / registry refinement; P2.1-D not started
+- P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — topbar registry foundation plus status-slot projection plus route visibility / interaction constraints / registry refinement plus P2.1-D integration tail/projection/binding/docs/seal; P2.2 not started
+
+## P2.1-D AurelShell Topbar Integration Tail / Projection / Binding / Docs / Section Handoff
+
+P2.1-D adds contract-only section integration, projection/API/event contract, shell/CLI/TUI binding, docs sync, P2.1 contract-scope exit seal, and P2.2 plan-readiness objects under `src/agentic_runtime/aurel_shell/topbar_integration_tail.py`.
+
+Boundary: `P21TopbarIntegrationSnapshot` and `P21TopbarCapabilityMap` are read-model integration artifacts over P2.1-A/B/C, not source of truth. `P21TopbarProjectionContract`, `P21TopbarApiContractShape`, and `P21TopbarEventContractShape` are contract shapes only; they create no API server, HTTP route, event bus, runtime event, memory write, trace write, or runtime mutation. `P21TopbarShellBindingContract` declares read-only CLI inspect contract shapes and explicit TUI unavailable status; it does not create a live CLI/TUI product, switch surfaces, or execute routes. `P21TopbarExitSeal` returns `SEALED_FOR_P2_1_CONTRACT_SCOPE` only; it is not production LIVE, not TRACE_VERIFIED, and not release scope. `P21P22ReadinessResult` returns `READY_FOR_P2_2_PLAN`, which is plan-only and does not implement P2.2 local navigation.
+
+Report: `agent/reports/P2_1_D_TOPBAR_INTEGRATION_TAIL.md`.
 
 ## P2.1-C AurelShell Topbar Route Visibility / Interaction Constraints / Registry Refinement
 

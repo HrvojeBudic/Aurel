@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.1-D Topbar Integration Tail / Section Seal Boundary
+
+### DEC-P21D-01: P2.1 seals only at contract scope
+**Decision:** P2.1-D may return `SEALED_FOR_P2_1_CONTRACT_SCOPE` only for the P2.1 Global Topbar / Surface Registry contract/read-model layer. The seal does not claim production `LIVE`, actual `TRACE_VERIFIED`, release scope, visual topbar implementation, route runtime, local navigation, API server, event bus, or runtime event emission.
+**Why:** P2.1 closes the global topbar / surface registry contract surface. Product UI, route runtime, local navigation, trace verification, and release evidence belong to later sections and cannot be inferred from a contract-scope seal.
+
+### DEC-P21D-02: P2.2 readiness is plan-only
+**Decision:** `READY_FOR_P2_2_PLAN` means P2.2 planning/readiness only. It does not start P2.2, does not implement P2.2-A, and does not create per-surface local navigation.
+**Why:** P2.1-D can hand off a coherent P2.1 section to the next planning gate without crossing into the P2.2 implementation boundary.
+
 ## 2026-06-29 - P2.0-F Projection / CLI / Exit Seal Boundary
 
 ### DEC-P20F-01: Missing P2.0-E OMNI marker waived for P2.0-F dispatch only
