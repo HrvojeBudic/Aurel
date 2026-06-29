@@ -220,8 +220,8 @@ P2.3-A — likely P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation
 
 ## 24. Commit Hash
 
-_(filled after commit)_
+`d5ba094275131d4622339aa7e7c6db14285be34d`
 
 ## 25. Final Git Status
 
-_(filled after commit)_
+Clean — `git status --short` empty after commit on `master`; no push performed.
