@@ -1,20 +1,21 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.5-C - Handoff Preview / Confirmation Boundary)_
+_Last updated: 2026-06-30 (P2.5-D - Handoff Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.5-C - P2.5.11-P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary
-- Current active: **P2.5-C complete - P2.5 handoff preview / confirmation boundary contracts implemented**
-- Next planned: P2.5-D - likely P2.5.16-P2.5.20 Handoff Projection / Binding / Docs / Section Seal
+- Last completed: P2.5-D - P2.5.16-P2.5.20 Handoff Projection / Binding / Docs / Section Seal
+- Current active: **P2.5-D complete - P2.5 handoff section sealed at contract/read-model scope**
+- Next planned: P2.6-A - exact title pending roadmap/repo canon read
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.4 status: **SEALED_CONTRACT_SCOPE** — P2.4-A through P2.4-D complete; contract/read-model only; not command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos, route runtime, tool/workflow dispatch, storage, memory/trace writes, product behavior, or release scope
-- P2.5-C status: **complete** — handoff preview gate, preview request, preview content, explanation bundle, confirmation requirement, confirmation intent boundary, preview result, side-effect proof
+- P2.5 status: **SEALED_CONTRACT_SCOPE** — P2.5-A through P2.5-D complete; contract/read-model only; not live handoff, projection UI, live binding, or release scope
+- P2.5-D status: **complete** — section gate, contract inventory, pack rollup, section projection, read-only binding, readiness audit, contract-scope demo, section seal
 - P2.5-B status: **complete** — handoff context gate, read-only context snapshot/items, continuity/carry-forward metadata, conflict/collision records, availability/readiness read model, explanation/context result contract, side-effect proof
 - P2.5-A status: **complete** — cross-surface handoff section gate, handoff identity/intent, source/target endpoint, payload/reference envelope, eligibility/unavailable-state, no-route/no-runtime boundary, foundation result/read model, side-effect proof
 - P2.4-D status: **complete** — command section gate, contract inventory, pack rollup, section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, section seal
@@ -24,7 +25,17 @@ _Last updated: 2026-06-30 (P2.5-C - Handoff Preview / Confirmation Boundary)_
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **748 passed** (post P2.5-C)
+- AurelShell suite: **764 passed** (post P2.5-D)
+
+## P2.5-D AurelShell Handoff Section Seal
+
+P2.5-D adds a contract-only P2.5 section projection/seal module under `src/agentic_runtime/aurel_shell/cross_surface_handoff_section_projection.py`: section gate over P2.5-C repo evidence, contract inventory over P2.5-A/B/C/D, pack rollup, section projection, read-only contract render binding status, no-fake-handoff readiness audit, contract-scope demo, section seal, side-effect proof, and section result.
+
+Boundary: section projection is not UI or live binding. Binding is read-only contract render or UNAVAILABLE and does not execute handoff, switch surfaces, or bind routes. Readiness audit passes contract scope only. Exit seal is contract scope only, not LIVE, not TRACE_VERIFIED, and not release scope. P2.5-D does not start P2.6, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.5-C repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.5-D focused tests 16 passed; `tests/aurel_shell` 764 passed; ruff PASS; mypy PASS (311 source files). Report: `agent/reports/P2_5_D_HANDOFF_SECTION_SEAL.md`.
 
 ## P2.5-C AurelShell Handoff Preview / Confirmation Boundary
 

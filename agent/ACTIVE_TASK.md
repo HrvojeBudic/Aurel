@@ -1,6 +1,16 @@
-# Active Task: P2.5-C (complete)
+# Active Task: P2.5-D (complete)
 
-**Status:** P2.5-C COMPLETE — P2.5 handoff preview / explanation / operator confirmation boundary implemented; next P2.5-D planning
+**Status:** P2.5-D COMPLETE — P2.5 handoff section projection / binding / docs / section seal implemented; next P2.6-A pending canon read
+
+## P2.5-D Status
+
+**DONE — SEALED_CONTRACT_SCOPE / CONTRACT_ONLY / READ_MODEL_ONLY** — P2.5.16–P2.5.20 handoff section projection and contract-scope seal implemented as contract-only AurelShell objects gated by P2.5-C repo evidence.
+
+P2.5-D establishes `CrossSurfaceHandoffSectionGate`, `CrossSurfaceHandoffContractInventory`, `CrossSurfaceHandoffPackRollup`, `CrossSurfaceHandoffSectionProjection`, `CrossSurfaceHandoffBindingStatus`, `CrossSurfaceHandoffReadinessAudit`, `CrossSurfaceHandoffSectionSeal`, `CrossSurfaceHandoffContractScopeDemo`, `P25DSideEffectProof`, and `P25DHandoffSectionResult` under `src/agentic_runtime/aurel_shell/cross_surface_handoff_section_projection.py`. All P2.5-D side-effect/no-authority booleans remain false.
+
+Boundary: section projection is not UI or live binding. Binding status is read-only contract render or UNAVAILABLE and does not execute handoff, switch surfaces, or bind routes. Readiness audit passes contract scope only and blocks fake LIVE/TRACE_VERIFIED/product/release/live handoff/live binding/UI projection claims. Section seal is contract-scope only, not release seal. Contract-scope demo serializes section state without runtime behavior. P2.5 complete means contract/read-model section complete, not live handoff complete.
+
+Report: `agent/reports/P2_5_D_HANDOFF_SECTION_SEAL.md`
 
 ## P2.5-C Status
 
@@ -146,8 +156,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.5-C — P2.5.11–P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary**
-- Next planned task: **P2.5-D — likely P2.5.16–P2.5.20 Handoff Projection / Binding / Docs / Section Seal**
+- Last completed task: **P2.5-D — P2.5.16–P2.5.20 Handoff Projection / Binding / Docs / Section Seal**
+- Next planned task: **P2.6-A — exact title pending roadmap/repo canon read**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status

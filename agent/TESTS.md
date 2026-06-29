@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.5-D Handoff Section Seal Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_cross_surface_handoff_section_projection.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.5-D **16 passed**; `tests/aurel_shell` **764 passed**; ruff **PASS**; mypy **PASS** (311 source files).
+
+P2.5-D is contract/read-model section projection, read-only contract render binding, readiness audit, contract-scope demo, and section seal only. It does NOT create projection UI, cross-surface UI, preview UI, explanation panel UI, confirmation modal, operator confirmation UI, live Shell/TUI binding, API/event bridge, handoff execution, surface switching, route execution, approval activation, permission enforcement, Custos/Mneme integration, memory/storage/trace writes, runtime mutation, source-of-truth store, claim production LIVE, claim TRACE_VERIFIED, claim release scope, claim product behavior, or start P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_5_D_HANDOFF_SECTION_SEAL.md`
+
 ## P2.5-C Handoff Preview / Confirmation Boundary Validation (COMPLETE)
 
 ```bash
