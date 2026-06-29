@@ -1,12 +1,22 @@
-# Active Task: P2.1-A (complete)
+# Active Task: P2.1-B (complete)
 
-**Status:** P2.1-A COMPLETE — Global Topbar / Surface Registry Foundation; next P2.1-B
+**Status:** P2.1-B COMPLETE — Topbar Status Slots / Availability / Operator Context; next P2.1-C
 
 ## Roadmap Position
 
-- Last completed task: **P2.1-A — P2.1.0–P2.1.5 Global Topbar / Surface Registry Foundation**
-- Next planned task: **P2.1-B — likely P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context**
+- Last completed task: **P2.1-B — P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context**
+- Next planned task: **P2.1-C — likely P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.1-B Status
+
+**DONE** — P2.1.6–P2.1.10 topbar status slots / availability / operator context implemented as contract-only AurelShell objects over the P2.1-A registry/read-model foundation.
+
+P2.1-B establishes `TopbarOperatorContextSlot`, `TopbarSurfaceAvailabilitySlot`, `TopbarProtectedBoundarySlot`, `TopbarAttentionStatusSlot`, `TopbarStatusProjection`, `TopbarStatusUnavailableBinding`, `P21BSideEffectProof`, and `P21BTopbarStatusSlotsPackResult`. All 30 P2.1-B side-effect/no-authority booleans remain false.
+
+Boundary: topbar status is projection, not runtime truth. Availability is not LIVE. Operator context is not authority, authentication, session creation, or identity mutation. Protected boundary display is not enforcement, Custos, policy, or access grant. Attention/status is not notification engine, approval queue, runtime event, or workflow start. No UI/client/runtime/local nav/command palette/P2.1-C/P2.2 work was created.
+
+Report: `agent/reports/P2_1_B_TOPBAR_STATUS_SLOTS.md`
 
 ## P2.1-A Status
 

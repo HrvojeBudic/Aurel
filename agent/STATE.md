@@ -1,15 +1,23 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.1-A — Global Topbar / Surface Registry Foundation)_
+_Last updated: 2026-06-29 (P2.1-B — Topbar Status Slots / Availability / Operator Context)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.1-A — P2.1.0–P2.1.5 Global Topbar / Surface Registry Foundation
-- Current active: **P2.1-A complete** — next P2.1-B
-- Next planned: P2.1-B — likely P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context
+- Last completed: P2.1-B — P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context
+- Current active: **P2.1-B complete** — next P2.1-C
+- Next planned: P2.1-C — likely P2.1.11–P2.1.15 Topbar Route Visibility / Interaction Constraints / Registry Refinement
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
-- P2.1 status: **P2.1-A complete** — topbar registry foundation; P2.1-B not started
+- P2.1 status: **P2.1-B complete** — topbar registry foundation plus status-slot projection; P2.1-C not started
+
+## P2.1-B AurelShell Topbar Status Slots / Availability / Operator Context
+
+P2.1-B adds contract-only topbar status slot objects under `src/agentic_runtime/aurel_shell/topbar_status.py`.
+
+Boundary: topbar status is projection, not runtime truth. Availability means contract/read-model availability and is not LIVE. Operator context is visible read-model stance only, not authentication, session creation, identity mutation, authority, or permission grant. SYSTEM/Settings protected boundary slots display guardrails but do not enforce security, call Custos, enforce policy, or grant access. Attention/status indicators are not runtime events, notification engine, approval queue, workflow start, or trace write. The status projection references P2.1-A `SurfaceRegistry` and `TopbarReadModel` and does not create UI, clients, route runtime, command palette, local navigation, memory writes, trace writes, P2.1-C, or P2.2.
+
+Validation: compileall PASS; P2.1-B focused tests 37 passed; `tests/aurel_shell` 343 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_1_B_TOPBAR_STATUS_SLOTS.md`.
 
 ## P2.1-A AurelShell Global Topbar / Surface Registry Foundation
 
