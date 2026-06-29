@@ -272,8 +272,8 @@ No-Execution Boundary.
 
 ## 31. Commit Hash
 
-To be recorded after implementation commit.
+Implementation commit: `526c1b78f7a673ced0b2928cc67ecac409bfc4ec`
 
 ## 32. Final Git Status
 
-To be confirmed clean after implementation commit.
+Clean after implementation commit. Report-hash update follows in docs commit.
