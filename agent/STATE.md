@@ -1,19 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.4-D - Command Palette Section Seal)_
+_Last updated: 2026-06-30 (P2.5-A - Cross-Surface Handoff Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.4-D - P2.4.16-P2.4.20 Command Palette Integration Tail / Projection / Binding / Docs / Section Seal
-- Current active: **P2.4-D complete - P2.4 command palette contract/read-model section sealed**
-- Next planned: P2.5-A - likely P2.5.0-P2.5.5 Cross-Surface Handoff Foundation
+- Last completed: P2.5-A - P2.5.0-P2.5.5 Cross-Surface Handoff Foundation
+- Current active: **P2.5-A complete - P2.5 cross-surface handoff foundation contracts implemented**
+- Next planned: P2.5-B - likely P2.5.6-P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.4 status: **SEALED_CONTRACT_SCOPE** — P2.4-A through P2.4-D complete; contract/read-model only; not command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos, route runtime, tool/workflow dispatch, storage, memory/trace writes, product behavior, or release scope
+- P2.5-A status: **complete** — cross-surface handoff section gate, handoff identity/intent, source/target endpoint, payload/reference envelope, eligibility/unavailable-state, no-route/no-runtime boundary, foundation result/read model, side-effect proof
 - P2.4-D status: **complete** — command section gate, contract inventory, pack rollup, section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, section seal
 - P2.4-C status: **complete** — command proposal gate, selection intent, command proposal, input/impact/requirement previews, active no-execution boundary, proposal result read model
 - P2.4-B status: **complete** — command discovery gate, query/search request, match/filter, surface-aware context, deterministic ranking, result-set read model

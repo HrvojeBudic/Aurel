@@ -1,6 +1,16 @@
-# Active Task: P2.4-D (complete)
+# Active Task: P2.5-A (complete)
 
-**Status:** P2.4-D COMPLETE — P2.4 command palette / global commands section sealed at contract/read-model scope; next P2.5-A planning
+**Status:** P2.5-A COMPLETE — P2.5 cross-surface handoff foundation contracts implemented; next P2.5-B planning
+
+## P2.5-A Status
+
+**DONE — CONTRACT_ONLY** — P2.5.0–P2.5.5 cross-surface handoff foundation implemented as contract-only AurelShell objects gated by P2.4-D repo evidence.
+
+P2.5-A establishes `CrossSurfaceHandoffGate`, `CrossSurfaceHandoffId`, `CrossSurfaceHandoffIntent`, `CrossSurfaceEndpoint`, `CrossSurfacePayloadEnvelope`, `CrossSurfaceEligibility`, `CrossSurfaceUnavailableReason`, `CrossSurfaceNoRouteBoundary`, `CrossSurfaceHandoffFoundationResult`, `P25ASideEffectProof`, and `P25ACrossSurfaceHandoffResult` under `src/agentic_runtime/aurel_shell/cross_surface_handoff.py`. All P2.5-A side-effect/no-authority booleans remain false.
+
+Boundary: handoff is not route execution, surface switching, or UI transition. Target surface is not runtime switch. Payload reference is not storage/memory/trace write. Eligibility is not permission enforcement. Intent is not command execution. Boundary result is not runtime transition. No-route/no-runtime boundary is active for all handoff results. 20 runtime capabilities marked unavailable with future pack references.
+
+Report: `agent/reports/P2_5_A_CROSS_SURFACE_HANDOFF_FOUNDATION.md`
 
 ## P2.4-D Status
 
