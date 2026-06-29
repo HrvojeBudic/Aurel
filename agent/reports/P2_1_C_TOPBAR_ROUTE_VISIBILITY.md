@@ -253,10 +253,8 @@ P2.1-D — likely P2.1.16-P2.1.20 P2.1 Integration Tail / Docs / Readiness / Sec
 
 ## 22. Commit Hash
 
-Implementation commit: `75f6550` (`feat(aurel-shell): add P2.1-C topbar route visibility`).
-
-Report-hash docs commit: pending at this report update.
+`75f6550`
 
 ## 23. Final Git Status
 
-Clean after implementation commit `75f6550`; final status is recorded in the final operator response after the report-hash docs commit.
+Clean — `git status --short` empty after commit.
