@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.5-C Handoff Preview / Confirmation Boundary Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_cross_surface_handoff_preview.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.5-C **18 passed**; `tests/aurel_shell` **748 passed**; ruff **PASS**; mypy **PASS** (310 source files).
+
+P2.5-C is contract/read-model handoff preview and confirmation boundary only. It does NOT render preview UI, explanation panel UI, confirmation modal, operator confirmation UI, record real operator consent, create consent state, create or activate approvals, authorize actions, enforce permissions, integrate Custos, integrate Mneme, execute handoff, switch surfaces, execute routes, create route handlers/runtime, execute commands, create command router/handler, invoke tools, dispatch workflows, create API server, create HTTP routes, create event bus, emit runtime events, mutate runtime, write memory/storage/trace, create source-of-truth store, claim production LIVE, claim TRACE_VERIFIED, claim release scope, claim product behavior, or start P2.5-D, P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_5_C_HANDOFF_PREVIEW_CONFIRMATION_BOUNDARY.md`
+
 ## P2.5-B Handoff Context / Continuity / Conflict / Availability Read Model Validation (COMPLETE)
 
 ```bash

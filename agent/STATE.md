@@ -1,19 +1,20 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.5-B - Handoff Context / Availability Read Model)_
+_Last updated: 2026-06-30 (P2.5-C - Handoff Preview / Confirmation Boundary)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.5-B - P2.5.6-P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model
-- Current active: **P2.5-B complete - P2.5 handoff context / availability read-model contracts implemented**
-- Next planned: P2.5-C - likely P2.5.11-P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary
+- Last completed: P2.5-C - P2.5.11-P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary
+- Current active: **P2.5-C complete - P2.5 handoff preview / confirmation boundary contracts implemented**
+- Next planned: P2.5-D - likely P2.5.16-P2.5.20 Handoff Projection / Binding / Docs / Section Seal
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.4 status: **SEALED_CONTRACT_SCOPE** — P2.4-A through P2.4-D complete; contract/read-model only; not command palette UI, selection UI, preview UI, keyboard shortcuts, command execution/router/handler, approval activation, permission enforcement, Custos, route runtime, tool/workflow dispatch, storage, memory/trace writes, product behavior, or release scope
+- P2.5-C status: **complete** — handoff preview gate, preview request, preview content, explanation bundle, confirmation requirement, confirmation intent boundary, preview result, side-effect proof
 - P2.5-B status: **complete** — handoff context gate, read-only context snapshot/items, continuity/carry-forward metadata, conflict/collision records, availability/readiness read model, explanation/context result contract, side-effect proof
 - P2.5-A status: **complete** — cross-surface handoff section gate, handoff identity/intent, source/target endpoint, payload/reference envelope, eligibility/unavailable-state, no-route/no-runtime boundary, foundation result/read model, side-effect proof
 - P2.4-D status: **complete** — command section gate, contract inventory, pack rollup, section projection, explicit UNAVAILABLE binding, readiness audit, contract-scope demo, section seal
@@ -23,7 +24,17 @@ _Last updated: 2026-06-30 (P2.5-B - Handoff Context / Availability Read Model)_
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **730 passed** (post P2.5-B)
+- AurelShell suite: **748 passed** (post P2.5-C)
+
+## P2.5-C AurelShell Handoff Preview / Confirmation Boundary
+
+P2.5-C adds a contract-only handoff preview and operator-confirmation boundary under `src/agentic_runtime/aurel_shell/cross_surface_handoff_preview.py`: preview gate over P2.5-B repo evidence, preview request, preview content items, explanation bundle, confirmation requirement, confirmation intent boundary, preview result, pack result, and side-effect proof.
+
+Boundary: preview request is not UI or operator prompt. Preview content is not rendered UI or explanation panel. Explanation bundle is not approval, authorization, or operator confirmation. Confirmation requirement is future obligation only and does not record consent or create confirmation UI. Confirmation intent boundary prevents authorization, permission decision, approval activation, consent recording, operator prompt, execution, route execution, and surface switch. Preview result is read model only with active no-confirmation and no-execution boundaries; it is not transition result, route result, live UI, source of truth, handoff execution, or memory/storage/trace write.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.5-B repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.5-C focused tests 18 passed; `tests/aurel_shell` 748 passed; ruff PASS; mypy PASS (310 source files). Report: `agent/reports/P2_5_C_HANDOFF_PREVIEW_CONFIRMATION_BOUNDARY.md`.
 
 ## P2.5-B AurelShell Handoff Context / Availability Read Model
 

@@ -1,6 +1,16 @@
-# Active Task: P2.5-B (complete)
+# Active Task: P2.5-C (complete)
 
-**Status:** P2.5-B COMPLETE — P2.5 handoff context / continuity / conflict / availability read model implemented; next P2.5-C planning
+**Status:** P2.5-C COMPLETE — P2.5 handoff preview / explanation / operator confirmation boundary implemented; next P2.5-D planning
+
+## P2.5-C Status
+
+**DONE — CONTRACT_ONLY / READ_MODEL_ONLY** — P2.5.11–P2.5.15 handoff preview and operator-confirmation boundary implemented as contract-only AurelShell objects gated by P2.5-B repo evidence.
+
+P2.5-C establishes `CrossSurfaceHandoffPreviewGate`, `CrossSurfaceHandoffPreviewRequest`, `CrossSurfaceHandoffPreviewContent`, `CrossSurfaceHandoffExplanationBundle`, `CrossSurfaceOperatorConfirmationRequirement`, `CrossSurfaceOperatorConfirmationIntentBoundary`, `CrossSurfaceHandoffPreviewResult`, `P25CSideEffectProof`, and `P25CHandoffPreviewResult` under `src/agentic_runtime/aurel_shell/cross_surface_handoff_preview.py`. All P2.5-C side-effect/no-authority booleans remain false.
+
+Boundary: preview request is not UI or operator prompt. Preview content is structured content only, not rendered UI or explanation panel. Explanation bundle groups evidence without approval, authorization, or operator confirmation. Confirmation requirement states future obligation only without recording consent or creating confirmation UI. Confirmation intent boundary prevents authorization, permission decision, approval activation, consent recording, operator prompt, execution, route execution, and surface switch. Preview result is read model only with active no-confirmation and no-execution boundaries; it is not transition result, route result, live UI, source of truth, handoff execution, or memory/storage/trace write.
+
+Report: `agent/reports/P2_5_C_HANDOFF_PREVIEW_CONFIRMATION_BOUNDARY.md`
 
 ## P2.5-B Status
 
@@ -136,8 +146,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.5-B — P2.5.6–P2.5.10 Handoff Context / Continuity / Conflict / Availability Read Model**
-- Next planned task: **P2.5-C — likely P2.5.11–P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary**
+- Last completed task: **P2.5-C — P2.5.11–P2.5.15 Handoff Preview / Explanation / Operator Confirmation Boundary**
+- Next planned task: **P2.5-D — likely P2.5.16–P2.5.20 Handoff Projection / Binding / Docs / Section Seal**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status
