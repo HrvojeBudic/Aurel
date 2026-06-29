@@ -291,8 +291,10 @@ P2.4 — Command Palette / Global Commands.
 
 ## 31. Commit Hash
 
-Implementation commit: pending.
+Implementation commit: `17aea2de737494d8b7b1cd29675cecf9fc5e9237`
+Report-hash docs commit: this follow-up commit records the implementation hash.
 
 ## 32. Final Git Status
 
-Pending final commit.
+Clean after implementation commit before report-hash update. Final clean status
+confirmed after the report-hash docs commit.
