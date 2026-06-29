@@ -1,12 +1,22 @@
-# Active Task: P2.0-F (complete)
+# Active Task: P2.1-A (complete)
 
-**Status:** P2.0-F COMPLETE — Projection/API/CLI/Docs/Exit Seal Integration Tail; P2.0 SEALED_FOR_P2_CONTRACT_SCOPE; next OMNI review of P2.0 exit seal + P2.1 readiness boundary
+**Status:** P2.1-A COMPLETE — Global Topbar / Surface Registry Foundation; next P2.1-B
 
 ## Roadmap Position
 
-- Last completed task: **P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail**
-- Next planned task: **OMNI review of P2.0 exit seal and P2.1 readiness boundary** (P2.1 not started, not authorized)
+- Last completed task: **P2.1-A — P2.1.0–P2.1.5 Global Topbar / Surface Registry Foundation**
+- Next planned task: **P2.1-B — likely P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
+
+## P2.1-A Status
+
+**DONE** — P2.1.0–P2.1.5 global topbar / surface registry foundation implemented as contract-only AurelShell objects over the sealed P2.0 stack.
+
+P2.1-A establishes `P21SectionIntake`, `P21AHandoffGate`, `SurfaceRegistryEntry`, `SurfaceRegistry`, `SurfaceTaxonomyDriftSignal`, `ActiveSurfaceState`, `TopbarSurfaceSwitchIntent`, `TopbarReadModel`, and `P21AGlobalTopbarSurfaceRegistryPackResult`. All 26 P2.1-A side-effect/no-authority booleans remain false.
+
+Boundary: global topbar read model is not live UI; surface registry is not source of truth; switch intent is proposal-only, not route execution; no universal left nav; local navigation deferred to P2.2; SYSTEM operator-only/agent-blocked; Settings non-root; Forum/Archivium remain future refs / drift signals only.
+
+Report: `agent/reports/P2_1_A_GLOBAL_TOPBAR_SURFACE_REGISTRY.md`
 
 ## P2.0-F Status
 

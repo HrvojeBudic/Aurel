@@ -58,6 +58,20 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.1-A Global Topbar / Surface Registry Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_topbar_surface_registry.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.1-A **75 passed**; AurelShell **306 passed**; ruff **PASS**; mypy **PASS** (292 files).
+
+P2.1-A is contract/read-model/topbar-registry only. It does NOT add product UI, frontend topbar, clients, live CLI/TUI, route runtime, local navigation, permission enforcement, Custos integration, memory writes, trace writes, or P2.1-B+ work.
+
 ## P2.0-F Projection / API / CLI / Docs / Exit Seal Validation (COMPLETE)
 
 Focused validation (2026-06-29):

@@ -1,14 +1,23 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.0-F — Projection/API/CLI/Docs/Exit Seal Integration Tail; P2.0 SEALED_FOR_P2_CONTRACT_SCOPE)_
+_Last updated: 2026-06-29 (P2.1-A — Global Topbar / Surface Registry Foundation)_
 
 ## Current Roadmap Pointer
 
-- Last completed: P2.0-F — P2.0.27–P2.0.30 Projection/API/CLI/Docs/Exit Seal Integration Tail
-- Current active: **OMNI review of P2.0 exit seal + P2.1 readiness boundary** (P2.1 not started, not authorized)
-- Next planned: OMNI review of P2.0 exit seal and P2.1 readiness boundary
+- Last completed: P2.1-A — P2.1.0–P2.1.5 Global Topbar / Surface Registry Foundation
+- Current active: **P2.1-A complete** — next P2.1-B
+- Next planned: P2.1-B — likely P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator Context
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
-- P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — **P2.0-F complete** (projection/API/event contracts + read-only CLI inspect + TUI UNAVAILABLE + docs sync + scope-aware exit seal); **P2.0-E complete** (operator demo + multi-client snapshot + regression harness); **P2.0-D complete** (truth labels + permission matrix + fixture discipline); **P2.0-C complete** (shell continuity contracts); **P2.0-B complete** (navigation + boundary); **P2.0-A complete** (shell foundation + seven-surface registry)
+- P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
+- P2.1 status: **P2.1-A complete** — topbar registry foundation; P2.1-B not started
+
+## P2.1-A AurelShell Global Topbar / Surface Registry Foundation
+
+P2.1-A adds contract-only topbar registry, active surface state, switch intent, and read model objects under `src/agentic_runtime/aurel_shell/topbar.py`.
+
+Boundary: `SurfaceRegistry` is a read model over P2.0 official surfaces — not source of truth. `TopbarReadModel` is projection-only — not live UI. `TopbarSurfaceSwitchIntent` is proposal-only — not route execution or permission grant. Logo route points to Aurel CRO via P2.0-B binding. No universal left nav; local navigation deferred to P2.2. SYSTEM is operator-only; Settings is non-root. Legacy taxonomy (Forum, Archivium, etc.) reported as drift/future refs only. All 26 P2.1-A side-effect booleans remain false.
+
+Validation: compileall PASS; P2.1-A focused tests 75 passed; `tests/aurel_shell` 306 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_1_A_GLOBAL_TOPBAR_SURFACE_REGISTRY.md`.
 
 ## P2.0-F AurelShell Projection / API / CLI / Docs / Exit Seal Integration Tail
 
