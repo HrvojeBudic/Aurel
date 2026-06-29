@@ -1,6 +1,12 @@
-# Active Task: P2.2-B (complete)
+# Active Task: AUDIT-REPAIR-001 (complete) / P2.2-B (complete)
 
-**Status:** P2.2-B COMPLETE — Local Navigation Hierarchy / Interaction Constraints; next P2.2-C planning
+**Status:** AUDIT-REPAIR-001 COMPLETE — test portability restored; P2.2-B COMPLETE; next P2.2-C planning
+
+## AUDIT-REPAIR-001 Status
+
+**DONE** — F-001 hardcoded repo path `/home/hrvojeb/Desktop/GG` replaced with portable `tests/repo_root.py` discovery in three subprocess test sites. Full suite **6151 passed, 3 skipped**. F-002 confirmed P2.2-B canon already synced. F-003–F-005 recorded as backlog only.
+
+Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 

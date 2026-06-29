@@ -8,6 +8,7 @@ import sys
 
 import pytest
 
+from tests.repo_root import REPO_ROOT
 from agentic_runtime.path_governance import (
     ContentInfluenceSurface,
     EvidenceBindingKind,
@@ -926,7 +927,7 @@ def test_no_filesystem_or_network_access() -> None:
 def test_p1_7_0_to_p1_7_15_regression_still_pass() -> None:
     result = subprocess.run(
         [sys.executable, "-m", "pytest", *_P1_7_REGRESSION_FILES, "-q"],
-        cwd="/home/hrvojeb/Desktop/GG",
+        cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,
         check=False,

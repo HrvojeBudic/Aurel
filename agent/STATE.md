@@ -1,16 +1,24 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.2-B — Local Navigation Hierarchy / Interaction Constraints)_
+_Last updated: 2026-06-29 (AUDIT-REPAIR-001 — Test Portability + P2.2-B Canon Sync)_
 
 ## Current Roadmap Pointer
 
+- Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
 - Last completed: P2.2-B — P2.2.6–P2.2.10 Local Navigation Hierarchy / Interaction Constraints
-- Current active: **P2.2-B complete** — hierarchy/ordering/selection/interaction contracts
-- Next planned: P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles
+- Current active: **AUDIT-REPAIR-001 complete** — regression portability blocker cleared
+- Next planned: P2.2-C — likely P2.2.11–P2.2.15 Local Navigation Context / Surface-Specific Profiles (planning only; not dispatched)
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **P2.2-A foundation + P2.2-B hierarchy complete** — contract/read-model only; not UI, not route runtime
+- Full suite: **6151 passed, 3 skipped** (post AUDIT-REPAIR-001)
+
+## AUDIT-REPAIR-001 Test Portability + P2.2-B Canon Sync
+
+Replaced hardcoded subprocess `cwd="/home/hrvojeb/Desktop/GG"` with `tests/repo_root.py` discovery in path-governance regression and capability-claim CLI tests. Prior 12 repo-path-drift failures eliminated. P2.2-B canon confirmed. F-003–F-005 remain backlog.
+
+Validation: targeted path tests **143 passed**; full suite **6151 passed, 3 skipped**; compileall/ruff/mypy PASS. Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`.
 
 ## P2.2-B AurelShell Local Navigation Hierarchy / Interaction Constraints
 

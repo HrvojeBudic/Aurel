@@ -10,6 +10,7 @@ import sys
 
 import pytest
 
+from tests.repo_root import REPO_ROOT
 from agentic_runtime.identity.capability_claims import (
     CapabilityClaim,
     CapabilityClaimDecision,
@@ -402,7 +403,7 @@ def test_p1410_safe_rewrite_does_not_overclaim():
 def _run_cli(args: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, "-m", "agentic_runtime.cli"] + args,
-        capture_output=True, text=True, cwd="/home/hrvojeb/Desktop/GG", timeout=15,
+        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=15,
     )
 
 

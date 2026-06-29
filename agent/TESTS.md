@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## AUDIT-REPAIR-001 Test Portability Validation (COMPLETE)
+
+```bash
+grep -R "/home/hrvojeb/Desktop/GG" -n tests src agent  # no active test occurrences
+.venv/bin/python -m pytest tests/path_governance/test_p1_7_16_policy_context_bridge.py \
+  tests/path_governance/test_p1_7_17_projection_api_event_contract.py \
+  tests/test_capability_claim_boundary.py -q
+.venv/bin/python -m pytest -q --tb=line
+```
+
+Results: targeted path/capability **143 passed**; full suite **6151 passed, 3 skipped**; compileall **PASS**; ruff **PASS**; mypy **PASS** (297 files).
+
+Portable cwd via `tests/repo_root.py` (`pyproject.toml` + `src/` discovery). No tests skipped/xfail/weakened. F-003–F-005 remain backlog.
+
+Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
+
 ## P2.2-B Local Navigation Hierarchy / Interaction Constraints Validation (COMPLETE)
 
 ```bash
