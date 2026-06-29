@@ -1,6 +1,16 @@
-# Active Task: P2.4-A (complete)
+# Active Task: P2.4-B (complete)
 
-**Status:** P2.4-A COMPLETE — P2.4 command palette / global commands foundation implemented at contract/read-model scope; next P2.4-B planning
+**Status:** P2.4-B COMPLETE — P2.4 command discovery read model implemented at contract/read-model scope; next P2.4-C planning
+
+## P2.4-B Status
+
+**DONE** — P2.4.6–P2.4.10 command search / ranking / context / result read model foundation implemented as contract-only AurelShell objects gated by P2.4-A repo evidence. OMNI review/acceptance evidence was explicitly ignored as a hard gate by operator instruction; this is recorded as an execution policy, not as false OMNI acceptance.
+
+P2.4-B establishes `GlobalCommandDiscoveryGate`, `GlobalCommandQuery`, `GlobalCommandFilter`, `GlobalCommandMatch`, `GlobalCommandDiscoveryContext`, `GlobalCommandRanking`, `GlobalCommandResultItem`, `GlobalCommandResultSet`, `P24BSideEffectProof`, and `P24BCommandDiscoveryResult` under `src/agentic_runtime/aurel_shell/global_command_discovery.py`. All P2.4-B side-effect/no-authority booleans remain false.
+
+Boundary: query is not search UI. Match/filter is not execution. Context is not authority grant. Ranking is not authorization or recommendation policy. Result item is not invocation. Result set is not command palette UI. P2.4-B does not create command palette UI, search UI, keyboard shortcuts, command execution/router/handler, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-C, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_4_B_COMMAND_DISCOVERY_READ_MODEL.md`
 
 ## P2.4-A Status
 

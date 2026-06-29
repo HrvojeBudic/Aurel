@@ -58,6 +58,20 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.4-B Command Discovery Read Model Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_global_command_discovery.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.4-B **23 passed**; `tests/aurel_shell` **592 passed**; ruff **PASS**; mypy **PASS**.
+
+P2.4-B is contract/read-model command discovery only. It does NOT add command palette UI, search UI, live search box, keyboard shortcut handling, keyboard listener, hotkey handler, fuzzy search UI, ML ranking, recommendation engine, command execution, command router, command handlers, tool invocation, workflow dispatch, approval activation, permission enforcement, Custos integration, surface runtime switch, route execution, route handlers, route runtime, API server, HTTP routes, event bus, runtime event emission, local/browser storage, memory writes, trace writes, runtime mutation, source-of-truth store, production LIVE, TRACE_VERIFIED, release scope, product behavior, P2.4-C, P2.5, P2.6, P2.7, P2.10, or P2.13 work.
+
 ## P2.4-A Command Palette / Global Commands Foundation Validation (COMPLETE)
 
 ```bash

@@ -1,23 +1,34 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.4-A - Command Palette / Global Commands Foundation)_
+_Last updated: 2026-06-29 (P2.4-B - Command Search / Ranking / Context / Result Read Model Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.4-A - P2.4.0-P2.4.5 Command Palette / Global Commands Foundation
-- Current active: **P2.4-A complete - P2.4 command contract/read-model foundation complete**
-- Next planned: P2.4-B - likely Command Search / Ranking / Context / Read Model Foundation
+- Last completed: P2.4-B - P2.4.6-P2.4.10 Command Search / Ranking / Context / Result Read Model Foundation
+- Current active: **P2.4-B complete - P2.4 command discovery read model complete**
+- Next planned: P2.4-C - likely Command Proposal / Selection / Preview / No-Execution Boundary
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
+- P2.4-B status: **complete** — command discovery gate, query/search request, match/filter, surface-aware context, deterministic ranking, result-set read model
 - P2.4-A status: **complete** — command section gate, global command identity, declarative registry, scope/surface target, availability/unavailable state, input/parameter contracts
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **569 passed** (post P2.4-A)
+- AurelShell suite: **592 passed** (post P2.4-B)
+
+## P2.4-B AurelShell Command Discovery Read Model Foundation
+
+P2.4-B adds a contract-only command discovery read model under `src/agentic_runtime/aurel_shell/global_command_discovery.py`: discovery gate over P2.4-A repo evidence, query/search request contract, match/filter contracts, surface-aware discovery context, deterministic ranking, result-set read model, side-effect proof, and pack result.
+
+Boundary: query is not search UI. Match/filter is not execution. Context is not authority grant. Ranking is not authorization or recommendation policy. Result item is not invocation. Result set is not command palette UI. P2.4-B does not create command palette UI, search UI, keyboard shortcuts, command execution/router/handler, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-C, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.4-A repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.4-B focused tests 23 passed; `tests/aurel_shell` 592 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_4_B_COMMAND_DISCOVERY_READ_MODEL.md`.
 
 ## P2.4-A AurelShell Command Palette / Global Commands Foundation
 
