@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.3-C Workspace Window Cross-Surface Boundary
+
+### DEC-P23C-01: Missing P2.3-B OMNI marker waived for P2.3-C dispatch only
+**Decision:** The operator explicitly instructed this P2.3-C dispatch to ignore missing P2.3-B OMNI acceptance evidence and continue. P2.3-C records this as an operator waiver, not as false OMNI acceptance evidence. The waiver is scoped to this dispatch only and does not extend to later packs.
+**Why:** P2.3-B implementation, report, implementation commit (`650dddf`), report-hash docs commit (`90bab5c`), clean git evidence, workspace focus/stack projection result, side-effect proof, and DONE status are present locally, but no separate P2.3-B OMNI acceptance marker was found in repo state.
+
+### DEC-P23C-02: P2.3-C is contract/read-model cross-surface semantics only
+**Decision:** P2.3-C defines cross-surface handoff, docking/undocking intent, conflict/collision state, compatibility constraints, and cross-surface projection semantics only. It does not create route runtime, route execution, real surface switching, frontend window movement, drag/drop, docking UI, layout engine, real collision detection, conflict resolver runtime, automatic conflict resolution, permission enforcement, permission grant/denial, runtime blocking, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.3-D, P2.10, or P2.13.
+**Why:** P2.3-C vocabulary sounds like runtime UI movement, docking, collision, and authority behavior. Keeping every contract side-effect false preserves the P2.3-A/B foundation boundary and prevents runtime overclaim.
+
 ## 2026-06-29 - P2.3-B Workspace Window Semantics Boundary
 
 ### DEC-P23B-01: Missing P2.3-A OMNI marker waived for P2.3-B dispatch only

@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.3-C Cross-Surface Window Handoff / Conflict / Docking Semantics Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_workspace_window_cross_surface.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.3-C **15 passed**; `tests/aurel_shell` **539 passed**; ruff **PASS**; mypy **PASS** (302 source files).
+
+P2.3-C is contract/read-model cross-surface window semantics only. It does NOT add product UI, browser UI, Tauri app, frontend components, frontend window movement, surface runtime switch, route runtime, route execution, route handlers, drag/drop, docking UI, undocking UI, CSS/frontend layout, layout engine, real collision detection, conflict resolver runtime, automatic conflict resolution, permission enforcement, permission grant/denial, runtime blocking, Custos integration, API server, HTTP routes, event bus, runtime event emission, local/browser storage, memory writes, trace writes, runtime mutation, source-of-truth store, production LIVE, TRACE_VERIFIED, release scope, P2.3-D, P2.10, or P2.13 work.
+
+Report: `agent/reports/P2_3_C_WORKSPACE_WINDOW_CROSS_SURFACE.md`
+
 ## P2.3-B Floating Window Focus / Stack / Grouping / Restore Semantics Validation (COMPLETE)
 
 ```bash

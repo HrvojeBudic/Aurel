@@ -1,6 +1,18 @@
-# Active Task: P2.3-B (complete)
+# Active Task: P2.3-C (complete)
 
-**Status:** P2.3-B COMPLETE — workspace window semantics contract/read-model pack complete; next P2.3-C planning
+**Status:** P2.3-C COMPLETE — cross-surface window semantics contract/read-model pack complete; next P2.3-D planning
+
+## P2.3-C Status
+
+**DONE** — P2.3.11–P2.3.15 cross-surface window handoff / conflict / docking semantics implemented as contract-only AurelShell objects over the P2.3-A workspace state projection seed and P2.3-B workspace focus/stack projection result.
+
+P2.3-C establishes `CrossSurfaceWindowHandoffContract`, `WindowDockingIntentContract`, `WindowConflictContract`, `WindowSurfaceCompatibilityContract`, `CrossSurfaceWindowProjectionResult`, `P23CSideEffectProof`, and `P23CWindowCrossSurfaceSemanticsResult` under `src/agentic_runtime/aurel_shell/workspace_window_cross_surface.py`. All P2.3-C side-effect/no-authority booleans remain false.
+
+Boundary: handoff is not route execution, real surface switch, or frontend window movement. Docking/undocking intent is not docking UI, drag/drop, or real layout change. Conflict/collision state is not real collision detection, conflict resolver runtime, automatic resolution, or layout engine. Compatibility is not permission enforcement, grant, denial, runtime block, or Custos integration. Projection result is not frontend state store or product behavior and does not start P2.3-D, P2.10, or P2.13.
+
+Operator waiver: the missing local P2.3-B OMNI acceptance marker was explicitly waived by operator instruction for this P2.3-C dispatch. The report records this as a waiver, not as false OMNI acceptance evidence.
+
+Report: `agent/reports/P2_3_C_WORKSPACE_WINDOW_CROSS_SURFACE.md`
 
 ## P2.3-B Status
 
@@ -52,8 +64,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.3-A — P2.3.0–P2.3.5 Floating Windows / Workspace State Foundation**
-- Next planned task: **P2.3-C — likely P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics**
+- Last completed task: **P2.3-C — P2.3.11–P2.3.15 Cross-Surface Window Handoff / Conflict / Docking Semantics**
+- Next planned task: **P2.3-D — likely P2.3.16–P2.3.20 P2.3 Integration Tail / Projection / Binding / Docs / Section Seal**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status
