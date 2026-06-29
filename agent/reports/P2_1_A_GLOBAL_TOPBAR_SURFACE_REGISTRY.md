@@ -227,8 +227,8 @@ P2.1-B — likely P2.1.6–P2.1.10 Topbar Status Slots / Availability / Operator
 
 ## 23. Commit Hash
 
-_(recorded after commit)_
+`29d1e7d`
 
 ## 24. Final Git Status
 
-_(recorded after commit)_
+Clean — `git status --short` empty after commit.
