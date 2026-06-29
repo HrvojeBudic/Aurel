@@ -253,8 +253,10 @@ P2.1-D — likely P2.1.16-P2.1.20 P2.1 Integration Tail / Docs / Readiness / Sec
 
 ## 22. Commit Hash
 
-Pending at report write. Final commit hash is recorded in the final operator response.
+Implementation commit: `75f6550` (`feat(aurel-shell): add P2.1-C topbar route visibility`).
+
+Report-hash docs commit: pending at this report update.
 
 ## 23. Final Git Status
 
-Pending at report write. Final git status is recorded in the final operator response.
+Clean after implementation commit `75f6550`; final status is recorded in the final operator response after the report-hash docs commit.
