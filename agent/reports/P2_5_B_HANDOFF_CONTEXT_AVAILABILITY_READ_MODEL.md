@@ -299,10 +299,10 @@ P2.5-C — likely P2.5.11-P2.5.15 Handoff Preview / Explanation / Operator Confi
 
 ## 33. Commit Hash
 
-Pending implementation commit.
+`196c3ba7967291f1a860456929ff25b39bdc54e6` — feat(aurel-shell): add P2.5 handoff context read model
 
 ---
 
 ## 34. Final Git Status
 
-Pending final clean status after commit.
+Clean after implementation commit. A follow-up docs-only commit records this implementation commit hash in the pack report.
