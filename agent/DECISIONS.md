@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-06-29 - P2.4-A Command Palette / Global Commands Foundation Boundary
+
+### DEC-P24A-01: OMNI evidence ignored only as an execution gate
+**Decision:** The P2.4-A dispatch explicitly ignores OMNI review/acceptance evidence as a hard gate. P2.3-D repo evidence remains mandatory: report, validation record, commit evidence, final/current clean git, contract-scope seal, no overclaim, and no premature future-pack work.
+**Why:** The operator prompt directly overrides OMNI evidence gating for this task only. This does not weaken CodeOps validation, report, git, or repo evidence discipline.
+
+### DEC-P24A-02: Command foundation is not command runtime
+**Decision:** P2.4-A defines command section gate, identity, registry, scope/surface target, availability, and input contracts only. It does not create command palette UI, keyboard shortcuts, fuzzy search, ranking, command execution, command router, command handlers, route runtime, surface switching, tool/workflow dispatch, approval activation, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-B, P2.5, P2.6, P2.7, P2.10, or P2.13.
+**Why:** P2.4-A vocabulary can be mistaken for product command palette behavior. The foundation must remain a deterministic command catalog/read-model before later search, context, routing, authority, and execution layers exist.
+
 ## 2026-06-29 - P2.3-D Workspace Window Section Seal Boundary
 
 ### DEC-P23D-01: Missing P2.3-C OMNI marker waived for P2.3-D dispatch only

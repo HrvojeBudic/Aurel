@@ -1,22 +1,33 @@
 # Repository State
 
-_Last updated: 2026-06-29 (P2.3-D — Workspace Window Section Seal)_
+_Last updated: 2026-06-29 (P2.4-A - Command Palette / Global Commands Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.3-D — P2.3.16–P2.3.20 Floating Windows / Workspace State Integration Tail / Projection / Binding / Docs / Section Seal
-- Current active: **P2.3-D complete — P2.3 contract/read-model section sealed**
-- Next planned: P2.4 — Command Palette / Global Commands
+- Last completed: P2.4-A - P2.4.0-P2.4.5 Command Palette / Global Commands Foundation
+- Current active: **P2.4-A complete - P2.4 command contract/read-model foundation complete**
+- Next planned: P2.4-B - likely Command Search / Ranking / Context / Read Model Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
 - P2.2 status: **SEALED_FOR_P2_2_CONTRACT_SCOPE** — P2.2-A through P2.2-D complete; contract/read-model only; not UI, not route runtime
 - P2.3 status: **SEALED_FOR_CONTRACT_SCOPE** — P2.3-A through P2.3-D complete; contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
+- P2.4-A status: **complete** — command section gate, global command identity, declarative registry, scope/surface target, availability/unavailable state, input/parameter contracts
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **553 passed** (post P2.3-D)
+- AurelShell suite: **569 passed** (post P2.4-A)
+
+## P2.4-A AurelShell Command Palette / Global Commands Foundation
+
+P2.4-A adds a contract-only command foundation under `src/agentic_runtime/aurel_shell/global_command_registry.py`: section gate over P2.3-D repo evidence, stable global command identity, deterministic command registry, scope/surface target records over the official surface registry, unavailable execution state, input/parameter contracts, side-effect proof, and pack result.
+
+Boundary: command is not execution. Registry is not command router. Availability is not permission enforcement or authorization. Surface target is not route execution or runtime surface switch. Input contract is not invocation. P2.4-A does not create command palette UI, frontend/browser/Tauri UI, keyboard shortcuts, search/ranking, command execution/router/handler, route runtime, tool/workflow dispatch, approvals, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, source-of-truth store, product behavior, P2.4-B, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.3-D repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.4-A focused tests 16 passed; `tests/aurel_shell` 569 passed; ruff PASS; mypy PASS (304 files). Report: `agent/reports/P2_4_A_COMMAND_PALETTE_GLOBAL_COMMANDS_FOUNDATION.md`.
 
 ## P2.3-D AurelShell Workspace Window Section Seal
 

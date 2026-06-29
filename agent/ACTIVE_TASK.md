@@ -1,6 +1,16 @@
-# Active Task: P2.3-D (complete)
+# Active Task: P2.4-A (complete)
 
-**Status:** P2.3-D COMPLETE — P2.3 workspace window section sealed for contract/read-model scope; next P2.4 planning
+**Status:** P2.4-A COMPLETE — P2.4 command palette / global commands foundation implemented at contract/read-model scope; next P2.4-B planning
+
+## P2.4-A Status
+
+**DONE** — P2.4.0–P2.4.5 command palette / global commands foundation implemented as contract-only AurelShell objects gated by P2.3-D repo evidence. OMNI review/acceptance evidence was explicitly ignored as a hard gate by operator instruction; this is recorded as an execution policy, not as false OMNI acceptance.
+
+P2.4-A establishes `CommandPaletteSectionGate`, `GlobalCommandId`, `GlobalCommandIdentity`, `GlobalCommandRegistry`, `GlobalCommandScope`, `GlobalCommandSurfaceTarget`, `GlobalCommandAvailability`, `GlobalCommandInputContract`, `GlobalCommandParameter`, `P24ASideEffectProof`, and `P24AGlobalCommandFoundationResult` under `src/agentic_runtime/aurel_shell/global_command_registry.py`. All P2.4-A side-effect/no-authority booleans remain false.
+
+Boundary: command is not execution. Registry is not router. Availability is not permission enforcement. Scope/surface target is not authority grant, route execution, or surface runtime switch. Input contract is not invocation. P2.4-A does not create command palette UI, keyboard shortcuts, search/ranking, command execution/router/handler, tool/workflow dispatch, approvals, permission enforcement, Custos integration, storage, memory/trace writes, runtime mutation, product behavior, P2.4-B, P2.5, P2.6, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_4_A_COMMAND_PALETTE_GLOBAL_COMMANDS_FOUNDATION.md`
 
 ## P2.3-D Status
 
@@ -76,8 +86,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.3-D — P2.3.16–P2.3.20 Floating Windows / Workspace State Integration Tail / Projection / Binding / Docs / Section Seal**
-- Next planned task: **P2.4 — Command Palette / Global Commands**
+- Last completed task: **P2.4-A — P2.4.0–P2.4.5 Command Palette / Global Commands Foundation**
+- Next planned task: **P2.4-B — likely P2.4.6–P2.4.10 Command Search / Ranking / Context / Read Model Foundation**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status
