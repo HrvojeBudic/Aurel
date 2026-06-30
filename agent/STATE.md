@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.7-C - Shell Binding Preview / Selection / Operator Confirmation Boundary)_
+_Last updated: 2026-06-30 (P2.7-D - Shell / CLI / TUI Binding Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.7-C - P2.7.11-P2.7.15 Shell Binding Preview / Selection / Operator Confirmation Boundary
-- Current active: **P2.7-C complete - P2.7 EXPANDED at binding preview / selection / confirmation-boundary scope**
-- Next planned: P2.7-D - P2.7.16-P2.7.20 Shell / CLI / TUI Binding Section Seal
+- Last completed: P2.7-D - P2.7.16-P2.7.20 Shell / CLI / TUI Binding Section Seal
+- Current active: **P2.7-D complete - P2.7 SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope**
+- Next planned: P2.8-A - P2.8.0-P2.8.5 Shell State / Reports / Docs Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -26,7 +26,8 @@ _Last updated: 2026-06-30 (P2.7-C - Shell Binding Preview / Selection / Operator
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
-- P2.7 status: **EXPANDED at binding preview / selection / confirmation-boundary scope** — P2.7-A through P2.7-C complete; contract-only binding foundation + read models / adapter contracts + preview / selection / confirmation-boundary contracts; not UI/product UI, CLI runner, TUI runtime, Shell execution runtime, command parser/router/handler, command execution, output writer, render runtime, operator confirmation runtime, approval runtime, HITL activation, permission enforcement, Custos decisioning, or runtime dispatch
+- P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete; contract-only binding foundation + read models / adapter contracts + preview / selection / confirmation-boundary contracts + section seal; not UI/product UI, CLI runner, TUI runtime, Shell runtime/execution runtime/state runtime, command parser/router/handler, command execution, output writer, render runtime, operator confirmation runtime, approval runtime, HITL activation, permission enforcement, Custos decisioning, runtime dispatch, trace/memory/storage writes, product behavior, release scope, Shell complete, P2 complete, or future-pack implementation
+- P2.7-D status: **complete** — section seal gate, full P2.7 contract inventory, section read model/version, binding availability rollup, runtime unavailable rollup, P2.8 handoff contract, validation rollup, contract-scope demo, no-live-binding proof, section seal result, side-effect proof; section seal not release seal; P2.7 complete not P2 complete; binding section complete not live binding; P2.8 handoff not P2.8 implementation; validation rollup does not invent PASS; no CLI runner, TUI runtime, Shell state runtime, command execution, approval runtime, permission enforcement, Custos decisioning, product behavior, LIVE, TRACE_VERIFIED, P2.8/P2.10/P2.13
 - P2.7-C status: **complete** — binding preview gate, preview bundle/item/risk note, selected binding intent, selection candidate/state, operator confirmation requirement/intent, confirmation outcome read model, cancel/reject/defer descriptors, confirmation boundary result, side-effect proof; preview bundle not UI; preview item not product UI; risk note does not enforce policy/activate approval; selected binding not invoked binding; selection intent not execution; selection state does not mutate runtime/shell state; confirmation requirement not approval; confirmation intent not authority; confirmation outcome not Custos decision; confirmed state not permission grant; cancel/reject/defer not runtime transitions; P2.7-B adapter expansion result + side-effect proof reused by reference
 - P2.7-B status: **complete** — binding read model gate, read model registry/entries/inventory, command descriptor read model, command surface adapter read model, output preview schema, render preview schema, binding context descriptor, binding availability read model, binding selection descriptor, adapter expansion result, side-effect proof; registry/inventory not source-of-truth; descriptor not parser; adapter not router/handler; output preview not writer; render preview not TUI runtime/product UI; context not runtime mutation; availability not permission enforcement; selection not operator confirmation/approval; P2.7-A evidence reused by reference
 - P2.7-A status: **complete** — binding section gate, target registry, surface catalog, capability descriptors, adapter contract, projection consumption contract, read-only command surface, output/render descriptors, no-command-execution boundary, no-runtime-dispatch boundary, foundation result, side-effect proof
@@ -34,7 +35,17 @@ _Last updated: 2026-06-30 (P2.7-C - Shell Binding Preview / Selection / Operator
 - P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
 - P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **906 passed** (post P2.7-C)
+- AurelShell suite: **921 passed** (post P2.7-D)
+
+## P2.7-D AurelShell Shell / CLI / TUI Binding Section Seal
+
+P2.7-D adds a contract-only Shell / CLI / TUI binding section seal module under `src/agentic_runtime/aurel_shell/shell_binding_section_seal.py`: section seal gate over P2.7-C repo evidence, full P2.7.0-P2.7.20 contract inventory, section read model and version, binding availability rollup, runtime unavailable rollup, P2.8 handoff contract, validation rollup, contract-scope demo, no-live-binding proof, section seal result, side-effect proof, and pack result.
+
+Boundary: section seal is not release seal. P2.7 complete is not P2 complete. Binding section complete is not live binding. Contract inventory references P2.7-A/B/C/D evidence and does not duplicate source-of-truth. Availability rollup is not permission enforcement. Runtime unavailable rollup is not runtime implementation. P2.8 handoff points to P2.8-A but does not start or implement P2.8 and creates no Shell state runtime. Validation rollup does not invent PASS. Contract-scope demo is not product demo. No-live-binding proof keeps all live/runtime/product fields false. P2.7-D does not start P2.8, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.7-C repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.7-D focused tests 15 passed; `tests/aurel_shell` 921 passed; ruff PASS; mypy PASS (319 source files). Report: `agent/reports/P2_7_D_SHELL_CLI_TUI_BINDING_SECTION_SEAL.md`.
 
 ## P2.7-C AurelShell Shell Binding Preview / Selection / Operator Confirmation Boundary
 

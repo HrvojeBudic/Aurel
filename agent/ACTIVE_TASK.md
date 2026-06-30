@@ -1,6 +1,16 @@
-# Active Task: P2.7-C (complete)
+# Active Task: P2.7-D (complete)
 
-**Status:** P2.7-C COMPLETE — P2.7 binding preview / selection / operator confirmation-boundary contracts implemented at contract scope; next P2.7-D (P2.7.16–P2.7.20 Shell / CLI / TUI Binding Section Seal)
+**Status:** P2.7-D COMPLETE — P2.7 Shell / CLI / TUI Binding section sealed at contract scope; next P2.8-A (P2.8.0–P2.8.5 Shell State / Reports / Docs Foundation)
+
+## P2.7-D Status
+
+**DONE — SEALED_CONTRACT_ONLY / CONTRACT_ONLY / SECTION_SEAL_ONLY / NO_LIVE_BINDING_PROOF / NO_COMMAND_EXECUTION_BOUNDARY / NO_RUNTIME_DISPATCH_BOUNDARY / NO_APPROVAL_RUNTIME_BOUNDARY** — P2.7.16–P2.7.20 Shell / CLI / TUI Binding section seal contracts implemented as contract-only AurelShell objects gated by P2.7-C repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.7-D establishes `ShellBindingSectionSealGate`, `ShellBindingSectionSealGateStatus`, `ShellBindingSectionContractInventory`, `ShellBindingSectionContractEntry`, `ShellBindingSectionReadModel`, `ShellBindingSectionReadModelVersion`, `ShellBindingAvailabilityRollup`, `ShellBindingRuntimeUnavailableRollup`, `ShellBindingP28HandoffContract`, `ShellBindingSectionValidationRollup`, `ShellBindingContractScopeDemo`, `ShellBindingNoLiveBindingProof`, `ShellBindingSectionSealResult`, `ShellBindingSectionSealTruthBoundary`, `P27DSideEffectProof`, and `P27DShellBindingSectionSealResult` under `src/agentic_runtime/aurel_shell/shell_binding_section_seal.py`. All P2.7-D side-effect/no-authority booleans remain false.
+
+Boundary: section seal is not release seal. P2.7 complete is not P2 complete. Binding section complete is not live binding. Contract inventory references P2.7-A/B/C/D evidence and does not duplicate source-of-truth. Section read model is not Shell complete, P2 complete, release scope, or live binding. Availability rollup is not permission enforcement. Runtime unavailable rollup is not runtime implementation. P2.8 handoff points to P2.8-A but does not start or implement P2.8 and creates no Shell state runtime. Validation rollup does not invent PASS. Contract-scope demo is not product demo. No-live-binding proof keeps live CLI runner, TUI runtime, Shell runtime, command execution, runtime dispatch, trace write, and product behavior false. P2.7-D does not start P2.8, P2.10, or P2.13.
+
+Report: `agent/reports/P2_7_D_SHELL_CLI_TUI_BINDING_SECTION_SEAL.md`
 
 ## P2.7-C Status
 
