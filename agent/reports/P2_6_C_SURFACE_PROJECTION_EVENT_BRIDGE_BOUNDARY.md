@@ -237,8 +237,8 @@ P2.6-D — P2.6.16-P2.6.20 Surface Projection / API / Event Bridge Section Seal.
 
 ## 33. Commit Hash
 
-PENDING — to be recorded after implementation commit.
+`ba87a10` — feat(aurel-shell): add P2.6 projection event boundaries
 
 ## 34. Final Git Status
 
-PENDING — to be recorded after validation and commit.
+Clean after implementation commit (in-scope files only). This report-hash record is a docs-only follow-up commit.
