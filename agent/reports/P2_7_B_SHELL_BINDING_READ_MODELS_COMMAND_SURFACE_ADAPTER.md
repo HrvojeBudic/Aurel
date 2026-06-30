@@ -197,7 +197,7 @@ Read models and adapters are contract-only. Runtime binding remains `available_a
 
 ## 33. Commit Hash
 
-`<recorded in follow-up docs commit>` — see `agent/REPORTS.md` index entry.
+`c6cc7a0` — `feat(aurel-shell): add P2.7 binding read models`
 
 ## 34. Final Git Status
 
