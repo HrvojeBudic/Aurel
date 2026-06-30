@@ -1,6 +1,16 @@
-# Active Task: P2.8-B (complete)
+# Active Task: P2.8-C (complete)
 
-**Status:** P2.8-B COMPLETE — P2.8 Shell State / Reports / Docs read-model/index expansion at contract scope; next P2.8-C (P2.8.11–P2.8.15 Docs Index / State Sync / Read-Only Summary Boundary)
+**Status:** P2.8-C COMPLETE — P2.8 Shell State / Reports / Docs read-only summary/sync descriptor boundary at contract scope; next P2.8-D (P2.8.16–P2.8.20 Shell State / Reports / Docs Section Seal)
+
+## P2.8-C Status
+
+**DONE — CONTRACT_ONLY / READ_ONLY_SUMMARY_ONLY / SYNC_DESCRIPTOR_ONLY / NO_SYNC_RUNTIME_BOUNDARY / NO_GENERATION_BOUNDARY / NO_WRITE_BOUNDARY** — P2.8.11–P2.8.15 Docs Index / State Sync / Read-Only Summary Boundary contracts implemented as contract-only AurelShell objects gated by P2.8-B repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.8-C establishes `ShellStateSummaryGate`, `ShellStateSummaryGateStatus`, `ShellDocsIndexSummary`, `ShellReportIndexSummary`, `ShellStateReadOnlySummary`, `ShellStateSummaryBundle`, `ShellStateSyncDescriptor`, `ShellStateSyncCandidate`, `ShellStateSyncDescriptorMode`, `ShellReferenceDriftDescriptor`, `ShellReferenceMissingDescriptor`, `ShellReferenceStaleDescriptor`, `ShellSourceComparisonDescriptor`, `ShellSummaryLimitationDescriptor`, `ShellReadOnlySummaryAvailability`, `ShellSummaryNoSyncRuntimeBoundary`, `ShellSummaryNoGenerationBoundary`, `ShellSummaryNoWriteBoundary`, `ShellStateSummaryBoundaryResult`, `ShellStateSummaryTruthBoundary`, `P28CSideEffectProof`, and `P28CShellStateSummaryResult` under `src/agentic_runtime/aurel_shell/shell_state_summary.py`. All P2.8-C side-effect/no-authority booleans remain false.
+
+Boundary: sync descriptor is not sync runtime. Sync candidate is not reconciliation execution. Shell state summary is not mutable Shell state. Summary bundle is not product summary UI. Summary contract is not generator runtime. Docs/report summary is not generated documentation/report. Drift/missing/stale descriptors do not repair, auto-fix, or refresh. Source comparison is not authority decision. Summary limitation is not policy enforcement. No-sync, no-generation, and no-write boundaries are active. P2.8-C does not start P2.8-D, P2.9, P2.10, or P2.13.
+
+Report: `agent/reports/P2_8_C_DOCS_INDEX_STATE_SYNC_READ_ONLY_SUMMARY.md`
 
 ## P2.8-B Status
 
