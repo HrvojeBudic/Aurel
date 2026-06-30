@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.6-C - Surface Projection Event Bridge Boundary)_
+_Last updated: 2026-06-30 (P2.6-D - Surface Projection Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.6-C - P2.6.11-P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion
-- Current active: **P2.6-C complete - P2.6 expanded at event-envelope/bridge-boundary contract scope**
-- Next planned: P2.6-D - P2.6.16-P2.6.20 Surface Projection / API / Event Bridge Section Seal
+- Last completed: P2.6-D - P2.6.16-P2.6.20 Surface Projection / API / Event Bridge Section Seal
+- Current active: **P2.6-D complete - P2.6 SEALED_CONTRACT_ONLY at section scope**
+- Next planned: P2.7-A - P2.7.0-P2.7.5 Shell / CLI / TUI Binding Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -25,11 +25,22 @@ _Last updated: 2026-06-30 (P2.6-C - Surface Projection Event Bridge Boundary)_
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- P2.6 status: **OPENED at contract event-boundary scope** — P2.6-A, P2.6-B, and P2.6-C complete; contract/read-model/API-schema/event-envelope boundary only; not projection UI, API server, HTTP routes, route handlers, live endpoint, live query execution, database/storage query runtime, websocket/SSE, live stream, event bus, event dispatcher/dispatch, subscriber/delivery runtime, runtime event emission, runtime bridge/dispatch, API event bridge runtime, trace write, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
+- P2.6-D status: **complete** — section seal gate, contract inventory, section read model, bridge availability rollup, binding availability UNAVAILABLE_P2_7_REQUIRED, no-live-infrastructure proof, validation rollup, contract-scope demo, section seal result, side-effect proof
 - P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
 - P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **850 passed** (post P2.6-C)
+- AurelShell suite: **865 passed** (post P2.6-D)
+
+## P2.6-D AurelShell Surface Projection Section Seal
+
+P2.6-D adds a contract-only section seal module under `src/agentic_runtime/aurel_shell/surface_projection_section_seal.py`: section seal gate over P2.6-C repo evidence, contract inventory rollup for P2.6.0-P2.6.20 by reference, section read model, bridge availability rollup, binding availability handoff to P2.7-A, no-live-infrastructure proof, validation rollup, contract-scope demo, section seal result, side-effect proof, and pack result.
+
+Boundary: section seal is not release seal. Inventory does not duplicate source-of-truth. Read model is not live endpoint, API server, or event bus. Binding availability is UNAVAILABLE_P2_7_REQUIRED and does not start P2.7. Validation rollup does not invent PASS. Contract-scope demo is not product demo. P2.6-D does not start P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.6-C repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.6-D focused tests 15 passed; `tests/aurel_shell` 865 passed; ruff PASS; mypy PASS (315 source files). Report: `agent/reports/P2_6_D_SURFACE_PROJECTION_API_EVENT_SECTION_SEAL.md`.
 
 ## P2.6-C AurelShell Surface Projection Event Bridge Boundary
 

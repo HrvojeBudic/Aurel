@@ -1,6 +1,16 @@
-# Active Task: P2.6-C (complete)
+# Active Task: P2.6-D (complete)
 
-**Status:** P2.6-C COMPLETE — P2.6 event envelope / bridge boundary / no-runtime-dispatch expansion implemented at contract scope; next P2.6-D (P2.6.16–P2.6.20 Surface Projection / API / Event Bridge Section Seal)
+**Status:** P2.6-D COMPLETE — P2.6 section seal implemented at contract scope; next P2.7-A (P2.7.0–P2.7.5 Shell / CLI / TUI Binding Foundation)
+
+## P2.6-D Status
+
+**DONE — SEALED_CONTRACT_ONLY / CONTRACT_ONLY / SECTION_SEAL_ONLY / NO_LIVE_INFRASTRUCTURE_PROOF** — P2.6.16–P2.6.20 surface projection / API / event bridge section seal implemented as contract-only AurelShell objects gated by P2.6-C repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.6-D establishes `SurfaceProjectionSectionSealGate`, `SurfaceProjectionSectionContractInventory`, `SurfaceProjectionSectionContractEntry`, `SurfaceProjectionSectionReadModel`, `SurfaceProjectionSectionReadModelVersion`, `SurfaceProjectionBridgeAvailabilityRollup`, `SurfaceProjectionBindingAvailability`, `SurfaceProjectionNoLiveInfrastructureProof`, `SurfaceProjectionSectionValidationRollup`, `SurfaceProjectionContractScopeDemo`, `SurfaceProjectionSectionSealResult`, `P26DSideEffectProof`, and `P26DSurfaceProjectionSectionSealResult` under `src/agentic_runtime/aurel_shell/surface_projection_section_seal.py`. All P2.6-D side-effect/no-authority booleans remain false.
+
+Boundary: section seal is not release seal. Contract inventory references P2.6-A/B/C/D evidence and does not duplicate source-of-truth. Section read model is not live endpoint, API server, or event bus. Binding availability is `UNAVAILABLE_P2_7_REQUIRED` and does not create CLI/Shell/TUI binding or start P2.7. Validation rollup does not invent PASS. Contract-scope demo is not product demo. No-live-infrastructure proof keeps all live/runtime/product fields false. P2.6-D does not start P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_6_D_SURFACE_PROJECTION_API_EVENT_SECTION_SEAL.md`
 
 ## P2.6-C Status
 
