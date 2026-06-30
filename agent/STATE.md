@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.6-A - Surface Projection / API / Event Bridge Foundation)_
+_Last updated: 2026-06-30 (P2.6-B - Surface Projection Read Models / API Schema Expansion)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.6-A - P2.6.0-P2.6.5 Surface Projection / API / Event Bridge Foundation
-- Current active: **P2.6-A complete - P2.6 opened at projection/API/event bridge contract foundation scope**
-- Next planned: P2.6-B - P2.6.6-P2.6.10 Surface Projection Read Models / API Schema Expansion
+- Last completed: P2.6-B - P2.6.6-P2.6.10 Surface Projection Read Models / API Schema Expansion
+- Current active: **P2.6-B complete - P2.6 expanded at projection schema/read-model contract scope**
+- Next planned: P2.6-C - P2.6.11-P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -25,9 +25,20 @@ _Last updated: 2026-06-30 (P2.6-A - Surface Projection / API / Event Bridge Foun
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- P2.6 status: **OPENED at contract foundation scope** — P2.6-A complete; contract/read-model only; not projection UI, API server, HTTP routes, route handlers, websocket/SSE, event bus, event dispatch, runtime bridge/dispatch, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6 status: **OPENED at contract schema/read-model scope** — P2.6-A and P2.6-B complete; contract/read-model/API-schema only; not projection UI, API server, HTTP routes, route handlers, live endpoint, live query execution, database/storage query runtime, websocket/SSE, event bus, event dispatch, runtime bridge/dispatch, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **804 passed** (post P2.6-A)
+- AurelShell suite: **828 passed** (post P2.6-B)
+
+## P2.6-B AurelShell Surface Projection Read Models / API Schema Expansion
+
+P2.6-B adds a contract-only projection schema/read-model expansion module under `src/agentic_runtime/aurel_shell/surface_projection_schemas.py`: schema gate over P2.6-A repo evidence, non-authoritative read model registry, schema inventory, schema versions, surface-specific schemas over the official seven-surface set, API-shaped response/error envelopes, static query/filter/sort/pagination grammar, active no-live-endpoint boundary, schema expansion result, side-effect proof, and pack result.
+
+Boundary: projection schema is not UI. Registry is not source-of-truth or storage. Schema inventory is not storage. Surface-specific schemas reference source contracts by ref, do not duplicate source-of-truth, do not mutate state, and do not claim product behavior. Response envelope is not a live HTTP response and requires no server or route handler. Error envelope is not a runtime error handler, throws no exception, and writes no trace. Query/filter/sort/pagination contracts do not execute live queries, query runtime/database/storage, or filter/sort/page live data. The no-live-endpoint boundary is active. P2.6-B does not start P2.6-C, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.6-A repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.6-B focused tests 24 passed; `tests/aurel_shell` 828 passed; ruff PASS; mypy PASS (313 source files). Report: `agent/reports/P2_6_B_SURFACE_PROJECTION_SCHEMA_EXPANSION.md`.
 
 ## P2.6-A AurelShell Surface Projection / API / Event Bridge Foundation
 

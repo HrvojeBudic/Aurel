@@ -1,6 +1,16 @@
-# Active Task: P2.6-A (complete)
+# Active Task: P2.6-B (complete)
 
-**Status:** P2.6-A COMPLETE — P2.6 surface projection / API / event bridge foundation implemented at contract scope; next P2.6-B (P2.6.6–P2.6.10 Surface Projection Read Models / API Schema Expansion)
+**Status:** P2.6-B COMPLETE — P2.6 surface projection read models / API schema expansion implemented at contract scope; next P2.6-C (P2.6.11–P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion)
+
+## P2.6-B Status
+
+**DONE — CONTRACT_ONLY / READ_MODEL_ONLY / API_SCHEMA_ONLY / NO_LIVE_ENDPOINT_BOUNDARY** — P2.6.6–P2.6.10 surface projection read models / API schema expansion implemented as contract-only AurelShell objects gated by P2.6-A repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.6-B establishes `SurfaceProjectionSchemaGate`, `SurfaceProjectionReadModelRegistry`, `SurfaceProjectionReadModelEntry`, `SurfaceProjectionSchemaInventory`, `SurfaceProjectionSchemaVersion`, `SurfaceSpecificProjectionSchema`, `SurfaceProjectionResponseEnvelope`, `SurfaceProjectionErrorEnvelope`, `SurfaceProjectionQueryContract`, `SurfaceProjectionFilterContract`, `SurfaceProjectionSortContract`, `SurfaceProjectionPaginationContract`, `SurfaceProjectionNoLiveEndpointBoundary`, `SurfaceProjectionSchemaExpansionResult`, `P26BSideEffectProof`, and `P26BSurfaceProjectionSchemaResult` under `src/agentic_runtime/aurel_shell/surface_projection_schemas.py`. All P2.6-B side-effect/no-authority booleans remain false.
+
+Boundary: projection schema is not UI. Registry is not source-of-truth or storage. Schema inventory is not storage. Surface-specific schemas reference source contracts and do not duplicate source-of-truth, mutate state, or claim product behavior. Response envelope is not a live HTTP response and requires no server or route handler. Error envelope is not a runtime error handler, throws no exception, and writes no trace. Query/filter/sort/pagination contracts are static grammar only and do not execute against runtime, database, or storage. The no-live-endpoint boundary is active. P2.6-B does not start P2.6-C, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_6_B_SURFACE_PROJECTION_SCHEMA_EXPANSION.md`
 
 ## P2.6-A Status
 
