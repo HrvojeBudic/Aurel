@@ -202,7 +202,7 @@ P2.9-A — P2.9.0–P2.9.5 Shell Exit Seal Foundation.
 
 ## 33. Commit Hash
 
-PENDING — recorded after commit.
+`da62fb8` — `feat(aurel-shell): seal P2.8 shell state contracts`
 
 ## 34. Final Git Status
 
