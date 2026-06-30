@@ -1,6 +1,16 @@
-# Active Task: P2.6-D (complete)
+# Active Task: P2.7-A (complete)
 
-**Status:** P2.6-D COMPLETE — P2.6 section seal implemented at contract scope; next P2.7-A (P2.7.0–P2.7.5 Shell / CLI / TUI Binding Foundation)
+**Status:** P2.7-A COMPLETE — P2.7 binding foundation implemented at contract scope; next P2.7-B (P2.7.6–P2.7.10 Shell Binding Read Models / Command Surface Adapter Expansion)
+
+## P2.7-A Status
+
+**DONE — CONTRACT_ONLY / BINDING_FOUNDATION_ONLY / NO_COMMAND_EXECUTION_BOUNDARY / NO_RUNTIME_DISPATCH_BOUNDARY** — P2.7.0–P2.7.5 Shell / CLI / TUI binding foundation implemented as contract-only AurelShell objects gated by P2.6-D repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.7-A establishes `ShellBindingSectionGate`, `ShellBindingTargetRegistry`, `ShellBindingTargetEntry`, `ShellBindingSurfaceCatalog`, `ShellBindingCapabilityDescriptor`, `ShellBindingAdapterContract`, `ShellBindingProjectionConsumptionContract`, `ShellBindingReadOnlyCommandSurface`, `ShellBindingOutputDescriptor`, `ShellBindingRenderDescriptor`, `ShellBindingNoCommandExecutionBoundary`, `ShellBindingNoRuntimeDispatchBoundary`, `ShellBindingFoundationResult`, `P27ASideEffectProof`, and `P27AShellBindingFoundationResult` under `src/agentic_runtime/aurel_shell/shell_binding_foundation.py`. All P2.7-A side-effect/no-authority booleans remain false.
+
+Boundary: binding contract is not command execution. CLI descriptor is not CLI app. TUI descriptor is not TUI runtime. Shell binding is not Shell execution runtime. Adapter contract is not runtime dispatch. Projection consumption references P2.6-D section seal evidence only. Read-only command surface is not executable. Target registry is not source-of-truth. Surface catalog is not live surface switcher. P2.7-A does not start P2.7-B, P2.8, P2.10, or P2.13.
+
+Report: `agent/reports/P2_7_A_SHELL_CLI_TUI_BINDING_FOUNDATION.md`
 
 ## P2.6-D Status
 

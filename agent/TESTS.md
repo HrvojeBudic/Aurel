@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.7-A Shell / CLI / TUI Binding Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_binding_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.7-A **13 passed**; `tests/aurel_shell` **878 passed**; ruff **PASS**; mypy **PASS** (316 source files).
+
+P2.7-A is a contract-only binding foundation only. It does NOT create CLI app, CLI runner, CLI entrypoint, TUI runtime, TUI app, Shell runtime, Shell execution runtime, command parser/router/handler, command execution, tool invocation, workflow dispatch, runtime dispatch, runtime bridge, runtime mutation, surface switching, API server, HTTP routes, live endpoint, event bus, trace write, memory write, storage write, permission enforcement, product UI, product behavior, release scope, LIVE, TRACE_VERIFIED, or start P2.7-B, P2.8, P2.10, or P2.13.
+
+Report: `agent/reports/P2_7_A_SHELL_CLI_TUI_BINDING_FOUNDATION.md`
+
 ## P2.6-D Surface Projection / API / Event Bridge Section Seal Validation (COMPLETE)
 
 ```bash

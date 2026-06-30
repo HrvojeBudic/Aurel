@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.6-D - Surface Projection Section Seal)_
+_Last updated: 2026-06-30 (P2.7-A - Shell / CLI / TUI Binding Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.6-D - P2.6.16-P2.6.20 Surface Projection / API / Event Bridge Section Seal
-- Current active: **P2.6-D complete - P2.6 SEALED_CONTRACT_ONLY at section scope**
-- Next planned: P2.7-A - P2.7.0-P2.7.5 Shell / CLI / TUI Binding Foundation
+- Last completed: P2.7-A - P2.7.0-P2.7.5 Shell / CLI / TUI Binding Foundation
+- Current active: **P2.7-A complete - P2.7 OPENED at binding foundation scope**
+- Next planned: P2.7-B - P2.7.6-P2.7.10 Shell Binding Read Models / Command Surface Adapter Expansion
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -26,11 +26,23 @@ _Last updated: 2026-06-30 (P2.6-D - Surface Projection Section Seal)_
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
+- P2.7 status: **OPENED at binding foundation scope** — P2.7-A complete; contract-only binding foundation; not CLI runner, TUI runtime, Shell execution runtime, command execution, or runtime dispatch
+- P2.7-A status: **complete** — binding section gate, target registry, surface catalog, capability descriptors, adapter contract, projection consumption contract, read-only command surface, output/render descriptors, no-command-execution boundary, no-runtime-dispatch boundary, foundation result, side-effect proof
 - P2.6-D status: **complete** — section seal gate, contract inventory, section read model, bridge availability rollup, binding availability UNAVAILABLE_P2_7_REQUIRED, no-live-infrastructure proof, validation rollup, contract-scope demo, section seal result, side-effect proof
 - P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
 - P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **865 passed** (post P2.6-D)
+- AurelShell suite: **878 passed** (post P2.7-A)
+
+## P2.7-A AurelShell Shell / CLI / TUI Binding Foundation
+
+P2.7-A adds a contract-only binding foundation module under `src/agentic_runtime/aurel_shell/shell_binding_foundation.py`: binding section gate over P2.6-D repo evidence, binding target registry, surface binding catalog, Shell/CLI/TUI capability descriptors, adapter contract, projection consumption contract, read-only command surface, output/render descriptors, no-command-execution boundary, no-runtime-dispatch boundary, foundation result, side-effect proof, and pack result.
+
+Boundary: binding contract is not command execution. Registry is not source-of-truth. Catalog is not live surface switcher. Capability descriptors are not CLI app, TUI runtime, or Shell execution runtime. Adapter is not runtime dispatch. Projection consumption is not live bridge consumption. Read-only command surface is not executable. P2.7-A does not start P2.7-B, P2.8, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.6-D repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.7-A focused tests 13 passed; `tests/aurel_shell` 878 passed; ruff PASS; mypy PASS (316 source files). Report: `agent/reports/P2_7_A_SHELL_CLI_TUI_BINDING_FOUNDATION.md`.
 
 ## P2.6-D AurelShell Surface Projection Section Seal
 
