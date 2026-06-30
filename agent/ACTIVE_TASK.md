@@ -1,6 +1,16 @@
-# Active Task: P2.6-B (complete)
+# Active Task: P2.6-C (complete)
 
-**Status:** P2.6-B COMPLETE — P2.6 surface projection read models / API schema expansion implemented at contract scope; next P2.6-C (P2.6.11–P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion)
+**Status:** P2.6-C COMPLETE — P2.6 event envelope / bridge boundary / no-runtime-dispatch expansion implemented at contract scope; next P2.6-D (P2.6.16–P2.6.20 Surface Projection / API / Event Bridge Section Seal)
+
+## P2.6-C Status
+
+**DONE — CONTRACT_ONLY / EVENT_ENVELOPE_ONLY / NO_LIVE_STREAM_BOUNDARY / NO_RUNTIME_DISPATCH_BOUNDARY** — P2.6.11–P2.6.15 event envelope / bridge boundary / no-runtime-dispatch expansion implemented as contract-only AurelShell objects gated by P2.6-B repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.6-C establishes `SurfaceProjectionEventBridgeGate`, `SurfaceProjectionEventEnvelopeRegistry`, `SurfaceProjectionEventEnvelopeEntry`, `SurfaceProjectionEventKindCatalog`, `SurfaceProjectionEventKindSpec`, `SurfaceProjectionEventPayloadSchemaRef`, `SurfaceProjectionEventSourceTargetMapping`, `SurfaceProjectionEventCausalityRef`, `SurfaceProjectionEventCorrelationRef`, `SurfaceProjectionEventEvidenceRef`, `SurfaceProjectionSubscriptionDescriptor`, `SurfaceProjectionDeliveryDescriptor`, `SurfaceProjectionNoLiveStreamBoundary`, `SurfaceProjectionNoRuntimeDispatchBoundary`, `SurfaceProjectionEventBridgeBoundaryResult`, `P26CSideEffectProof`, and `P26CSurfaceProjectionEventBridgeResult` under `src/agentic_runtime/aurel_shell/surface_projection_events.py`. All P2.6-C side-effect/no-authority booleans remain false.
+
+Boundary: event envelope is not runtime event. Event registry/catalog are not event bus, dispatcher, or runtime emitter. Payload refs point to P2.6-B schema contracts and do not execute or mutate payload. Source-target mappings use the official seven-surface set and do not switch surfaces, execute routes, or mutate navigation. Causality/correlation/evidence refs do not write trace, create trace events, claim TRACE_VERIFIED, create runtime links, or mutate runtime context. Subscription/delivery descriptors create no subscriber/subscription/delivery runtime, delivery channel, or message send. The no-live-stream and no-runtime-dispatch boundaries are active. P2.6-C does not start P2.6-D, P2.7, P2.10, or P2.13.
+
+Report: `agent/reports/P2_6_C_SURFACE_PROJECTION_EVENT_BRIDGE_BOUNDARY.md`
 
 ## P2.6-B Status
 

@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.6-C Event Envelope / Bridge Boundary / No-Runtime-Dispatch Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_surface_projection_events.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.6-C **22 passed**; `tests/aurel_shell` **850 passed**; ruff **PASS**; mypy **PASS** (314 source files).
+
+P2.6-C is a contract-only projection event-envelope / bridge-boundary expansion only. It does NOT create event bus, event dispatcher, event subscriber runtime, subscription runtime, delivery runtime, delivery channel, websocket/SSE runtime, live stream, runtime event emission, runtime bridge, runtime dispatch, API event bridge runtime, trace write, memory write, storage write, projection UI, API server, HTTP routes, route handlers, live endpoint, live query execution, surface switching, route/command execution, command router/handler, workflow/tool dispatch, CLI/Shell/TUI binding, approval activation, authorization, permission enforcement, Custos/Mneme integration, runtime mutation, source-of-truth store, claim production LIVE, claim TRACE_VERIFIED, claim release scope, claim product behavior, or start P2.6-D, P2.7, P2.10, or P2.13. The discarded Attention / Notification / Inbox direction for P2.6 was not used.
+
+Report: `agent/reports/P2_6_C_SURFACE_PROJECTION_EVENT_BRIDGE_BOUNDARY.md`
+
 ## P2.6-B Surface Projection Read Models / API Schema Expansion Validation (COMPLETE)
 
 ```bash

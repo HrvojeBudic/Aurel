@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.6-B - Surface Projection Read Models / API Schema Expansion)_
+_Last updated: 2026-06-30 (P2.6-C - Surface Projection Event Bridge Boundary)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.6-B - P2.6.6-P2.6.10 Surface Projection Read Models / API Schema Expansion
-- Current active: **P2.6-B complete - P2.6 expanded at projection schema/read-model contract scope**
-- Next planned: P2.6-C - P2.6.11-P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion
+- Last completed: P2.6-C - P2.6.11-P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatch Expansion
+- Current active: **P2.6-C complete - P2.6 expanded at event-envelope/bridge-boundary contract scope**
+- Next planned: P2.6-D - P2.6.16-P2.6.20 Surface Projection / API / Event Bridge Section Seal
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -25,10 +25,21 @@ _Last updated: 2026-06-30 (P2.6-B - Surface Projection Read Models / API Schema 
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- P2.6 status: **OPENED at contract schema/read-model scope** — P2.6-A and P2.6-B complete; contract/read-model/API-schema only; not projection UI, API server, HTTP routes, route handlers, live endpoint, live query execution, database/storage query runtime, websocket/SSE, event bus, event dispatch, runtime bridge/dispatch, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6 status: **OPENED at contract event-boundary scope** — P2.6-A, P2.6-B, and P2.6-C complete; contract/read-model/API-schema/event-envelope boundary only; not projection UI, API server, HTTP routes, route handlers, live endpoint, live query execution, database/storage query runtime, websocket/SSE, live stream, event bus, event dispatcher/dispatch, subscriber/delivery runtime, runtime event emission, runtime bridge/dispatch, API event bridge runtime, trace write, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
 - P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **828 passed** (post P2.6-B)
+- AurelShell suite: **850 passed** (post P2.6-C)
+
+## P2.6-C AurelShell Surface Projection Event Bridge Boundary
+
+P2.6-C adds a contract-only projection event bridge boundary module under `src/agentic_runtime/aurel_shell/surface_projection_events.py`: event bridge gate over P2.6-B repo evidence, event envelope registry, event kind catalog/specs, payload schema refs, source-target mappings over the official seven-surface set, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof, and pack result.
+
+Boundary: event envelope is not runtime event. Event kind catalog is not event bus. Event envelope registry is not dispatcher or runtime emitter. Payload schema refs point to P2.6-B schema contracts and do not execute or mutate payload. Source-target mappings do not switch surfaces, execute routes, or mutate navigation. Causality/correlation/evidence refs do not write trace, create trace events, claim TRACE_VERIFIED, create runtime links, or mutate runtime context. Subscription and delivery descriptors do not create subscriber/subscription/delivery runtime, delivery channel, or message send. The no-live-stream and no-runtime-dispatch boundaries are active. P2.6-C does not start P2.6-D, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.6-B repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.6-C focused tests 22 passed; `tests/aurel_shell` 850 passed; ruff PASS; mypy PASS (314 source files). Report: `agent/reports/P2_6_C_SURFACE_PROJECTION_EVENT_BRIDGE_BOUNDARY.md`.
 
 ## P2.6-B AurelShell Surface Projection Read Models / API Schema Expansion
 
