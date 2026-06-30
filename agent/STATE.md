@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.8-A — Shell State / Reports / Docs Foundation)_
+_Last updated: 2026-06-30 (P2.8-B — Shell State Read Models / Report Index Expansion)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.8-A - P2.8.0-P2.8.5 Shell State / Reports / Docs Foundation
-- Current active: **P2.8-A complete - P2.8 OPENED at Shell State / Reports / Docs foundation scope**
-- Next planned: P2.8-B - P2.8.6-P2.8.10 Shell State Read Models / Report Index Expansion
+- Last completed: P2.8-B - P2.8.6-P2.8.10 Shell State Read Models / Report Index Expansion
+- Current active: **P2.8-B complete - P2.8 EXPANDED at Shell State / Reports / Docs read-model/index scope**
+- Next planned: P2.8-C - P2.8.11-P2.8.15 Docs Index / State Sync / Read-Only Summary Boundary
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -27,9 +27,20 @@ _Last updated: 2026-06-30 (P2.8-A — Shell State / Reports / Docs Foundation)_
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
 - P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
-- P2.8 status: **OPENED at foundation scope** — P2.8-A complete; contract-only Shell state snapshot, report/docs reference registries, availability, governance boundary; not live Shell state runtime, session engine, persistent store, generators, publishers, or product behavior
+- P2.8 status: **EXPANDED at read-model/index scope** — P2.8-A and P2.8-B complete; contract-only Shell state snapshot, report/docs reference registries, read model registry/inventory, section status/state snapshot read models, report/docs indexes, query/filter/sort descriptors, availability rollup, no-generation/no-runtime/no-write boundaries; not live Shell state runtime, query/filter/sort runtime, session engine, persistent store, generators, publishers, write path, or product behavior
+- P2.8-B status: **complete** — read model gate, registry, entries, inventory, section status read model, state snapshot read model, report index, report index entries, report family grouping, docs index, docs index entries, docs family grouping, query/filter/sort descriptors, availability rollup, no-generation boundary, no-runtime-mutation boundary, no-write boundary, expansion result, side-effect proof; registry not query runtime; report/docs indexes not source-of-truth replacements; descriptors do not execute; no P2.8-C/P2.8-D/P2.9/P2.10/P2.13
 - P2.8-A status: **complete** — foundation gate, identity, snapshot contract, source references, governance boundary, report/docs registries, availability contract, no-runtime-mutation boundary, no-write boundary, foundation result, side-effect proof; snapshot not live state; registries not source-of-truth; no trace/memory/storage write; no P2.8-B/P2.9/P2.10/P2.13
-- AurelShell suite: **935 passed** (post P2.8-A)
+- AurelShell suite: **949 passed** (post P2.8-B)
+
+## P2.8-B AurelShell Shell State Read Models / Report Index Expansion
+
+P2.8-B adds a contract-only Shell State / Reports / Docs read-model and index module under `src/agentic_runtime/aurel_shell/shell_state_read_models.py`: read model gate over P2.8-A repo evidence, read model registry/entries/inventory, section status read model, state snapshot read model, report index/entries/family grouping, docs index/entries/family grouping, query/filter/sort descriptors, availability rollup, no-generation boundary, no-runtime-mutation boundary, no-trace-memory-storage-write boundary, read-model expansion result, side-effect proof, and pack result.
+
+Boundary: read model registry is not query runtime. Read model inventory is not source-of-truth duplication. Section status read model is not mutable Shell state. State snapshot read model is not live Shell state or session state engine. Report index is not `agent/REPORTS.md` replacement. Docs index is not docs source-of-truth. Query/filter/sort descriptors do not execute. Report/docs family grouping does not generate reports/docs. Availability is not permission enforcement. No-generation, no-runtime-mutation and no-write boundaries are active. P2.8-B does not start P2.8-C, P2.8-D, P2.9, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.8-A repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.8-B focused tests 14 passed; `tests/aurel_shell` 949 passed; ruff PASS; mypy PASS (321 source files). Report: `agent/reports/P2_8_B_SHELL_STATE_READ_MODELS_REPORT_INDEX.md`.
 
 ## P2.8-A AurelShell Shell State / Reports / Docs Foundation
 

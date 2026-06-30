@@ -1,6 +1,16 @@
-# Active Task: P2.8-A (complete)
+# Active Task: P2.8-B (complete)
 
-**Status:** P2.8-A COMPLETE — P2.8 Shell State / Reports / Docs foundation at contract scope; next P2.8-B (P2.8.6–P2.8.10 Shell State Read Models / Report Index Expansion)
+**Status:** P2.8-B COMPLETE — P2.8 Shell State / Reports / Docs read-model/index expansion at contract scope; next P2.8-C (P2.8.11–P2.8.15 Docs Index / State Sync / Read-Only Summary Boundary)
+
+## P2.8-B Status
+
+**DONE — CONTRACT_ONLY / SHELL_STATE_READ_MODEL_ONLY / READ_MODEL_REGISTRY_ONLY / REPORT_INDEX_READ_MODEL_ONLY / DOCS_INDEX_READ_MODEL_ONLY / NO_REPORT_DOCS_GENERATION_BOUNDARY / NO_RUNTIME_STATE_MUTATION_BOUNDARY / NO_TRACE_MEMORY_STORAGE_WRITE_BOUNDARY** — P2.8.6–P2.8.10 Shell State Read Models / Report Index Expansion contracts implemented as contract-only AurelShell objects gated by P2.8-A repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.8-B establishes `ShellStateReadModelGate`, `ShellStateReadModelGateStatus`, `ShellStateReadModelRegistry`, `ShellStateReadModelEntry`, `ShellStateReadModelInventory`, `ShellSectionStatusReadModel`, `ShellStateSnapshotReadModel`, `ShellReportIndexReadModel`, `ShellReportIndexEntry`, `ShellReportFamilyGrouping`, `ShellDocsIndexReadModel`, `ShellDocsIndexEntry`, `ShellDocsFamilyGrouping`, `ShellReportDocsQueryDescriptor`, `ShellReportDocsFilterDescriptor`, `ShellReportDocsSortDescriptor`, `ShellReadModelAvailabilityRollup`, `ShellReadModelNoGenerationBoundary`, `ShellReadModelNoRuntimeMutationBoundary`, `ShellReadModelNoTraceMemoryStorageWriteBoundary`, `ShellStateReadModelExpansionResult`, `ShellStateReadModelTruthBoundary`, `P28BSideEffectProof`, and `P28BShellStateReadModelResult` under `src/agentic_runtime/aurel_shell/shell_state_read_models.py`. All P2.8-B side-effect/no-authority booleans remain false.
+
+Boundary: read model registry is not query runtime. Read model inventory is not source-of-truth duplication. Section status read model is not mutable Shell state. State snapshot read model is not live Shell state or session state engine. Report index is not `agent/REPORTS.md` replacement. Docs index is not docs source-of-truth. Query/filter/sort descriptors do not execute. Report/docs family grouping does not generate reports/docs. Availability is not permission enforcement. No-generation, no-runtime-mutation and no-write boundaries are active. P2.8-B does not start P2.8-C, P2.8-D, P2.9, P2.10, or P2.13.
+
+Report: `agent/reports/P2_8_B_SHELL_STATE_READ_MODELS_REPORT_INDEX.md`
 
 ## P2.8-A Status
 
