@@ -1,6 +1,16 @@
-# Active Task: P2.7-D (complete)
+# Active Task: P2.8-A (complete)
 
-**Status:** P2.7-D COMPLETE — P2.7 Shell / CLI / TUI Binding section sealed at contract scope; next P2.8-A (P2.8.0–P2.8.5 Shell State / Reports / Docs Foundation)
+**Status:** P2.8-A COMPLETE — P2.8 Shell State / Reports / Docs foundation at contract scope; next P2.8-B (P2.8.6–P2.8.10 Shell State Read Models / Report Index Expansion)
+
+## P2.8-A Status
+
+**DONE — CONTRACT_ONLY / SHELL_STATE_FOUNDATION_ONLY / NO_RUNTIME_STATE_MUTATION_BOUNDARY / NO_TRACE_MEMORY_STORAGE_WRITE_BOUNDARY** — P2.8.0–P2.8.5 Shell State / Reports / Docs foundation contracts implemented as contract-only AurelShell objects gated by P2.7-D repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.8-A establishes `ShellStateFoundationGate`, `ShellStateFoundationGateStatus`, `ShellStateFoundationIdentity`, `ShellStateSnapshotContract`, `ShellStateSnapshotScope`, `ShellStateSourceReference`, `ShellStateGovernanceSourceBoundary`, `ShellReportReferenceRegistry`, `ShellReportReferenceEntry`, `ShellDocsReferenceRegistry`, `ShellDocsReferenceEntry`, `ShellReportDocsAvailabilityContract`, `ShellReportDocsAvailabilityStatus`, `ShellStateNoRuntimeMutationBoundary`, `ShellStateNoTraceMemoryStorageWriteBoundary`, `ShellStateFoundationResult`, `ShellStateFoundationTruthBoundary`, `P28ASideEffectProof`, and `P28AShellStateFoundationResult` under `src/agentic_runtime/aurel_shell/shell_state_foundation.py`. All P2.8-A side-effect/no-authority booleans remain false.
+
+Boundary: Shell state snapshot is not live Shell state. Source reference is not storage persistence. Report registry is not agent/REPORTS.md replacement. Docs registry is not docs source-of-truth. Report/docs availability is not permission enforcement. Governance boundary preserves agent/ as source-of-truth. No-runtime-mutation and no-write boundaries are active. Foundation result is not product behavior. P2.8-A does not start P2.8-B, P2.9, P2.10, or P2.13.
+
+Report: `agent/reports/P2_8_A_SHELL_STATE_REPORTS_DOCS_FOUNDATION.md`
 
 ## P2.7-D Status
 

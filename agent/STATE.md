@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.7-D - Shell / CLI / TUI Binding Section Seal)_
+_Last updated: 2026-06-30 (P2.8-A — Shell State / Reports / Docs Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.7-D - P2.7.16-P2.7.20 Shell / CLI / TUI Binding Section Seal
-- Current active: **P2.7-D complete - P2.7 SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope**
-- Next planned: P2.8-A - P2.8.0-P2.8.5 Shell State / Reports / Docs Foundation
+- Last completed: P2.8-A - P2.8.0-P2.8.5 Shell State / Reports / Docs Foundation
+- Current active: **P2.8-A complete - P2.8 OPENED at Shell State / Reports / Docs foundation scope**
+- Next planned: P2.8-B - P2.8.6-P2.8.10 Shell State Read Models / Report Index Expansion
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -26,16 +26,20 @@ _Last updated: 2026-06-30 (P2.7-D - Shell / CLI / TUI Binding Section Seal)_
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
-- P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete; contract-only binding foundation + read models / adapter contracts + preview / selection / confirmation-boundary contracts + section seal; not UI/product UI, CLI runner, TUI runtime, Shell runtime/execution runtime/state runtime, command parser/router/handler, command execution, output writer, render runtime, operator confirmation runtime, approval runtime, HITL activation, permission enforcement, Custos decisioning, runtime dispatch, trace/memory/storage writes, product behavior, release scope, Shell complete, P2 complete, or future-pack implementation
-- P2.7-D status: **complete** — section seal gate, full P2.7 contract inventory, section read model/version, binding availability rollup, runtime unavailable rollup, P2.8 handoff contract, validation rollup, contract-scope demo, no-live-binding proof, section seal result, side-effect proof; section seal not release seal; P2.7 complete not P2 complete; binding section complete not live binding; P2.8 handoff not P2.8 implementation; validation rollup does not invent PASS; no CLI runner, TUI runtime, Shell state runtime, command execution, approval runtime, permission enforcement, Custos decisioning, product behavior, LIVE, TRACE_VERIFIED, P2.8/P2.10/P2.13
-- P2.7-C status: **complete** — binding preview gate, preview bundle/item/risk note, selected binding intent, selection candidate/state, operator confirmation requirement/intent, confirmation outcome read model, cancel/reject/defer descriptors, confirmation boundary result, side-effect proof; preview bundle not UI; preview item not product UI; risk note does not enforce policy/activate approval; selected binding not invoked binding; selection intent not execution; selection state does not mutate runtime/shell state; confirmation requirement not approval; confirmation intent not authority; confirmation outcome not Custos decision; confirmed state not permission grant; cancel/reject/defer not runtime transitions; P2.7-B adapter expansion result + side-effect proof reused by reference
-- P2.7-B status: **complete** — binding read model gate, read model registry/entries/inventory, command descriptor read model, command surface adapter read model, output preview schema, render preview schema, binding context descriptor, binding availability read model, binding selection descriptor, adapter expansion result, side-effect proof; registry/inventory not source-of-truth; descriptor not parser; adapter not router/handler; output preview not writer; render preview not TUI runtime/product UI; context not runtime mutation; availability not permission enforcement; selection not operator confirmation/approval; P2.7-A evidence reused by reference
-- P2.7-A status: **complete** — binding section gate, target registry, surface catalog, capability descriptors, adapter contract, projection consumption contract, read-only command surface, output/render descriptors, no-command-execution boundary, no-runtime-dispatch boundary, foundation result, side-effect proof
-- P2.6-D status: **complete** — section seal gate, contract inventory, section read model, bridge availability rollup, binding availability UNAVAILABLE_P2_7_REQUIRED, no-live-infrastructure proof, validation rollup, contract-scope demo, section seal result, side-effect proof
-- P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
-- P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
-- P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **921 passed** (post P2.7-D)
+- P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
+- P2.8 status: **OPENED at foundation scope** — P2.8-A complete; contract-only Shell state snapshot, report/docs reference registries, availability, governance boundary; not live Shell state runtime, session engine, persistent store, generators, publishers, or product behavior
+- P2.8-A status: **complete** — foundation gate, identity, snapshot contract, source references, governance boundary, report/docs registries, availability contract, no-runtime-mutation boundary, no-write boundary, foundation result, side-effect proof; snapshot not live state; registries not source-of-truth; no trace/memory/storage write; no P2.8-B/P2.9/P2.10/P2.13
+- AurelShell suite: **935 passed** (post P2.8-A)
+
+## P2.8-A AurelShell Shell State / Reports / Docs Foundation
+
+P2.8-A adds a contract-only Shell state / reports / docs foundation module under `src/agentic_runtime/aurel_shell/shell_state_foundation.py`: foundation gate over P2.7-D repo evidence, foundation identity, snapshot contract, source references, governance source boundary, report reference registry, docs reference registry, report/docs availability contract, no-runtime-mutation boundary, no-trace-memory-storage-write boundary, foundation result, side-effect proof, and pack result.
+
+Boundary: Shell state snapshot is not live Shell state. Source reference is not storage persistence. Report registry is not agent/REPORTS.md replacement. Docs registry is not docs source-of-truth. Availability is not permission enforcement. Governance boundary preserves agent/. No-runtime-mutation and no-write boundaries are active. P2.8-A does not start P2.8-B, P2.9, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.7-D repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.8-A focused tests 14 passed; `tests/aurel_shell` 935 passed; ruff PASS; mypy PASS (320 source files). Report: `agent/reports/P2_8_A_SHELL_STATE_REPORTS_DOCS_FOUNDATION.md`.
 
 ## P2.7-D AurelShell Shell / CLI / TUI Binding Section Seal
 

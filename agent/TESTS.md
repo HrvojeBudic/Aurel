@@ -58,6 +58,20 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.8-A Shell State / Reports / Docs Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_state_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.8-A **14 passed**; `tests/aurel_shell` **935 passed**; ruff **PASS**; mypy **PASS** (320 source files).
+
+P2.8-A is a contract-only Shell state / reports / docs foundation pack only. It does NOT create live Shell state runtime, Shell runtime, session state engine, persistent state store, database persistence, storage write, trace write, memory write, report generator runtime, docs generator runtime, report publisher, docs publisher, agent/REPORTS.md replacement, agent/ governance replacement, docs source-of-truth, product UI, product behavior, CLI runner, TUI runtime, command execution, runtime dispatch, permission enforcement, Custos decisioning, approval runtime, LIVE, TRACE_VERIFIED, release scope, or start P2.8-B, P2.9, P2.10, or P2.13.
+
 ## P2.7-D Shell / CLI / TUI Binding Section Seal Validation (COMPLETE)
 
 ```bash
