@@ -231,8 +231,8 @@ P2.6-C — P2.6.11-P2.6.15 Event Envelope / Bridge Boundary / No-Runtime-Dispatc
 
 ## 32. Commit Hash
 
-PENDING — will be recorded after the implementation commit is created.
+`7eca9c2` — feat(aurel-shell): add P2.6 projection schemas
 
 ## 33. Final Git Status
 
-PENDING — pre-commit validation clean; final clean status will be recorded after commit.
+Clean after implementation commit (in-scope files only). This report-hash record is a docs-only follow-up commit.
