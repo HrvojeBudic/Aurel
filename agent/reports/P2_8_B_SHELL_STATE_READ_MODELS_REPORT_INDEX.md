@@ -197,8 +197,8 @@ P2.8-C — P2.8.11–P2.8.15 Docs Index / State Sync / Read-Only Summary Boundar
 
 ## 33. Commit Hash
 
-Pending — to be recorded after the implementation commit.
+`8762a8a` — `feat(aurel-shell): add P2.8 shell state read models`
 
 ## 34. Final Git Status
 
-Pending final commit; validation worktree contained only in-scope P2.8-B files before commit.
+Clean after implementation commit.
