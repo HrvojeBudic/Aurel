@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.7-A - Shell / CLI / TUI Binding Foundation)_
+_Last updated: 2026-06-30 (P2.7-B - Shell Binding Read Models / Command Surface Adapter Expansion)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.7-A - P2.7.0-P2.7.5 Shell / CLI / TUI Binding Foundation
-- Current active: **P2.7-A complete - P2.7 OPENED at binding foundation scope**
-- Next planned: P2.7-B - P2.7.6-P2.7.10 Shell Binding Read Models / Command Surface Adapter Expansion
+- Last completed: P2.7-B - P2.7.6-P2.7.10 Shell Binding Read Models / Command Surface Adapter Expansion
+- Current active: **P2.7-B complete - P2.7 EXPANDED at binding read-model / adapter scope**
+- Next planned: P2.7-C - P2.7.11-P2.7.15 Shell Binding Preview / Selection / Operator Confirmation Boundary
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -26,13 +26,20 @@ _Last updated: 2026-06-30 (P2.7-A - Shell / CLI / TUI Binding Foundation)_
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
-- P2.7 status: **OPENED at binding foundation scope** — P2.7-A complete; contract-only binding foundation; not CLI runner, TUI runtime, Shell execution runtime, command execution, or runtime dispatch
+- P2.7 status: **EXPANDED at binding read-model / adapter scope** — P2.7-A through P2.7-B complete; contract-only binding foundation + read models / adapter contracts; not CLI runner, TUI runtime, Shell execution runtime, command parser/router/handler, command execution, output writer, render runtime, operator confirmation, approval, permission enforcement, or runtime dispatch
+- P2.7-B status: **complete** — binding read model gate, read model registry/entries/inventory, command descriptor read model, command surface adapter read model, output preview schema, render preview schema, binding context descriptor, binding availability read model, binding selection descriptor, adapter expansion result, side-effect proof; registry/inventory not source-of-truth; descriptor not parser; adapter not router/handler; output preview not writer; render preview not TUI runtime/product UI; context not runtime mutation; availability not permission enforcement; selection not operator confirmation/approval; P2.7-A evidence reused by reference
 - P2.7-A status: **complete** — binding section gate, target registry, surface catalog, capability descriptors, adapter contract, projection consumption contract, read-only command surface, output/render descriptors, no-command-execution boundary, no-runtime-dispatch boundary, foundation result, side-effect proof
 - P2.6-D status: **complete** — section seal gate, contract inventory, section read model, bridge availability rollup, binding availability UNAVAILABLE_P2_7_REQUIRED, no-live-infrastructure proof, validation rollup, contract-scope demo, section seal result, side-effect proof
 - P2.6-C status: **complete** — event bridge gate, event envelope registry, event kind catalog, payload schema refs, source-target mappings, causality/correlation/evidence refs, subscription/delivery descriptors, active no-live-stream boundary, active no-runtime-dispatch boundary, event bridge boundary result, side-effect proof
 - P2.6-B status: **complete** — schema gate, non-authoritative read model registry, schema inventory, surface-specific schemas, response/error envelopes, static query/filter/sort/pagination contracts, active no-live-endpoint boundary, schema expansion result, side-effect proof
 - P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
-- AurelShell suite: **878 passed** (post P2.7-A)
+- AurelShell suite: **892 passed** (post P2.7-B)
+
+## P2.7-B AurelShell Shell Binding Read Models / Command Surface Adapter Expansion
+
+P2.7-B adds a contract-only binding read-model / adapter module under `src/agentic_runtime/aurel_shell/shell_binding_read_models.py`: binding read model gate over P2.7-A repo evidence, read model registry/entries/inventory, command descriptor read model, command surface adapter read model, output preview schema, render preview schema, binding context descriptor, binding availability read model, binding selection descriptor, adapter expansion result, side-effect proof, and pack result.
+
+Boundary: command descriptor is not command parser. Command surface adapter read model is not command router or handler. Adapter expansion is not command execution. Output preview is not output writer. Render preview is not TUI runtime or product UI. Context descriptor does not mutate runtime context. Availability read model does not enforce permission. Selection descriptor is not operator confirmation or approval runtime. Registry/inventory are not source-of-truth. P2.7-A evidence is reused by reference only. P2.7-B does not start P2.7-C, P2.8, P2.10, or P2.13.
 
 ## P2.7-A AurelShell Shell / CLI / TUI Binding Foundation
 

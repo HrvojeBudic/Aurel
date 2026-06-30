@@ -1,6 +1,16 @@
-# Active Task: P2.7-A (complete)
+# Active Task: P2.7-B (complete)
 
-**Status:** P2.7-A COMPLETE — P2.7 binding foundation implemented at contract scope; next P2.7-B (P2.7.6–P2.7.10 Shell Binding Read Models / Command Surface Adapter Expansion)
+**Status:** P2.7-B COMPLETE — P2.7 binding read models / command surface adapter contracts implemented at contract scope; next P2.7-C (P2.7.11–P2.7.15 Shell Binding Preview / Selection / Operator Confirmation Boundary)
+
+## P2.7-B Status
+
+**DONE — CONTRACT_ONLY / BINDING_READ_MODEL_ONLY / NO_COMMAND_EXECUTION_BOUNDARY / NO_RUNTIME_DISPATCH_BOUNDARY** — P2.7.6–P2.7.10 Shell binding read models / command surface adapter contracts implemented as contract-only AurelShell objects gated by P2.7-A repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.7-B establishes `ShellBindingReadModelGate`, `ShellBindingReadModelGateStatus`, `ShellBindingReadModelRegistry`, `ShellBindingReadModelEntry`, `ShellBindingReadModelInventory`, `ShellCommandDescriptorReadModel`, `ShellCommandDescriptorKind`, `ShellCommandSurfaceAdapterReadModel`, `ShellCommandSurfaceAdapterMode`, `ShellBindingOutputPreviewSchema`, `ShellBindingRenderPreviewSchema`, `ShellBindingContextDescriptor`, `ShellBindingAvailabilityReadModel`, `ShellBindingAvailabilityReadModelStatus`, `ShellBindingSelectionDescriptor`, `ShellBindingAdapterExpansionResult`, `ShellBindingReadModelTruthBoundary`, `P27BSideEffectProof`, and `P27BShellBindingReadModelResult` under `src/agentic_runtime/aurel_shell/shell_binding_read_models.py`. All P2.7-B side-effect/no-authority booleans remain false.
+
+Boundary: command descriptor is not command parser. Command surface adapter read model is not command router or handler. Adapter expansion is not command execution. Output preview is not output writer. Render preview is not TUI runtime or product UI. Binding context descriptor does not mutate runtime context. Binding availability read model does not enforce permission. Binding selection descriptor is not operator confirmation or approval runtime. Read model registry/inventory are not source-of-truth. P2.7-A evidence is reused by reference only. P2.7-B does not start P2.7-C, P2.8, P2.10, or P2.13.
+
+Report: `agent/reports/P2_7_B_SHELL_BINDING_READ_MODELS_COMMAND_SURFACE_ADAPTER.md`
 
 ## P2.7-A Status
 
