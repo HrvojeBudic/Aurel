@@ -191,7 +191,7 @@ P2.7-A — P2.7.0–P2.7.5 Shell / CLI / TUI Binding Foundation
 
 ## 36. Commit Hash
 
-Recorded after implementation commit (see final git log).
+`9c74a57` — feat(aurel-shell): seal P2.6 projection contracts
 
 ## 37. Final Git Status
 
