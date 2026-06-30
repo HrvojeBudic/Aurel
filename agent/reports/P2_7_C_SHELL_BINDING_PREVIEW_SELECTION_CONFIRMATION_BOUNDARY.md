@@ -195,7 +195,7 @@ Preview, selection and confirmation contracts are contract-only. Preview bundle 
 
 ## 34. Commit Hash
 
-`<pending>` — `feat(aurel-shell): add P2.7 binding preview boundary` (recorded in a follow-up docs commit)
+`47d69d2` — `feat(aurel-shell): add P2.7 binding preview boundary`
 
 ## 35. Final Git Status
 
