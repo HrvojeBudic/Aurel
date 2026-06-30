@@ -196,8 +196,8 @@ Binding foundation is contract-only. Runtime binding deferred to P2.7-B+. Read-o
 
 ## 36. Commit Hash
 
-PENDING_AT_COMMIT
+`e6f84da`
 
 ## 37. Final Git Status
 
-PENDING_AT_COMMIT
+Clean — all in-scope files committed on `master`.
