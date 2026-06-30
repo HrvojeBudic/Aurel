@@ -1,6 +1,16 @@
-# Active Task: P2.8-C (complete)
+# Active Task: P2.8-D (complete)
 
-**Status:** P2.8-C COMPLETE — P2.8 Shell State / Reports / Docs read-only summary/sync descriptor boundary at contract scope; next P2.8-D (P2.8.16–P2.8.20 Shell State / Reports / Docs Section Seal)
+**Status:** P2.8-D COMPLETE — P2.8 Shell State / Reports / Docs section sealed at contract scope; next P2.9-A (P2.9.0–P2.9.5 Shell Exit Seal Foundation)
+
+## P2.8-D Status
+
+**DONE — SEALED_CONTRACT_ONLY / CONTRACT_ONLY / SECTION_SEAL_ONLY / NO_LIVE_STATE_PROOF / NO_SYNC_RUNTIME_PROOF / NO_GENERATION_PROOF / NO_WRITE_PROOF** — P2.8.16–P2.8.20 Shell State / Reports / Docs section seal contracts implemented as contract-only AurelShell objects gated by P2.8-C repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.8-D establishes `ShellStateSectionSealGate`, `ShellStateSectionSealGateStatus`, `ShellStateSectionContractInventory`, `ShellStateSectionContractEntry`, `ShellStateSectionCoverageMatrix`, `ShellStateSectionCoverageEntry`, `ShellStateSectionReadModel`, `ShellStateSectionStatus`, `ShellStateReportsDocsAvailabilityRollup`, `ShellStateRuntimeUnavailableRollup`, `ShellStateP29HandoffContract`, `ShellStateSectionValidationRollup`, `ShellStateSectionEvidenceRollup`, `ShellStateSectionContractScopeDemo`, `ShellStateNoLiveStateProof`, `ShellStateNoSyncRuntimeProof`, `ShellStateNoGenerationProof`, `ShellStateNoWriteProof`, `ShellStateSectionSealResult`, `ShellStateSectionSealTruthBoundary`, `P28DSideEffectProof`, and `P28DShellStateSectionSealResult` under `src/agentic_runtime/aurel_shell/shell_state_section_seal.py`. All P2.8-D side-effect/no-authority booleans remain false.
+
+Boundary: section seal is not release seal. P2.8 complete is not P2 complete. Shell State section complete is not live Shell state. Contract inventory and coverage matrix reference P2.8-A/B/C/D evidence and do not duplicate source-of-truth. Availability rollup is not permission enforcement. Runtime unavailable rollup is not runtime implementation. P2.9 handoff points to P2.9-A but does not start or implement P2.9. Validation rollup does not invent PASS. Evidence rollup does not claim TRACE_VERIFIED. Contract-scope demo is not product demo. No-live/no-sync/no-generation/no-write proofs are active. P2.8-D does not start P2.9, P2.10, P2.11, P2.12, or P2.13.
+
+Report: `agent/reports/P2_8_D_SHELL_STATE_REPORTS_DOCS_SECTION_SEAL.md`
 
 ## P2.8-C Status
 

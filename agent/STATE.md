@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.8-C — Docs Index / State Sync / Read-Only Summary Boundary)_
+_Last updated: 2026-06-30 (P2.8-D — Shell State / Reports / Docs Section Seal)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.8-C - P2.8.11-P2.8.15 Docs Index / State Sync / Read-Only Summary Boundary
-- Current active: **P2.8-C complete - P2.8 EXPANDED at Shell State / Reports / Docs summary/sync descriptor scope**
-- Next planned: P2.8-D - P2.8.16-P2.8.20 Shell State / Reports / Docs Section Seal
+- Last completed: P2.8-D - P2.8.16-P2.8.20 Shell State / Reports / Docs Section Seal
+- Current active: **P2.8-D complete - P2.8 SEALED_CONTRACT_ONLY at Shell State / Reports / Docs section scope**
+- Next planned: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -27,10 +27,21 @@ _Last updated: 2026-06-30 (P2.8-C — Docs Index / State Sync / Read-Only Summar
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
 - P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
-- P2.8 status: **EXPANDED at summary/sync descriptor scope** — P2.8-A, P2.8-B, and P2.8-C complete; contract-only Shell state snapshot, report/docs reference registries, read model registry/inventory, section status/state snapshot read models, report/docs indexes, query/filter/sort descriptors, read-only summaries, sync descriptors/candidates, drift/missing/stale descriptors, no-sync/no-generation/no-write boundaries; not live Shell state runtime, Shell state sync runtime, reconciliation engine, query/filter/sort runtime, session engine, persistent store, generators, publishers, write path, or product behavior
-- P2.8-C status: **complete** — summary gate, docs/report index summaries, Shell state read-only summary, summary bundle, sync descriptor/candidate, drift/missing/stale descriptors, source comparison descriptor, summary limitation descriptor, read-only summary availability, no-sync boundary, no-generation boundary, no-write boundary, summary boundary result, side-effect proof; sync descriptor is not sync runtime; summaries are not generators; no P2.8-D/P2.9/P2.10/P2.13
+- P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete; contract-only Shell state snapshot, report/docs reference registries, read model registry/inventory, section status/state snapshot read models, report/docs indexes, query/filter/sort descriptors, read-only summaries, sync descriptors/candidates, drift/missing/stale descriptors, section seal gate, contract inventory, full coverage matrix, section read model, availability/runtime unavailable rollups, P2.9 handoff contract, validation/evidence rollups, no-live/no-sync/no-generation/no-write proofs; not live Shell state runtime, Shell state sync runtime, reconciliation engine, generators, publishers, write path, product behavior, or release seal
+- P2.8-D status: **complete** — section seal gate, contract inventory, coverage matrix, section read model/status, availability rollup, runtime unavailable rollup, P2.9 handoff contract, validation rollup, evidence rollup, contract-scope demo, no-live/no-sync/no-generation/no-write proofs, section seal result, side-effect proof; section seal is not release seal; P2.9 handoff is not P2.9 implementation; no P2.9/P2.10/P2.13
+- P2.8-C status: **complete** — summary gate, docs/report index summaries, Shell state read-only summary, summary bundle, sync descriptor/candidate, drift/missing/stale descriptors, source comparison descriptor, summary limitation descriptor, read-only summary availability, no-sync boundary, no-generation boundary, no-write boundary, summary boundary result, side-effect proof; sync descriptor is not sync runtime; summaries are not generators
 - P2.8-B status: **complete** — read model gate, registry, entries, inventory, section status read model, state snapshot read model, report index, report index entries, report family grouping, docs index, docs index entries, docs family grouping, query/filter/sort descriptors, availability rollup, no-generation boundary, no-runtime-mutation boundary, no-write boundary, expansion result, side-effect proof; registry not query runtime; report/docs indexes not source-of-truth replacements; descriptors do not execute; no P2.8-C/P2.8-D/P2.9/P2.10/P2.13
-- AurelShell suite: **963 passed** (post P2.8-C)
+- AurelShell suite: **978 passed** (post P2.8-D)
+
+## P2.8-D AurelShell Shell State / Reports / Docs Section Seal
+
+P2.8-D adds a contract-only Shell State / Reports / Docs section seal module under `src/agentic_runtime/aurel_shell/shell_state_section_seal.py`: section seal gate over P2.8-C repo evidence, contract inventory, full P2.8.0-P2.8.20 coverage matrix, section read model/status, availability rollup, runtime unavailable rollup, P2.9 handoff contract, validation rollup, evidence rollup, contract-scope demo, no-live/no-sync/no-generation/no-write proofs, section seal result, side-effect proof, and pack result.
+
+Boundary: section seal is not release seal. P2.8 complete is not P2 complete. Shell State section complete is not live Shell state. Contract inventory and coverage matrix reference source evidence without duplicating agent governance. Availability rollup is not permission enforcement. Runtime unavailable rollup is not runtime implementation. P2.9 handoff points to P2.9-A but does not start or implement P2.9. Validation rollup does not invent PASS. Evidence rollup does not claim TRACE_VERIFIED. Contract-scope demo is not product demo. P2.8-D does not start P2.9, P2.10, P2.11, P2.12, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.8-C repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.8-D focused tests 15 passed; `tests/aurel_shell` 978 passed; ruff PASS; mypy PASS (323 source files). Report: `agent/reports/P2_8_D_SHELL_STATE_REPORTS_DOCS_SECTION_SEAL.md`.
 
 ## P2.8-C AurelShell Docs Index / State Sync / Read-Only Summary Boundary
 
