@@ -58,6 +58,20 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.7-C Shell Binding Preview / Selection / Operator Confirmation Boundary Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_binding_preview_selection.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.7-C **14 passed**; `tests/aurel_shell` **906 passed**; ruff **PASS**; mypy **PASS** (318 source files).
+
+P2.7-C is a contract-only binding preview / selection / confirmation-boundary pack only. It does NOT create UI, product UI, CLI app/runner/entrypoint, TUI runtime/app, Shell runtime/execution runtime, command parser/router/handler, command execution/invocation, output writer runtime, render runtime, operator confirmation runtime, approval runtime, HITL approval activation, authorization, permission enforcement/grant/denial, Custos/Mneme integration, tool invocation, workflow dispatch, runtime dispatch, runtime bridge, runtime mutation, surface switching, navigation mutation, API server, HTTP routes, live endpoint, event bus, trace/memory/storage writes, source-of-truth store, product behavior, release scope, LIVE, TRACE_VERIFIED, or start P2.7-D, P2.8, P2.10, or P2.13.
+
 ## P2.7-B Shell Binding Read Models / Command Surface Adapter Validation (COMPLETE)
 
 ```bash

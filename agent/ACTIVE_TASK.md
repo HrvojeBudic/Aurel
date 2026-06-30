@@ -1,6 +1,16 @@
-# Active Task: P2.7-B (complete)
+# Active Task: P2.7-C (complete)
 
-**Status:** P2.7-B COMPLETE — P2.7 binding read models / command surface adapter contracts implemented at contract scope; next P2.7-C (P2.7.11–P2.7.15 Shell Binding Preview / Selection / Operator Confirmation Boundary)
+**Status:** P2.7-C COMPLETE — P2.7 binding preview / selection / operator confirmation-boundary contracts implemented at contract scope; next P2.7-D (P2.7.16–P2.7.20 Shell / CLI / TUI Binding Section Seal)
+
+## P2.7-C Status
+
+**DONE — CONTRACT_ONLY / PREVIEW_ONLY / SELECTION_INTENT_ONLY / NO_COMMAND_EXECUTION_BOUNDARY / NO_RUNTIME_DISPATCH_BOUNDARY / NO_APPROVAL_ACTIVATION_BOUNDARY** — P2.7.11–P2.7.15 Shell binding preview / selection / confirmation-boundary contracts implemented as contract-only AurelShell objects gated by P2.7-B repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.7-C establishes `ShellBindingPreviewGate`, `ShellBindingPreviewGateStatus`, `ShellBindingPreviewBundle`, `ShellBindingPreviewItem`, `ShellBindingPreviewItemKind`, `ShellBindingPreviewRiskNote`, `ShellBindingPreviewRiskKind`, `ShellBindingSelectedIntent`, `ShellBindingSelectionCandidate`, `ShellBindingSelectionState`, `ShellBindingSelectionMode`, `ShellBindingConfirmationRequirement`, `ShellBindingConfirmationIntent`, `ShellBindingConfirmationRequirementStatus`, `ShellBindingConfirmationOutcomeReadModel`, `ShellBindingConfirmationOutcomeStatus`, `ShellBindingCancelDescriptor`, `ShellBindingRejectDescriptor`, `ShellBindingDeferDescriptor`, `ShellBindingConfirmationBoundaryResult`, `ShellBindingPreviewSelectionTruthBoundary`, `P27CSideEffectProof`, and `P27CShellBindingPreviewSelectionResult` under `src/agentic_runtime/aurel_shell/shell_binding_preview_selection.py`. All P2.7-C side-effect/no-authority booleans remain false.
+
+Boundary: preview bundle is not UI. Preview item is not product UI. Preview risk note does not enforce policy or activate approval. Selected binding is not invoked binding. Selection intent is not execution. Selection state does not mutate runtime/shell state or execute selection. Operator confirmation requirement is not approval and activates no HITL. Confirmation intent records operator intent as contract only and grants no authority/permission. Confirmation outcome read model is not a Custos decision. Confirmed state is not a permission grant. Cancel/reject/defer descriptors are not runtime transitions. P2.7-B adapter expansion result and side-effect proof are reused by reference only. P2.7-C does not start P2.7-D, P2.8, P2.10, or P2.13.
+
+Report: `agent/reports/P2_7_C_SHELL_BINDING_PREVIEW_SELECTION_CONFIRMATION_BOUNDARY.md`
 
 ## P2.7-B Status
 
