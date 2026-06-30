@@ -200,8 +200,8 @@ P2.8-B — P2.8.6–P2.8.10 Shell State Read Models / Report Index Expansion.
 
 ## 33. Commit Hash
 
-PENDING_AT_COMMIT — recorded after implementation commit.
+`c6b995a` — `feat(aurel-shell): add P2.8 shell state foundation`
 
 ## 34. Final Git Status
 
-PENDING_AT_COMMIT — expected clean after commit.
+Clean after implementation commit.
