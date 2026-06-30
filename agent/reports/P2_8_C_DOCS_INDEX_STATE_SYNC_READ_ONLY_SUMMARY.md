@@ -195,8 +195,8 @@ P2.8-D — P2.8.16–P2.8.20 Shell State / Reports / Docs Section Seal.
 
 ## 33. Commit Hash
 
-To be recorded after commit.
+`1ceef88` — `feat(aurel-shell): add P2.8 summary boundaries`
 
 ## 34. Final Git Status
 
-To be recorded after commit.
+Clean after implementation commit.
