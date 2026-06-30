@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.6-A Surface Projection / API / Event Bridge Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_surface_projection_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.6-A **40 passed**; `tests/aurel_shell` **804 passed**; ruff **PASS**; mypy **PASS** (312 source files).
+
+P2.6-A is a contract-only surface projection / API / event bridge foundation only. It does NOT create projection UI, API server, HTTP routes, route handlers, websocket/SSE runtime, event bus, event dispatch, runtime bridge, runtime dispatch, surface switching, route/command execution, command router/handler, workflow/tool dispatch, CLI/Shell/TUI binding, approval activation, authorization, permission enforcement, Custos/Mneme integration, memory/storage/trace writes, runtime mutation, source-of-truth store, claim production LIVE, claim TRACE_VERIFIED, claim release scope, claim product behavior, or start P2.6-B, P2.7, P2.10, or P2.13. The discarded Attention / Notification / Inbox direction for P2.6 was not used.
+
+Report: `agent/reports/P2_6_A_SURFACE_PROJECTION_API_EVENT_FOUNDATION.md`
+
 ## P2.5-D Handoff Section Seal Validation (COMPLETE)
 
 ```bash

@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.5-D - Handoff Section Seal)_
+_Last updated: 2026-06-30 (P2.6-A - Surface Projection / API / Event Bridge Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.5-D - P2.5.16-P2.5.20 Handoff Projection / Binding / Docs / Section Seal
-- Current active: **P2.5-D complete - P2.5 handoff section sealed at contract/read-model scope**
-- Next planned: P2.6-A - exact title pending roadmap/repo canon read
+- Last completed: P2.6-A - P2.6.0-P2.6.5 Surface Projection / API / Event Bridge Foundation
+- Current active: **P2.6-A complete - P2.6 opened at projection/API/event bridge contract foundation scope**
+- Next planned: P2.6-B - P2.6.6-P2.6.10 Surface Projection Read Models / API Schema Expansion
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -25,7 +25,21 @@ _Last updated: 2026-06-30 (P2.5-D - Handoff Section Seal)_
 - P2.3-D status: **complete** — section projection, read-only binding, docs/report sync, readiness audit, and contract-scope exit seal
 - P2.3-C status: **complete** — contract/read-model only; not UI, route runtime, drag/drop, docking UI, conflict resolver, permission enforcement, storage, product behavior, or runtime mutation
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
-- AurelShell suite: **764 passed** (post P2.5-D)
+- P2.6 status: **OPENED at contract foundation scope** — P2.6-A complete; contract/read-model only; not projection UI, API server, HTTP routes, route handlers, websocket/SSE, event bus, event dispatch, runtime bridge/dispatch, CLI/Shell/TUI binding, permission enforcement, or live bridge
+- P2.6-A status: **complete** — surface projection section gate over P2.5-D, projection identity, official surface scope, API exposure + active no-server boundary, event envelope/stream + active no-event-bus boundary, availability/unavailable-state, foundation result + active no-live-bridge boundary, side-effect proof
+- AurelShell suite: **804 passed** (post P2.6-A)
+
+## P2.6-A AurelShell Surface Projection / API / Event Bridge Foundation
+
+P2.6-A adds a contract-only P2.6 projection/API/event bridge foundation module under `src/agentic_runtime/aurel_shell/surface_projection_foundation.py`: surface projection section gate over sealed P2.5-D repo evidence, projection identity, official seven-surface scope, API exposure (read-model schema only) with active no-server boundary, event envelope and event stream descriptor with active no-event-bus boundary, projection availability / unavailable-state, foundation result with active no-live-bridge boundary, side-effect proof, and pack result.
+
+Boundary: projection is not UI and is not source-of-truth. Surface scope does not switch surfaces, execute routes, or mutate navigation. API exposure is a read-model schema shape, not an API server; endpoint schema is not a route handler. Event envelope is a contract, not an event bus; event stream descriptor is not a live runtime stream; `trace_ref` is a report reference only. Availability is capability honesty, not permission enforcement/approval. Foundation result is not a live bridge. P2.6-A does not start P2.6-B, P2.7, P2.10, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.5-D repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.6-A focused tests 40 passed; `tests/aurel_shell` 804 passed; ruff PASS; mypy PASS (312 source files). Report: `agent/reports/P2_6_A_SURFACE_PROJECTION_API_EVENT_FOUNDATION.md`.
+
+The discarded Attention / Notification / Inbox direction for P2.6 was not used; the result serialization is asserted to contain none of those tokens.
 
 ## P2.5-D AurelShell Handoff Section Seal
 

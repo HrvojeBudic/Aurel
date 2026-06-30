@@ -1,6 +1,16 @@
-# Active Task: P2.5-D (complete)
+# Active Task: P2.6-A (complete)
 
-**Status:** P2.5-D COMPLETE — P2.5 handoff section projection / binding / docs / section seal implemented; next P2.6-A pending canon read
+**Status:** P2.6-A COMPLETE — P2.6 surface projection / API / event bridge foundation implemented at contract scope; next P2.6-B (P2.6.6–P2.6.10 Surface Projection Read Models / API Schema Expansion)
+
+## P2.6-A Status
+
+**DONE — CONTRACT_ONLY / READ_MODEL_ONLY / API_SCHEMA_ONLY / EVENT_ENVELOPE_ONLY / NO_LIVE_BRIDGE_BOUNDARY** — P2.6.0–P2.6.5 surface projection / API / event bridge foundation implemented as contract-only AurelShell objects gated by sealed P2.5-D repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.6-A establishes `SurfaceProjectionGate`, `SurfaceProjectionIdentity`, `SurfaceProjectionScope`, `SurfaceProjectionApiExposure`, `SurfaceProjectionNoServerBoundary`, `SurfaceProjectionEventEnvelope`, `SurfaceProjectionEventStreamDescriptor`, `SurfaceProjectionNoEventBusBoundary`, `SurfaceProjectionAvailability`, `SurfaceProjectionFoundationResult`, `P26ASideEffectProof`, and `P26ASurfaceProjectionResult` under `src/agentic_runtime/aurel_shell/surface_projection_foundation.py`. All P2.6-A side-effect/no-authority booleans remain false.
+
+Boundary: projection is not UI and is not source-of-truth. Surface scope uses the official seven-surface set and does not switch surfaces, execute routes, or mutate navigation. API exposure is a read-model schema shape, not an API server; endpoint schema is not a route handler; the no-server boundary is active. Event envelope is a contract, not an event bus; event stream descriptor is not a live runtime stream; `trace_ref` is a report reference only; the no-event-bus boundary is active. Availability is capability honesty, not permission enforcement or approval activation. Foundation result carries an active no-live-bridge boundary and is not a live bridge. The discarded Attention / Notification / Inbox direction for P2.6 was not used. P2.6-A does not start P2.6-B, P2.7, P2.10, or P2.13. P2.6 opened at contract foundation scope means contract foundation complete, not live bridge complete.
+
+Report: `agent/reports/P2_6_A_SURFACE_PROJECTION_API_EVENT_FOUNDATION.md`
 
 ## P2.5-D Status
 
@@ -156,8 +166,8 @@ Report: `agent/reports/AUDIT_REPAIR_001_TEST_PORTABILITY_P2_2_B_CANON_SYNC.md`
 
 ## Roadmap Position
 
-- Last completed task: **P2.5-D — P2.5.16–P2.5.20 Handoff Projection / Binding / Docs / Section Seal**
-- Next planned task: **P2.6-A — exact title pending roadmap/repo canon read**
+- Last completed task: **P2.6-A — P2.6.0–P2.6.5 Surface Projection / API / Event Bridge Foundation**
+- Next planned task: **P2.6-B — P2.6.6–P2.6.10 Surface Projection Read Models / API Schema Expansion**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 
 ## P2.2-B Status
