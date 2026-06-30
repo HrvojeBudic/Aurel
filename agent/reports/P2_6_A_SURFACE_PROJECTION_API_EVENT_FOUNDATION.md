@@ -257,10 +257,10 @@ P2.6-B — P2.6.6–P2.6.10 Surface Projection Read Models / API Schema Expansio
 
 ## 32. Commit Hash
 
-(to be recorded after commit)
+`414243a278048660323065e5dae7a0b2f65ffd05` — feat(aurel-shell): add P2.6 surface projection foundation
 
 ---
 
 ## 33. Final Git Status
 
-Clean after implementation commit (in-scope files only).
+Clean after implementation commit (in-scope files only). This report-hash record is a docs-only follow-up commit.
