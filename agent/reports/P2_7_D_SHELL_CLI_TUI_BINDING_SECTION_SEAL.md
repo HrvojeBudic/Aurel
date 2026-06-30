@@ -283,8 +283,8 @@ P2.8-A - P2.8.0-P2.8.5 Shell State / Reports / Docs Foundation.
 
 ## 35. Commit Hash
 
-PENDING_UNTIL_COMMIT
+`43e7240` - `feat(aurel-shell): seal P2.7 binding contracts`
 
 ## 36. Final Git Status
 
-PENDING_UNTIL_FINAL_STATUS
+Clean after implementation commit; report hash recorded in follow-up docs commit.
