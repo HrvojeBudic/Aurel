@@ -237,8 +237,8 @@ Exact P2.9-D scope should be confirmed from the next operator dispatch because R
 
 ## 19. Commit Hash
 
-Implementation commit: `pending-current-pack` - `feat(shell): add P2.9-C exit seal finalization`
+Implementation commit: `5f4aa0b` - `feat(shell): add P2.9-C exit seal finalization`
 
 ## 20. Final Git Status
 
-Pending validation and commit.
+Clean after implementation commit `5f4aa0b`; this report hash field is recorded by the follow-up docs hash-record commit.
