@@ -1,6 +1,16 @@
-# Active Task: P2.9-C complete; next P2.9-D (P2.9.16-P2.9.20)
+# Active Task: P2.9-D complete; next P2.10-A (pointer only, not started)
 
-**Status:** P2.9-C COMPLETE — Shell Exit Seal finalization / blocker / evidence bundle for P2.9.11-P2.9.15. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). P2.9.11-P2.9.15 DONE (P2.9-C). old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.9-D is next. P2.10+ remains NOT STARTED.
+**Status:** P2.9-D COMPLETE — Shell Exit Seal final tail / P2.10 entry gate for P2.9.16-P2.9.20. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). P2.9.11-P2.9.15 DONE (P2.9-C). P2.9.16-P2.9.20 DONE (P2.9-D). P2.9 is sealed as honest Shell exit foundation. old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.10-A is next pointer only. P2.10+ remains NOT STARTED.
+
+## P2.9-D Status
+
+**DONE — FINAL_TAIL_SEAL / P2_9_16_TO_P2_9_20_DONE / P29_SEALED / P210_HANDOFF_ALLOWED / P2_10_A_NEXT_POINTER / P2_10_NOT_STARTED** — Implemented final tail intake, full P2.9 seal aggregation, P2.10 entry gate / blocker matrix, final Shell Exit Seal result, and P2.10-A handoff pointer for P2.9.16-P2.9.20.
+
+Report: `agent/reports/P2_9_D_SHELL_EXIT_SEAL_FINAL_TAIL.md`
+
+Current / next recommended roadmap task: **P2.10-A — Multi-Client Shell Foundation / Web-Desktop-Mobile-CLI Parity Contracts**
+
+Reason: P2.9-D completed P2.9.16-P2.9.20 and sealed P2.9 as an honest Shell exit foundation. P2.10-A is only a next pointer; P2.10+ remains NOT STARTED until a future operator-dispatched P2.10 pack. P2.9-D did not claim Shell LIVE, product readiness, command execution, safe sandbox, full-suite PASS, or coverage PASS.
 
 ## P2.9-C Status
 
@@ -8,9 +18,9 @@
 
 Report: `agent/reports/P2_9_C_SHELL_EXIT_SEAL_FINALIZATION.md`
 
-Current / next recommended roadmap task: **P2.9-D — P2.9.16-P2.9.20 Shell Exit Seal Final Tail / next granular P2.9 pack**
+Current / next recommended roadmap task at P2.9-C time: P2.9-D — now complete.
 
-Reason: P2.9-C completed P2.9.11-P2.9.15 only. P2.9.16-P2.9.20 remain NOT DONE, and P2.10+ is still blocked until P2.9-D completes or explicitly seals the gate.
+Reason at P2.9-C completion time: P2.9-C completed P2.9.11-P2.9.15 only. P2.9.16-P2.9.20 remained NOT DONE, and P2.10+ stayed blocked until P2.9-D completed or explicitly sealed the gate.
 
 ## true P2.9-B Status
 

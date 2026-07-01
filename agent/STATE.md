@@ -1,12 +1,13 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P2.9-C - Shell Exit Seal Finalization)_
+_Last updated: 2026-07-01 (P2.9-D - Shell Exit Seal Final Tail)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
-- Last completed P2 finalization pack: **P2.9-C** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle; P2.9-D is next; P2.10+ remains NOT STARTED
+- Last completed P2 final tail pack: **P2.9-D** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate; P2.9 is sealed as honest Shell exit foundation; P2.10-A is next pointer; P2.10+ remains NOT STARTED until next pack
+- Last completed P2 finalization pack: **P2.9-C** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle; consumed by P2.9-D; P2.10+ remains NOT STARTED
 - Last completed P2 readiness matrix: **true P2.9-B** — P2.9.6-P2.9.10 Shell Exit Seal readiness / validation / evidence matrix; old P2.9-B retained as evidence/truth seal overlay; P2.VSLICE-A remains PREFLIGHT_ONLY; consumed by P2.9-C; P2.10+ remains NOT STARTED
 - Last completed P2 reconciliation: **P2.9-B-R1** — roadmap granularity reconciliation; old P2.9-B retained as evidence/truth seal overlay; corrected true P2.9-B (P2.9.6-P2.9.10) pointer
 - Last completed P2 evidence overlay: **old P2.9-B** — Shell Exit Seal / Vertical Slice Evidence Consumption; P2.1–P2.9 section evidence boundary with P2.VSLICE-A consumption; not granular P2.9.x completion; not Shell LIVE or P2 product complete
@@ -22,8 +23,8 @@ _Last updated: 2026-07-01 (P2.9-C - Shell Exit Seal Finalization)_
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.9-C complete — P2.9.11-P2.9.15 Shell Exit Seal Finalization DONE**
-- Next recommended roadmap task: **P2.9-D — P2.9.16-P2.9.20 Shell Exit Seal Final Tail / next granular P2.9 pack**
+- Current active: **P2.9-D complete — P2.9.16-P2.9.20 Shell Exit Seal Final Tail DONE**
+- Next recommended roadmap task: **P2.10-A — Multi-Client Shell Foundation / Web-Desktop-Mobile-CLI Parity Contracts**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -44,17 +45,27 @@ _Last updated: 2026-07-01 (P2.9-C - Shell Exit Seal Finalization)_
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
 - P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
 - P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete
-- P2.9 status: **OPENED with P2.9-A, true P2.9-B, and P2.9-C complete** — P2.9.0-P2.9.15 DONE at contract/readiness/finalization/evidence-bundle scope; not completed final Shell Exit Seal, release seal, Shell LIVE, P2 complete, or product readiness
+- P2.9 status: **SEALED_AS_HONEST_SHELL_EXIT_FOUNDATION** — P2.9.0-P2.9.20 DONE across P2.9-A/B/C/D contract/readiness/finalization/final-tail scope; not Shell LIVE, release seal, command execution, safe sandbox, full suite, coverage, or product readiness
 - P2.9-A status: **complete with repaired evidence refs** — P2.9-A-R1 fixed stale prior-section test refs and mismatched commit refs; foundation is not completed Shell Exit Seal; P2.9-B handoff is not P2.9-B implementation; no P2.9-B/P2.9-C/P2.9-D/P2.10/P2.11/P2.12/P2.13
 - P2.9-B-R1 status: **DONE** — roadmap granularity reconciliation; report `agent/reports/P2_9_B_R1_ROADMAP_GRANULARITY_RECONCILIATION_P2_9_X_COVERAGE_MATRIX.md`; corrected premature P2.10+ pointer
 - old P2.9-B status: **DONE as evidence/truth seal overlay** — NOT DONE as granular P2.9.6–P2.9.10 implementation; report `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`; retained not reverted
 - true P2.9-B status: **DONE** — P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix implemented in `shell_exit_readiness.py`; report `agent/reports/P2_9_B_SHELL_EXIT_SEAL_READINESS_VALIDATION_EVIDENCE_MATRIX.md`; no Shell LIVE, command execution, product UI, safe sandbox, P2.9-C/D completion, or P2.10+ start claim
 - P2.VSLICE-A status: **DONE** — governed command preflight slice; preflight/read-model only; not command execution; consumed by P2.9-B; report `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
 - P2.REVIEW-A status: **DONE** — vertical slice selected; report `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
-- P2.9-C status: **DONE** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle implemented in `shell_exit_finalization.py`; report `agent/reports/P2_9_C_SHELL_EXIT_SEAL_FINALIZATION.md`; no Shell LIVE, command execution, product UI, safe sandbox, final P2 exit, P2.9-D completion, or P2.10+ start claim
-- P2.9-D status: **NOT DONE / NEXT** — not started; remains required for P2.9.16-P2.9.20 final tail
-- P2.10+ status: **NOT STARTED** — blocked until P2.9-D completes or explicitly seals the gate
+- P2.9-C status: **DONE** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle implemented in `shell_exit_finalization.py`; report `agent/reports/P2_9_C_SHELL_EXIT_SEAL_FINALIZATION.md`; consumed by P2.9-D; no Shell LIVE, command execution, product UI, safe sandbox, final P2 exit, or P2.10+ start claim
+- P2.9-D status: **DONE** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate implemented in `shell_exit_final_seal.py`; report `agent/reports/P2_9_D_SHELL_EXIT_SEAL_FINAL_TAIL.md`; P2.10-A next pointer only; no Shell LIVE, command execution, product UI, safe sandbox, product readiness, P2.10 implementation, full-suite, or coverage claim
+- P2.10+ status: **NOT STARTED** — P2.10-A is next pointer only; no P2.10 implementation files or tests exist from P2.9-D
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P2.9-D Shell Exit Seal Final Tail
+
+P2.9-D adds a contract-only final tail layer under `shell_exit_final_seal.py`: `ShellExitFinalTailIntake`, `ShellExitP29SealAggregate`, `ShellExitP210EntryGate`, `ShellExitP210GateDecision`, `ShellExitFinalSealResult`, `ShellExitP29CompletionReport`, `ShellExitP210HandoffPointer`, and `P29DResult`.
+
+P2.9.16-P2.9.20 are DONE as final-tail/P2.10-gate contracts with working labels only. P2.9 is sealed as an honest Shell exit foundation across P2.9.0-P2.9.20. P2.10-A is the next pointer only; P2.10+ remains NOT STARTED until a future operator-dispatched pack. P2.VSLICE-A remains PREFLIGHT_ONLY. Old P2.9-B remains retained as evidence overlay, not reverted or deleted.
+
+Boundary: final tail / P2.10 entry gate / handoff pointer only. No Shell LIVE, full Shell product UI, arbitrary command execution, full command runtime, full API/event bridge, safe sandbox claim, product readiness claim, full-suite claim, coverage claim, P2.10 module, P2.10 test, P2.10 implementation, roadmap renumbering, or checkpoint ID rename.
+
+Report: `agent/reports/P2_9_D_SHELL_EXIT_SEAL_FINAL_TAIL.md`
 
 ## P2.9-C Shell Exit Seal Finalization
 
