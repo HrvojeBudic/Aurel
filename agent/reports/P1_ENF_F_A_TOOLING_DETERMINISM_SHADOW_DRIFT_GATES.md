@@ -257,11 +257,11 @@ Alternative operator path: **P2.9-B** Shell Exit Seal Readiness rerun.
 
 ## 19. Commit Hash
 
-Pending commit — will be recorded after commit.
+`d91d2e25bfea6e313bd79a3d0f2aa10966f2efd8`
 
 ## 20. Final Git Status
 
-Pending — must be clean after commit.
+Clean after commit (`git status --short` empty).
 
 ## Gate Input Conventions
 
