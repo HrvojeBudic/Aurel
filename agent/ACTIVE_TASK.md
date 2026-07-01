@@ -1,16 +1,22 @@
-# Active Task: P1.ENF-E complete; next P2.REVIEW-A unless operator reruns P2.9-B
+# Active Task: P2.REVIEW-A complete; next P2.VSLICE-A unless operator reruns P2.9-B
 
-**Status:** P1.ENF-E COMPLETE as sandbox backend safety classification and unsafe backend gating. P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P2.REVIEW-A COMPLETE as first true P2 vertical slice decision. P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P2.REVIEW-A Status
+
+**DONE — VERTICAL_SLICE_SELECTED / P2.9-B_NOT_DONE** — P2.1–P2.9 truth classification completed; **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice** selected; fallback **P2.VSLICE-A-FALLBACK — Global Topbar / Surface Registry Truth Slice**; evidence gaps and P2.9-B rerun criteria documented; P2.6 Surface Projection correction preserved; 9 focused tests plus regressions passing.
+
+Report: `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
+
+Current / next recommended roadmap task: **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice**
+
+Reason: P2.REVIEW-A selected the first operator-testable vertical slice without implementing it. P2.9-B remains NOT DONE until slice evidence criteria are met. Operator may choose P2.9-B rerun only if fallback criteria or slice preflight evidence is sufficient.
 
 ## P1.ENF-E Status
 
 **DONE — SANDBOX_BACKEND_GATED / P2.9-B_NOT_DONE** — Sandbox safety taxonomy, backend requirement gate, runtime submit binding with governance artifacts; UnsafeLocalSandbox remains UNSAFE_LOCAL/dev-only; SAFE_VERIFIED unavailable without proof; 13 focused tests plus regressions passing.
 
 Report: `agent/reports/P1_ENF_E_SANDBOX_SAFE_BACKEND_GATING_UNSAFE_LOCAL_HARDENING.md`
-
-Current / next recommended roadmap task: **P2.REVIEW-A — First True P2 Vertical Slice Decision**
-
-Reason: P1.ENF-E closed the execution-boundary truth gap for unsafe sandbox backends without implementing sandbox platform rewrite or P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-D1 Status
 
