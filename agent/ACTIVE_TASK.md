@@ -1,6 +1,16 @@
-# Active Task: P2.9-D complete; next P2.10-A (pointer only, not started)
+# Active Task: P2.10-A complete; next P2.10-B
 
-**Status:** P2.9-D COMPLETE — Shell Exit Seal final tail / P2.10 entry gate for P2.9.16-P2.9.20. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). P2.9.11-P2.9.15 DONE (P2.9-C). P2.9.16-P2.9.20 DONE (P2.9-D). P2.9 is sealed as honest Shell exit foundation. old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.10-A is next pointer only. P2.10+ remains NOT STARTED.
+**Status:** P2.10-A COMPLETE — Multi-Client Shell Foundation / Client Parity Contract. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-B is next. P2.10-B/C/D remain NOT_DONE. No Shell LIVE, command execution, runnable web/desktop/mobile, or full local app claim.
+
+## P2.10-A Status
+
+**DONE — MULTI_CLIENT_FOUNDATION / CLIENT_PARITY_CONTRACT / P2_10_B_NEXT / P2_10_B_C_D_NOT_DONE** — Implemented client taxonomy, shared ShellClientState, parity matrix, local run mode boundaries, surface availability, and no-overclaim boundaries.
+
+Report: `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`
+
+Current / next recommended roadmap task: **P2.10-B — Local Web Shell Skeleton / Contract-Bound Client Read Model**
+
+Reason: P2.10-A completed the multi-client Shell foundation contracts. P2.10-B can build the local web shell skeleton against stable contracts. P2.10-C/D remain NOT_DONE. No Shell LIVE, command execution, or runnable local app claim.
 
 ## P2.9-D Status
 
@@ -8,9 +18,7 @@
 
 Report: `agent/reports/P2_9_D_SHELL_EXIT_SEAL_FINAL_TAIL.md`
 
-Current / next recommended roadmap task: **P2.10-A — Multi-Client Shell Foundation / Web-Desktop-Mobile-CLI Parity Contracts**
-
-Reason: P2.9-D completed P2.9.16-P2.9.20 and sealed P2.9 as an honest Shell exit foundation. P2.10-A is only a next pointer; P2.10+ remains NOT STARTED until a future operator-dispatched P2.10 pack. P2.9-D did not claim Shell LIVE, product readiness, command execution, safe sandbox, full-suite PASS, or coverage PASS.
+Reason at P2.9-D completion time: P2.9-D completed P2.9.16-P2.9.20 and sealed P2.9 as an honest Shell exit foundation. P2.10-A was only a next pointer at that time.
 
 ## P2.9-C Status
 

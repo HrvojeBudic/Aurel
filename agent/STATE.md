@@ -1,12 +1,13 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P2.9-D - Shell Exit Seal Final Tail)_
+_Last updated: 2026-07-01 (P2.10-A - Multi-Client Shell Foundation)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
-- Last completed P2 final tail pack: **P2.9-D** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate; P2.9 is sealed as honest Shell exit foundation; P2.10-A is next pointer; P2.10+ remains NOT STARTED until next pack
+- Last completed P2 multi-client foundation pack: **P2.10-A** — multi-client Shell foundation / client parity contract; P2.10-B is next; P2.10-B/C/D remain NOT_DONE; no Shell LIVE, command execution, runnable web/desktop/mobile, or full local app claim
+- Last completed P2 final tail pack: **P2.9-D** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate; P2.9 is sealed as honest Shell exit foundation
 - Last completed P2 finalization pack: **P2.9-C** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle; consumed by P2.9-D; P2.10+ remains NOT STARTED
 - Last completed P2 readiness matrix: **true P2.9-B** — P2.9.6-P2.9.10 Shell Exit Seal readiness / validation / evidence matrix; old P2.9-B retained as evidence/truth seal overlay; P2.VSLICE-A remains PREFLIGHT_ONLY; consumed by P2.9-C; P2.10+ remains NOT STARTED
 - Last completed P2 reconciliation: **P2.9-B-R1** — roadmap granularity reconciliation; old P2.9-B retained as evidence/truth seal overlay; corrected true P2.9-B (P2.9.6-P2.9.10) pointer
@@ -23,8 +24,8 @@ _Last updated: 2026-07-01 (P2.9-D - Shell Exit Seal Final Tail)_
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.9-D complete — P2.9.16-P2.9.20 Shell Exit Seal Final Tail DONE**
-- Next recommended roadmap task: **P2.10-A — Multi-Client Shell Foundation / Web-Desktop-Mobile-CLI Parity Contracts**
+- Current active: **P2.10-A complete — Multi-Client Shell Foundation / Client Parity Contract DONE**
+- Next recommended roadmap task: **P2.10-B — Local Web Shell Skeleton / Contract-Bound Client Read Model**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -54,8 +55,21 @@ _Last updated: 2026-07-01 (P2.9-D - Shell Exit Seal Final Tail)_
 - P2.REVIEW-A status: **DONE** — vertical slice selected; report `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
 - P2.9-C status: **DONE** — P2.9.11-P2.9.15 Shell Exit Seal finalization / blocker / evidence bundle implemented in `shell_exit_finalization.py`; report `agent/reports/P2_9_C_SHELL_EXIT_SEAL_FINALIZATION.md`; consumed by P2.9-D; no Shell LIVE, command execution, product UI, safe sandbox, final P2 exit, or P2.10+ start claim
 - P2.9-D status: **DONE** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate implemented in `shell_exit_final_seal.py`; report `agent/reports/P2_9_D_SHELL_EXIT_SEAL_FINAL_TAIL.md`; P2.10-A next pointer only; no Shell LIVE, command execution, product UI, safe sandbox, product readiness, P2.10 implementation, full-suite, or coverage claim
-- P2.10+ status: **NOT STARTED** — P2.10-A is next pointer only; no P2.10 implementation files or tests exist from P2.9-D
-- AurelShell suite: **1004 passed** (post P2.9-A-R1)
+- P2.10-A status: **DONE** — multi-client Shell foundation implemented in `multi_client_foundation.py`; report `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`; P2.10-B next; no Shell LIVE, command execution, runnable web/desktop/mobile, or full local app claim
+- P2.10-B status: **NOT_DONE** — next recommended pack
+- P2.10-C status: **NOT_DONE**
+- P2.10-D status: **NOT_DONE**
+- AurelShell suite: **1004 passed** (post P2.9-A-R1; P2.10-A adds 22 focused tests)
+
+## P2.10-A Multi-Client Shell Foundation
+
+P2.10-A adds a contract-only multi-client foundation layer under `multi_client_foundation.py`: `ShellClientKind`, `ShellClientState`, `ShellClientParityMatrix`, `ShellClientLocalRunModeEntry`, `ShellClientNoOverclaimBoundary`, `P210APrerequisiteGate`, and `P210AResult`.
+
+P2.10-A defines client taxonomy, shared Shell client state, parity matrix, local run mode boundaries, surface availability, and no-overclaim boundaries. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.0-E `ClientKind` is retained with legacy mapping to P2.10-A `ShellClientKind`.
+
+Boundary: foundation contracts only. No full web UI, Tauri desktop app, mobile app, arbitrary command execution, Shell LIVE, production API server, full API/event bridge live, P2.10-B/C/D implementation, or runnable local app claim.
+
+Report: `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`
 
 ## P2.9-D Shell Exit Seal Final Tail
 

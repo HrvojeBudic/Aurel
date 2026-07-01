@@ -275,6 +275,31 @@ P1.ENF-B is entrypoint audit/guard expansion only. It does NOT implement P1.ENF-
 
 Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`
 
+## P2.10-A Multi-Client Shell Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p210a_multi_client_foundation.py -q
+.venv/bin/python -m pytest tests/test_shell_client_parity_matrix.py -q
+.venv/bin/python -m pytest tests/test_shell_client_run_modes.py -q
+.venv/bin/python -m pytest tests/test_shell_exit_final_seal.py tests/test_p29d_p210_entry_gate.py tests/test_p29d_final_tail_handoff.py -q
+.venv/bin/python -m pytest tests/test_shell_exit_finalization.py tests/test_p29c_release_boundaries.py tests/test_p29c_finalization_evidence_bundle.py -q
+.venv/bin/python -m pytest tests/test_shell_exit_readiness.py tests/test_shell_exit_validation_matrix.py tests/test_p29b_shell_exit_evidence_matrix.py -q
+.venv/bin/python -m pytest tests/test_p2_command_palette_vslice.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_p2_vertical_slice_review.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results after P2.10-A: compileall **PASS**; P2.10-A focused **22 passed**; P2.9 seal regressions **140 passed**; ruff **PASS**; mypy **PASS** on new module. Full suite and coverage **NOT RUN**.
+
+P2.10-A is a contract-only multi-client Shell foundation pack only. It does NOT implement P2.10-B/C/D, full web UI, Tauri desktop app, mobile app, arbitrary command execution, Shell LIVE, production API server, full API/event bridge live, runnable local app, or change P2.VSLICE-A preflight, command preflight, policy, identity, or sandbox behavior.
+
+Report: `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`
+
 ## P2.9-A Shell Exit Seal Foundation Validation (COMPLETE)
 
 ```bash
