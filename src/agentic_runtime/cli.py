@@ -468,6 +468,16 @@ from .cli_modules.policy_commands import (
     cmd_policy_status,
     cmd_policy_unavailable,
 )
+from .cli_modules.shell_commands import (
+    cmd_shell_clients,
+    cmd_shell_evidence,
+    cmd_shell_export_json,
+    cmd_shell_parity,
+    cmd_shell_read_model,
+    cmd_shell_run_modes,
+    cmd_shell_status,
+    cmd_shell_surfaces,
+)
 from .cli_modules.path_governance import (
     cmd_path_governance_api_envelope,
     cmd_path_governance_capabilities,
@@ -1031,6 +1041,50 @@ def main(argv: list[str] | None = None) -> int:
     p_harness_run.add_argument("--case", default="", help="run a single case by id")
     p_harness_run.add_argument("--json", action="store_true")
     p_harness_run.set_defaults(func=cmd_policy_harness_run)
+
+    # P2.10-D — Shell terminal client parity binding
+    p_shell = sub.add_parser(
+        "shell",
+        help="P2.10 Shell terminal read model (read-only)",
+    )
+    shell_sub = p_shell.add_subparsers(dest="shell_command", required=True)
+
+    p_shell_status = shell_sub.add_parser("status", help="show Shell terminal status")
+    p_shell_status.add_argument("--json", action="store_true")
+    p_shell_status.set_defaults(func=cmd_shell_status)
+
+    p_shell_clients = shell_sub.add_parser("clients", help="list Shell clients")
+    p_shell_clients.add_argument("--json", action="store_true")
+    p_shell_clients.set_defaults(func=cmd_shell_clients)
+
+    p_shell_surfaces = shell_sub.add_parser("surfaces", help="list Shell surfaces")
+    p_shell_surfaces.add_argument("--json", action="store_true")
+    p_shell_surfaces.set_defaults(func=cmd_shell_surfaces)
+
+    p_shell_parity = shell_sub.add_parser("parity", help="show CLI/TUI parity matrix")
+    p_shell_parity.add_argument("--json", action="store_true")
+    p_shell_parity.set_defaults(func=cmd_shell_parity)
+
+    p_shell_evidence = shell_sub.add_parser("evidence", help="list Shell evidence refs")
+    p_shell_evidence.add_argument("--json", action="store_true")
+    p_shell_evidence.set_defaults(func=cmd_shell_evidence)
+
+    p_shell_run_modes = shell_sub.add_parser("run-modes", help="list terminal run modes")
+    p_shell_run_modes.add_argument("--json", action="store_true")
+    p_shell_run_modes.set_defaults(func=cmd_shell_run_modes)
+
+    p_shell_export = shell_sub.add_parser(
+        "export-json",
+        help="export deterministic Shell terminal read model JSON",
+    )
+    p_shell_export.set_defaults(func=cmd_shell_export_json)
+
+    p_shell_read_model = shell_sub.add_parser(
+        "read-model",
+        help="show Shell terminal read model",
+    )
+    p_shell_read_model.add_argument("--json", action="store_true")
+    p_shell_read_model.set_defaults(func=cmd_shell_read_model)
 
     # P1.7.18 — path governance projection CLI binding
     p_pg = sub.add_parser(

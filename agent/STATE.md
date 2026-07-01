@@ -1,12 +1,13 @@
 # Repository State
 
-_Last updated: 2026-07-02 (P2.10-C - Tauri Desktop Local Shell)_
+_Last updated: 2026-07-02 (P2.10-D - CLI/TUI Parity Binding)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
-- Last completed P2 desktop wrapper pack: **P2.10-C** — Tauri desktop local shell / desktop wrapper contract; P2.10-D is next; P2.10-D/E remain NOT_DONE; desktop wrapper runnable (DEV_FIXTURE); no Shell LIVE, command execution, native authority, full desktop app, mobile, or CLI/TUI parity claim
+- Last completed P2 terminal client pack: **P2.10-D** — CLI/TUI parity binding / terminal client read model; P2.10-E is next and remains NOT_DONE; runnable CLI path is read-only terminal inspection only; TUI is contract-only parity; no Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim
+- Last completed P2 desktop wrapper pack: **P2.10-C** — Tauri desktop local shell / desktop wrapper contract; consumed by P2.10-D; desktop wrapper runnable (DEV_FIXTURE); no Shell LIVE, command execution, native authority, full desktop app, or mobile claim
 - Last completed P2 web shell pack: **P2.10-B** — local web Shell skeleton / contract-bound read model; consumed by P2.10-C; no Shell LIVE, command execution, or full local app claim
 - Last completed P2 multi-client foundation pack: **P2.10-A** — multi-client Shell foundation / client parity contract; consumed by P2.10-B; no Shell LIVE, command execution, or full local app claim
 - Last completed P2 final tail pack: **P2.9-D** — P2.9.16-P2.9.20 Shell Exit Seal final tail / P2.10 entry gate; P2.9 is sealed as honest Shell exit foundation
@@ -26,8 +27,8 @@ _Last updated: 2026-07-02 (P2.10-C - Tauri Desktop Local Shell)_
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.10-C complete — Tauri Desktop Local Shell / Desktop Wrapper Contract DONE**
-- Next recommended roadmap task: **P2.10-D — CLI/TUI Parity Binding / Terminal Client Read Model**
+- Current active: **P2.10-D complete — CLI/TUI Parity Binding / Terminal Client Read Model DONE**
+- Next recommended roadmap task: **P2.10-E — Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -60,8 +61,19 @@ _Last updated: 2026-07-02 (P2.10-C - Tauri Desktop Local Shell)_
 - P2.10-A status: **DONE** — multi-client Shell foundation implemented in `multi_client_foundation.py`; report `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`; consumed by P2.10-B
 - P2.10-B status: **DONE** — local web Shell skeleton / contract-bound read model in `web_shell_read_model.py` and `web/shell/`; report `agent/reports/P2_10_B_LOCAL_WEB_SHELL_SKELETON.md`; consumed by P2.10-C; local web skeleton runnable (DEV_FIXTURE); no Shell LIVE, command execution, or full local app claim
 - P2.10-C status: **DONE** — Tauri desktop local shell / desktop wrapper contract in `desktop_shell_contract.py` and `web/shell/src-tauri/`; report `agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md`; P2.10-D next; desktop wrapper runnable (DEV_FIXTURE); no Shell LIVE, command execution, native authority, full desktop app, mobile, or CLI/TUI parity claim
-- P2.10-D status: **NOT_DONE** — next recommended pack
+- P2.10-D status: **DONE** — CLI/TUI parity binding / terminal client read model in `terminal_shell_client.py` and read-only `python -m agentic_runtime.cli shell ...`; report `agent/reports/P2_10_D_CLI_TUI_PARITY_BINDING.md`; P2.10-E next; no Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim
+- P2.10-E status: **NOT_DONE** — next recommended pack
 - AurelShell suite: **1004 passed** (post P2.9-A-R1; P2.10-A adds 22 focused tests; P2.10-B adds 18 focused tests)
+
+## P2.10-D CLI/TUI Parity Binding / Terminal Client Read Model
+
+P2.10-D adds a Python-owned terminal client parity layer under `terminal_shell_client.py` and read-only CLI commands under `python -m agentic_runtime.cli shell ...`. The terminal read model derives from P2.10-A `ShellClientState`, P2.10-B `WebShellReadModel`, and P2.10-C `DesktopShellReadModel`; it preserves surfaces, clients, truth labels, evidence refs, local run modes, limitations, parity status, and no-overclaim boundaries.
+
+Operator-testable read-only commands: `shell status`, `shell clients`, `shell surfaces`, `shell parity`, `shell evidence`, `shell run-modes`, and `shell export-json`. These commands render text/JSON only. They do not call `AgenticRuntime.submit`, execute tools, approve actions, start/stop runtime, trigger sandbox, write memory, mutate policy, mutate identity, dispatch agents, run workflows, or claim Shell LIVE.
+
+Boundary: terminal parity/read model only. CLI_READ_ONLY and TERMINAL_JSON_EXPORT do not equal command execution or Shell LIVE. TUI is contract-only parity, not a full TUI product. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-E remains NOT_DONE.
+
+Report: `agent/reports/P2_10_D_CLI_TUI_PARITY_BINDING.md`
 
 ## P2.10-C Tauri Desktop Local Shell
 

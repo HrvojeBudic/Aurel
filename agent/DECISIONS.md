@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-07-02 - P2.10-D CLI/TUI Parity Binding
+
+### DEC-P210D-01: Terminal client consumes P2.10-A/B/C truth and stays read-only
+**Decision:** P2.10-D implements `TerminalShellClientContract`, `TerminalShellReadModel`, and `TerminalShellParityMatrix` over P2.10-A `ShellClientState`, P2.10-B `WebShellReadModel`, and P2.10-C `DesktopShellReadModel`. The `shell` CLI namespace renders those contracts as text/JSON only.
+**Why:** CLI/TUI parity means same truth with different presentation. Creating a separate terminal truth model or an execution gateway would bypass the Shell client contract chain and overclaim terminal authority.
+
+### DEC-P210D-02: TUI parity is contract-only; CLI JSON export is read-only inspection
+**Decision:** P2.10-D claims runnable CLI only for read-only terminal inspection commands. TUI remains contract-only parity, not an interactive TUI product. JSON export is deterministic read-model serialization, not a live backend.
+**Why:** P2.10-D must unlock terminal parity without command execution, tool execution, approval execution, runtime control, sandbox control, Shell LIVE, full terminal automation, or P2.10-E.
+
 ## 2026-07-01 - P1.ENF-F-B Roadmap v5.5 Canon Sync
 
 ### DEC-P1ENFFB-01: v5.5 is active canon; historical docs are labeled, not deleted
