@@ -205,7 +205,7 @@ P2.9-B — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Ma
 
 ## 32. Commit Hash
 
-PENDING_AT_COMMIT
+`0e8a7b4` — `feat(aurel-shell): add P2.9 exit seal foundation`
 
 ## 33. Final Git Status
 
