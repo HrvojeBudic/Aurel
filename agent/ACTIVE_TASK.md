@@ -1,6 +1,16 @@
-# Active Task: P1.ENF-F-A complete; next P1.ENF-C unless operator reruns P2.9-B
+# Active Task: P1.ENF-C complete; next P1.ENF-F-B unless operator reruns P2.9-B
 
-**Status:** P1.ENF-F-A COMPLETE as tooling/determinism/shadow drift gates. P1.ENF-A, P1.ENF-A-OMNI-R1, and P1.ENF-B remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-C COMPLETE as Golden Thread B governance continuity harness. P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-C Status
+
+**DONE — CONTINUITY_HARNESS / EVIDENCE_SYNC / P2.9-B_NOT_DONE** — Golden Thread B continuity harness added under `golden_thread_b.py` with 17 evidence nodes (P1.8–P2.9-A, P1.ENF chain, P2.9-B NOT_DONE), truth labels, gap matrix, side-effect proof, and 17 focused tests. Golden Thread A preserved.
+
+Report: `agent/reports/P1_ENF_C_GOLDEN_THREAD_B_GOVERNANCE_CONTINUITY.md`
+
+Current / next recommended roadmap task: **P1.ENF-F-B — Roadmap v5.5 Canon Sync / Historical Docs Archive**
+
+Reason: P1.ENF-C completed the governance continuity spine without implementing P2.9-B or product Shell behavior. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-F-A Status
 

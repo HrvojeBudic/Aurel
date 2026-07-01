@@ -1,17 +1,18 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-F-A - Tooling / Determinism / Shadow-Still-Active Drift Gates)_
+_Last updated: 2026-07-01 (P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance Continuity)_
 
 ## Current Roadmap Pointer
 
+- Last completed continuity harness: **P1.ENF-C** - Golden Thread B governance continuity spine linking P1.8–P2.9-A and P1.ENF repair/audit/gate chain with truth labels and gap matrix
 - Last completed drift gate pack: **P1.ENF-F-A** - validation truth gates, determinism/dirty worktree gate, tooling truth/core strict probe gate, shadow/enforcement drift gate, contract/live overclaim gate, unknown entrypoint risk gate, report/code claim drift gate
 - Last completed enforcement audit: **P1.ENF-B** - entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, unknown-risk blocking
 - Last completed repair: **P1.ENF-A-OMNI-R1** - consent fixture determinism, core strict mypy probe truth, trace Merkle live-payload semantics
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-F-A complete - lightweight drift/validation gates; P1.ENF-C is next planned Golden Thread pack unless operator reruns P2.9-B first**
-- Next recommended roadmap task: **P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance Continuity**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-C complete - Golden Thread B continuity harness; P1.ENF-F-B is next planned docs/canon sync pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Docs Archive**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -37,6 +38,14 @@ _Last updated: 2026-07-01 (P1.ENF-F-A - Tooling / Determinism / Shadow-Still-Act
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-C Golden Thread B / P1.8–P2.9 Governance Continuity
+
+P1.ENF-C adds Golden Thread B under `golden_thread_b.py`: 17 evidence nodes spanning P1.8, P1.9, P2.1–P2.9-A, P2.9-A-R1, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, P1.ENF-F-A, and P2.9-B NOT_DONE handoff; truth labels (CONTRACT_ONLY, ENFORCEMENT_BRIDGE, VALIDATION_TRUTH_REPAIR, NO_BYPASS_EVIDENCE, DRIFT_GATED, NOT_DONE, GAP/WARNING); gap matrix; side-effect proof; Golden Thread A preservation.
+
+Boundary: continuity harness / evidence sync only. No P1.ENF-F-B, P1.ENF-D1, P1.ENF-E, P2.9-B, Shell command router, product UI, P2 vertical slice, ROADMAP rewrite, sandbox hardening, repo_agent rewrite, LIVE, TRACE_VERIFIED, or all-evidence-complete claim.
+
+Validation: compileall PASS; Golden Thread B 17 passed; validation truth + drift gates 18 passed; entrypoint audit 16 passed; P1.ENF-A enforcement 24 passed; trace/consent repair 6 passed; ruff PASS; baseline mypy PASS (332 files); core strict probe PASS (5 files, silent imports). Full suite/coverage/Bandit NOT RUN. Report: `agent/reports/P1_ENF_C_GOLDEN_THREAD_B_GOVERNANCE_CONTINUITY.md`.
 
 ## P1.ENF-F-A Tooling / Determinism / Shadow-Still-Active Drift Gates
 
