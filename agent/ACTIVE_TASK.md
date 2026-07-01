@@ -1,6 +1,16 @@
-# Active Task: P2.10-E complete; next P2.11
+# Active Task: P2.11-A complete; next P2.11-B
 
-**Status:** P2.10-E COMPLETE — Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE. P2.10 is sealed as an honest multi-client Shell foundation. P2.11 / Surface Permission Matrix is next and remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+**Status:** P2.11-A COMPLETE — Surface Permission Matrix Foundation / Client-Surface Authority Baseline. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B / Surface Permission Projection / Matrix Read Model is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+
+## P2.11-A Status
+
+**DONE — SURFACE_PERMISSION_MATRIX_FOUNDATION / CLIENT_SURFACE_AUTHORITY_BASELINE / P2_11_B_NEXT / P2_12_NOT_STARTED** — Implemented Python `SurfacePermissionAction`, `SurfacePermissionLevel`, `SurfacePermissionReason`, `SurfacePermissionEvidenceRef`, `SurfacePermissionEntry`, `ClientSurfaceAuthorityBaseline`, `SurfacePermissionMatrix`, `SurfacePermissionMatrixSummary`, `SurfacePermissionNoOverclaimBoundary`, `P211AHandoff`, and `P211AResult` over P2.10-A/B/C/D/E Shell truth.
+
+Report: `agent/reports/P2_11_A_SURFACE_PERMISSION_MATRIX_FOUNDATION.md`
+
+Current / next recommended roadmap task: **P2.11-B — Surface Permission Projection / Matrix Read Model**
+
+Reason: P2.11-A completed the baseline permission matrix foundation only. P2.11-B can project/read that matrix for operator inspection. P2.11 as a whole remains incomplete. P2.12+ remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, runtime/sandbox control, full policy runtime, Custos enforcement, or product readiness claim.
 
 ## P2.10-E Status
 

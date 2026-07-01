@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-07-02 - P2.11-A Surface Permission Matrix Foundation
+
+### DEC-P211A-01: Permission matrix is Shell-level pre-execution authority modeling only
+**Decision:** P2.11-A implements `surface_permission_matrix.py` as an evidence-bound client x surface x action permission foundation over P2.10-A/B/C/D/E. `ALLOWED`, `READ_ONLY`, and `PREFLIGHT_ONLY` apply only to the scoped Shell surface action. They do not authorize runtime actions, replace Custos, enforce full policy, or imply Shell LIVE/product readiness.
+**Why:** Permission vocabulary can be mistaken for final authorization. Keeping P2.11-A as deterministic pre-execution modeling prevents a permission matrix from becoming command execution, runtime enforcement, policy runtime, or product authority.
+
+### DEC-P211A-02: P2.10-E not-started checks are historical seal truth
+**Decision:** P2.10-E keeps `p211_not_started` as the historical truth of the P2.10-E seal/handoff moment. P2.11-A uses its own prerequisite gate to verify P2.10-E evidence and P2.12+ not-started state.
+**Why:** Once P2.11-A exists, dynamic file discovery would falsely invalidate P2.10-E regression evidence. The current pack needs a current gate, while prior reports remain evidence snapshots.
+
 ## 2026-07-02 - P2.10-E Multi-Client Operator Demo Seal
 
 ### DEC-P210E-01: P2.10-E seals only P2.10, not final P2

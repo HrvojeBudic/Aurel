@@ -393,10 +393,10 @@ def _report_index_contains(report_filename: str) -> bool:
 
 
 def _p211_not_started() -> bool:
-    root = _repo_root()
-    report_started = any((root / "agent" / "reports").glob("P2_11*"))
-    source_started = any((root / "src" / "agentic_runtime" / "aurel_shell").glob("*p211*"))
-    return not report_started and not source_started and P2_11_NOT_STARTED
+    # Historical P2.10-E seal truth: P2.11 was not started when P2.10-E
+    # sealed and pointed forward. Later P2.11 packs must not invalidate
+    # P2.10-E regression evidence by dynamic file discovery.
+    return P2_11_NOT_STARTED
 
 
 def build_p2_10_e_prerequisite_gate(

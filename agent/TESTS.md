@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.11-A Surface Permission Matrix Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p211a_surface_permission_matrix.py -q
+.venv/bin/python -m pytest tests/test_p211a_client_surface_authority_baseline.py -q
+.venv/bin/python -m pytest tests/test_p211a_surface_permission_no_execution.py -q
+.venv/bin/python -m pytest tests/test_p211a_p211b_handoff.py -q
+.venv/bin/python -m pytest tests/test_p210e_multi_client_demo_seal.py tests/test_p210e_truth_consistency_matrix.py tests/test_p210e_no_overclaim_matrix.py tests/test_p210e_p211_handoff.py -q
+.venv/bin/python -m pytest tests/test_p210d_terminal_shell_client.py tests/test_p210d_cli_tui_parity_matrix.py tests/test_p210d_terminal_no_execution.py -q
+.venv/bin/python -m pytest tests/test_p210d_cli_commands.py -q
+.venv/bin/python -m pytest tests/test_p210c_desktop_shell_contract.py tests/test_p210c_desktop_capability_boundary.py tests/test_p210c_tauri_wrapper_truth.py -q
+.venv/bin/python -m pytest tests/test_p210b_web_shell_read_model.py tests/test_p210b_web_shell_contract_binding.py -q
+.venv/bin/python -m pytest tests/test_p210a_multi_client_foundation.py tests/test_shell_client_parity_matrix.py tests/test_shell_client_run_modes.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m ruff check src tests
+```
+
+P2.11-A seals only the Surface Permission Matrix foundation / client-surface authority baseline. P2.11-B is next, P2.11 as a whole is not complete, and P2.12+ remains NOT_STARTED. The matrix does not implement or claim command execution, tool execution, approval execution, runtime control, sandbox control, memory write, policy mutation, identity mutation, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff.
+
 ## P2.10-E Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle Validation (COMPLETE)
 
 ```bash
