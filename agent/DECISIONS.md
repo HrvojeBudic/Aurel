@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-07-02 - P2.10-E Multi-Client Operator Demo Seal
+
+### DEC-P210E-01: P2.10-E seals only P2.10, not final P2
+**Decision:** P2.10-E implements `multi_client_demo_seal.py` as an evidence-seal layer over P2.10-A/B/C/D. It seals P2.10 as an honest multi-client Shell foundation and points next to P2.11 Surface Permission Matrix. It does not claim final P2 completion, P2.20, or P3 handoff.
+**Why:** P2.10 is a multi-client foundation section. Final P2 seal belongs to P2.20, and skipping to P3 would collapse the roadmap tail and overclaim product readiness.
+
+### DEC-P210E-02: Runnable client claims remain evidence-bound and non-product
+**Decision:** WEB and DESKTOP_TAURI remain local dev fixture runnable paths from P2.10-B/C evidence, CLI remains read-only tested inspection from P2.10-D, TUI remains contract-only, and MOBILE_FOUNDATION remains NOT_STARTED/future-gated. P2.10-E adds no new client capabilities.
+**Why:** The seal must aggregate evidence without turning read models into Shell LIVE, command execution, full web/desktop/CLI/TUI product, mobile app, or product readiness.
+
 ## 2026-07-02 - P2.10-D CLI/TUI Parity Binding
 
 ### DEC-P210D-01: Terminal client consumes P2.10-A/B/C truth and stays read-only

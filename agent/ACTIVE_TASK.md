@@ -1,16 +1,26 @@
-# Active Task: P2.10-D complete; next P2.10-E
+# Active Task: P2.10-E complete; next P2.11
 
-**Status:** P2.10-D COMPLETE — CLI/TUI Parity Binding / Terminal Client Read Model. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A DONE. P2.10-B DONE. P2.10-C DONE. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-E is next and remains NOT_DONE. Runnable terminal path is read-only Shell inspection only. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim.
+**Status:** P2.10-E COMPLETE — Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE. P2.10 is sealed as an honest multi-client Shell foundation. P2.11 / Surface Permission Matrix is next and remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+
+## P2.10-E Status
+
+**DONE — MULTI_CLIENT_OPERATOR_DEMO_SEAL / P2_10_SEALED / P2_11_NEXT / P2_11_NOT_STARTED** — Implemented Python `MultiClientShellEvidenceBundle`, `MultiClientTruthConsistencyMatrix`, `P210OperatorDemoSeal`, `P210RunModeSummary`, surface coverage matrix, `P210NoOverclaimMatrix`, `P210CompletionSeal`, and `P210EHandoff` over P2.10-A/B/C/D Shell truth.
+
+Report: `agent/reports/P2_10_E_MULTI_CLIENT_OPERATOR_DEMO_SEAL.md`
+
+Current / next recommended roadmap task: **P2.11 — Surface Permission Matrix**
+
+Reason: P2.10-E sealed P2.10 as an honest multi-client Shell foundation and preserved client run-mode/no-overclaim truth. P2.11 can define the Surface Permission Matrix over that client/surface baseline. P2.11 remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, full local app, or product readiness claim.
 
 ## P2.10-D Status
 
-**DONE — CLI_TUI_PARITY_BINDING / TERMINAL_CLIENT_READ_MODEL / READ_ONLY_TERMINAL_INSPECTION / P2_10_E_NEXT / P2_10_E_NOT_DONE** — Implemented Python `TerminalShellClientContract`, `TerminalShellReadModel`, `TerminalShellParityMatrix`, no-execution boundary, deterministic terminal JSON export, and read-only `python -m agentic_runtime.cli shell ...` commands consuming P2.10-A/B/C Shell truth.
+**DONE — CLI_TUI_PARITY_BINDING / TERMINAL_CLIENT_READ_MODEL / READ_ONLY_TERMINAL_INSPECTION / consumed by P2.10-E** — Implemented Python `TerminalShellClientContract`, `TerminalShellReadModel`, `TerminalShellParityMatrix`, no-execution boundary, deterministic terminal JSON export, and read-only `python -m agentic_runtime.cli shell ...` commands consuming P2.10-A/B/C Shell truth.
 
 Report: `agent/reports/P2_10_D_CLI_TUI_PARITY_BINDING.md`
 
-Current / next recommended roadmap task: **P2.10-E — Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle**
+Current / next recommended roadmap task at P2.10-D time: **P2.10-E — now complete**
 
-Reason: P2.10-D completed terminal client parity and read-only Shell inspection. P2.10-E can seal the multi-client operator demo evidence bundle. P2.10-E remains NOT_DONE. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim.
+Reason at P2.10-D completion time: P2.10-D completed terminal client parity and read-only Shell inspection. P2.10-E could seal the multi-client operator demo evidence bundle. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim.
 
 ## P2.10-C Status
 
@@ -20,7 +30,7 @@ Report: `agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md`
 
 Current / next recommended roadmap task at P2.10-C time: **P2.10-D — now complete**
 
-Reason at P2.10-C completion time: P2.10-C completed the contract-bound Tauri desktop wrapper. P2.10-D could bind CLI/TUI parity against the same Shell client truth. P2.10-E remains NOT_DONE. No Shell LIVE, command execution, native authority, or full desktop app claim.
+Reason at P2.10-C completion time: P2.10-C completed the contract-bound Tauri desktop wrapper. P2.10-D could bind CLI/TUI parity against the same Shell client truth. P2.10-E was not done at P2.10-C completion time and is now complete. No Shell LIVE, command execution, native authority, or full desktop app claim.
 
 ## P2.10-B Status
 
@@ -30,7 +40,7 @@ Report: `agent/reports/P2_10_B_LOCAL_WEB_SHELL_SKELETON.md`
 
 Current / next recommended roadmap task: **P2.10-C — Tauri Desktop Local Shell / Desktop Wrapper Contract**
 
-Reason: P2.10-B completed the contract-bound local web Shell skeleton. P2.10-C can wrap the same web/client contract in Tauri. P2.10-D/E remain NOT_DONE. No Shell LIVE, command execution, or full local app claim.
+Reason at P2.10-B completion time: P2.10-B completed the contract-bound local web Shell skeleton. P2.10-C could wrap the same web/client contract in Tauri. P2.10-D/E were not done at P2.10-B completion time and are now complete. No Shell LIVE, command execution, or full local app claim.
 
 ## P2.10-A Status
 

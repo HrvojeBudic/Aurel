@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.10-E Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p210e_multi_client_demo_seal.py -q
+.venv/bin/python -m pytest tests/test_p210e_truth_consistency_matrix.py -q
+.venv/bin/python -m pytest tests/test_p210e_no_overclaim_matrix.py -q
+.venv/bin/python -m pytest tests/test_p210e_p211_handoff.py -q
+.venv/bin/python -m pytest tests/test_p210d_terminal_shell_client.py tests/test_p210d_cli_tui_parity_matrix.py tests/test_p210d_terminal_no_execution.py -q
+.venv/bin/python -m pytest tests/test_p210d_cli_commands.py -q
+.venv/bin/python -m pytest tests/test_p210c_desktop_shell_contract.py tests/test_p210c_desktop_capability_boundary.py tests/test_p210c_tauri_wrapper_truth.py -q
+.venv/bin/python -m pytest tests/test_p210b_web_shell_read_model.py tests/test_p210b_web_shell_contract_binding.py -q
+.venv/bin/python -m pytest tests/test_p210a_multi_client_foundation.py tests/test_shell_client_parity_matrix.py tests/test_shell_client_run_modes.py -q
+.venv/bin/python -m pytest tests/test_shell_exit_final_seal.py tests/test_p29d_p210_entry_gate.py tests/test_p29d_final_tail_handoff.py -q
+.venv/bin/python -m pytest tests/test_p2_command_palette_vslice.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_p2_vertical_slice_review.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m ruff check src tests
+```
+
+P2.10-E seals only P2.10 as an honest multi-client Shell foundation. P2.11 remains NOT_STARTED and final P2 seal remains P2.20. The seal does not implement or claim Shell LIVE, full local app, product readiness, command execution, tool execution, approval execution, runtime control, sandbox control, P3 handoff, production API, or full API/event bridge live.
+
 ## P2.10-D CLI/TUI Parity Binding / Terminal Client Read Model Validation (COMPLETE)
 
 ```bash
