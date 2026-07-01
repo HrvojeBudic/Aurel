@@ -13,6 +13,43 @@ from typing import Optional
 
 from .budget import BudgetLedger, BudgetPolicy
 from .canonical_path import CanonicalPathResolver
+from .entrypoint_governance_guard import (
+    EntrypointBypassGuardResult,
+    EntrypointBypassRisk,
+    EntrypointGovernanceClassification,
+    EntrypointGovernanceGuard,
+    GovernedDelegationRequirement,
+    NonExecutingEntrypointProof,
+    classify_entrypoint_governance,
+)
+from .governance_enforcement import (
+    GovernanceEnforcementBoundary,
+    GovernanceEnforcementConfig,
+    GovernanceEnforcementMode,
+    GovernanceEnforcementModeStatus,
+    GovernanceEnforcementResult,
+    P1ENFASideEffectProof,
+    P1ENFAResult,
+)
+from .identity_submit_context import (
+    IdentityMissingContextBehavior,
+    IdentitySubmitArtifact,
+    IdentitySubmitContext,
+    IdentitySubmitContextHash,
+    IdentitySubmitContextLoader,
+    IdentitySubmitPreflightResult,
+    build_identity_submit_context,
+    evaluate_identity_submit_preflight,
+    load_default_identity_submit_context,
+)
+from .policy_submit_influence import (
+    PolicyResolverShadowCompatibilityProof,
+    PolicyResolverSubmitArtifact,
+    PolicyResolverSubmitGateResult,
+    PolicyResolverSubmitInfluence,
+    PolicyResolverSubmitInfluenceStatus,
+    evaluate_policy_resolver_submit_influence,
+)
 from .core_types import (
     AgentCard,
     AgentClass,
@@ -190,6 +227,20 @@ __all__ = [
     "__version__",
     "AgentCard", "AgentClass", "AuthorityScope", "Intent", "RiskLevel",
     "ExecutionStatus", "ExecutionOutcome", "RuntimeStateMachine",
+    "GovernanceEnforcementMode", "GovernanceEnforcementModeStatus",
+    "GovernanceEnforcementConfig", "GovernanceEnforcementResult",
+    "GovernanceEnforcementBoundary", "P1ENFASideEffectProof", "P1ENFAResult",
+    "PolicyResolverSubmitInfluence", "PolicyResolverSubmitInfluenceStatus",
+    "PolicyResolverSubmitGateResult", "PolicyResolverSubmitArtifact",
+    "PolicyResolverShadowCompatibilityProof", "evaluate_policy_resolver_submit_influence",
+    "IdentitySubmitContext", "IdentitySubmitContextHash", "IdentitySubmitPreflightResult",
+    "IdentitySubmitArtifact", "IdentityMissingContextBehavior", "IdentitySubmitContextLoader",
+    "build_identity_submit_context", "evaluate_identity_submit_preflight",
+    "load_default_identity_submit_context",
+    "EntrypointGovernanceClassification", "EntrypointGovernanceGuard",
+    "EntrypointBypassRisk", "EntrypointBypassGuardResult",
+    "GovernedDelegationRequirement", "NonExecutingEntrypointProof",
+    "classify_entrypoint_governance",
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend",
@@ -281,6 +332,8 @@ def build_runtime(
     trace_checkpoint_every: int = 5,
     policy_card_registry: PolicyCardRegistry | None = None,
     enable_policy_shadow_projection: bool = False,
+    governance_enforcement_config: GovernanceEnforcementConfig | None = None,
+    identity_context_loader: IdentitySubmitContextLoader | None = None,
 ) -> Kernel:
     sandbox_policy: Optional[SandboxPolicy] = None
     if sandbox is None:
@@ -363,6 +416,8 @@ def build_runtime(
         sandbox_policy=sandbox_policy,
         policy_card_registry=policy_card_registry,
         enable_policy_shadow_projection=enable_policy_shadow_projection,
+        governance_enforcement_config=governance_enforcement_config,
+        identity_context_loader=identity_context_loader,
     )
     return Kernel(sandbox, tools, policy, verifier, trace, memory, budget,
                   router, skills, runtime, sandbox_policy=sandbox_policy)

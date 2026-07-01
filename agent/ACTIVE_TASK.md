@@ -1,6 +1,16 @@
-# Active Task: P2.9-A-R1 complete; next P2.9-B
+# Active Task: P1.ENF-A complete; next P2.9-B unless operator chooses P1.ENF-B
 
-**Status:** P2.9-A COMPLETE with P2.9-A-R1 evidence-ref repair applied — P2.9 Shell Exit Seal foundation opened at contract scope; next executable roadmap task remains P2.9-B (P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix)
+**Status:** P1.ENF-A COMPLETE as explicit-config enforcement bridge - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification added. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-A Status
+
+**DONE - ENFORCEMENT_BRIDGE / EXPLICIT_CONFIG_ONLY / DEFAULT_COMPATIBLE / P2.9-B_NOT_DONE** - Runtime submit can now consume policy resolver influence and identity submit context evidence under explicit governance enforcement config. `ENFORCE_FAIL_CLOSED` blocks on hard policy resolver deny/error/strict conflict or missing required policy/identity context. Entrypoint guard classifies runtime submit as governed, AurelShell contract modules as non-executing, repo_agent execution-like paths as governed-delegation-required, and unknown execution-like paths as blocked unknown risk.
+
+Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`
+
+Current / next recommended roadmap task: **P2.9-B**
+
+Reason: P1.ENF-A completed the requested enforcement pivot without implementing P2.9-B. P2.9-B remains NOT DONE. P2.9-C remains blocked until P2.9-B completes. Operator may choose P1.ENF-B first if expanding the entrypoint bypass audit is higher priority.
 
 ## P2.9-A-R1 Repair Status
 

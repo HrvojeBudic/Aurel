@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-07-01 - P1.ENF-A Governance Enforcement Bridge
+
+### DEC-P1ENFA-01: Enforcement bridge is explicit-config and default-compatible
+**Decision:** `GovernanceEnforcementConfig` defaults to `SHADOW_ONLY`, and `AgenticRuntime.submit()` only attaches new P1.ENF-A governance artifacts or changes outcomes when governance enforcement config or an identity loader is explicitly supplied. Under explicit `ENFORCE_FAIL_CLOSED`, submit can deny before approval/sandbox/tool execution on hard policy resolver deny/error/strict conflict or missing required policy/identity context.
+**Why:** Aurel needs a real enforcement migration path, but existing P0/P1.6.12 submit behavior must remain compatible unless an operator-controlled enforcement mode is selected.
+
+### DEC-P1ENFA-02: Entrypoint bypass guard is classifier-only
+**Decision:** P1.ENF-A classifies `AgenticRuntime.submit`, AurelShell contract modules, repo_agent paths, and unknown execution-like strings without creating a command router, Shell execution path, product UI, or broad entrypoint audit engine.
+**Why:** The pack needs a bypass-risk guard surface now, while product Shell routing, full repo-agent enforcement audit, and broad entrypoint hardening remain separate follow-up work.
+
 ## 2026-06-30 - P2.5-B Handoff Context / Availability Boundary
 
 ### DEC-P25B-01: Handoff context is snapshot/read model, not transfer or persistence

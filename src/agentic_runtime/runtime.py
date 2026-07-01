@@ -28,6 +28,20 @@ from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
 from .budget import BudgetExceeded, BudgetLedger
+from .governance_enforcement import (
+    GovernanceEnforcementConfig,
+)
+from .identity_submit_context import (
+    IdentitySubmitContextLoader,
+    IdentitySubmitPreflightResult,
+    evaluate_identity_submit_preflight,
+    identity_submit_preflight_to_artifact,
+)
+from .policy_submit_influence import (
+    PolicyResolverSubmitGateResult,
+    evaluate_policy_resolver_submit_influence,
+    policy_submit_gate_result_to_artifact,
+)
 from .approval import (
     ApprovalDecision,
     ApprovalOutcome,
@@ -104,7 +118,9 @@ class AgenticRuntime:
                  approval_policy: ApprovalPolicy | None = None,
                  sandbox_policy: SandboxPolicy | None = None,
                  policy_card_registry: PolicyCardRegistry | None = None,
-                 enable_policy_shadow_projection: bool = False) -> None:
+                 enable_policy_shadow_projection: bool = False,
+                 governance_enforcement_config: GovernanceEnforcementConfig | None = None,
+                 identity_context_loader: IdentitySubmitContextLoader | None = None) -> None:
         self.tools = tool_runtime
         self.policy = policy
         self.verifier = verifier
@@ -117,6 +133,13 @@ class AgenticRuntime:
         self.sandbox_policy = sandbox_policy
         self.policy_card_registry = policy_card_registry
         self.enable_policy_shadow_projection = enable_policy_shadow_projection
+        self.governance_enforcement_config = (
+            governance_enforcement_config or GovernanceEnforcementConfig()
+        )
+        self._governance_enforcement_explicit = (
+            governance_enforcement_config is not None or identity_context_loader is not None
+        )
+        self.identity_context_loader = identity_context_loader
         self.input_validator = ToolInputValidator()
         self.output_validator = ToolOutputValidator()
         self._write_lock = threading.Lock()  # single-writer canonical state
@@ -152,11 +175,24 @@ class AgenticRuntime:
         except BudgetExceeded as e:
             self._budget_blocked(pre_policy_hash, cmd, e, card=card)
             raise
+        identity_preflight = self._evaluate_identity_submit_preflight()
+        if identity_preflight is not None and identity_preflight.should_block:
+            return self._governance_enforcement_blocked(
+                pre_policy_hash,
+                cmd,
+                card,
+                reason="identity submit context failed closed",
+                identity_preflight=identity_preflight,
+            )
         # ---- 1. POLICY ------------------------------------------------- #
         decision = self.policy.evaluate(cmd, card)
         if decision.verdict is PolicyVerdict.DENY:
             obs = ObservationEnvelope.make(cmd.id, success=False,
                 stderr="DENIED by policy: " + "; ".join(decision.reasons))
+            self._attach_submit_governance_artifacts(
+                obs,
+                identity_preflight=identity_preflight,
+            )
             vres = VerifierResult(False, "policy", reason="denied")
             runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
                 cmd,
@@ -169,6 +205,27 @@ class AgenticRuntime:
                 cmd, decision.verdict, obs, vres, pre_policy_hash, pre_policy_hash
             )
             return CommandResult(obs, vres, decision, transition=rec)
+
+        runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+            cmd,
+            card,
+            decision=decision,
+        )
+        policy_submit_gate = self._evaluate_policy_resolver_submit_influence(
+            cmd,
+            card,
+            runtime_snapshot,
+        )
+        if policy_submit_gate is not None and policy_submit_gate.should_block:
+            return self._governance_enforcement_blocked(
+                pre_policy_hash,
+                cmd,
+                card,
+                reason=policy_submit_gate.artifact.blocker_reason
+                or "policy resolver submit influence failed closed",
+                identity_preflight=identity_preflight,
+                policy_submit_gate=policy_submit_gate,
+            )
 
         # ---- 2. APPROVAL (HITL) ---------------------------------------- #
         tool_spec = self.tools.get(cmd.tool)
@@ -341,6 +398,11 @@ class AgenticRuntime:
             sandbox_decision=sb_decision,
         )
         self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
+        self._attach_submit_governance_artifacts(
+            obs,
+            identity_preflight=identity_preflight,
+            policy_submit_gate=policy_submit_gate,
+        )
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, after_hash
         )
@@ -722,6 +784,126 @@ class AgenticRuntime:
             before_hash,
         )
         _ = rec
+
+    def _evaluate_identity_submit_preflight(
+        self,
+    ) -> IdentitySubmitPreflightResult | None:
+        if not self._governance_enforcement_explicit:
+            return None
+        cfg = self.governance_enforcement_config
+        return evaluate_identity_submit_preflight(
+            mode=cfg.mode,
+            require_identity_context=cfg.require_identity_context,
+            loader=self.identity_context_loader,
+        )
+
+    def _evaluate_policy_resolver_submit_influence(
+        self,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        runtime_snapshot: RuntimePolicySnapshot,
+    ) -> PolicyResolverSubmitGateResult | None:
+        if not self._governance_enforcement_explicit:
+            return None
+        cfg = self.governance_enforcement_config
+        context = None
+        if self.policy_card_registry is not None:
+            try:
+                context = self._build_policy_resolution_context_for_submit(
+                    cmd,
+                    card,
+                    runtime_snapshot,
+                )
+            except Exception:
+                context = None
+        return evaluate_policy_resolver_submit_influence(
+            mode=cfg.mode,
+            require_policy_context=cfg.require_policy_context,
+            registry=self.policy_card_registry,
+            context=context,
+        )
+
+    def _attach_submit_governance_artifacts(
+        self,
+        obs: ObservationEnvelope,
+        *,
+        identity_preflight: IdentitySubmitPreflightResult | None = None,
+        policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
+    ) -> None:
+        if not self._governance_enforcement_explicit:
+            return
+        if not self.governance_enforcement_config.attach_submit_artifacts:
+            return
+        artifacts: dict[str, Any] = {
+            "mode": self.governance_enforcement_config.mode.value,
+            "truth_label": "ENFORCEMENT_BRIDGE",
+        }
+        if identity_preflight is not None:
+            artifacts["identity_submit_context"] = identity_submit_preflight_to_artifact(
+                identity_preflight
+            )
+        if policy_submit_gate is not None:
+            artifacts["policy_submit_influence"] = policy_submit_gate_result_to_artifact(
+                policy_submit_gate
+            )
+        obs.artifacts["governance_enforcement"] = artifacts
+
+    def _governance_enforcement_blocked(
+        self,
+        before_hash: str,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        *,
+        reason: str,
+        identity_preflight: IdentitySubmitPreflightResult | None = None,
+        policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
+    ) -> CommandResult:
+        obs = ObservationEnvelope.make(
+            cmd.id,
+            success=False,
+            stderr=f"GOVERNANCE ENFORCEMENT DENIED: {reason}",
+        )
+        self._attach_submit_governance_artifacts(
+            obs,
+            identity_preflight=identity_preflight,
+            policy_submit_gate=policy_submit_gate,
+        )
+        vres = VerifierResult(
+            False,
+            "governance_enforcement",
+            reason=reason,
+            code="GOVERNANCE_ENFORCEMENT_DENIED",
+            evidence={
+                "mode": self.governance_enforcement_config.mode.value,
+                "identity_status": (
+                    identity_preflight.status.value if identity_preflight is not None else ""
+                ),
+                "policy_status": (
+                    policy_submit_gate.status.value if policy_submit_gate is not None else ""
+                ),
+            },
+        )
+        decision = PolicyDecision(
+            PolicyVerdict.DENY,
+            RiskLevel.CRITICAL,
+            [f"governance enforcement: {reason}"],
+        )
+        runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
+            cmd,
+            card,
+            decision=decision,
+            blocker_codes=("GOVERNANCE_ENFORCEMENT_DENIED",),
+        )
+        self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
+        rec = self._append_transition(
+            cmd,
+            decision.verdict,
+            obs,
+            vres,
+            before_hash,
+            before_hash,
+        )
+        return CommandResult(obs, vres, decision, transition=rec)
 
 
     def _policy_shadow_enabled(self) -> bool:

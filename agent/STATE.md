@@ -1,13 +1,14 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P2.9-A-R1 — Shell Exit Seal Foundation Evidence Ref Repair)_
+_Last updated: 2026-07-01 (P1.ENF-A - Policy + Identity Enforcement Readiness / Runtime Submit Wiring)_
 
 ## Current Roadmap Pointer
 
-- Last completed repair: **P2.9-A-R1** — Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
+- Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
+- Last completed repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.9-A complete with P2.9-A-R1 evidence-ref repair applied - P2.9 OPENED at Shell Exit Seal foundation scope**
-- Next executable roadmap task: **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-A complete - explicit-config runtime submit enforcement bridge added; P2.9-A remains repaired and complete at foundation scope**
+- Next recommended roadmap task: **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**, unless operator chooses P1.ENF-B first
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -33,6 +34,16 @@ _Last updated: 2026-07-01 (P2.9-A-R1 — Shell Exit Seal Foundation Evidence Ref
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-A Runtime Submit Enforcement Bridge
+
+P1.ENF-A adds an explicit-config enforcement bridge across runtime submit, policy resolver output, identity context evidence, and entrypoint bypass classification. New modules: `governance_enforcement.py`, `policy_submit_influence.py`, `identity_submit_context.py`, and `entrypoint_governance_guard.py`.
+
+Boundary: default runtime submit behavior remains compatible unless a caller explicitly supplies governance enforcement config or identity context loader. `ENFORCE_FAIL_CLOSED` can block submit on hard policy resolver deny/error/strict conflict, missing required policy context, or missing required identity context. The bridge does not implement full Custos runtime, permission matrix, Shell command router, product UI, identity CLI refactor, Golden Thread B, sandbox backend rewrite, memory behavior rewrite, trace ledger rewrite, P2.9-B, P2.9-C, P2.9-D, P2.10+, LIVE, TRACE_VERIFIED, product behavior, P2 completion, or Shell completion.
+
+Validation: compileall PASS; governance enforcement submit tests 11 passed; identity submit context tests 7 passed; entrypoint governance guard tests 6 passed; runtime/policy/identity/repo_agent/aurel_shell regression selector 3229 passed; ruff PASS; mypy PASS; Bandit `-ll` PASS. Optional full pytest was interrupted after 4140 passed and is not claimed as full-suite PASS. Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`.
+
+Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`.
 
 ## P2.9-A AurelShell Shell Exit Seal Foundation
 

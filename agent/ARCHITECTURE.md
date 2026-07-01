@@ -136,6 +136,21 @@ Architectural boundaries:
 - Runtime does not create default cards, discover policy files, or use global policy state.
 - Resolver/projection errors are observable as `SHADOW_ERROR` metadata and are non-fatal to submit.
 
+## P1.ENF-A Governance Enforcement Bridge
+
+P1.ENF-A is the first explicit-config enforcement bridge from Custos shadow judgment and identity source hashes into `AgenticRuntime.submit()` preflight.
+
+The bridge adds:
+
+- `governance_enforcement.py` for closed-world modes and side-effect proof.
+- `policy_submit_influence.py` for policy resolver submit influence.
+- `identity_submit_context.py` for deterministic identity context/hash binding.
+- `entrypoint_governance_guard.py` for bypass-risk classification.
+
+Default runtime behavior remains compatible. Callers that do not pass a `GovernanceEnforcementConfig` or identity loader do not get new submit artifacts or changed outcomes. Under explicit `ENFORCE_FAIL_CLOSED`, submit can deny before approval, sandbox, or tool execution when the policy resolver returns hard deny/error/strict conflict, or when required policy/identity context is missing.
+
+P1.ENF-A does not implement full Custos runtime, permission matrix, Shell command routing, product UI, identity CLI refactor, Golden Thread B, sandbox backend rewrite, trace ledger rewrite, memory rewrite, P2.9-B, production `LIVE`, or `TRACE_VERIFIED`.
+
 ## Risk Tier Policy Cards (P1.6.3)
 
 Risk Tier Policy Cards are AurelCore governance substrate objects. They define stable R0-R6 risk semantics, reversibility expectations, oversight expectations, evidence expectations, and action-class mapping seeds. They are not a runtime risk classifier and do not grant authority, resolve policy, pause workflows, write traces, select sandboxes, route models, write memory, or enforce execution.

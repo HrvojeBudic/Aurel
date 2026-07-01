@@ -58,6 +58,24 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P1.ENF-A Policy + Identity Enforcement Bridge Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_governance_enforcement_submit.py -q
+.venv/bin/python -m pytest tests/test_identity_submit_context.py -q
+.venv/bin/python -m pytest tests/test_entrypoint_governance_guard.py -q
+.venv/bin/python -m pytest tests -q -k "runtime or policy or policy_cards or identity or repo_agent or aurel_shell"
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results after P1.ENF-A: compileall **PASS**; governance enforcement submit **11 passed**; identity submit context **7 passed**; entrypoint governance guard **6 passed**; runtime/policy/identity/repo_agent/aurel_shell regression subset **3229 passed, 3493 deselected**; ruff **PASS**; mypy **PASS** (328 source files); Bandit `-ll` **PASS**. Optional full pytest was interrupted after extended runtime with **4140 passed** and no failure output before interrupt; not claimed as full-suite PASS. Coverage was not run after the optional full-suite interruption.
+
+P1.ENF-A is an explicit-config runtime submit enforcement bridge only. It does NOT implement P2.9-B, P2.9-C, P2.9-D, P2.10+, full Custos runtime, full permission matrix, Shell command router, product UI, identity CLI monolith refactor, Golden Thread B, sandbox backend rewrite, memory behavior rewrite, trace ledger rewrite, production LIVE, TRACE_VERIFIED, P2 completion, or Shell completion.
+
+Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`
+
 ## P2.9-A Shell Exit Seal Foundation Validation (COMPLETE)
 
 ```bash
