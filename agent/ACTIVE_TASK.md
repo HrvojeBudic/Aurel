@@ -1,6 +1,16 @@
-# Active Task: P2.REVIEW-A complete; next P2.VSLICE-A unless operator reruns P2.9-B
+# Active Task: P2.VSLICE-A complete; next P2.9-B after consuming slice evidence
 
-**Status:** P2.REVIEW-A COMPLETE as first true P2 vertical slice decision. P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P2.VSLICE-A COMPLETE as governed Command Palette / Global Command preflight slice. P2.REVIEW-A, P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P2.VSLICE-A Status
+
+**DONE — PREFLIGHT_READ_MODEL_ONLY / P2.9-B_NOT_DONE** — Seed global command registry, availability projection, command intent/preflight decision with policy/identity/sandbox gate summaries, pytest read-model operator path; 16 focused tests plus regressions passing; preflight is not command execution; CLI/TUI binding remains evidence gap.
+
+Report: `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
+
+Current / next recommended roadmap task: **P2.9-B — P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+
+Reason: P2.VSLICE-A provides slice evidence for P2.9-B rerun. P2.9-B remains NOT DONE until explicitly rerun and sealed.
 
 ## P2.REVIEW-A Status
 
