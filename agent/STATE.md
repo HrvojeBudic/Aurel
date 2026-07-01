@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P2.9-A — Shell Exit Seal Foundation)_
+_Last updated: 2026-07-01 (P2.9-A-R1 — Shell Exit Seal Foundation Evidence Ref Repair)_
 
 ## Current Roadmap Pointer
 
-- Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
+- Last completed repair: **P2.9-A-R1** — Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.9-A complete - P2.9 OPENED at Shell Exit Seal foundation scope**
-- Next planned: P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix
+- Current active: **P2.9-A complete with P2.9-A-R1 evidence-ref repair applied - P2.9 OPENED at Shell Exit Seal foundation scope**
+- Next executable roadmap task: **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -29,8 +29,10 @@ _Last updated: 2026-07-01 (P2.9-A — Shell Exit Seal Foundation)_
 - P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
 - P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete
 - P2.9 status: **OPENED at foundation scope** — P2.9-A complete; contract-only exit seal foundation; not completed Shell Exit Seal, release seal, or product readiness
-- P2.9-A status: **complete** — foundation gate, prior evidence intake, section inventory intake, exit criteria catalog, readiness dimensions, unavailable capability declarations, no-release/no-product/no-live/no-completion boundaries, P2.9-B handoff contract, foundation result, side-effect proof; foundation is not completed Shell Exit Seal; P2.9-B handoff is not P2.9-B implementation; no P2.9-B/P2.9-C/P2.9-D/P2.10/P2.11/P2.12/P2.13
-- AurelShell suite: **994 passed** (post P2.9-A)
+- P2.9-A status: **complete with repaired evidence refs** — P2.9-A-R1 fixed stale prior-section test refs and mismatched commit refs; foundation is not completed Shell Exit Seal; P2.9-B handoff is not P2.9-B implementation; no P2.9-B/P2.9-C/P2.9-D/P2.10/P2.11/P2.12/P2.13
+- P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
+- P2.9-C status: **NOT READY** — blocked until P2.9-B completes
+- AurelShell suite: **1004 passed** (post P2.9-A-R1)
 
 ## P2.9-A AurelShell Shell Exit Seal Foundation
 
@@ -41,6 +43,8 @@ Boundary: foundation is not completed Shell Exit Seal. Exit criteria catalog is 
 OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.8-D repo evidence remained required and passed.
 
 Validation: compileall PASS; P2.9-A focused tests 16 passed; `tests/aurel_shell` 994 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_9_A_SHELL_EXIT_SEAL_FOUNDATION.md`.
+
+P2.9-A-R1 repair: prior-section evidence refs were repaired before rerunning P2.9-B. Timestamp-only dirty consent fixture churn was restored and not committed. Stale test path refs now point to existing `tests/aurel_shell/test_shell_*` files. Prior-section commit refs now resolve to matching P2.0-F through P2.8-D implementation/seal commits, with focused tests preventing silent evidence-ref rot. P2.9-A remains DONE; P2.9-B remains NOT DONE and should be rerun next; P2.9-C remains blocked until P2.9-B completes. Repair report: `agent/reports/P2_9_A_R1_SHELL_EXIT_SEAL_FOUNDATION_EVIDENCE_REF_REPAIR.md`.
 
 ## P2.8-D AurelShell Shell State / Reports / Docs Section Seal
 

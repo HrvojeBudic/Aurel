@@ -1,6 +1,16 @@
-# Active Task: P2.9-A (complete)
+# Active Task: P2.9-A-R1 complete; next P2.9-B
 
-**Status:** P2.9-A COMPLETE — P2.9 Shell Exit Seal foundation opened at contract scope; next P2.9-B (P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix)
+**Status:** P2.9-A COMPLETE with P2.9-A-R1 evidence-ref repair applied — P2.9 Shell Exit Seal foundation opened at contract scope; next executable roadmap task remains P2.9-B (P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix)
+
+## P2.9-A-R1 Repair Status
+
+**DONE — EVIDENCE_REF_REPAIR_ONLY / NO_RUNTIME_CHANGE / P2.9-B_NOT_DONE** — P2.9-A prior-section evidence refs were repaired before rerunning P2.9-B. Timestamp-only consent fixture churn was restored and not committed. Stale prior-section test path refs now point to existing AurelShell test files, and prior-section commit refs now resolve to matching P2.0-F through P2.8-D implementation/seal commits.
+
+Report: `agent/reports/P2_9_A_R1_SHELL_EXIT_SEAL_FOUNDATION_EVIDENCE_REF_REPAIR.md`
+
+Current / next executable roadmap task: **P2.9-B**
+
+Reason: P2.9-B was blocked by dirty worktree hygiene and stale P2.9-A evidence refs; the P2.9-A-R1 repair is now complete. P2.9-B remains NOT DONE. P2.9-C remains blocked until P2.9-B completes.
 
 ## P2.9-A Status
 
