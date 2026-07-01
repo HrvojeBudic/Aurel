@@ -1,6 +1,16 @@
-# Active Task: P1.ENF-C complete; next P1.ENF-F-B unless operator reruns P2.9-B
+# Active Task: P1.ENF-F-B complete; next P1.ENF-D1 unless operator reruns P2.9-B
 
-**Status:** P1.ENF-C COMPLETE as Golden Thread B governance continuity harness. P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-F-B COMPLETE as Roadmap v5.5 canon sync / historical docs archive labeling. P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-F-B Status
+
+**DONE — DOCS_CANON_SYNC / HISTORICAL_ARCHIVE / P2.9-B_NOT_DONE** — Active canon pointer for Aurel Roadmap v5.5 added; `agent/CANON_INDEX.md` created with doc status taxonomy and discovery matrix; historical v3.2/v5.1 material labeled without deletion; Golden Thread B bound as current continuity evidence; P2.6 Surface Projection correction preserved; focused docs/canon tests added.
+
+Report: `agent/reports/P1_ENF_F_B_ROADMAP_V55_CANON_SYNC_HISTORICAL_DOCS_ARCHIVE.md`
+
+Current / next recommended roadmap task: **P1.ENF-D1 — Identity Kernel Invariant Enforcement Deepening**
+
+Reason: P1.ENF-F-B completed docs/canon truth sync without implementing P1.ENF-D1, P2.9-B, or product Shell behavior. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-C Status
 
@@ -8,7 +18,7 @@
 
 Report: `agent/reports/P1_ENF_C_GOLDEN_THREAD_B_GOVERNANCE_CONTINUITY.md`
 
-Current / next recommended roadmap task: **P1.ENF-F-B — Roadmap v5.5 Canon Sync / Historical Docs Archive**
+Current / next recommended roadmap task: **P1.ENF-F-B — Roadmap v5.5 Canon Sync / Historical Docs Archive** (completed; see P1.ENF-F-B Status above)
 
 Reason: P1.ENF-C completed the governance continuity spine without implementing P2.9-B or product Shell behavior. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 

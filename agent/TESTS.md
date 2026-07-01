@@ -133,6 +133,33 @@ P1.ENF-C is a governance continuity harness only. It does NOT implement P1.ENF-F
 
 Report: `agent/reports/P1_ENF_C_GOLDEN_THREAD_B_GOVERNANCE_CONTINUITY.md`
 
+## P1.ENF-F-B Roadmap v5.5 Canon Sync / Historical Docs Archive Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_entrypoint_governance_audit.py tests/test_repo_agent_entrypoint_audit.py -q
+.venv/bin/python -m pytest tests/test_docs_canon_status.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m mypy --follow-imports=silent \
+  --enable-error-code arg-type \
+  --enable-error-code call-arg \
+  --enable-error-code union-attr \
+  src/agentic_runtime/runtime.py \
+  src/agentic_runtime/trace.py \
+  src/agentic_runtime/repo_agent.py \
+  src/agentic_runtime/core_types.py \
+  src/agentic_runtime/__init__.py
+```
+
+Results after P1.ENF-F-B: compileall **PASS**; Golden Thread B **17 passed**; validation truth + drift gates **18 passed**; entrypoint audit **16 passed**; docs canon status **9 passed**; ruff **PASS**; baseline mypy **PASS**; core strict probe **PASS** (5 files, silent imports). Full suite, coverage, Bandit, and optional selector **NOT RUN**.
+
+P1.ENF-F-B is docs/canon sync only. It does NOT implement P1.ENF-D1, P1.ENF-E, P2.REVIEW-A, P2.9-B, Shell command router, product UI, ROADMAP renumbering/rewrite, historical evidence deletion, LIVE, TRACE_VERIFIED, or P2 complete claim.
+
+Report: `agent/reports/P1_ENF_F_B_ROADMAP_V55_CANON_SYNC_HISTORICAL_DOCS_ARCHIVE.md`
+
 ## P1.ENF-F-A Tooling / Determinism / Shadow-Still-Active Drift Gates Validation (COMPLETE)
 
 ```bash

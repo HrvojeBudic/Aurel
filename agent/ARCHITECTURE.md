@@ -890,6 +890,8 @@ P1.4.16 Battery → aggregate PASSED/FAILED status
 
 ## Roadmap v3.2 — System Architecture (P1.5.0)
 
+> **Historical / Reference Notice:** This section preserves v3.2 macro architecture reference (`HISTORICAL_REFERENCE`). Active roadmap canon is Aurel Roadmap v5.5 in `agent/ROADMAP.md`. Current Shell surface taxonomy follows P2.0+ seven-surface canon (Aurel CRO, HQ, CORP, HUB, IDE, SYSTEM, Settings). See `agent/CANON_INDEX.md`.
+
 ### Aurel Core vs independent Hub tools
 
 ```

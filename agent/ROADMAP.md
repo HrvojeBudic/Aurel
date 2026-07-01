@@ -2,6 +2,21 @@
 
 **Macro roadmap version:** Aurel Roadmap v5.5 — Integration-First actor-boundary remap (evolved from v3.2 macro structure)
 
+## Active roadmap canon
+
+**Status:** ACTIVE_CANON — current roadmap and task authority unless the operator explicitly overrides.
+
+| Field | Value |
+|-------|-------|
+| Active roadmap | Aurel Roadmap v5.5 (this file) |
+| Doc status index | `agent/CANON_INDEX.md` |
+| Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
+| Last completed pack | P1.ENF-F-B |
+| Next planned pack | P1.ENF-D1 |
+| P2.9-B | NOT DONE |
+
+Historical roadmap/report eras (v3.2, v5.0/v5.1, v5.4 transition) remain preserved with explicit status labels in `agent/CANON_INDEX.md`. Do not treat historical docs as current task authority.
+
 ## Integration-First law
 
 Every completed Pn.x section must produce a vertical slice:
@@ -232,6 +247,8 @@ Backend remains source of truth. Shell/CLI/TUI are projection surfaces. Mock dat
 Canonical P1.4 detail: `docs/P1.4_IDENTITY_AUTONOMY_SCOPE_CONTRACT.md`, `docs/P1.4_AGENT_TRUST_CONSTITUTION.md`
 
 ## Roadmap v3.2 doctrine
+
+> **Historical / Superseded Notice:** The v3.2 doctrine and system map below are preserved macro-structure reference material (`HISTORICAL_REFERENCE`). Active execution authority is Aurel Roadmap v5.5 (`ACTIVE_CANON`). See `agent/CANON_INDEX.md`.
 
 **Historical P1.5 note:** P1.5.11B is implemented, and later P1.5 modules advanced through the P1.5 integrated seal. P1.6 advanced through P1.6.19 truth-sync; current active work is **P1.6.20 exit seal**.
 

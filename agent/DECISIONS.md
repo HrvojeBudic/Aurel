@@ -1,5 +1,15 @@
 # Decisions Log
 
+## 2026-07-01 - P1.ENF-F-B Roadmap v5.5 Canon Sync
+
+### DEC-P1ENFFB-01: v5.5 is active canon; historical docs are labeled, not deleted
+**Decision:** `agent/ROADMAP.md` remains the active roadmap authority (Aurel Roadmap v5.5). Older roadmap/report eras (v3.2, v5.0/v5.1, v5.4 transition, P2 contract reports, Golden Thread A) are preserved with explicit status labels in `agent/CANON_INDEX.md` and index-level historical notices. Historical docs are not rewritten, renumbered, or deleted.
+**Why:** Future implementation agents need unambiguous current canon without losing audit evidence. Index-level labeling reduces stale-doc routing risk while honoring the no-deletion evidence law.
+
+### DEC-P1ENFFB-02: Golden Thread B is current continuity evidence, not Shell live behavior
+**Decision:** Golden Thread B (`P1.ENF-C`) is the current continuity harness reference for P1.8–P2.9-A + P1.ENF chain. It does not make P2.9-B done, does not claim Shell LIVE, and does not claim TRACE_VERIFIED.
+**Why:** Continuity evidence must be distinguished from product/live readiness to prevent overclaim routing.
+
 ## 2026-07-01 - P1.ENF-A Governance Enforcement Bridge
 
 ### DEC-P1ENFA-01: Enforcement bridge is explicit-config and default-compatible

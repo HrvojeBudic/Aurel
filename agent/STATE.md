@@ -1,9 +1,12 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance Continuity)_
+_Last updated: 2026-07-01 (P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Docs Archive)_
 
 ## Current Roadmap Pointer
 
+- **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
+- **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
+- Last completed docs/canon sync: **P1.ENF-F-B** - v5.5 active canon pointer, historical doc status labels, canon index
 - Last completed continuity harness: **P1.ENF-C** - Golden Thread B governance continuity spine linking P1.8–P2.9-A and P1.ENF repair/audit/gate chain with truth labels and gap matrix
 - Last completed drift gate pack: **P1.ENF-F-A** - validation truth gates, determinism/dirty worktree gate, tooling truth/core strict probe gate, shadow/enforcement drift gate, contract/live overclaim gate, unknown entrypoint risk gate, report/code claim drift gate
 - Last completed enforcement audit: **P1.ENF-B** - entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, unknown-risk blocking
@@ -11,8 +14,8 @@ _Last updated: 2026-07-01 (P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance C
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-C complete - Golden Thread B continuity harness; P1.ENF-F-B is next planned docs/canon sync pack unless operator reruns P2.9-B first**
-- Next recommended roadmap task: **P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Docs Archive**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-F-B complete - v5.5 canon sync / historical archive labeling; P1.ENF-D1 is next planned pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P1.ENF-D1 - Identity Kernel Invariant Enforcement Deepening**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -38,6 +41,14 @@ _Last updated: 2026-07-01 (P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance C
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-F-B Roadmap v5.5 Canon Sync / Historical Docs Archive
+
+P1.ENF-F-B makes Aurel Roadmap v5.5 the unambiguous active canon while preserving older roadmap/docs/reports as labeled historical evidence. Added `agent/CANON_INDEX.md` with doc status taxonomy and discovery matrix; active canon pointers in `agent/ROADMAP.md`, `agent/STATE.md`, and `agent/ACTIVE_TASK.md`; historical notices on v3.2 sections in `agent/ROADMAP.md` and `agent/ARCHITECTURE.md`; focused docs/canon tests in `tests/test_docs_canon_status.py`.
+
+Boundary: docs/canon sync only. No ROADMAP renumbering, content rewrite, historical deletion, P1.ENF-D1, P1.ENF-E, P2.REVIEW-A, P2.9-B, Shell router, product UI, LIVE, TRACE_VERIFIED, or P2 complete claim.
+
+Validation: compileall PASS; Golden Thread B 17 passed; validation truth + drift gates 18 passed; entrypoint audit 16 passed; docs canon status 9 passed; ruff PASS; baseline mypy PASS; core strict probe PASS. Full suite/coverage NOT RUN. Report: `agent/reports/P1_ENF_F_B_ROADMAP_V55_CANON_SYNC_HISTORICAL_DOCS_ARCHIVE.md`.
 
 ## P1.ENF-C Golden Thread B / P1.8–P2.9 Governance Continuity
 
