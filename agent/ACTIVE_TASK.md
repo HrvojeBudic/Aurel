@@ -1,6 +1,16 @@
-# Active Task: P2.8-D (complete)
+# Active Task: P2.9-A (complete)
 
-**Status:** P2.8-D COMPLETE — P2.8 Shell State / Reports / Docs section sealed at contract scope; next P2.9-A (P2.9.0–P2.9.5 Shell Exit Seal Foundation)
+**Status:** P2.9-A COMPLETE — P2.9 Shell Exit Seal foundation opened at contract scope; next P2.9-B (P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix)
+
+## P2.9-A Status
+
+**DONE — EXIT_SEAL_FOUNDATION_ONLY / CONTRACT_ONLY / NOT_EXIT_SEAL_COMPLETE / NOT_RELEASE_SEAL / NOT_PRODUCT_READY** — P2.9.0–P2.9.5 Shell Exit Seal foundation contracts implemented as contract-only AurelShell objects gated by P2.8-D repo evidence with OMNI evidence ignored by operator instruction.
+
+P2.9-A establishes `ShellExitSealFoundationGate`, `ShellExitSealFoundationGateStatus`, `ShellPriorSectionEvidenceIntake`, `ShellPriorSectionEvidenceEntry`, `ShellSectionInventoryIntake`, `ShellSectionInventoryEntry`, `ShellExitCriteriaCatalog`, `ShellExitCriterion`, `ShellExitReadinessDimension`, `ShellExitReadinessDimensionStatus`, `ShellExitUnavailableCapabilityDeclaration`, `ShellExitUnavailableCapabilityEntry`, `ShellExitNoReleaseSealBoundary`, `ShellExitNoProductReadinessBoundary`, `ShellExitNoLiveRuntimeBoundary`, `ShellExitNoP2CompleteBoundary`, `ShellExitNoShellCompleteBoundary`, `ShellExitP29BHandoffContract`, `ShellExitSealFoundationResult`, `ShellExitSealFoundationTruthBoundary`, `P29ASideEffectProof`, and `P29AShellExitSealFoundationResult` under `src/agentic_runtime/aurel_shell/shell_exit_seal_foundation.py`. All P2.9-A side-effect/no-authority booleans remain false.
+
+Boundary: foundation is not completed Shell Exit Seal. Exit criteria catalog is not validation execution. Readiness dimension is not product readiness. Prior section evidence intake references P2.0–P2.8 by ref only and does not claim TRACE_VERIFIED. Section inventory intake does not duplicate agent governance. Unavailable capability declaration does not implement runtime. No-release/no-product/no-live/no-completion boundaries are active. P2.9-B handoff points to P2.9-B but does not start or implement P2.9-B. P2.9-A does not start P2.9-C, P2.9-D, P2.10, P2.11, P2.12, or P2.13.
+
+Report: `agent/reports/P2_9_A_SHELL_EXIT_SEAL_FOUNDATION.md`
 
 ## P2.8-D Status
 

@@ -1,13 +1,13 @@
 # Repository State
 
-_Last updated: 2026-06-30 (P2.8-D — Shell State / Reports / Docs Section Seal)_
+_Last updated: 2026-07-01 (P2.9-A — Shell Exit Seal Foundation)_
 
 ## Current Roadmap Pointer
 
 - Last completed repair: **AUDIT-REPAIR-001** — portable test cwd; full suite green
-- Last completed: P2.8-D - P2.8.16-P2.8.20 Shell State / Reports / Docs Section Seal
-- Current active: **P2.8-D complete - P2.8 SEALED_CONTRACT_ONLY at Shell State / Reports / Docs section scope**
-- Next planned: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
+- Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
+- Current active: **P2.9-A complete - P2.9 OPENED at Shell Exit Seal foundation scope**
+- Next planned: P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -27,11 +27,20 @@ _Last updated: 2026-06-30 (P2.8-D — Shell State / Reports / Docs Section Seal)
 - P2.3-B status: **complete** — contract/read-model only; not UI, focus manager, z-index/layout runtime, storage, product behavior, or runtime mutation
 - P2.6 status: **SEALED_CONTRACT_ONLY at section scope** — P2.6-A through P2.6-D complete; contract/read-model/API-schema/event-envelope/section-seal only; not live bridge, API server, event bus runtime, or CLI/Shell/TUI binding
 - P2.7 status: **SEALED_CONTRACT_ONLY at Shell / CLI / TUI binding section scope** — P2.7-A through P2.7-D complete
-- P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete; contract-only Shell state snapshot, report/docs reference registries, read model registry/inventory, section status/state snapshot read models, report/docs indexes, query/filter/sort descriptors, read-only summaries, sync descriptors/candidates, drift/missing/stale descriptors, section seal gate, contract inventory, full coverage matrix, section read model, availability/runtime unavailable rollups, P2.9 handoff contract, validation/evidence rollups, no-live/no-sync/no-generation/no-write proofs; not live Shell state runtime, Shell state sync runtime, reconciliation engine, generators, publishers, write path, product behavior, or release seal
-- P2.8-D status: **complete** — section seal gate, contract inventory, coverage matrix, section read model/status, availability rollup, runtime unavailable rollup, P2.9 handoff contract, validation rollup, evidence rollup, contract-scope demo, no-live/no-sync/no-generation/no-write proofs, section seal result, side-effect proof; section seal is not release seal; P2.9 handoff is not P2.9 implementation; no P2.9/P2.10/P2.13
-- P2.8-C status: **complete** — summary gate, docs/report index summaries, Shell state read-only summary, summary bundle, sync descriptor/candidate, drift/missing/stale descriptors, source comparison descriptor, summary limitation descriptor, read-only summary availability, no-sync boundary, no-generation boundary, no-write boundary, summary boundary result, side-effect proof; sync descriptor is not sync runtime; summaries are not generators
-- P2.8-B status: **complete** — read model gate, registry, entries, inventory, section status read model, state snapshot read model, report index, report index entries, report family grouping, docs index, docs index entries, docs family grouping, query/filter/sort descriptors, availability rollup, no-generation boundary, no-runtime-mutation boundary, no-write boundary, expansion result, side-effect proof; registry not query runtime; report/docs indexes not source-of-truth replacements; descriptors do not execute; no P2.8-C/P2.8-D/P2.9/P2.10/P2.13
-- AurelShell suite: **978 passed** (post P2.8-D)
+- P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete
+- P2.9 status: **OPENED at foundation scope** — P2.9-A complete; contract-only exit seal foundation; not completed Shell Exit Seal, release seal, or product readiness
+- P2.9-A status: **complete** — foundation gate, prior evidence intake, section inventory intake, exit criteria catalog, readiness dimensions, unavailable capability declarations, no-release/no-product/no-live/no-completion boundaries, P2.9-B handoff contract, foundation result, side-effect proof; foundation is not completed Shell Exit Seal; P2.9-B handoff is not P2.9-B implementation; no P2.9-B/P2.9-C/P2.9-D/P2.10/P2.11/P2.12/P2.13
+- AurelShell suite: **994 passed** (post P2.9-A)
+
+## P2.9-A AurelShell Shell Exit Seal Foundation
+
+P2.9-A adds a contract-only Shell Exit Seal foundation module under `src/agentic_runtime/aurel_shell/shell_exit_seal_foundation.py`: foundation gate over P2.8-D repo evidence, prior section evidence intake (P2.0–P2.8 by ref), section inventory intake, exit criteria catalog, readiness dimensions, unavailable capability declarations, no-release/no-product/no-live/no-completion boundaries, P2.9-B handoff contract, foundation result, side-effect proof, and pack result.
+
+Boundary: foundation is not completed Shell Exit Seal. Exit criteria catalog is not validation execution. Readiness dimension is not product readiness. Evidence intake does not claim TRACE_VERIFIED. P2.9-B handoff is contract only. P2.9-A does not start P2.9-B, P2.9-C, P2.9-D, P2.10, P2.11, P2.12, or P2.13.
+
+OMNI evidence policy: OMNI review/acceptance evidence was ignored as a hard gate by explicit operator instruction for this dispatch. P2.8-D repo evidence remained required and passed.
+
+Validation: compileall PASS; P2.9-A focused tests 16 passed; `tests/aurel_shell` 994 passed; ruff PASS; mypy PASS. Report: `agent/reports/P2_9_A_SHELL_EXIT_SEAL_FOUNDATION.md`.
 
 ## P2.8-D AurelShell Shell State / Reports / Docs Section Seal
 

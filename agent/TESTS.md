@@ -58,6 +58,22 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.9-A Shell Exit Seal Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/aurel_shell/test_shell_exit_seal_foundation.py -q
+.venv/bin/python -m pytest tests/aurel_shell -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results: compileall **PASS**; focused P2.9-A **16 passed**; `tests/aurel_shell` **994 passed**; ruff **PASS**; mypy **PASS**.
+
+P2.9-A is a contract-only Shell Exit Seal foundation pack only. It does NOT create completed Shell Exit Seal, release seal, product readiness, P2 completion, Shell completion, live Shell runtime, multi-client runtime, frontend/product UI, operator-testable product behavior, validation execution, trace verification, permission enforcement, Custos decisioning, truth-label enforcement, runtime dispatch, command execution, trace write, memory write, storage write, agent governance replacement, LIVE, TRACE_VERIFIED, release scope, or start P2.9-B, P2.9-C, P2.9-D, P2.10, P2.11, P2.12, or P2.13.
+
+Report: `agent/reports/P2_9_A_SHELL_EXIT_SEAL_FOUNDATION.md`
+
 ## P2.8-D Shell State / Reports / Docs Section Seal Validation (COMPLETE)
 
 ```bash
