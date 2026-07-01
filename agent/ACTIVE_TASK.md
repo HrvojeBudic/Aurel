@@ -1,6 +1,16 @@
-# Active Task: P2.9-B complete; next P2.9-C (P2.9.11-P2.9.15)
+# Active Task: P2.9-C complete; next P2.9-D (P2.9.16-P2.9.20)
 
-**Status:** true P2.9-B COMPLETE — Shell Exit Seal readiness / validation / evidence matrix for P2.9.6-P2.9.10. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.9-C is next. P2.9-D remains NOT DONE. P2.10+ remains NOT STARTED.
+**Status:** P2.9-C COMPLETE — Shell Exit Seal finalization / blocker / evidence bundle for P2.9.11-P2.9.15. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). P2.9.11-P2.9.15 DONE (P2.9-C). old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.9-D is next. P2.10+ remains NOT STARTED.
+
+## P2.9-C Status
+
+**DONE — SHELL_EXIT_SEAL_FINALIZATION / P2_9_11_TO_P2_9_15_DONE / C_READY_FOR_D / P2_9_D_NEXT / P2_10_BLOCKED** — Implemented finalization intake, seal decision aggregation, release blocker / no-release boundary matrix, finalization evidence bundle, and P2.9-D handoff for P2.9.11-P2.9.15.
+
+Report: `agent/reports/P2_9_C_SHELL_EXIT_SEAL_FINALIZATION.md`
+
+Current / next recommended roadmap task: **P2.9-D — P2.9.16-P2.9.20 Shell Exit Seal Final Tail / next granular P2.9 pack**
+
+Reason: P2.9-C completed P2.9.11-P2.9.15 only. P2.9.16-P2.9.20 remain NOT DONE, and P2.10+ is still blocked until P2.9-D completes or explicitly seals the gate.
 
 ## true P2.9-B Status
 
@@ -8,9 +18,9 @@
 
 Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_READINESS_VALIDATION_EVIDENCE_MATRIX.md`
 
-Current / next recommended roadmap task: **P2.9-C — P2.9.11-P2.9.15 Shell Exit Seal Finalization / next granular P2.9 pack**
+Current / next recommended roadmap task at P2.9-B time: P2.9-C — now complete.
 
-Reason: true P2.9-B completed P2.9.6-P2.9.10 only. P2.9.11-P2.9.20 remain NOT DONE, and P2.10+ is still blocked until P2.9-C/D are complete or explicitly sealed.
+Reason at P2.9-B completion time: true P2.9-B completed P2.9.6-P2.9.10 only. P2.9.11-P2.9.20 remained NOT DONE, and P2.10+ stayed blocked until P2.9-C/D completion or explicit seal.
 
 ## P2.9-B-R1 Status
 
