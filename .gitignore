@@ -8,6 +8,7 @@ __pycache__/
 htmlcov/
 *.egg-info/
 dist/
+node_modules/
 build/
 demo_buggy_calculator/
 .cursor/debug-*.log
@@ -25,3 +26,4 @@ __pycache__/
 reports/git_hygiene/
 
 .claude/settings.local.json
+*.tsbuildinfo

@@ -1,16 +1,22 @@
-# Active Task: P2.10-A complete; next P2.10-B
+# Active Task: P2.10-B complete; next P2.10-C
 
-**Status:** P2.10-A COMPLETE — Multi-Client Shell Foundation / Client Parity Contract. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-B is next. P2.10-B/C/D remain NOT_DONE. No Shell LIVE, command execution, runnable web/desktop/mobile, or full local app claim.
+**Status:** P2.10-B COMPLETE — Local Web Shell Skeleton / Contract-Bound Client Read Model. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A DONE. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-C is next. P2.10-C/D/E remain NOT_DONE. Local web skeleton runnable (DEV_FIXTURE). No Shell LIVE, command execution, desktop/mobile runnable, or full local app claim.
+
+## P2.10-B Status
+
+**DONE — LOCAL_WEB_SHELL_SKELETON / CONTRACT_BOUND_READ_MODEL / P2_10_C_NEXT / P2_10_C_D_E_NOT_DONE** — Implemented Python `WebShellReadModel`, deterministic JSON fixture, and minimal Vite/React web skeleton under `web/shell/`.
+
+Report: `agent/reports/P2_10_B_LOCAL_WEB_SHELL_SKELETON.md`
+
+Current / next recommended roadmap task: **P2.10-C — Tauri Desktop Local Shell / Desktop Wrapper Contract**
+
+Reason: P2.10-B completed the contract-bound local web Shell skeleton. P2.10-C can wrap the same web/client contract in Tauri. P2.10-D/E remain NOT_DONE. No Shell LIVE, command execution, or full local app claim.
 
 ## P2.10-A Status
 
-**DONE — MULTI_CLIENT_FOUNDATION / CLIENT_PARITY_CONTRACT / P2_10_B_NEXT / P2_10_B_C_D_NOT_DONE** — Implemented client taxonomy, shared ShellClientState, parity matrix, local run mode boundaries, surface availability, and no-overclaim boundaries.
+**DONE — MULTI_CLIENT_FOUNDATION / CLIENT_PARITY_CONTRACT / consumed by P2.10-B** — Implemented client taxonomy, shared ShellClientState, parity matrix, local run mode boundaries, surface availability, and no-overclaim boundaries.
 
 Report: `agent/reports/P2_10_A_MULTI_CLIENT_SHELL_FOUNDATION.md`
-
-Current / next recommended roadmap task: **P2.10-B — Local Web Shell Skeleton / Contract-Bound Client Read Model**
-
-Reason: P2.10-A completed the multi-client Shell foundation contracts. P2.10-B can build the local web shell skeleton against stable contracts. P2.10-C/D remain NOT_DONE. No Shell LIVE, command execution, or runnable local app claim.
 
 ## P2.9-D Status
 
