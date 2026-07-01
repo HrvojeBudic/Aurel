@@ -21,9 +21,27 @@ def test_local_run_modes_are_honest_and_not_live() -> None:
     modes = build_shell_client_local_run_modes()
     assert len(modes) == 6  # python backend + 5 clients
     for entry in modes:
-        assert entry.locally_runnable is False
         assert entry.truth_label is not ShellClientTruthLabel.LIVE
-        assert entry.launch_command == ""
+        if entry.locally_runnable:
+            assert entry.client_kind in {
+                ShellClientKind.WEB,
+                ShellClientKind.DESKTOP_TAURI,
+            }
+            assert entry.launch_command
+        else:
+            assert entry.launch_command == ""
+
+
+def test_web_and_desktop_launch_commands_when_scaffolds_exist() -> None:
+    modes = {
+        m.client_kind: m
+        for m in build_shell_client_local_run_modes()
+        if m.client_kind is not None
+    }
+    assert modes[ShellClientKind.WEB].locally_runnable is True
+    assert modes[ShellClientKind.WEB].launch_command == "npm run dev"
+    assert modes[ShellClientKind.DESKTOP_TAURI].locally_runnable is True
+    assert modes[ShellClientKind.DESKTOP_TAURI].launch_command == "npm run tauri:dev"
 
 
 def test_web_desktop_mobile_are_contract_only() -> None:

@@ -275,6 +275,31 @@ P1.ENF-B is entrypoint audit/guard expansion only. It does NOT implement P1.ENF-
 
 Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`
 
+## P2.10-C Tauri Desktop Local Shell Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -c "from agentic_runtime.aurel_shell.web_shell_read_model import export_web_shell_read_model_fixture; from agentic_runtime.aurel_shell.desktop_shell_contract import export_desktop_shell_read_model_fixture; export_web_shell_read_model_fixture(); export_desktop_shell_read_model_fixture()"
+.venv/bin/python -m pytest tests/test_p210c_desktop_shell_contract.py -q
+.venv/bin/python -m pytest tests/test_p210c_desktop_capability_boundary.py -q
+.venv/bin/python -m pytest tests/test_p210c_tauri_wrapper_truth.py -q
+.venv/bin/python -m pytest tests/test_p210b_web_shell_read_model.py tests/test_p210b_web_shell_contract_binding.py -q
+.venv/bin/python -m pytest tests/test_p210a_multi_client_foundation.py tests/test_shell_client_parity_matrix.py tests/test_shell_client_run_modes.py -q
+.venv/bin/python -m pytest tests/test_shell_exit_final_seal.py tests/test_p29d_p210_entry_gate.py tests/test_p29d_final_tail_handoff.py -q
+.venv/bin/python -m pytest tests/test_p2_command_palette_vslice.py tests/test_p2_command_preflight.py tests/test_p2_vertical_slice_review.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime/aurel_shell/desktop_shell_contract.py src/agentic_runtime/aurel_shell/web_shell_read_model.py
+cd web/shell && npm install && npm run typecheck && npm test && npm run build && npm run tauri:build
+```
+
+Results after P2.10-C: compileall **PASS**; P2.10-C focused **20 passed**; P2.10-B regression **18 passed**; P2.10-A regression **23 passed**; P2.9-D seal **15 passed**; P2 vertical slice **25 passed**; truth/drift **18 passed**; Golden Thread B **17 passed**; ruff **PASS**; mypy **PASS**; frontend typecheck **PASS**; vitest **11 passed**; build **PASS**; tauri build **PASS**. Full suite and coverage **NOT RUN**.
+
+P2.10-C is a Tauri desktop local shell / desktop wrapper contract pack only. It does NOT implement P2.10-D/E, mobile app, CLI/TUI parity, arbitrary command execution, native file/secrets/shell/runtime/sandbox authority, Shell LIVE, production desktop app, full local app, or change P2.VSLICE-A preflight, command preflight, policy, identity, or sandbox behavior. Runnable desktop wrapper is DEV_FIXTURE — not Shell LIVE, not full desktop app, not native authority.
+
+Report: `agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md`
+
 ## P2.10-B Local Web Shell Skeleton Validation (COMPLETE)
 
 ```bash

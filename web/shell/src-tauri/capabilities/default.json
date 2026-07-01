@@ -1,0 +1,7 @@
+{
+  "$schema": "https://schema.tauri.app/config/2/capability",
+  "identifier": "default",
+  "description": "P2.10-C minimal desktop wrapper — no native authority bridges",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

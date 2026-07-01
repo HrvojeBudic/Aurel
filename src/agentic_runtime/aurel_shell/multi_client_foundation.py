@@ -56,8 +56,9 @@ P2_10_A_TEST_PARITY_REF = "tests/test_shell_client_parity_matrix.py"
 P2_10_A_TEST_RUN_MODES_REF = "tests/test_shell_client_run_modes.py"
 
 P2_10_B_NOT_STARTED = True
-P2_10_C_NOT_STARTED = True
+P2_10_C_NOT_STARTED = False
 P2_10_D_NOT_STARTED = True
+P2_10_C_REPORT_PATH = "agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md"
 
 _SURFACE_SELECTOR_IDS: frozenset[str] = frozenset(
     {"aurel_cro", "hq", "corp", "hub", "ide"}
@@ -642,12 +643,12 @@ def build_shell_client_local_run_modes() -> tuple[ShellClientLocalRunModeEntry, 
         ShellClientKind.WEB: (
             ShellClientRunMode.WEB_DEV_SHELL_CONTRACT,
             ShellClientTruthLabel.CONTRACT_ONLY,
-            "no npm run dev scaffold exists",
+            "web shell scaffold exists under web/shell",
         ),
         ShellClientKind.DESKTOP_TAURI: (
             ShellClientRunMode.DESKTOP_TAURI_CONTRACT,
             ShellClientTruthLabel.CONTRACT_ONLY,
-            "no tauri dev scaffold exists",
+            "tauri dev scaffold exists under web/shell/src-tauri",
         ),
         ShellClientKind.MOBILE_FOUNDATION: (
             ShellClientRunMode.MOBILE_CONTRACT_ONLY,
@@ -667,6 +668,9 @@ def build_shell_client_local_run_modes() -> tuple[ShellClientLocalRunModeEntry, 
     }
     cli_binding = build_shell_cli_binding_contract()
     tui_binding = build_shell_tui_binding_contract()
+    repo_root = Path(__file__).resolve().parents[3]
+    web_shell_package = repo_root / "web" / "shell" / "package.json"
+    tauri_conf = repo_root / "web" / "shell" / "src-tauri" / "tauri.conf.json"
     for client_kind in _SHELL_CLIENT_KINDS:
         run_mode, truth_label, limitation = run_truth[client_kind]
         locally_runnable = False
@@ -676,6 +680,14 @@ def build_shell_client_local_run_modes() -> tuple[ShellClientLocalRunModeEntry, 
         }
         launch_command = ""
         evidence = [P2_10_A_REPORT_PATH]
+        if client_kind is ShellClientKind.WEB and web_shell_package.is_file():
+            locally_runnable = True
+            launch_command = "npm run dev"
+            evidence.append("web/shell/package.json")
+        if client_kind is ShellClientKind.DESKTOP_TAURI and tauri_conf.is_file():
+            locally_runnable = True
+            launch_command = "npm run tauri:dev"
+            evidence.extend(("web/shell/package.json", "web/shell/src-tauri/tauri.conf.json"))
         if client_kind is ShellClientKind.CLI:
             evidence.append("src/agentic_runtime/aurel_shell/cli_binding.py")
             if cli_binding.binding_status is not ShellBindingStatus.READ_ONLY_CONTRACT:

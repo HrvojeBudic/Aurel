@@ -64,7 +64,7 @@ describe("web shell contract binding", () => {
   it("points next pack to P2.10-C", () => {
     const model = loadFixture();
     expect(model.next_pack).toBe("P2.10-C");
-    expect(model.p210c_not_started).toBe(true);
+    expect(model.p210c_not_started).toBe(false);
     expect(model.p210d_not_started).toBe(true);
   });
 });

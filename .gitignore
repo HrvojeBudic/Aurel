@@ -9,6 +9,7 @@ htmlcov/
 *.egg-info/
 dist/
 node_modules/
+web/shell/src-tauri/target/
 build/
 demo_buggy_calculator/
 .cursor/debug-*.log

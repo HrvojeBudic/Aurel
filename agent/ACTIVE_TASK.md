@@ -1,6 +1,16 @@
-# Active Task: P2.10-B complete; next P2.10-C
+# Active Task: P2.10-C complete; next P2.10-D
 
-**Status:** P2.10-B COMPLETE — Local Web Shell Skeleton / Contract-Bound Client Read Model. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A DONE. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-C is next. P2.10-C/D/E remain NOT_DONE. Local web skeleton runnable (DEV_FIXTURE). No Shell LIVE, command execution, desktop/mobile runnable, or full local app claim.
+**Status:** P2.10-C COMPLETE — Tauri Desktop Local Shell / Desktop Wrapper Contract. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A DONE. P2.10-B DONE. P2.VSLICE-A remains PREFLIGHT_ONLY. P2.10-D is next. P2.10-D/E remain NOT_DONE. Desktop wrapper runnable (DEV_FIXTURE). No Shell LIVE, command execution, native authority, full desktop app, mobile runnable, or CLI/TUI parity claim.
+
+## P2.10-C Status
+
+**DONE — TAURI_DESKTOP_WRAPPER_CONTRACT / DESKTOP_TAURI_DEV_RUNNABLE / P2_10_D_NEXT / P2_10_D_E_NOT_DONE** — Implemented Python `DesktopShellReadModel`, `DesktopShellCapabilityBoundary`, deterministic desktop JSON fixture, and minimal Tauri 2 wrapper under `web/shell/src-tauri/` wrapping the P2.10-B web skeleton.
+
+Report: `agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md`
+
+Current / next recommended roadmap task: **P2.10-D — CLI/TUI Parity Binding / Terminal Client Read Model**
+
+Reason: P2.10-C completed the contract-bound Tauri desktop wrapper. P2.10-D can bind CLI/TUI parity against the same Shell client truth. P2.10-E remains NOT_DONE. No Shell LIVE, command execution, native authority, or full desktop app claim.
 
 ## P2.10-B Status
 

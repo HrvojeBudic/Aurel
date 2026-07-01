@@ -153,3 +153,31 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.desktop-app-shell .desktop-wrapper-panel {
+  margin: 1rem 1.25rem 0;
+  border: 1px solid #3d4f63;
+  background: #151c24;
+}
+
+.desktop-wrapper-panel .status-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0.35rem 1rem;
+}
+
+.desktop-wrapper-panel .mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+}
+
+.capability-boundary {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #2a3441;
+}
+
+.capability-boundary p {
+  margin: 0.35rem 0;
+  font-size: 0.875rem;
+}

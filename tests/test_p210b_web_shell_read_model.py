@@ -42,7 +42,7 @@ def _roundtrip(obj) -> dict:
 def test_p210b_constants() -> None:
     assert P2_10_B_PACK_ID == "P2.10-B"
     assert P2_10_B_NEXT_PACK == "P2.10-C"
-    assert P2_10_C_NOT_STARTED is True
+    assert P2_10_C_NOT_STARTED is False
     assert P2_10_D_NOT_STARTED is True
     assert P2_10_E_NOT_STARTED is True
 
@@ -53,7 +53,7 @@ def test_p210b_prerequisite_gate_passes_with_p210a() -> None:
     assert gate.p210a_report_indexed is True
     assert gate.p210a_proves_multi_client_done is True
     assert gate.p210a_points_to_p210b is True
-    assert gate.p210c_not_started is True
+    assert gate.p210c_not_started is False
     assert gate.p210d_not_started is True
     assert gate.gate_status is P210BPrerequisiteGateStatus.GATE_PASSED
     assert gate.blockers == ()
@@ -107,7 +107,7 @@ def test_p210b_p210c_next_not_implemented() -> None:
     result = build_p2_10_b_web_shell_result()
     assert result.next_pack == "P2.10-C"
     rm = result.read_model
-    assert rm.p210c_not_started is True
+    assert rm.p210c_not_started is False
     assert rm.p210d_not_started is True
     assert rm.p210e_not_started is True
     proof = result.side_effect_proof

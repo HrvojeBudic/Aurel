@@ -33,7 +33,7 @@ def test_p210a_constants_and_supported_clients() -> None:
     assert P2_10_A_PACK_ID == "P2.10-A"
     assert P2_10_A_NEXT_PACK == "P2.10-B"
     assert P2_10_B_NOT_STARTED is True
-    assert P2_10_C_NOT_STARTED is True
+    assert P2_10_C_NOT_STARTED is False
     assert P2_10_D_NOT_STARTED is True
     result = build_p2_10_a_multi_client_foundation_result()
     kinds = {s.client_kind for s in result.client_states}
@@ -91,7 +91,7 @@ def test_p210a_p210b_next_not_implemented() -> None:
     assert result.next_pack == "P2.10-B"
     assert result.p210b_ready is True
     assert result.p210b_not_started is True
-    assert result.p210c_not_started is True
+    assert result.p210c_not_started is False
     assert result.p210d_not_started is True
     proof = result.side_effect_proof
     assert proof.p2_10_b_implemented is False

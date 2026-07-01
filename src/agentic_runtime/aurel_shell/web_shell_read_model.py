@@ -546,9 +546,9 @@ def assert_p2_10_b_no_scope_expansion(result: P210BResult) -> None:
             field="next_pack",
             code=AurelShellErrorCode.VALIDATION_ERROR,
         )
-    if not rm.p210c_not_started:
+    if P2_10_C_NOT_STARTED and not rm.p210c_not_started:
         _reject(
-            "P2.10-C must remain not started",
+            "P2.10-C must remain not started while P2_10_C_NOT_STARTED is True",
             field="p210c_not_started",
             code=AurelShellErrorCode.VALIDATION_ERROR,
         )
