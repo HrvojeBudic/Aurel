@@ -273,8 +273,8 @@ Exact P2.10-A scope must be confirmed by a future operator dispatch. P2.9-D did 
 
 ## 20. Commit Hash
 
-Implementation commit: PENDING
+Implementation commit: `b0772c6` - `feat(shell): add P2.9-D final exit seal gate`
 
 ## 21. Final Git Status
 
-PENDING final validation and commit.
+Clean after implementation commit `b0772c6`; this report hash field is recorded by the follow-up docs hash-record commit.
