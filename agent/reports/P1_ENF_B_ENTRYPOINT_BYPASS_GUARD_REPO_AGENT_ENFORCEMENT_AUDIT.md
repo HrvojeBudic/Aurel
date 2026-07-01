@@ -285,8 +285,8 @@ Alternative operator path: **P2.9-B** Shell Exit Seal Readiness rerun.
 
 ## 20. Commit Hash
 
-Pending until commit.
+`47ea1286ad2ee681c34c4c5a4b35b5e308f1263a`
 
 ## 21. Final Git Status
 
-Pending until commit. Expected: clean.
+Clean — `git status --short` empty after commit.
