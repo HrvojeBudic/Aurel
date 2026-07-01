@@ -227,8 +227,8 @@ Exact P2.9-C scope should be confirmed from the next operator dispatch because R
 
 ## 19. Commit Hash
 
-Pending until implementation commit is created.
+Implementation commit: `161fb8b` - `feat(shell): add P2.9-B exit readiness matrix`
 
 ## 20. Final Git Status
 
-Pending until implementation commit is created.
+Clean after implementation commit `161fb8b`; this report hash field is recorded by the follow-up docs hash-record commit.
