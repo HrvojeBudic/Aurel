@@ -1,6 +1,16 @@
-# Active Task: P2.9-B-R1 complete; next true P2.9-B (P2.9.6–P2.9.10)
+# Active Task: P2.9-B complete; next P2.9-C (P2.9.11-P2.9.15)
 
-**Status:** P2.9-B-R1 COMPLETE — roadmap granularity reconciliation / P2.9.x coverage matrix. P2.9.0–P2.9.5 DONE (P2.9-A). P2.9.6–P2.9.10 PARTIAL via old P2.9-B evidence overlay only; true P2.9-B NOT DONE. old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A, P2.REVIEW-A, P1.ENF chain remain DONE. P2.9-C/D and P2.10+ NOT STARTED.
+**Status:** true P2.9-B COMPLETE — Shell Exit Seal readiness / validation / evidence matrix for P2.9.6-P2.9.10. P2.9.0-P2.9.5 DONE (P2.9-A). P2.9.6-P2.9.10 DONE (true P2.9-B). old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A remains PREFLIGHT_ONLY. P2.REVIEW-A and P1.ENF chain remain DONE. P2.9-C is next. P2.9-D remains NOT DONE. P2.10+ remains NOT STARTED.
+
+## true P2.9-B Status
+
+**DONE — SHELL_EXIT_READINESS_VALIDATION_EVIDENCE_MATRIX / P2_9_6_TO_P2_9_10_DONE / P2_9_C_NEXT / P2_10_BLOCKED** — Implemented checkpoint-level readiness contract, validation matrix, vertical-slice evidence binding, checkpoint seal evidence matrix, and P2.9-C handoff for P2.9.6-P2.9.10.
+
+Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_READINESS_VALIDATION_EVIDENCE_MATRIX.md`
+
+Current / next recommended roadmap task: **P2.9-C — P2.9.11-P2.9.15 Shell Exit Seal Finalization / next granular P2.9 pack**
+
+Reason: true P2.9-B completed P2.9.6-P2.9.10 only. P2.9.11-P2.9.20 remain NOT DONE, and P2.10+ is still blocked until P2.9-C/D are complete or explicitly sealed.
 
 ## P2.9-B-R1 Status
 
@@ -8,19 +18,15 @@
 
 Report: `agent/reports/P2_9_B_R1_ROADMAP_GRANULARITY_RECONCILIATION_P2_9_X_COVERAGE_MATRIX.md`
 
-Current / next recommended roadmap task: **true P2.9-B — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+Current / next recommended roadmap task at R1 time: true P2.9-B — now complete.
 
-Reason: P2.9.6–P2.9.10 have no true implementation evidence; old P2.9-B overlay does not close granular checkpoints. P2.10+ not justified.
+Reason: P2.9.6-P2.9.10 previously had no true implementation evidence; old P2.9-B overlay did not close granular checkpoints. P2.10+ was not justified.
 
 ## old P2.9-B Status (evidence overlay — retained)
 
 **DONE — SHELL_EXIT_SEAL_EVIDENCE_BOUNDARY / EVIDENCE_OVERLAY_ONLY / NOT_GRANULAR_P2_9_X_COMPLETE** — Consumed P2.REVIEW-A and P2.VSLICE-A evidence; produced P2 section seal matrix with truth labels. Retained as evidence boundary; not true P2.9-B granular completion.
 
 Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`
-
-## true P2.9-B Status
-
-**NOT DONE** — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix not implemented. Next executable pack.
 
 ## P2.VSLICE-A Status
 
