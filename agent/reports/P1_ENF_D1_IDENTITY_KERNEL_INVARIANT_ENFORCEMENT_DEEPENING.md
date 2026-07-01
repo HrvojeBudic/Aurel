@@ -183,8 +183,8 @@ Modified:
 
 ## 17. Commit Hash
 
-_(recorded after commit)_
+`1b85e40` — feat(runtime): deepen identity kernel invariant enforcement
 
 ## 18. Final Git Status
 
-_(recorded after commit)_
+Clean after commit `1b85e40`.
