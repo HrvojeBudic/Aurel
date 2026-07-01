@@ -236,8 +236,8 @@ Do not start P2.10+ until true P2.9-B/C/D coverage is closed or operator explici
 
 ## 18. Commit Hash
 
-Pending until commit.
+`0ce98df` — `docs(shell): reconcile P2.9 roadmap coverage`
 
 ## 19. Final Git Status
 
-Pending until commit.
+Clean after commit `0ce98df`.
