@@ -10,9 +10,15 @@ from typing import Any, Mapping
 
 class EntrypointGovernanceClassification(str, Enum):
     NON_EXECUTING_CONTRACT_ONLY = "non_executing_contract_only"
+    NON_EXECUTING_READ_MODEL_ONLY = "non_executing_read_model_only"
     GOVERNED_RUNTIME_SUBMIT = "governed_runtime_submit"
+    GOVERNED_DELEGATION_CONFIRMED = "governed_delegation_confirmed"
     GOVERNED_DELEGATION_REQUIRED = "governed_delegation_required"
+    TEST_ONLY_EXECUTION_FIXTURE = "test_only_execution_fixture"
+    DEV_FIXTURE_ONLY = "dev_fixture_only"
     BLOCKED_UNKNOWN_EXECUTION_RISK = "blocked_unknown_execution_risk"
+    BLOCKED_POLICY_BYPASS_RISK = "blocked_policy_bypass_risk"
+    BLOCKED_IDENTITY_BYPASS_RISK = "blocked_identity_bypass_risk"
     UNAVAILABLE = "unavailable"
 
 
@@ -92,9 +98,52 @@ class EntrypointGovernanceGuard:
 
 _AUREL_SHELL_CONTRACT_PREFIX = "agentic_runtime.aurel_shell."
 
+_SYMBOL_OVERRIDES: dict[str, EntrypointBypassGuardResult] = {
+    "agentic_runtime.repo_agent.PatchExecutor.apply": EntrypointBypassGuardResult(
+        entrypoint="agentic_runtime.repo_agent.PatchExecutor.apply",
+        classification=EntrypointGovernanceClassification.GOVERNED_DELEGATION_CONFIRMED,
+        bypass_risk=EntrypointBypassRisk.LOW,
+        delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
+        reason_codes=("REPO_AGENT_PATCH_DELEGATES_TO_RUNTIME_SUBMIT",),
+        metadata={"known_runtime_submit_delegation": True, "evidence": "repo_agent.py:647"},
+    ),
+    "agentic_runtime.repo_agent.TestRunnerAdapter.run": EntrypointBypassGuardResult(
+        entrypoint="agentic_runtime.repo_agent.TestRunnerAdapter.run",
+        classification=EntrypointGovernanceClassification.GOVERNED_DELEGATION_CONFIRMED,
+        bypass_risk=EntrypointBypassRisk.LOW,
+        delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
+        reason_codes=("REPO_AGENT_TEST_RUN_DELEGATES_TO_RUNTIME_SUBMIT",),
+        metadata={"known_runtime_submit_delegation": True, "evidence": "repo_agent.py:677"},
+    ),
+    "agentic_runtime.cli.cmd_status": EntrypointBypassGuardResult(
+        entrypoint="agentic_runtime.cli.cmd_status",
+        classification=EntrypointGovernanceClassification.NON_EXECUTING_READ_MODEL_ONLY,
+        bypass_risk=EntrypointBypassRisk.NONE,
+        delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
+        reason_codes=("CLI_STATUS_IS_READ_MODEL_ONLY",),
+    ),
+    "agentic_runtime.cli.cmd_verify": EntrypointBypassGuardResult(
+        entrypoint="agentic_runtime.cli.cmd_verify",
+        classification=EntrypointGovernanceClassification.BLOCKED_UNKNOWN_EXECUTION_RISK,
+        bypass_risk=EntrypointBypassRisk.HIGH,
+        delegation_requirement=GovernedDelegationRequirement.UNKNOWN,
+        reason_codes=("CLI_VERIFY_SUBPROCESS_BYPASS_RUNTIME_SUBMIT",),
+        metadata={"bypasses_runtime_submit": True},
+    ),
+    "agentic_runtime.demo_harness": EntrypointBypassGuardResult(
+        entrypoint="agentic_runtime.demo_harness",
+        classification=EntrypointGovernanceClassification.DEV_FIXTURE_ONLY,
+        bypass_risk=EntrypointBypassRisk.LOW,
+        delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
+        reason_codes=("DEV_FIXTURE_ONLY_NOT_PRODUCT_ENTRYPOINT",),
+    ),
+}
+
 
 def classify_entrypoint_governance(entrypoint: str) -> EntrypointBypassGuardResult:
     normalized = entrypoint.strip()
+    if normalized in _SYMBOL_OVERRIDES:
+        return _SYMBOL_OVERRIDES[normalized]
     if normalized in {
         "agentic_runtime.runtime.AgenticRuntime.submit",
         "AgenticRuntime.submit",
@@ -106,6 +155,14 @@ def classify_entrypoint_governance(entrypoint: str) -> EntrypointBypassGuardResu
             bypass_risk=EntrypointBypassRisk.NONE,
             delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
             reason_codes=("RUNTIME_SUBMIT_IS_GOVERNED_DISPOSAL_PATH",),
+        )
+    if normalized.startswith("tests."):
+        return EntrypointBypassGuardResult(
+            entrypoint=normalized,
+            classification=EntrypointGovernanceClassification.TEST_ONLY_EXECUTION_FIXTURE,
+            bypass_risk=EntrypointBypassRisk.LOW,
+            delegation_requirement=GovernedDelegationRequirement.NOT_REQUIRED,
+            reason_codes=("TEST_ONLY_EXECUTION_FIXTURE_NOT_PRODUCT_PATH",),
         )
     if normalized.startswith(_AUREL_SHELL_CONTRACT_PREFIX):
         return EntrypointBypassGuardResult(
@@ -128,6 +185,22 @@ def classify_entrypoint_governance(entrypoint: str) -> EntrypointBypassGuardResu
             delegation_requirement=GovernedDelegationRequirement.REQUIRED,
             reason_codes=("REPO_AGENT_EXECUTION_LIKE_PATH_REQUIRES_RUNTIME_SUBMIT",),
             metadata={"known_runtime_submit_delegation": True},
+        )
+    if normalized.startswith("agentic_runtime.cli_modules.identity"):
+        return EntrypointBypassGuardResult(
+            entrypoint=normalized,
+            classification=EntrypointGovernanceClassification.BLOCKED_IDENTITY_BYPASS_RISK,
+            bypass_risk=EntrypointBypassRisk.HIGH,
+            delegation_requirement=GovernedDelegationRequirement.UNKNOWN,
+            reason_codes=("IDENTITY_CLI_NOT_PROVEN_SUBMIT_GOVERNED",),
+        )
+    if normalized.startswith("agentic_runtime.cli_modules.policy"):
+        return EntrypointBypassGuardResult(
+            entrypoint=normalized,
+            classification=EntrypointGovernanceClassification.BLOCKED_POLICY_BYPASS_RISK,
+            bypass_risk=EntrypointBypassRisk.HIGH,
+            delegation_requirement=GovernedDelegationRequirement.UNKNOWN,
+            reason_codes=("POLICY_CLI_NOT_PROVEN_SUBMIT_GOVERNED",),
         )
     if _looks_execution_like(normalized):
         return EntrypointBypassGuardResult(

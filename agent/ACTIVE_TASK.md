@@ -1,6 +1,16 @@
-# Active Task: P1.ENF-A complete; next P2.9-B unless operator chooses P1.ENF-B
+# Active Task: P1.ENF-B complete; next P1.ENF-C unless operator reruns P2.9-B
 
-**Status:** P1.ENF-A COMPLETE as explicit-config enforcement bridge - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification added. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-B COMPLETE as entrypoint bypass guard expansion / repo_agent enforcement audit. P1.ENF-A and P1.ENF-A-OMNI-R1 remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-B Status
+
+**DONE — GOVERNANCE_AUDIT / NO_BYPASS_EVIDENCE / P2.9-B_NOT_DONE** — Entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, AurelShell contract-only confirmation, unknown-risk blocking, and no-scope-expansion proof added under `entrypoint_governance_audit.py` with guard extensions in `entrypoint_governance_guard.py`.
+
+Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`
+
+Current / next recommended roadmap task: **P1.ENF-C — Golden Thread B / P1.8–P2.9 Governance Continuity**
+
+Reason: P1.ENF-B completed the requested entrypoint audit expansion without implementing P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-A Status
 
@@ -8,9 +18,9 @@
 
 Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`
 
-Current / next recommended roadmap task: **P2.9-B**
+Current / next recommended roadmap task: **P1.ENF-C** (P1.ENF-B now complete; P2.9-B remains NOT DONE alternative)
 
-Reason: P1.ENF-A completed the requested enforcement pivot without implementing P2.9-B. P2.9-B remains NOT DONE. P2.9-C remains blocked until P2.9-B completes. Operator may choose P1.ENF-B first if expanding the entrypoint bypass audit is higher priority.
+Reason: P1.ENF-A completed the requested enforcement pivot. P1.ENF-B expanded the entrypoint audit. P2.9-B remains NOT DONE. P2.9-C remains blocked until P2.9-B completes.
 
 ## P2.9-A-R1 Repair Status
 

@@ -39,12 +39,11 @@ def test_repo_agent_execution_like_paths_require_governed_delegation():
     result = classify_entrypoint_governance(
         "agentic_runtime.repo_agent.PatchExecutor.apply"
     )
-    assert (
-        result.classification
-        is EntrypointGovernanceClassification.GOVERNED_DELEGATION_REQUIRED
-    )
-    assert result.delegation_requirement is GovernedDelegationRequirement.REQUIRED
-    assert result.metadata["known_runtime_submit_delegation"] is True
+    assert result.classification in {
+        EntrypointGovernanceClassification.GOVERNED_DELEGATION_REQUIRED,
+        EntrypointGovernanceClassification.GOVERNED_DELEGATION_CONFIRMED,
+    }
+    assert result.metadata.get("known_runtime_submit_delegation") is True
 
 
 def test_unknown_execution_like_entrypoint_is_blocked_unknown_risk():

@@ -1,15 +1,16 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-A-OMNI-R1 - Validation Truth / Fixture Determinism / Core Integrity Repair)_
+_Last updated: 2026-07-01 (P1.ENF-B - Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit)_
 
 ## Current Roadmap Pointer
 
+- Last completed enforcement audit: **P1.ENF-B** - entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, unknown-risk blocking
 - Last completed repair: **P1.ENF-A-OMNI-R1** - consent fixture determinism, core strict mypy probe truth, trace Merkle live-payload semantics
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-A-OMNI-R1 complete - validation truth repaired; P1.ENF-B is next planned enforcement pack unless operator reruns P2.9-B first**
-- Next recommended roadmap task: **P1.ENF-B - Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-B complete - entrypoint bypass guard expansion / repo_agent enforcement audit; P1.ENF-C is next planned Golden Thread pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance Continuity**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -35,6 +36,14 @@ _Last updated: 2026-07-01 (P1.ENF-A-OMNI-R1 - Validation Truth / Fixture Determi
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-B Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit
+
+P1.ENF-B expands P1.ENF-A entrypoint classification into a repo-backed audit: `entrypoint_governance_audit.py` with `EntrypointDiscoveryRecord`, `SideEffectVector`, `P1ENFBResult`, and `P1ENFBSideEffectProof`; expanded guard classifications including `GOVERNED_DELEGATION_CONFIRMED`, `NON_EXECUTING_READ_MODEL_ONLY`, `TEST_ONLY_EXECUTION_FIXTURE`, `DEV_FIXTURE_ONLY`, `BLOCKED_POLICY_BYPASS_RISK`, and `BLOCKED_IDENTITY_BYPASS_RISK`; 19 seed discovery records with file:line evidence; repo_agent matrix proving `PatchExecutor.apply` and `TestRunnerAdapter.run` delegate to `runtime.submit`; CLI audit marking `cmd_status` read-only and `cmd_verify` as blocked subprocess bypass.
+
+Boundary: audit/guard expansion only. No Shell command router, product UI, P2.9-B, repo_agent rewrite, identity CLI refactor, sandbox hardening, runtime.submit rewrite, LIVE, TRACE_VERIFIED, or all-entrypoints-safe claim.
+
+Validation: compileall PASS; entrypoint governance audit 10 passed; repo_agent entrypoint audit 6 passed; entrypoint governance guard 6 passed; P1.ENF-A regression 18 passed; P1.ENF-A-OMNI-R1 repair 7 passed; ruff PASS; baseline mypy PASS (329 files); core strict probe PASS (5 files). Optional aurel_shell/full suite/bandit NOT RUN. Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`.
 
 ## P1.ENF-A Runtime Submit Enforcement Bridge
 

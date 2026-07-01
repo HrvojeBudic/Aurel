@@ -22,6 +22,17 @@ from .entrypoint_governance_guard import (
     NonExecutingEntrypointProof,
     classify_entrypoint_governance,
 )
+from .entrypoint_governance_audit import (
+    EntrypointDiscoveryRecord,
+    EntrypointGovernanceAudit,
+    EntrypointKind,
+    EntrypointSurface,
+    EntrypointTruthLabel,
+    P1ENFBResult,
+    P1ENFBSideEffectProof,
+    SideEffectVector,
+    classify_entrypoint_with_audit_symbol,
+)
 from .governance_enforcement import (
     GovernanceEnforcementBoundary,
     GovernanceEnforcementConfig,
@@ -241,6 +252,10 @@ __all__ = [
     "EntrypointBypassRisk", "EntrypointBypassGuardResult",
     "GovernedDelegationRequirement", "NonExecutingEntrypointProof",
     "classify_entrypoint_governance",
+    "EntrypointGovernanceAudit", "EntrypointDiscoveryRecord",
+    "EntrypointSurface", "EntrypointKind", "EntrypointTruthLabel",
+    "SideEffectVector", "P1ENFBResult", "P1ENFBSideEffectProof",
+    "classify_entrypoint_with_audit_symbol",
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend",

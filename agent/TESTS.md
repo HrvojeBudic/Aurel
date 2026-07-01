@@ -105,6 +105,34 @@ P1.ENF-A-OMNI-R1 is validation-truth repair only. It does NOT implement P1.ENF-B
 
 Report: `agent/reports/P1_ENF_A_OMNI_R1_VALIDATION_TRUTH_CORE_INTEGRITY_REPAIR.md`
 
+## P1.ENF-B Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_entrypoint_governance_audit.py -q
+.venv/bin/python -m pytest tests/test_repo_agent_entrypoint_audit.py -q
+.venv/bin/python -m pytest tests/test_entrypoint_governance_guard.py -q
+.venv/bin/python -m pytest tests/test_governance_enforcement_submit.py tests/test_identity_submit_context.py -q
+.venv/bin/python -m pytest tests/test_trace.py tests/test_trace_merkle_integrity.py tests/test_consent_fixture_determinism.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m mypy --follow-imports=silent \
+  --enable-error-code arg-type \
+  --enable-error-code call-arg \
+  --enable-error-code union-attr \
+  src/agentic_runtime/runtime.py \
+  src/agentic_runtime/trace.py \
+  src/agentic_runtime/repo_agent.py \
+  src/agentic_runtime/core_types.py \
+  src/agentic_runtime/__init__.py
+```
+
+Results after P1.ENF-B: compileall **PASS**; entrypoint governance audit **10 passed**; repo_agent entrypoint audit **6 passed**; entrypoint governance guard **6 passed**; P1.ENF-A regression **18 passed**; P1.ENF-A-OMNI-R1 repair **7 passed**; ruff **PASS**; baseline mypy **PASS** (329 source files); core strict probe **PASS** (5 files). Optional aurel_shell, full suite, and Bandit **NOT RUN**.
+
+P1.ENF-B is entrypoint audit/guard expansion only. It does NOT implement P1.ENF-C, P2.9-B, Shell command router, product UI, repo_agent rewrite, identity CLI refactor, sandbox hardening, LIVE, TRACE_VERIFIED, or all-entrypoints-safe claim.
+
+Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`
+
 ## P2.9-A Shell Exit Seal Foundation Validation (COMPLETE)
 
 ```bash
