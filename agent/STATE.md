@@ -1,11 +1,12 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-D1 - Identity Kernel Invariant Enforcement Deepening)_
+_Last updated: 2026-07-01 (P1.ENF-E - Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
+- Last completed sandbox backend gate: **P1.ENF-E** - sandbox safety taxonomy, backend requirement gate, runtime submit binding; UnsafeLocalSandbox remains UNSAFE_LOCAL/dev-only; SAFE_VERIFIED unavailable
 - Last completed identity invariant enforcement: **P1.ENF-D1** - selected Identity Kernel invariant discovery and runtime submit/preflight enforcement binding for IK-002/005/006/007
 - Last completed docs/canon sync: **P1.ENF-F-B** - v5.5 active canon pointer, historical doc status labels, canon index
 - Last completed continuity harness: **P1.ENF-C** - Golden Thread B governance continuity spine linking P1.8–P2.9-A and P1.ENF repair/audit/gate chain with truth labels and gap matrix
@@ -15,8 +16,8 @@ _Last updated: 2026-07-01 (P1.ENF-D1 - Identity Kernel Invariant Enforcement Dee
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-D1 complete - selected Identity Kernel invariant enforcement deepening; P1.ENF-E is next planned pack unless operator reruns P2.9-B first**
-- Next recommended roadmap task: **P1.ENF-E - Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-E complete - sandbox backend safety classification and unsafe backend gating; P2.REVIEW-A is next planned pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P2.REVIEW-A - First True P2 Vertical Slice Decision**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -42,6 +43,14 @@ _Last updated: 2026-07-01 (P1.ENF-D1 - Identity Kernel Invariant Enforcement Dee
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-E Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening
+
+P1.ENF-E adds sandbox backend safety classification (`sandbox_safety.py`) and a runtime submit gate (`sandbox_backend_gate.py`) bound into `runtime.py` under explicit governance enforcement config. `UnsafeLocalSandbox` is classified UNSAFE_LOCAL and cannot claim LIVE or SAFE_VERIFIED. `SAFE_VERIFIED` remains unavailable (empty proof refs). `require_safe_sandbox_backend=True` under `ENFORCE_FAIL_CLOSED` blocks unsafe local backends.
+
+Boundary: sandbox backend truth gate only. No full sandbox platform, container rewrite, AurelExec/tool gateway/Custos redesign, P2.REVIEW-A, P2.9-B, Shell router, product UI, LIVE, TRACE_VERIFIED, or P2 complete claim.
+
+Report: `agent/reports/P1_ENF_E_SANDBOX_SAFE_BACKEND_GATING_UNSAFE_LOCAL_HARDENING.md`
 
 ## P1.ENF-D1 Identity Kernel Invariant Enforcement Deepening
 

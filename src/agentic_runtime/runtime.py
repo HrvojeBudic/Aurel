@@ -24,7 +24,7 @@ reads happen via read-only sub-entities that never enter this write path).
 from __future__ import annotations
 
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Literal, Protocol
 
 from .budget import BudgetExceeded, BudgetLedger
@@ -76,12 +76,28 @@ from .policy_cards.runtime_projection import (
     shadow_projection_error_payload,
 )
 from .sandbox_policy import SandboxDecision, SandboxPolicy
+from .sandbox_backend_gate import (
+    SandboxBackendGateResult,
+    evaluate_sandbox_backend_gate,
+    sandbox_backend_gate_to_artifact,
+    sandbox_backend_requirement_from_config,
+)
+from .sandbox_safety import resolve_wrapped_sandbox_backend
 from .tool_contracts import (ContractValidationResult, ToolContractRegistry,
                              ToolInputValidator, ToolOutputValidator,
                              default_contract_registry)
 from .tools import ToolRuntime
 from .trace import TraceLedgerBackend
 from .verifier import StateVerifier
+
+_GOVERNANCE_SUBMIT_ARG_KEYS = frozenset({
+    "_identity_invariant_signals",
+    "_sandbox_backend_signals",
+})
+
+
+def _contract_args(args: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in args.items() if k not in _GOVERNANCE_SUBMIT_ARG_KEYS}
 
 
 @dataclass
@@ -161,7 +177,7 @@ class AgenticRuntime:
         if not gate.ok or contract is None:
             return self._contract_blocked(
                 pre_policy_hash, cmd, gate, phase="registry", card=card)
-        input_check = self.input_validator.validate(contract, cmd.args)
+        input_check = self.input_validator.validate(contract, _contract_args(cmd.args))
         if not input_check.ok:
             return self._contract_blocked(
                 pre_policy_hash, cmd, input_check, phase="input", card=card)
@@ -190,6 +206,17 @@ class AgenticRuntime:
                 reason=reason,
                 identity_submit=identity_submit,
             )
+        sandbox_backend_gate = self._evaluate_sandbox_backend_gate(cmd)
+        if sandbox_backend_gate is not None and sandbox_backend_gate.should_block:
+            reason = _sandbox_backend_gate_block_reason(sandbox_backend_gate)
+            return self._governance_enforcement_blocked(
+                pre_policy_hash,
+                cmd,
+                card,
+                reason=reason,
+                identity_submit=identity_submit,
+                sandbox_backend_gate=sandbox_backend_gate,
+            )
         # ---- 1. POLICY ------------------------------------------------- #
         decision = self.policy.evaluate(cmd, card)
         if decision.verdict is PolicyVerdict.DENY:
@@ -198,6 +225,7 @@ class AgenticRuntime:
             self._attach_submit_governance_artifacts(
                 obs,
                 identity_submit=identity_submit,
+                sandbox_backend_gate=sandbox_backend_gate,
             )
             vres = VerifierResult(False, "policy", reason="denied")
             runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
@@ -231,6 +259,7 @@ class AgenticRuntime:
                 or "policy resolver submit influence failed closed",
                 identity_submit=identity_submit,
                 policy_submit_gate=policy_submit_gate,
+                sandbox_backend_gate=sandbox_backend_gate,
             )
 
         # ---- 2. APPROVAL (HITL) ---------------------------------------- #
@@ -342,7 +371,7 @@ class AgenticRuntime:
             if self.verifier.should_check_integrity(cmd):
                 integrity_before = self.verifier.capture_integrity()
 
-            obs = self.tools.dispatch(cmd)
+            obs = self.tools.dispatch(replace(cmd, args=_contract_args(cmd.args)))
             obs = self.budget.apply_output_caps(obs)
             try:
                 self.budget.charge_time(obs.duration_s)
@@ -409,6 +438,7 @@ class AgenticRuntime:
             obs,
             identity_submit=identity_submit,
             policy_submit_gate=policy_submit_gate,
+            sandbox_backend_gate=sandbox_backend_gate,
         )
         rec = self._append_transition(
             cmd, decision.verdict, obs, vres, before_hash, after_hash
@@ -806,6 +836,26 @@ class AgenticRuntime:
             submit_metadata={"args": cmd.args},
         )
 
+    def _evaluate_sandbox_backend_gate(
+        self,
+        cmd: CommandEnvelope,
+    ) -> SandboxBackendGateResult | None:
+        if not self._governance_enforcement_explicit:
+            return None
+        cfg = self.governance_enforcement_config
+        requirement = sandbox_backend_requirement_from_config(
+            mode=cfg.mode,
+            require_safe_sandbox_backend=cfg.require_safe_sandbox_backend,
+            gate_mode=None,
+            submit_metadata={"args": cmd.args},
+        )
+        backend = resolve_wrapped_sandbox_backend(self.tools.sandbox)
+        return evaluate_sandbox_backend_gate(
+            mode=cfg.mode,
+            backend=backend,
+            requirement=requirement,
+        )
+
     def _evaluate_policy_resolver_submit_influence(
         self,
         cmd: CommandEnvelope,
@@ -840,6 +890,7 @@ class AgenticRuntime:
         identity_preflight: IdentitySubmitPreflightResult | None = None,
         identity_invariant_enforcement: IdentityInvariantEnforcementResult | None = None,
         policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
+        sandbox_backend_gate: SandboxBackendGateResult | None = None,
     ) -> None:
         if not self._governance_enforcement_explicit:
             return
@@ -871,6 +922,10 @@ class AgenticRuntime:
             artifacts["policy_submit_influence"] = policy_submit_gate_result_to_artifact(
                 policy_submit_gate
             )
+        if sandbox_backend_gate is not None:
+            artifacts["sandbox_backend_gate"] = sandbox_backend_gate_to_artifact(
+                sandbox_backend_gate
+            )
         obs.artifacts["governance_enforcement"] = artifacts
 
     def _governance_enforcement_blocked(
@@ -883,6 +938,7 @@ class AgenticRuntime:
         identity_submit: IdentitySubmitWithInvariantResult | None = None,
         identity_preflight: IdentitySubmitPreflightResult | None = None,
         policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
+        sandbox_backend_gate: SandboxBackendGateResult | None = None,
     ) -> CommandResult:
         obs = ObservationEnvelope.make(
             cmd.id,
@@ -894,6 +950,7 @@ class AgenticRuntime:
             identity_submit=identity_submit,
             identity_preflight=identity_preflight,
             policy_submit_gate=policy_submit_gate,
+            sandbox_backend_gate=sandbox_backend_gate,
         )
         preflight = (
             identity_submit.preflight
@@ -916,6 +973,16 @@ class AgenticRuntime:
                 "identity_invariant_decision": invariant_status,
                 "policy_status": (
                     policy_submit_gate.status.value if policy_submit_gate is not None else ""
+                ),
+                "sandbox_gate_decision": (
+                    sandbox_backend_gate.decision.value
+                    if sandbox_backend_gate is not None
+                    else ""
+                ),
+                "sandbox_safety_class": (
+                    sandbox_backend_gate.artifact.sandbox_safety_class
+                    if sandbox_backend_gate is not None
+                    else ""
                 ),
             },
         )
@@ -1180,6 +1247,14 @@ def _identity_submit_block_reason(result: IdentitySubmitWithInvariantResult) -> 
     if artifact.violations:
         return artifact.violations[0].message
     return "identity kernel invariant enforcement failed closed"
+
+
+def _sandbox_backend_gate_block_reason(result: SandboxBackendGateResult) -> str:
+    if result.artifact.violations:
+        return result.artifact.violations[0].message
+    if result.artifact.unavailable_reasons:
+        return result.artifact.unavailable_reasons[0]
+    return "sandbox backend gate failed closed"
 
 
 class _NullLock:

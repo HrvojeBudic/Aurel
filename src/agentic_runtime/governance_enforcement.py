@@ -31,6 +31,7 @@ class GovernanceEnforcementBoundary(str, Enum):
     POLICY_RESOLVER_SUBMIT_INFLUENCE = "policy_resolver_submit_influence"
     IDENTITY_SUBMIT_CONTEXT = "identity_submit_context"
     IDENTITY_KERNEL_INVARIANT = "identity_kernel_invariant"
+    SANDBOX_BACKEND_GATE = "sandbox_backend_gate"
     ENTRYPOINT_BYPASS_GUARD = "entrypoint_bypass_guard"
     SIDE_EFFECT_PROOF = "side_effect_proof"
 
@@ -40,6 +41,7 @@ class GovernanceEnforcementConfig:
     mode: GovernanceEnforcementMode = GovernanceEnforcementMode.SHADOW_ONLY
     require_policy_context: bool = False
     require_identity_context: bool = False
+    require_safe_sandbox_backend: bool = False
     attach_submit_artifacts: bool = True
 
     def __post_init__(self) -> None:
@@ -48,6 +50,7 @@ class GovernanceEnforcementConfig:
         for field_name in (
             "require_policy_context",
             "require_identity_context",
+            "require_safe_sandbox_backend",
             "attach_submit_artifacts",
         ):
             if not isinstance(getattr(self, field_name), bool):
@@ -67,6 +70,7 @@ class GovernanceEnforcementConfig:
             "mode": self.mode.value,
             "require_identity_context": self.require_identity_context,
             "require_policy_context": self.require_policy_context,
+            "require_safe_sandbox_backend": self.require_safe_sandbox_backend,
             "status": self.status.value,
         }
 

@@ -1,6 +1,16 @@
-# Active Task: P1.ENF-D1 complete; next P1.ENF-E unless operator reruns P2.9-B
+# Active Task: P1.ENF-E complete; next P2.REVIEW-A unless operator reruns P2.9-B
 
-**Status:** P1.ENF-D1 COMPLETE as selected Identity Kernel invariant enforcement deepening. P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-E COMPLETE as sandbox backend safety classification and unsafe backend gating. P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-E Status
+
+**DONE — SANDBOX_BACKEND_GATED / P2.9-B_NOT_DONE** — Sandbox safety taxonomy, backend requirement gate, runtime submit binding with governance artifacts; UnsafeLocalSandbox remains UNSAFE_LOCAL/dev-only; SAFE_VERIFIED unavailable without proof; 13 focused tests plus regressions passing.
+
+Report: `agent/reports/P1_ENF_E_SANDBOX_SAFE_BACKEND_GATING_UNSAFE_LOCAL_HARDENING.md`
+
+Current / next recommended roadmap task: **P2.REVIEW-A — First True P2 Vertical Slice Decision**
+
+Reason: P1.ENF-E closed the execution-boundary truth gap for unsafe sandbox backends without implementing sandbox platform rewrite or P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-D1 Status
 
@@ -8,9 +18,7 @@
 
 Report: `agent/reports/P1_ENF_D1_IDENTITY_KERNEL_INVARIANT_ENFORCEMENT_DEEPENING.md`
 
-Current / next recommended roadmap task: **P1.ENF-E — Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening**
-
-Reason: P1.ENF-D1 completed selected invariant enforcement without identity CLI refactor, auth/session subsystem, Custos runtime, sandbox hardening, or P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
+Current / next recommended roadmap task: **P1.ENF-E — Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening** (completed; see P1.ENF-E Status above)
 
 ## P1.ENF-F-B Status
 

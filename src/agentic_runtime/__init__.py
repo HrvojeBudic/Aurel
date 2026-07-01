@@ -190,6 +190,25 @@ from .sandbox_policy import (
     resolve_apply_sandbox_profile,
     resolve_workspace_path,
 )
+from .sandbox_backend_gate import (
+    SandboxBackendDecision,
+    SandboxBackendGateMode,
+    SandboxBackendGateResult,
+    SandboxBackendRequirement,
+    SANDBOX_BACKEND_SIGNALS_KEY,
+    evaluate_sandbox_backend_gate,
+    sandbox_backend_gate_to_artifact,
+    sandbox_backend_requirement_from_config,
+)
+from .sandbox_safety import (
+    SandboxBackendCapability,
+    SandboxBackendKind,
+    SandboxBackendRecord,
+    SandboxSafetyClass,
+    classify_sandbox_backend,
+    discover_sandbox_backend_records,
+    resolve_wrapped_sandbox_backend,
+)
 from .state_machine import RuntimeStateMachine
 from .tool_contracts import (
     ArgSpec,
@@ -287,6 +306,13 @@ __all__ = [
     "SandboxExecutionLimits", "ProfiledSandbox", "get_sandbox_profile",
     "create_profiled_sandbox", "backend_availability", "resolve_apply_sandbox_profile",
     "is_secret_like_path", "is_path_allowed", "enforce_path_policy", "resolve_workspace_path",
+    "SandboxSafetyClass", "SandboxBackendKind", "SandboxBackendCapability",
+    "SandboxBackendRecord", "classify_sandbox_backend", "discover_sandbox_backend_records",
+    "resolve_wrapped_sandbox_backend",
+    "SandboxBackendGateMode", "SandboxBackendDecision", "SandboxBackendRequirement",
+    "SandboxBackendGateResult", "SANDBOX_BACKEND_SIGNALS_KEY",
+    "evaluate_sandbox_backend_gate", "sandbox_backend_gate_to_artifact",
+    "sandbox_backend_requirement_from_config",
     "CanonicalPathResolver", "TestIntegrityVerifier", "StateVerifier",
     "ProtectedPathPolicy", "FileIntegritySnapshot", "MUTATE_PROTECTED_TOOL",
     "PROTECTED_FILE_MUTATION",

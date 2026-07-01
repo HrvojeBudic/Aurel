@@ -125,6 +125,15 @@ def discover_identity_kernel_invariants(
     by_id = {item.id: item for item in kernel.invariants}
     ik_ids_found = tuple(sorted(by_id))
     unavailable = tuple(item for item in selected_ids if item not in by_id)
+    rel_path = _repo_relative_path(path)
+    all_records = tuple(
+        IdentityKernelInvariantRecord.from_kernel_invariant(
+            invariant,
+            source_path=rel_path,
+            selected=invariant.id in selected_ids,
+        )
+        for invariant in kernel.invariants
+    )
     return IdentityKernelDiscoveryResult(
         source=source,
         invariants=all_records,
