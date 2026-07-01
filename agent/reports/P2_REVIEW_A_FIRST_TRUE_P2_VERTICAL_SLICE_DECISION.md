@@ -217,8 +217,8 @@ Alternative: P2.9-B rerun only after P2.VSLICE-A evidence criteria are met or fa
 
 ## 19. Commit Hash
 
-_(recorded after commit)_
+`3f49dd8bfabc2764858ceb3b7fd775e2cfbc353f`
 
 ## 20. Final Git Status
 
-_(recorded after commit)_
+Clean after commit `3f49dd8`.
