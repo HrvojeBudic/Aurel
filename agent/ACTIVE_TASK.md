@@ -1,16 +1,22 @@
-# Active Task: P1.ENF-B complete; next P1.ENF-C unless operator reruns P2.9-B
+# Active Task: P1.ENF-F-A complete; next P1.ENF-C unless operator reruns P2.9-B
 
-**Status:** P1.ENF-B COMPLETE as entrypoint bypass guard expansion / repo_agent enforcement audit. P1.ENF-A and P1.ENF-A-OMNI-R1 remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-F-A COMPLETE as tooling/determinism/shadow drift gates. P1.ENF-A, P1.ENF-A-OMNI-R1, and P1.ENF-B remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-F-A Status
+
+**DONE — DRIFT_GATE / VALIDATION_TRUTH / P2.9-B_NOT_DONE** — Lightweight validation truth and governance drift gates added under `validation_truth_gates.py` and `drift_gates.py` with structured gate inputs, six gate families, and focused tests.
+
+Report: `agent/reports/P1_ENF_F_A_TOOLING_DETERMINISM_SHADOW_DRIFT_GATES.md`
+
+Current / next recommended roadmap task: **P1.ENF-C — Golden Thread B / P1.8–P2.9 Governance Continuity**
+
+Reason: P1.ENF-F-A completed the requested drift gate layer without implementing Golden Thread B or P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-B Status
 
 **DONE — GOVERNANCE_AUDIT / NO_BYPASS_EVIDENCE / P2.9-B_NOT_DONE** — Entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, AurelShell contract-only confirmation, unknown-risk blocking, and no-scope-expansion proof added under `entrypoint_governance_audit.py` with guard extensions in `entrypoint_governance_guard.py`.
 
 Report: `agent/reports/P1_ENF_B_ENTRYPOINT_BYPASS_GUARD_REPO_AGENT_ENFORCEMENT_AUDIT.md`
-
-Current / next recommended roadmap task: **P1.ENF-C — Golden Thread B / P1.8–P2.9 Governance Continuity**
-
-Reason: P1.ENF-B completed the requested entrypoint audit expansion without implementing P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-A Status
 

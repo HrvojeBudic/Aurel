@@ -105,6 +105,34 @@ P1.ENF-A-OMNI-R1 is validation-truth repair only. It does NOT implement P1.ENF-B
 
 Report: `agent/reports/P1_ENF_A_OMNI_R1_VALIDATION_TRUTH_CORE_INTEGRITY_REPAIR.md`
 
+## P1.ENF-F-A Tooling / Determinism / Shadow-Still-Active Drift Gates Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py -q
+.venv/bin/python -m pytest tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_consent_fixture_determinism.py tests/test_trace_merkle_integrity.py -q
+.venv/bin/python -m pytest tests/test_entrypoint_governance_audit.py tests/test_repo_agent_entrypoint_audit.py -q
+.venv/bin/python -m pytest tests/test_governance_enforcement_submit.py tests/test_identity_submit_context.py tests/test_entrypoint_governance_guard.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m mypy --follow-imports=silent \
+  --enable-error-code arg-type \
+  --enable-error-code call-arg \
+  --enable-error-code union-attr \
+  src/agentic_runtime/runtime.py \
+  src/agentic_runtime/trace.py \
+  src/agentic_runtime/repo_agent.py \
+  src/agentic_runtime/core_types.py \
+  src/agentic_runtime/__init__.py
+```
+
+Results after P1.ENF-F-A: compileall **PASS**; validation truth gates **6 passed**; drift gates **12 passed**; P1.ENF-A-OMNI-R1 repair **6 passed**; P1.ENF-B audit **16 passed**; P1.ENF-A enforcement **24 passed**; ruff **PASS**; baseline mypy **PASS** (331 source files); core strict probe **PASS** (5 files, silent imports). Full suite, coverage, Bandit, and optional selector **NOT RUN**.
+
+P1.ENF-F-A is a lightweight drift/validation gate layer only. It does NOT implement P1.ENF-C, P1.ENF-F-B, P1.ENF-D1, P1.ENF-E, P2.9-B, full CI, global mypy strictness, Shell command router, product UI, LIVE, TRACE_VERIFIED, or all-drift-impossible claim.
+
+Report: `agent/reports/P1_ENF_F_A_TOOLING_DETERMINISM_SHADOW_DRIFT_GATES.md`
+
 ## P1.ENF-B Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit Validation (COMPLETE)
 
 ```bash

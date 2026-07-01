@@ -1,15 +1,16 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-B - Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit)_
+_Last updated: 2026-07-01 (P1.ENF-F-A - Tooling / Determinism / Shadow-Still-Active Drift Gates)_
 
 ## Current Roadmap Pointer
 
+- Last completed drift gate pack: **P1.ENF-F-A** - validation truth gates, determinism/dirty worktree gate, tooling truth/core strict probe gate, shadow/enforcement drift gate, contract/live overclaim gate, unknown entrypoint risk gate, report/code claim drift gate
 - Last completed enforcement audit: **P1.ENF-B** - entrypoint discovery map, expanded classifications, repo_agent enforcement matrix, CLI/shell path audit, unknown-risk blocking
 - Last completed repair: **P1.ENF-A-OMNI-R1** - consent fixture determinism, core strict mypy probe truth, trace Merkle live-payload semantics
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-B complete - entrypoint bypass guard expansion / repo_agent enforcement audit; P1.ENF-C is next planned Golden Thread pack unless operator reruns P2.9-B first**
+- Current active: **P1.ENF-F-A complete - lightweight drift/validation gates; P1.ENF-C is next planned Golden Thread pack unless operator reruns P2.9-B first**
 - Next recommended roadmap task: **P1.ENF-C - Golden Thread B / P1.8–P2.9 Governance Continuity**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
@@ -36,6 +37,14 @@ _Last updated: 2026-07-01 (P1.ENF-B - Entrypoint Bypass Guard Expansion / Repo A
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-F-A Tooling / Determinism / Shadow-Still-Active Drift Gates
+
+P1.ENF-F-A adds lightweight executable drift gates under `validation_truth_gates.py` and `drift_gates.py`: determinism/dirty worktree checks, tooling truth/core strict probe validation, shadow-still-active/enforcement bridge mismatch detection, contract/live overclaim detection, unknown entrypoint risk drift using P1.ENF-B evidence inputs, and report/code claim drift gates with structured inputs (no broad NL parser).
+
+Boundary: gate/read-model layer only. No Golden Thread B, docs archive cleanup, sandbox hardening, P2.9-B, Shell command router, product UI, repo_agent rewrite, runtime.submit rewrite, full CI, global mypy strictness, LIVE, TRACE_VERIFIED, or all-drift-impossible claim.
+
+Validation: compileall PASS; validation truth gates 6 passed; drift gates 12 passed; P1.ENF-A-OMNI-R1 repair 6 passed; P1.ENF-B audit 16 passed; P1.ENF-A enforcement 24 passed; ruff PASS; baseline mypy PASS (331 files); core strict probe PASS (5 files). Full suite/coverage/Bandit NOT RUN. Report: `agent/reports/P1_ENF_F_A_TOOLING_DETERMINISM_SHADOW_DRIFT_GATES.md`.
 
 ## P1.ENF-B Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit
 
