@@ -76,6 +76,35 @@ P1.ENF-A is an explicit-config runtime submit enforcement bridge only. It does N
 
 Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`
 
+## P1.ENF-A-OMNI-R1 Validation Truth / Core Integrity Repair Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_consent_fixture_determinism.py -q
+.venv/bin/python -m pytest tests/test_trace_merkle_integrity.py -q
+.venv/bin/python -m pytest tests/test_trace.py tests/test_trace_persistence_p06.py -q
+.venv/bin/python -m pytest tests/test_governance_enforcement_submit.py tests/test_identity_submit_context.py tests/test_entrypoint_governance_guard.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m mypy --follow-imports=silent \
+  --enable-error-code arg-type \
+  --enable-error-code call-arg \
+  --enable-error-code union-attr \
+  src/agentic_runtime/runtime.py \
+  src/agentic_runtime/trace.py \
+  src/agentic_runtime/repo_agent.py \
+  src/agentic_runtime/core_types.py \
+  src/agentic_runtime/__init__.py
+```
+
+**Validation truth:** Baseline mypy (`src/agentic_runtime`) keeps repo-wide disabled error codes in `pyproject.toml` and is not a strict core wiring proof. The **core strict probe** above scopes to five runtime/security files with `arg-type`, `call-arg`, and `union-attr` enabled and `--follow-imports=silent` so transitive identity/shell/policy lattice debt is not misread as core wiring failure. Running the same five files without `--follow-imports=silent` still surfaces broad transitive type debt outside this repair scope — that result is **not** claimed as core probe PASS.
+
+Results after P1.ENF-A-OMNI-R1: compileall **PASS**; consent fixture determinism **4 passed**; trace Merkle integrity **2 passed**; trace regression **12 passed**; P1.ENF-A regression **24 passed**; ruff **PASS**; baseline mypy **PASS** (328 source files); core strict probe **PASS** (5 source files, silent imports). Full suite and coverage **NOT RUN**. Bandit **NOT RUN**.
+
+P1.ENF-A-OMNI-R1 is validation-truth repair only. It does NOT implement P1.ENF-B, P2.9-B, global mypy strictness, full type safety, TRACE_VERIFIED, LIVE, or product behavior.
+
+Report: `agent/reports/P1_ENF_A_OMNI_R1_VALIDATION_TRUTH_CORE_INTEGRITY_REPAIR.md`
+
 ## P2.9-A Shell Exit Seal Foundation Validation (COMPLETE)
 
 ```bash

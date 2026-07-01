@@ -260,7 +260,8 @@ class InMemoryTraceLedger:
     def merkle_root(self) -> str:
         if not self._entries:
             return GENESIS
-        layer = [r.entry_hash for r in self._entries]
+        # Leaves recompute from live payload fields so tampered records change the root.
+        layer = [sha(r.prev_entry_hash, r.payload_hash()) for r in self._entries]
         while len(layer) > 1:
             nxt = []
             for i in range(0, len(layer), 2):
@@ -575,7 +576,8 @@ class PersistentTraceLedger:
     def merkle_root(self) -> str:
         if not self._events:
             return GENESIS
-        layer = [e["entry_hash"] for e in self._events]
+        # Leaves recompute from live event fields so tampered payloads change the root.
+        layer = [_entry_hash(e) for e in self._events]
         while len(layer) > 1:
             nxt = []
             for i in range(0, len(layer), 2):

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 __version__ = "0.2.0"
 
-from typing import Optional
+from typing import Optional, cast
 
 from .budget import BudgetLedger, BudgetPolicy
 from .canonical_path import CanonicalPathResolver
@@ -317,7 +317,7 @@ class Kernel:
 
 
 def build_runtime(
-    sandbox: Optional[SandboxBackend] = None,
+    sandbox: SandboxBackend | ProfiledSandbox | None = None,
     sandbox_mode: Optional[SandboxMode] = None,
     sandbox_profile: Optional[str] = None,
     workspace_root: Optional[str] = None,
@@ -379,13 +379,15 @@ def build_runtime(
             profile = get_sandbox_profile(
                 SandboxProfileName.UNSAFE_LOCAL_DEMO.value, sandbox.root)
             sandbox_policy = SandboxPolicy(profile)
-    tools = ToolRuntime(sandbox, sandbox_policy=sandbox_policy)
+    assert sandbox is not None  # all resolution branches above assign a backend
+    sandbox_backend = cast(SandboxBackend, sandbox)
+    tools = ToolRuntime(sandbox_backend, sandbox_policy=sandbox_policy)
     contracts = default_contract_registry()
     tools.bind_contracts(contracts)
-    policy = PolicyEngine(registered_tools=tools.registered, sandbox=sandbox,
+    policy = PolicyEngine(registered_tools=tools.registered, sandbox=sandbox_backend,
                           contract_registry=contracts)
-    test_integrity = TestIntegrityVerifier(sandbox)
-    verifier = StateVerifier(sandbox, test_integrity=test_integrity)
+    test_integrity = TestIntegrityVerifier(sandbox_backend)
+    verifier = StateVerifier(sandbox_backend, test_integrity=test_integrity)
     if trace_backend == "persistent":
         trace: TraceLedgerBackend = PersistentTraceLedger(
             base_dir=trace_dir,

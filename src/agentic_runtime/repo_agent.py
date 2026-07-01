@@ -379,7 +379,10 @@ class RepoPlanValidator:
                 if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
                     errors.append(f"{key} must be array of strings")
 
-        files_to_modify = data.get("files_to_modify") if isinstance(data.get("files_to_modify"), list) else []
+        files_to_modify_raw = data.get("files_to_modify")
+        files_to_modify: list[str] = (
+            files_to_modify_raw if isinstance(files_to_modify_raw, list) else []
+        )
         if len(set(files_to_modify)) > request.max_files_changed:
             errors.append("files_to_modify exceeds max_files_changed")
         for rel in files_to_modify:

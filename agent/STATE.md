@@ -1,14 +1,15 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-A - Policy + Identity Enforcement Readiness / Runtime Submit Wiring)_
+_Last updated: 2026-07-01 (P1.ENF-A-OMNI-R1 - Validation Truth / Fixture Determinism / Core Integrity Repair)_
 
 ## Current Roadmap Pointer
 
+- Last completed repair: **P1.ENF-A-OMNI-R1** - consent fixture determinism, core strict mypy probe truth, trace Merkle live-payload semantics
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
-- Last completed repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
+- Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-A complete - explicit-config runtime submit enforcement bridge added; P2.9-A remains repaired and complete at foundation scope**
-- Next recommended roadmap task: **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**, unless operator chooses P1.ENF-B first
+- Current active: **P1.ENF-A-OMNI-R1 complete - validation truth repaired; P1.ENF-B is next planned enforcement pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P1.ENF-B - Entrypoint Bypass Guard Expansion / Repo Agent Enforcement Audit**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -44,6 +45,14 @@ Boundary: default runtime submit behavior remains compatible unless a caller exp
 Validation: compileall PASS; governance enforcement submit tests 11 passed; identity submit context tests 7 passed; entrypoint governance guard tests 6 passed; runtime/policy/identity/repo_agent/aurel_shell regression selector 3229 passed; ruff PASS; mypy PASS; Bandit `-ll` PASS. Optional full pytest was interrupted after 4140 passed and is not claimed as full-suite PASS. Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`.
 
 Report: `agent/reports/P1_ENF_A_POLICY_IDENTITY_ENTRYPOINT_ENFORCEMENT_VERTICAL.md`.
+
+## P1.ENF-A-OMNI-R1 Validation Truth / Core Integrity Repair
+
+P1.ENF-A-OMNI-R1 repairs validation-truth gaps after P1.ENF-A: consent CLI tests write generated artifacts under pytest `tmp_path` instead of tracked `tests/fixtures/consent/` JSON; baseline mypy is distinguished from a scoped core strict probe on five runtime/security files; `InMemoryTraceLedger.merkle_root()` and `PersistentTraceLedger.merkle_root()` recompute Merkle leaves from live payload fields (option C1).
+
+Boundary: no consent runtime semantic change, no global mypy strictness, no trace ledger rewrite, no P1.ENF-B/C/D/E/F, no P2.9-B, no LIVE, no TRACE_VERIFIED, no full-suite or coverage seal.
+
+Validation: compileall PASS; consent fixture determinism 4 passed; trace Merkle integrity 2 passed; trace regression 12 passed; P1.ENF-A regression 24 passed; ruff PASS; baseline mypy PASS; core strict probe PASS (5 files, `--follow-imports=silent`). Full suite and coverage NOT RUN. Report: `agent/reports/P1_ENF_A_OMNI_R1_VALIDATION_TRUTH_CORE_INTEGRITY_REPAIR.md`.
 
 ## P2.9-A AurelShell Shell Exit Seal Foundation
 

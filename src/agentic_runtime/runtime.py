@@ -153,7 +153,7 @@ class AgenticRuntime:
         # ---- 0. TOOL CONTRACT — INPUT (before policy/budget/execution) -- #
         contract, gate = self.contracts.resolve_for_execution(
             cmd.tool, self.tools.registered)
-        if not gate.ok:
+        if not gate.ok or contract is None:
             return self._contract_blocked(
                 pre_policy_hash, cmd, gate, phase="registry", card=card)
         input_check = self.input_validator.validate(contract, cmd.args)
@@ -361,6 +361,7 @@ class AgenticRuntime:
             after_hash = self.tools.sandbox.state_hash()
 
             # ---- 6b. TOOL CONTRACT — OUTPUT (before verified success) -- #
+            assert contract is not None  # resolved at submit gate when registry gate passed
             output_check = self.output_validator.validate(contract, obs)
             if not output_check.ok:
                 vres = VerifierResult(

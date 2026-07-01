@@ -5,17 +5,11 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
-FIXTURES = Path(__file__).resolve().parent.parent / "fixtures" / "consent"
-
-# Build report and request fixtures at module scope
-_DELTA_REPORT_PATH = FIXTURES / "delta_report.json"
-_REQUEST_PATH = FIXTURES / "consent_request.json"
-_RECORD_PATH = FIXTURES / "consent_record.json"
-_DENIED_PATH = FIXTURES / "consent_denied.json"
-_REVOKED_PATH = FIXTURES / "consent_revoked.json"
+CANONICAL_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures" / "consent"
 
 
 def _run_cli(*args: str) -> subprocess.CompletedProcess:
@@ -27,10 +21,16 @@ def _run_cli(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-@pytest.fixture(scope="module", autouse=True)
-def _build_fixtures():
-    """Build JSON fixtures needed for CLI tests."""
-    FIXTURES.mkdir(parents=True, exist_ok=True)
+def build_consent_cli_workspace(workspace: Path) -> dict[str, Path]:
+    """Build mutable consent CLI artifacts under workspace (not tracked fixtures)."""
+    paths: dict[str, Path] = {
+        "delta_report": workspace / "delta_report.json",
+        "request": workspace / "consent_request.json",
+        "record": workspace / "consent_record.json",
+        "denied": workspace / "consent_denied.json",
+        "revoked": workspace / "consent_revoked.json",
+        "delta_report_mismatch": workspace / "delta_report_mismatch.json",
+    }
 
     delta_report = {
         "report_id": "adr_test_cli",
@@ -61,38 +61,40 @@ def _build_fixtures():
         "old_attestation_id": "srcatt_old_cli",
         "new_attestation_id": "srcatt_new_cli",
     }
-    _DELTA_REPORT_PATH.write_text(json.dumps(delta_report, indent=2))
+    paths["delta_report"].write_text(json.dumps(delta_report, indent=2))
 
-    # Build consent request via CLI
     result = _run_cli(
         "identity", "consent", "request",
-        "--delta-report", str(_DELTA_REPORT_PATH),
+        "--delta-report", str(paths["delta_report"]),
         "--json",
     )
     if result.returncode == 0:
-        _REQUEST_PATH.write_text(result.stdout)
+        paths["request"].write_text(result.stdout)
+
+    if paths["request"].exists():
+        grant = _run_cli(
+            "identity", "consent", "grant",
+            "--request", str(paths["request"]),
+            "--operator-id", "operator.cli.test",
+            "--ack-risk",
+            "--json",
+        )
+        if grant.returncode == 0:
+            paths["record"].write_text(grant.stdout)
+
+    return paths
 
 
-@pytest.fixture(scope="module", autouse=True)
-def _build_record():
-    """Build a consent record via CLI grant."""
-    if not _REQUEST_PATH.exists():
-        return
-    result = _run_cli(
-        "identity", "consent", "grant",
-        "--request", str(_REQUEST_PATH),
-        "--operator-id", "operator.cli.test",
-        "--ack-risk",
-        "--json",
-    )
-    if result.returncode == 0:
-        _RECORD_PATH.write_text(result.stdout)
+@pytest.fixture(scope="module")
+def consent_cli_workspace(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
+    """Generate mutable consent CLI artifacts under tmp_path, not tracked fixtures."""
+    return build_consent_cli_workspace(tmp_path_factory.mktemp("consent_cli"))
 
 
-def test_consent_cli_request_outputs_json():
+def test_consent_cli_request_outputs_json(consent_cli_workspace: dict[str, Path]):
     result = _run_cli(
         "identity", "consent", "request",
-        "--delta-report", str(_DELTA_REPORT_PATH),
+        "--delta-report", str(consent_cli_workspace["delta_report"]),
         "--json",
     )
     assert result.returncode == 0, f"stderr: {result.stderr}"
@@ -103,10 +105,10 @@ def test_consent_cli_request_outputs_json():
     assert data["requires_explicit_risk_acknowledgement"] is True
 
 
-def test_consent_cli_grant_outputs_record():
+def test_consent_cli_grant_outputs_record(consent_cli_workspace: dict[str, Path]):
     result = _run_cli(
         "identity", "consent", "grant",
-        "--request", str(_REQUEST_PATH),
+        "--request", str(consent_cli_workspace["request"]),
         "--operator-id", "operator.cli.grant",
         "--ack-risk",
         "--json",
@@ -117,10 +119,10 @@ def test_consent_cli_grant_outputs_record():
     assert data["risk_acknowledged"] is True
 
 
-def test_consent_cli_grant_requires_ack_risk_for_high_delta():
+def test_consent_cli_grant_requires_ack_risk_for_high_delta(consent_cli_workspace: dict[str, Path]):
     result = _run_cli(
         "identity", "consent", "grant",
-        "--request", str(_REQUEST_PATH),
+        "--request", str(consent_cli_workspace["request"]),
         "--operator-id", "operator.cli.noack",
         "--json",
     )
@@ -129,10 +131,10 @@ def test_consent_cli_grant_requires_ack_risk_for_high_delta():
     assert "risk_acknowledgement_required" in data.get("blockers", [])
 
 
-def test_consent_cli_deny_outputs_denied_record():
+def test_consent_cli_deny_outputs_denied_record(consent_cli_workspace: dict[str, Path]):
     result = _run_cli(
         "identity", "consent", "deny",
-        "--request", str(_REQUEST_PATH),
+        "--request", str(consent_cli_workspace["request"]),
         "--operator-id", "operator.cli.deny",
         "--reason", "too broad scope",
         "--json",
@@ -142,12 +144,12 @@ def test_consent_cli_deny_outputs_denied_record():
     assert data["status"] == "DENIED"
 
 
-def test_consent_cli_validate_accepts_valid_record():
-    assert _RECORD_PATH.exists(), "Record fixture not built"
+def test_consent_cli_validate_accepts_valid_record(consent_cli_workspace: dict[str, Path]):
+    assert consent_cli_workspace["record"].exists(), "Record fixture not built"
     result = _run_cli(
         "identity", "consent", "validate",
-        "--record", str(_RECORD_PATH),
-        "--delta-report", str(_DELTA_REPORT_PATH),
+        "--record", str(consent_cli_workspace["record"]),
+        "--delta-report", str(consent_cli_workspace["delta_report"]),
         "--json",
     )
     assert result.returncode == 0
@@ -155,8 +157,8 @@ def test_consent_cli_validate_accepts_valid_record():
     assert data["valid"] is True
 
 
-def test_consent_cli_validate_rejects_attestation_mismatch():
-    mismatch_report = {
+def test_consent_cli_validate_rejects_attestation_mismatch(consent_cli_workspace: dict[str, Path]):
+    mismatch_report: dict[str, Any] = {
         "report_id": "adr_mismatch",
         "source_kind": "operator_contract",
         "deltas": [
@@ -185,13 +187,13 @@ def test_consent_cli_validate_rejects_attestation_mismatch():
         "old_attestation_id": "srcatt_DIFFERENT",
         "new_attestation_id": "srcatt_DIFFERENT2",
     }
-    mismatch_path = FIXTURES / "delta_report_mismatch.json"
+    mismatch_path = consent_cli_workspace["delta_report_mismatch"]
     mismatch_path.write_text(json.dumps(mismatch_report, indent=2))
 
-    assert _RECORD_PATH.exists()
+    assert consent_cli_workspace["record"].exists()
     result = _run_cli(
         "identity", "consent", "validate",
-        "--record", str(_RECORD_PATH),
+        "--record", str(consent_cli_workspace["record"]),
         "--delta-report", str(mismatch_path),
         "--json",
     )
@@ -200,11 +202,11 @@ def test_consent_cli_validate_rejects_attestation_mismatch():
     assert "old_attestation_mismatch" in data["blockers"]
 
 
-def test_consent_cli_revoke_outputs_revoked_record():
-    assert _RECORD_PATH.exists()
+def test_consent_cli_revoke_outputs_revoked_record(consent_cli_workspace: dict[str, Path]):
+    assert consent_cli_workspace["record"].exists()
     result = _run_cli(
         "identity", "consent", "revoke",
-        "--record", str(_RECORD_PATH),
+        "--record", str(consent_cli_workspace["record"]),
         "--operator-id", "operator.cli.revoke",
         "--reason", "source changed",
         "--json",
@@ -212,15 +214,14 @@ def test_consent_cli_revoke_outputs_revoked_record():
     assert result.returncode == 0
     data = json.loads(result.stdout)
     assert data["status"] == "REVOKED"
-    # Save for show test
-    _REVOKED_PATH.write_text(json.dumps(data, indent=2))
+    consent_cli_workspace["revoked"].write_text(json.dumps(data, indent=2))
 
 
-def test_consent_cli_show_outputs_record():
-    assert _REVOKED_PATH.exists()
+def test_consent_cli_show_outputs_record(consent_cli_workspace: dict[str, Path]):
+    assert consent_cli_workspace["revoked"].exists()
     result = _run_cli(
         "identity", "consent", "show",
-        "--record", str(_REVOKED_PATH),
+        "--record", str(consent_cli_workspace["revoked"]),
         "--json",
     )
     assert result.returncode == 0
