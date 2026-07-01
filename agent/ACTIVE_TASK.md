@@ -1,16 +1,26 @@
-# Active Task: P2.9-B complete; next P2.10+ or P2.9-C if repair needed
+# Active Task: P2.9-B-R1 complete; next true P2.9-B (P2.9.6–P2.9.10)
 
-**Status:** P2.9-B COMPLETE as Shell Exit Seal / Vertical Slice Evidence Consumption. P2.1–P2.9 sealed as honest Shell foundation with one operator-testable vertical slice (P2.VSLICE-A). P2 is not full Shell LIVE or product complete. P2.VSLICE-A, P2.REVIEW-A, P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-C and P2.9-D remain NOT READY. P2.10+ not started.
+**Status:** P2.9-B-R1 COMPLETE — roadmap granularity reconciliation / P2.9.x coverage matrix. P2.9.0–P2.9.5 DONE (P2.9-A). P2.9.6–P2.9.10 PARTIAL via old P2.9-B evidence overlay only; true P2.9-B NOT DONE. old P2.9-B retained as evidence/truth seal overlay (not reverted). P2.VSLICE-A, P2.REVIEW-A, P1.ENF chain remain DONE. P2.9-C/D and P2.10+ NOT STARTED.
 
-## P2.9-B Status
+## P2.9-B-R1 Status
 
-**DONE — SHELL_EXIT_SEAL_EVIDENCE_BOUNDARY / P2_FOUNDATION_SEALED / NOT_SHELL_LIVE / NOT_P2_PRODUCT_COMPLETE** — Consumed P2.REVIEW-A and P2.VSLICE-A evidence; produced P2 section seal matrix with truth labels; verified P2.6 correction; documented first true vertical slice proof; 16 focused + regressions passing; seal is evidence boundary not product completion.
+**DONE — ROADMAP_GRANULARITY_RECONCILED / OLD_P2_9_B_OVERLAY_RETAINED / TRUE_P2_9_B_NOT_DONE** — Extracted P2.9.x checkpoints from ROADMAP; built coverage matrix; reclassified old P2.9-B; corrected state pointer away from premature P2.10+ handoff.
+
+Report: `agent/reports/P2_9_B_R1_ROADMAP_GRANULARITY_RECONCILIATION_P2_9_X_COVERAGE_MATRIX.md`
+
+Current / next recommended roadmap task: **true P2.9-B — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+
+Reason: P2.9.6–P2.9.10 have no true implementation evidence; old P2.9-B overlay does not close granular checkpoints. P2.10+ not justified.
+
+## old P2.9-B Status (evidence overlay — retained)
+
+**DONE — SHELL_EXIT_SEAL_EVIDENCE_BOUNDARY / EVIDENCE_OVERLAY_ONLY / NOT_GRANULAR_P2_9_X_COMPLETE** — Consumed P2.REVIEW-A and P2.VSLICE-A evidence; produced P2 section seal matrix with truth labels. Retained as evidence boundary; not true P2.9-B granular completion.
 
 Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`
 
-Current / next recommended roadmap task: **P2.10+** or **P2.9-C** only if seal gaps require repair
+## true P2.9-B Status
 
-Reason: P2.9-B seal complete. P2 foundation honest with documented gaps. No Shell LIVE, command execution, or full product UI claimed.
+**NOT DONE** — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix not implemented. Next executable pack.
 
 ## P2.VSLICE-A Status
 

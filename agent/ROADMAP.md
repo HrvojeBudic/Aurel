@@ -11,9 +11,10 @@
 | Active roadmap | Aurel Roadmap v5.5 (this file) |
 | Doc status index | `agent/CANON_INDEX.md` |
 | Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
-| Last completed pack | P1.ENF-F-B |
-| Next planned pack | P1.ENF-D1 |
-| P2.9-B | NOT DONE |
+| Last completed pack | P2.9-B-R1 |
+| Next planned pack | true P2.9-B — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix |
+| old P2.9-B (evidence overlay) | DONE — retained; not granular P2.9.x completion |
+| true P2.9-B (P2.9.6–P2.9.10) | NOT DONE |
 
 Historical roadmap/report eras (v3.2, v5.0/v5.1, v5.4 transition) remain preserved with explicit status labels in `agent/CANON_INDEX.md`. Do not treat historical docs as current task authority.
 
