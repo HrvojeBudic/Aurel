@@ -319,8 +319,10 @@ Coverage: not run.
 
 ## 20. Commit Hash
 
-Implementation commit hash: pending at report creation; recorded in follow-up docs commit if needed.
+Implementation commit hash: `3a82ab0`.
+
+Implementation commit message: `feat(shell): add P2.11-A surface permission matrix foundation`.
 
 ## 21. Final Git Status
 
-Pending at report creation.
+Clean after implementation commit.
