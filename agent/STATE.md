@@ -1,12 +1,13 @@
 # Repository State
 
-_Last updated: 2026-07-02 (P2.11-A - Surface Permission Matrix Foundation)_
+_Last updated: 2026-07-02 (P2.11-B - Surface Permission Projection / Matrix Read Model)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
-- Last completed P2.11 foundation pack: **P2.11-A** — Surface Permission Matrix Foundation / Client-Surface Authority Baseline; deterministic 700-entry client x surface x action permission matrix over all P2.10 clients and seven Shell surfaces; P2.11-B is next; P2.11 as a whole is not complete; P2.12+ remains NOT_STARTED; no command execution, runtime control, sandbox control, policy/identity/memory mutation, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
+- Last completed P2.11 projection pack: **P2.11-B** — Surface Permission Projection / Matrix Read Model; deterministic projection/read model over P2.11-A permission matrix with client/surface/action/evidence/sensitive-surface/no-overclaim views; P2.11-C is next; P2.11 as a whole is not complete; P2.12+ remains NOT_STARTED; projection is not enforcement; read model is not execution; no command execution, runtime control, sandbox control, policy/identity/memory mutation, permission enforcement, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
+- Last completed P2.11 foundation pack: **P2.11-A** — Surface Permission Matrix Foundation / Client-Surface Authority Baseline; deterministic 700-entry client x surface x action permission matrix over all P2.10 clients and seven Shell surfaces; consumed by P2.11-B; P2.11 as a whole is not complete; P2.12+ remains NOT_STARTED; no command execution, runtime control, sandbox control, policy/identity/memory mutation, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
 - Last completed P2.10 seal pack: **P2.10-E** — Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle; P2.10 sealed as honest multi-client Shell foundation; P2.11 / Surface Permission Matrix is next and remains NOT_STARTED; no final P2 seal, P3 handoff, Shell LIVE, full local app, product readiness, command execution, runtime control, or sandbox control claim
 - Last completed P2 terminal client pack: **P2.10-D** — CLI/TUI parity binding / terminal client read model; consumed by P2.10-E; runnable CLI path is read-only terminal inspection only; TUI is contract-only parity; no Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim
 - Last completed P2 desktop wrapper pack: **P2.10-C** — Tauri desktop local shell / desktop wrapper contract; consumed by P2.10-D; desktop wrapper runnable (DEV_FIXTURE); no Shell LIVE, command execution, native authority, full desktop app, or mobile claim
@@ -29,8 +30,8 @@ _Last updated: 2026-07-02 (P2.11-A - Surface Permission Matrix Foundation)_
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.11-A complete — Surface Permission Matrix Foundation / Client-Surface Authority Baseline DONE**
-- Next recommended roadmap task: **P2.11-B — Surface Permission Projection / Matrix Read Model**
+- Current active: **P2.11-B complete — Surface Permission Projection / Matrix Read Model DONE**
+- Next recommended roadmap task: **P2.11-C — Surface Permission Operator Inspection / CLI-Shell View Binding**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -65,7 +66,8 @@ _Last updated: 2026-07-02 (P2.11-A - Surface Permission Matrix Foundation)_
 - P2.10-C status: **DONE** — Tauri desktop local shell / desktop wrapper contract in `desktop_shell_contract.py` and `web/shell/src-tauri/`; report `agent/reports/P2_10_C_TAURI_DESKTOP_LOCAL_SHELL.md`; P2.10-D next; desktop wrapper runnable (DEV_FIXTURE); no Shell LIVE, command execution, native authority, full desktop app, mobile, or CLI/TUI parity claim
 - P2.10-D status: **DONE** — CLI/TUI parity binding / terminal client read model in `terminal_shell_client.py` and read-only `python -m agentic_runtime.cli shell ...`; report `agent/reports/P2_10_D_CLI_TUI_PARITY_BINDING.md`; consumed by P2.10-E; no Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full terminal automation, or full TUI product claim
 - P2.10-E status: **DONE** — multi-client operator demo seal / web-desktop-CLI evidence bundle in `multi_client_demo_seal.py`; report `agent/reports/P2_10_E_MULTI_CLIENT_OPERATOR_DEMO_SEAL.md`; P2.10 sealed as honest multi-client Shell foundation; P2.11 next and NOT_STARTED; no final P2 seal, P3 handoff, Shell LIVE, full local app, product readiness, command execution, runtime control, or sandbox control claim
-- P2.11-A status: **DONE** — Surface Permission Matrix Foundation / Client-Surface Authority Baseline in `surface_permission_matrix.py`; report `agent/reports/P2_11_A_SURFACE_PERMISSION_MATRIX_FOUNDATION.md`; P2.11-B next; P2.11 as a whole not complete; P2.12+ not started; no command execution, tool execution, approval execution, runtime control, sandbox control, memory write, policy mutation, identity mutation, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
+- P2.11-B status: **DONE** — Surface Permission Projection / Matrix Read Model in `surface_permission_projection.py`; report `agent/reports/P2_11_B_SURFACE_PERMISSION_PROJECTION_READ_MODEL.md`; P2.11-C next; P2.11 as a whole not complete; P2.12+ not started; projection is not enforcement; read model is not execution; no command execution, tool execution, approval execution, runtime control, sandbox control, memory write, policy mutation, identity mutation, permission enforcement, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
+- P2.11-A status: **DONE** — Surface Permission Matrix Foundation / Client-Surface Authority Baseline in `surface_permission_matrix.py`; report `agent/reports/P2_11_A_SURFACE_PERMISSION_MATRIX_FOUNDATION.md`; consumed by P2.11-B; P2.11 as a whole not complete; P2.12+ not started; no command execution, tool execution, approval execution, runtime control, sandbox control, memory write, policy mutation, identity mutation, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff claim
 - AurelShell suite: **1004 passed** (post P2.9-A-R1; P2.10-A adds 22 focused tests; P2.10-B adds 18 focused tests)
 
 ## P2.11-A Surface Permission Matrix Foundation / Client-Surface Authority Baseline
@@ -74,9 +76,19 @@ P2.11-A adds a Python-owned surface permission foundation under `surface_permiss
 
 The matrix covers all P2.10 clients (`WEB`, `DESKTOP_TAURI`, `CLI`, `TUI`, `MOBILE_FOUNDATION`), all seven Shell surfaces (`Aurel CRO`, `HQ`, `CORP`, `HUB`, `IDE`, `SYSTEM`, `Settings`), and 20 permission actions. Total entries: 700. All disabled execution/runtime/sandbox/policy/identity/memory/workflow actions are denied/unavailable/future-gated. `PREFLIGHT_ONLY` remains a governed preflight request only and never becomes command execution.
 
-Boundary: P2.11-A is permission foundation/read-model contract only. It is not runtime enforcement, final authorization, full policy runtime, or Custos enforcement. P2.11-B is next. P2.11 as a whole is not complete. P2.12+ remains not started. No Shell LIVE, product readiness, final P2 seal, or P3 handoff claim.
+Boundary: P2.11-A is permission foundation/read-model contract only. It is not runtime enforcement, final authorization, full policy runtime, or Custos enforcement. P2.11-B projects that matrix into inspection views only. P2.11-C is next. P2.11 as a whole is not complete. P2.12+ remains not started. No Shell LIVE, product readiness, final P2 seal, or P3 handoff claim.
 
 Report: `agent/reports/P2_11_A_SURFACE_PERMISSION_MATRIX_FOUNDATION.md`
+
+## P2.11-B Surface Permission Projection / Matrix Read Model
+
+P2.11-B adds a Python-owned permission projection/read model under `surface_permission_projection.py`. It defines `SurfacePermissionProjectionKind`, `SurfacePermissionProjectionEntry`, `SurfacePermissionClientView`, `SurfacePermissionSurfaceView`, `SurfacePermissionActionView`, `SurfacePermissionEvidenceView`, `SurfacePermissionNoOverclaimView`, `SurfacePermissionReadModel`, `SurfacePermissionProjectionSummary`, `P211BHandoff`, and `P211BResult`.
+
+The read model consumes the P2.11-A matrix hash and projects all 700 entries into 5 client views, 7 surface views, 20 action views, and 3 sensitive-surface views. JSON-safe serialization is available via `serialize_surface_permission_read_model()`. Projection preserves `PREFLIGHT_ONLY` as non-execution and does not upgrade `ALLOWED` to final authorization.
+
+Boundary: P2.11-B is projection/inspection only. It is not permission enforcement, command execution, full policy runtime, or Custos enforcement. P2.11-C is next. P2.11 as a whole is not complete. P2.12+ remains not started. No Shell LIVE, product readiness, final P2 seal, or P3 handoff claim.
+
+Report: `agent/reports/P2_11_B_SURFACE_PERMISSION_PROJECTION_READ_MODEL.md`
 
 ## P2.10-E Multi-Client Operator Demo Seal / Web-Desktop-CLI Evidence Bundle
 

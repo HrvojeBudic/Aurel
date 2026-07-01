@@ -1,6 +1,16 @@
-# Active Task: P2.11-A complete; next P2.11-B
+# Active Task: P2.11-B complete; next P2.11-C
 
-**Status:** P2.11-A COMPLETE — Surface Permission Matrix Foundation / Client-Surface Authority Baseline. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B / Surface Permission Projection / Matrix Read Model is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+**Status:** P2.11-B COMPLETE — Surface Permission Projection / Matrix Read Model. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B is DONE as a deterministic projection/read model over that matrix. P2.11-C / Surface Permission Operator Inspection / CLI-Shell View Binding is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. Projection is not enforcement. Read model is not execution. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+
+## P2.11-B Status
+
+**DONE — SURFACE_PERMISSION_PROJECTION / MATRIX_READ_MODEL / P2_11_C_NEXT / P2_12_NOT_STARTED** — Implemented Python `SurfacePermissionProjectionKind`, `SurfacePermissionProjectionEntry`, `SurfacePermissionClientView`, `SurfacePermissionSurfaceView`, `SurfacePermissionActionView`, `SurfacePermissionEvidenceView`, `SurfacePermissionNoOverclaimView`, `SurfacePermissionReadModel`, `SurfacePermissionProjectionSummary`, `P211BHandoff`, and `P211BResult` over P2.11-A matrix truth.
+
+Report: `agent/reports/P2_11_B_SURFACE_PERMISSION_PROJECTION_READ_MODEL.md`
+
+Current / next recommended roadmap task: **P2.11-C — Surface Permission Operator Inspection / CLI-Shell View Binding**
+
+Reason: P2.11-B completed the projection/read model only. P2.11-C can bind operator-facing inspection paths to CLI/TUI/Shell views. P2.11 as a whole remains incomplete. P2.12+ remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, runtime/sandbox control, permission enforcement, full policy runtime, Custos enforcement, or product readiness claim.
 
 ## P2.11-A Status
 
@@ -8,7 +18,7 @@
 
 Report: `agent/reports/P2_11_A_SURFACE_PERMISSION_MATRIX_FOUNDATION.md`
 
-Current / next recommended roadmap task: **P2.11-B — Surface Permission Projection / Matrix Read Model**
+Current / next recommended roadmap task: **P2.11-B — Surface Permission Projection / Matrix Read Model** (DONE; superseded by P2.11-C next)
 
 Reason: P2.11-A completed the baseline permission matrix foundation only. P2.11-B can project/read that matrix for operator inspection. P2.11 as a whole remains incomplete. P2.12+ remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, runtime/sandbox control, full policy runtime, Custos enforcement, or product readiness claim.
 
