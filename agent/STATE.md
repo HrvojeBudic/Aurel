@@ -1,13 +1,14 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P2.VSLICE-A - Governed Command Palette / Global Command Preflight Slice)_
+_Last updated: 2026-07-01 (P2.9-B - Shell Exit Seal / Vertical Slice Evidence Consumption)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
-- Last completed P2 vertical slice: **P2.VSLICE-A** — governed Command Palette / Global Command preflight slice; preflight/read-model only; not command execution; P2.9-B remains NOT DONE
-- Last completed P2 review: **P2.REVIEW-A** - first true P2 vertical slice decision; **P2.VSLICE-A** selected and implemented; **P2.VSLICE-A-FALLBACK** Surface Registry fallback documented; P2.9-B remains NOT DONE
+- Last completed P2 exit seal: **P2.9-B** — Shell Exit Seal / Vertical Slice Evidence Consumption; P2.1–P2.9 sealed as honest Shell foundation with one operator-testable vertical slice; not Shell LIVE or P2 product complete
+- Last completed P2 vertical slice: **P2.VSLICE-A** — governed Command Palette / Global Command preflight slice; preflight/read-model only; not command execution; consumed by P2.9-B seal
+- Last completed P2 review: **P2.REVIEW-A** - first true P2 vertical slice decision; **P2.VSLICE-A** selected and implemented; **P2.VSLICE-A-FALLBACK** Surface Registry fallback documented
 - Last completed sandbox backend gate: **P1.ENF-E** - sandbox safety taxonomy, backend requirement gate, runtime submit binding; UnsafeLocalSandbox remains UNSAFE_LOCAL/dev-only; SAFE_VERIFIED unavailable
 - Last completed identity invariant enforcement: **P1.ENF-D1** - selected Identity Kernel invariant discovery and runtime submit/preflight enforcement binding for IK-002/005/006/007
 - Last completed docs/canon sync: **P1.ENF-F-B** - v5.5 active canon pointer, historical doc status labels, canon index
@@ -18,8 +19,8 @@ _Last updated: 2026-07-01 (P2.VSLICE-A - Governed Command Palette / Global Comma
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P2.VSLICE-A complete — governed command preflight slice implemented; P2.9-B remains NOT DONE**
-- Next recommended roadmap task: **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix** after consuming P2.VSLICE-A evidence
+- Current active: **P2.9-B complete — Shell Exit Seal with P2.VSLICE-A evidence consumption; P2 is not full Shell LIVE/product complete**
+- Next recommended roadmap task: **P2.10+** or **P2.9-C** only if seal gaps require repair
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -42,25 +43,33 @@ _Last updated: 2026-07-01 (P2.VSLICE-A - Governed Command Palette / Global Comma
 - P2.8 status: **SEALED_CONTRACT_ONLY at section scope** — P2.8-A through P2.8-D complete
 - P2.9 status: **OPENED at foundation scope** — P2.9-A complete; contract-only exit seal foundation; not completed Shell Exit Seal, release seal, or product readiness
 - P2.9-A status: **complete with repaired evidence refs** — P2.9-A-R1 fixed stale prior-section test refs and mismatched commit refs; foundation is not completed Shell Exit Seal; P2.9-B handoff is not P2.9-B implementation; no P2.9-B/P2.9-C/P2.9-D/P2.10/P2.11/P2.12/P2.13
-- P2.9-B status: **NOT DONE** — rerun after P2.VSLICE-A evidence; consumes P2.REVIEW-A decision and P2.VSLICE-A report
-- P2.VSLICE-A status: **DONE** — governed command preflight slice; preflight/read-model only; not command execution; report `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
+- P2.9-B status: **DONE** — Shell Exit Seal / Vertical Slice Evidence Consumption; P2.1–P2.9 sealed as honest Shell foundation; report `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`; not Shell LIVE or P2 product complete
+- P2.VSLICE-A status: **DONE** — governed command preflight slice; preflight/read-model only; not command execution; consumed by P2.9-B; report `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
 - P2.REVIEW-A status: **DONE** — vertical slice selected; report `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
-- P2.9-C status: **NOT READY** — blocked until P2.9-B completes
+- P2.9-C status: **NOT READY** — not started; operator may invoke only if seal gaps require repair
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
 
 ## P2.VSLICE-A Governed Command Palette / Global Command Preflight Slice
 
 P2.VSLICE-A adds governed command preflight under `command_availability.py`, `command_preflight.py`, `command_projection.py`, and `p2_command_palette_vslice.py`: seed global command registry, availability truth projection, command intent, preflight decision with P1.ENF-A/D1/E gate summaries, pytest read-model operator path, and 16 focused tests.
 
-Boundary: preflight/read-model only. No command execution, Shell LIVE, CLI/TUI product binding, P2.9-B, sandbox/identity/policy enforcement changes, or P2 complete claim.
+Boundary: preflight/read-model only. No command execution, Shell LIVE, CLI/TUI product binding, sandbox/identity/policy enforcement changes, or P2 complete claim. Consumed by P2.9-B seal.
 
 Report: `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
+
+## P2.9-B Shell Exit Seal / Vertical Slice Evidence Consumption
+
+P2.9-B consumes P2.REVIEW-A and P2.VSLICE-A evidence to seal P2.1–P2.9 as an honest Shell foundation with one operator-testable vertical slice. Produces section seal matrix with truth labels, verifies P2.6 correction, documents gaps, and hands off to P2.10+. Evidence seal only — not Shell LIVE, not P2 product complete, not command execution.
+
+Boundary: evidence/truth seal only. No P2.VSLICE-A implementation changes, no command execution, no Shell UI, no sandbox/identity/policy changes, no P2.9-C/D, no P2.10+ start, no Shell LIVE, no P2 complete claim.
+
+Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`
 
 ## P2.REVIEW-A First True P2 Vertical Slice Decision
 
 P2.REVIEW-A adds `p2_vertical_slice_review.py` review harness: P2.1–P2.9 truth classification, five vertical slice candidates, selection of **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice** with **P2.VSLICE-A-FALLBACK — Global Topbar / Surface Registry Truth Slice** fallback, evidence gap matrix, and P2.9-B rerun criteria. P2.6 Surface Projection / API / Event Bridge correction preserved.
 
-Boundary: review/decision gate only. No P2.VSLICE-A implementation, P2.9-B, Shell LIVE, command execution, sandbox/identity/policy changes, or P2 complete claim.
+Boundary: review/decision gate only. Consumed by P2.9-B seal. No Shell LIVE, command execution, sandbox/identity/policy changes, or P2 complete claim.
 
 Report: `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
 

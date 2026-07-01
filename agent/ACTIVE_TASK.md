@@ -1,26 +1,28 @@
-# Active Task: P2.VSLICE-A complete; next P2.9-B after consuming slice evidence
+# Active Task: P2.9-B complete; next P2.10+ or P2.9-C if repair needed
 
-**Status:** P2.VSLICE-A COMPLETE as governed Command Palette / Global Command preflight slice. P2.REVIEW-A, P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P2.9-B COMPLETE as Shell Exit Seal / Vertical Slice Evidence Consumption. P2.1–P2.9 sealed as honest Shell foundation with one operator-testable vertical slice (P2.VSLICE-A). P2 is not full Shell LIVE or product complete. P2.VSLICE-A, P2.REVIEW-A, P1.ENF-E, P1.ENF-D1, P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-C and P2.9-D remain NOT READY. P2.10+ not started.
+
+## P2.9-B Status
+
+**DONE — SHELL_EXIT_SEAL_EVIDENCE_BOUNDARY / P2_FOUNDATION_SEALED / NOT_SHELL_LIVE / NOT_P2_PRODUCT_COMPLETE** — Consumed P2.REVIEW-A and P2.VSLICE-A evidence; produced P2 section seal matrix with truth labels; verified P2.6 correction; documented first true vertical slice proof; 16 focused + regressions passing; seal is evidence boundary not product completion.
+
+Report: `agent/reports/P2_9_B_SHELL_EXIT_SEAL_VERTICAL_SLICE_EVIDENCE_CONSUMPTION.md`
+
+Current / next recommended roadmap task: **P2.10+** or **P2.9-C** only if seal gaps require repair
+
+Reason: P2.9-B seal complete. P2 foundation honest with documented gaps. No Shell LIVE, command execution, or full product UI claimed.
 
 ## P2.VSLICE-A Status
 
-**DONE — PREFLIGHT_READ_MODEL_ONLY / P2.9-B_NOT_DONE** — Seed global command registry, availability projection, command intent/preflight decision with policy/identity/sandbox gate summaries, pytest read-model operator path; 16 focused tests plus regressions passing; preflight is not command execution; CLI/TUI binding remains evidence gap.
+**DONE — PREFLIGHT_READ_MODEL_ONLY / CONSUMED_BY_P2_9_B** — Seed global command registry, availability projection, command intent/preflight decision with policy/identity/sandbox gate summaries, pytest read-model operator path; 16 focused tests plus regressions passing; preflight is not command execution; CLI/TUI binding remains evidence gap.
 
 Report: `agent/reports/P2_VSLICE_A_GOVERNED_COMMAND_PALETTE_PREFLIGHT.md`
 
-Current / next recommended roadmap task: **P2.9-B — P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
-
-Reason: P2.VSLICE-A provides slice evidence for P2.9-B rerun. P2.9-B remains NOT DONE until explicitly rerun and sealed.
-
 ## P2.REVIEW-A Status
 
-**DONE — VERTICAL_SLICE_SELECTED / P2.9-B_NOT_DONE** — P2.1–P2.9 truth classification completed; **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice** selected; fallback **P2.VSLICE-A-FALLBACK — Global Topbar / Surface Registry Truth Slice**; evidence gaps and P2.9-B rerun criteria documented; P2.6 Surface Projection correction preserved; 9 focused tests plus regressions passing.
+**DONE — VERTICAL_SLICE_SELECTED / CONSUMED_BY_P2_9_B** — P2.1–P2.9 truth classification completed; **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice** selected; fallback **P2.VSLICE-A-FALLBACK — Global Topbar / Surface Registry Truth Slice**; evidence gaps and P2.9-B rerun criteria documented; P2.6 Surface Projection correction preserved; 9 focused tests plus regressions passing.
 
 Report: `agent/reports/P2_REVIEW_A_FIRST_TRUE_P2_VERTICAL_SLICE_DECISION.md`
-
-Current / next recommended roadmap task: **P2.VSLICE-A — Governed Command Palette / Global Command Preflight Slice**
-
-Reason: P2.REVIEW-A selected the first operator-testable vertical slice without implementing it. P2.9-B remains NOT DONE until slice evidence criteria are met. Operator may choose P2.9-B rerun only if fallback criteria or slice preflight evidence is sufficient.
 
 ## P1.ENF-E Status
 
