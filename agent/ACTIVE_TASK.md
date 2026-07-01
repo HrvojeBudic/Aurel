@@ -1,6 +1,16 @@
-# Active Task: P2.11-B complete; next P2.11-C
+# Active Task: P2.11-C complete; next P2.11-D
 
-**Status:** P2.11-B COMPLETE — Surface Permission Projection / Matrix Read Model. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B is DONE as a deterministic projection/read model over that matrix. P2.11-C / Surface Permission Operator Inspection / CLI-Shell View Binding is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. Projection is not enforcement. Read model is not execution. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+**Status:** P2.11-C COMPLETE — Surface Permission Operator Inspection / CLI-Shell View Binding. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B is DONE as a deterministic projection/read model over that matrix. P2.11-C is DONE as read-only operator inspection / CLI-Shell view binding over that read model. P2.11-D / Surface Permission Inspection Parity / Evidence Consistency Gate is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. Inspection is not enforcement. CLI/Shell view binding is not execution. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
+
+## P2.11-C Status
+
+**DONE — SURFACE_PERMISSION_OPERATOR_INSPECTION / CLI_SHELL_VIEW_BINDING / P2_11_D_NEXT / P2_12_NOT_STARTED** — Implemented Python `SurfacePermissionInspectionQuery`, `SurfacePermissionInspectionFilter`, `SurfacePermissionInspectionResult`, `SurfacePermissionInspectionView`, `SurfacePermissionCliCommandSpec`, `SurfacePermissionShellViewBinding`, `SurfacePermissionInspectionExport`, `SurfacePermissionInspectionNoExecutionProof`, `P211CHandoff`, and `P211CResult` over P2.11-B read model truth.
+
+Report: `agent/reports/P2_11_C_SURFACE_PERMISSION_OPERATOR_INSPECTION.md`
+
+Current / next recommended roadmap task: **P2.11-D — Surface Permission Inspection Parity / Evidence Consistency Gate**
+
+Reason: P2.11-C completed operator inspection and read-only CLI/Shell binding only. P2.11-D can validate inspection parity and evidence consistency across matrix/projection/operator views. P2.11 as a whole remains incomplete. P2.12+ remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, runtime/sandbox control, permission enforcement, full policy runtime, Custos enforcement, or product readiness claim.
 
 ## P2.11-B Status
 
@@ -8,9 +18,7 @@
 
 Report: `agent/reports/P2_11_B_SURFACE_PERMISSION_PROJECTION_READ_MODEL.md`
 
-Current / next recommended roadmap task: **P2.11-C — Surface Permission Operator Inspection / CLI-Shell View Binding**
-
-Reason: P2.11-B completed the projection/read model only. P2.11-C can bind operator-facing inspection paths to CLI/TUI/Shell views. P2.11 as a whole remains incomplete. P2.12+ remains NOT_STARTED. Final P2 seal belongs to P2.20. No P3 handoff, Shell LIVE, command execution, runtime/sandbox control, permission enforcement, full policy runtime, Custos enforcement, or product readiness claim.
+Current / next recommended roadmap task: **P2.11-C — Surface Permission Operator Inspection / CLI-Shell View Binding** (DONE; superseded by P2.11-D next)
 
 ## P2.11-A Status
 

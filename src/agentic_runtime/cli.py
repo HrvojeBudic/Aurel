@@ -478,6 +478,16 @@ from .cli_modules.shell_commands import (
     cmd_shell_status,
     cmd_shell_surfaces,
 )
+from .cli_modules.shell_permission_commands import (
+    cmd_shell_permissions_actions,
+    cmd_shell_permissions_clients,
+    cmd_shell_permissions_evidence,
+    cmd_shell_permissions_export,
+    cmd_shell_permissions_sensitive,
+    cmd_shell_permissions_show,
+    cmd_shell_permissions_summary,
+    cmd_shell_permissions_surfaces,
+)
 from .cli_modules.path_governance import (
     cmd_path_governance_api_envelope,
     cmd_path_governance_capabilities,
@@ -1085,6 +1095,92 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_shell_read_model.add_argument("--json", action="store_true")
     p_shell_read_model.set_defaults(func=cmd_shell_read_model)
+
+    # P2.11-C — Shell permission inspection binding
+    p_shell_permissions = shell_sub.add_parser(
+        "permissions",
+        help="P2.11-C surface permission inspection (read-only)",
+    )
+    permissions_sub = p_shell_permissions.add_subparsers(
+        dest="permissions_command",
+        required=True,
+    )
+
+    p_perm_summary = permissions_sub.add_parser(
+        "summary",
+        help="summarize permission inspection read model",
+    )
+    p_perm_summary.add_argument("--json", action="store_true")
+    p_perm_summary.set_defaults(func=cmd_shell_permissions_summary)
+
+    p_perm_clients = permissions_sub.add_parser(
+        "clients",
+        help="list client permission views",
+    )
+    p_perm_clients.add_argument("--json", action="store_true")
+    p_perm_clients.set_defaults(func=cmd_shell_permissions_clients)
+
+    p_perm_surfaces = permissions_sub.add_parser(
+        "surfaces",
+        help="list surface permission views",
+    )
+    p_perm_surfaces.add_argument("--json", action="store_true")
+    p_perm_surfaces.set_defaults(func=cmd_shell_permissions_surfaces)
+
+    p_perm_actions = permissions_sub.add_parser(
+        "actions",
+        help="list action permission views",
+    )
+    p_perm_actions.add_argument("--json", action="store_true")
+    p_perm_actions.set_defaults(func=cmd_shell_permissions_actions)
+
+    p_perm_show = permissions_sub.add_parser(
+        "show",
+        help="show filtered permission entries",
+    )
+    p_perm_show.add_argument("--client", default=None)
+    p_perm_show.add_argument("--surface", default=None)
+    p_perm_show.add_argument("--action", default=None)
+    p_perm_show.add_argument("--level", default=None)
+    p_perm_show.add_argument("--reason", default=None)
+    p_perm_show.add_argument("--no-evidence", action="store_true")
+    p_perm_show.add_argument("--sensitive", action="store_true")
+    p_perm_show.add_argument("--denied", action="store_true")
+    p_perm_show.add_argument("--future-gated", action="store_true")
+    p_perm_show.add_argument("--contract-only", action="store_true")
+    p_perm_show.add_argument("--unavailable", action="store_true")
+    p_perm_show.add_argument("--preflight-only", action="store_true")
+    p_perm_show.add_argument("--json", action="store_true")
+    p_perm_show.set_defaults(func=cmd_shell_permissions_show)
+
+    p_perm_evidence = permissions_sub.add_parser(
+        "evidence",
+        help="inspect evidence refs and NO_EVIDENCE entries",
+    )
+    p_perm_evidence.add_argument("--no-evidence", action="store_true")
+    p_perm_evidence.add_argument("--json", action="store_true")
+    p_perm_evidence.set_defaults(func=cmd_shell_permissions_evidence)
+
+    p_perm_sensitive = permissions_sub.add_parser(
+        "sensitive",
+        help="inspect sensitive surface limitations",
+    )
+    p_perm_sensitive.add_argument("--json", action="store_true")
+    p_perm_sensitive.set_defaults(func=cmd_shell_permissions_sensitive)
+
+    p_perm_export = permissions_sub.add_parser(
+        "export",
+        help="export read-only permission inspection JSON",
+    )
+    p_perm_export.add_argument("--client", default=None)
+    p_perm_export.add_argument("--surface", default=None)
+    p_perm_export.add_argument("--action", default=None)
+    p_perm_export.add_argument("--level", default=None)
+    p_perm_export.add_argument("--no-evidence", action="store_true")
+    p_perm_export.add_argument("--sensitive", action="store_true")
+    p_perm_export.add_argument("--denied", action="store_true")
+    p_perm_export.add_argument("--json", action="store_true")
+    p_perm_export.set_defaults(func=cmd_shell_permissions_export)
 
     # P1.7.18 — path governance projection CLI binding
     p_pg = sub.add_parser(

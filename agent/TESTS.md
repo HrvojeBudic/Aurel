@@ -58,6 +58,27 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P2.11-C Surface Permission Operator Inspection / CLI-Shell View Binding Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p211c_surface_permission_inspection.py -q
+.venv/bin/python -m pytest tests/test_p211c_permission_inspection_filters.py -q
+.venv/bin/python -m pytest tests/test_p211c_cli_shell_view_binding.py -q
+.venv/bin/python -m pytest tests/test_p211c_permission_inspection_no_execution.py -q
+.venv/bin/python -m pytest tests/test_p211c_p211d_handoff.py -q
+.venv/bin/python -m pytest tests/test_p211b_surface_permission_projection.py tests/test_p211b_matrix_read_model.py tests/test_p211b_permission_projection_no_execution.py tests/test_p211b_p211c_handoff.py -q
+.venv/bin/python -m pytest tests/test_p211a_surface_permission_matrix.py tests/test_p211a_client_surface_authority_baseline.py tests/test_p211a_surface_permission_no_execution.py tests/test_p211a_p211b_handoff.py -q
+.venv/bin/python -m pytest tests/test_p210e_multi_client_demo_seal.py tests/test_p210e_truth_consistency_matrix.py tests/test_p210e_no_overclaim_matrix.py tests/test_p210e_p211_handoff.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m ruff check src tests
+```
+
+P2.11-C seals only Surface Permission Operator Inspection / CLI-Shell View Binding over P2.11-B. P2.11-D is next, P2.11 as a whole is not complete, and P2.12+ remains NOT_STARTED. Inspection is not enforcement. CLI/Shell view binding is not execution. The inspection layer does not implement or claim command execution, tool execution, approval execution, runtime control, sandbox control, memory write, policy mutation, identity mutation, permission enforcement, full policy runtime, Custos enforcement, Shell LIVE, product readiness, final P2 seal, or P3 handoff.
+
 ## P2.11-B Surface Permission Projection / Matrix Read Model Validation (COMPLETE)
 
 ```bash
