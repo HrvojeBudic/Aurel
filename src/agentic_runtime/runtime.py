@@ -31,10 +31,15 @@ from .budget import BudgetExceeded, BudgetLedger
 from .governance_enforcement import (
     GovernanceEnforcementConfig,
 )
+from .identity_invariant_enforcement import (
+    IdentityInvariantEnforcementResult,
+    IdentitySubmitWithInvariantResult,
+    evaluate_identity_submit_with_invariants,
+    identity_invariant_enforcement_to_artifact,
+)
 from .identity_submit_context import (
     IdentitySubmitContextLoader,
     IdentitySubmitPreflightResult,
-    evaluate_identity_submit_preflight,
     identity_submit_preflight_to_artifact,
 )
 from .policy_submit_influence import (
@@ -175,14 +180,15 @@ class AgenticRuntime:
         except BudgetExceeded as e:
             self._budget_blocked(pre_policy_hash, cmd, e, card=card)
             raise
-        identity_preflight = self._evaluate_identity_submit_preflight()
-        if identity_preflight is not None and identity_preflight.should_block:
+        identity_submit = self._evaluate_identity_submit_with_invariants(cmd)
+        if identity_submit is not None and identity_submit.should_block:
+            reason = _identity_submit_block_reason(identity_submit)
             return self._governance_enforcement_blocked(
                 pre_policy_hash,
                 cmd,
                 card,
-                reason="identity submit context failed closed",
-                identity_preflight=identity_preflight,
+                reason=reason,
+                identity_submit=identity_submit,
             )
         # ---- 1. POLICY ------------------------------------------------- #
         decision = self.policy.evaluate(cmd, card)
@@ -191,7 +197,7 @@ class AgenticRuntime:
                 stderr="DENIED by policy: " + "; ".join(decision.reasons))
             self._attach_submit_governance_artifacts(
                 obs,
-                identity_preflight=identity_preflight,
+                identity_submit=identity_submit,
             )
             vres = VerifierResult(False, "policy", reason="denied")
             runtime_snapshot = self._build_runtime_policy_snapshot_for_submit(
@@ -223,7 +229,7 @@ class AgenticRuntime:
                 card,
                 reason=policy_submit_gate.artifact.blocker_reason
                 or "policy resolver submit influence failed closed",
-                identity_preflight=identity_preflight,
+                identity_submit=identity_submit,
                 policy_submit_gate=policy_submit_gate,
             )
 
@@ -401,7 +407,7 @@ class AgenticRuntime:
         self._attach_policy_shadow_projection(cmd, card, obs, runtime_snapshot)
         self._attach_submit_governance_artifacts(
             obs,
-            identity_preflight=identity_preflight,
+            identity_submit=identity_submit,
             policy_submit_gate=policy_submit_gate,
         )
         rec = self._append_transition(
@@ -786,16 +792,18 @@ class AgenticRuntime:
         )
         _ = rec
 
-    def _evaluate_identity_submit_preflight(
+    def _evaluate_identity_submit_with_invariants(
         self,
-    ) -> IdentitySubmitPreflightResult | None:
+        cmd: CommandEnvelope,
+    ) -> IdentitySubmitWithInvariantResult | None:
         if not self._governance_enforcement_explicit:
             return None
         cfg = self.governance_enforcement_config
-        return evaluate_identity_submit_preflight(
+        return evaluate_identity_submit_with_invariants(
             mode=cfg.mode,
             require_identity_context=cfg.require_identity_context,
             loader=self.identity_context_loader,
+            submit_metadata={"args": cmd.args},
         )
 
     def _evaluate_policy_resolver_submit_influence(
@@ -828,7 +836,9 @@ class AgenticRuntime:
         self,
         obs: ObservationEnvelope,
         *,
+        identity_submit: IdentitySubmitWithInvariantResult | None = None,
         identity_preflight: IdentitySubmitPreflightResult | None = None,
+        identity_invariant_enforcement: IdentityInvariantEnforcementResult | None = None,
         policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
     ) -> None:
         if not self._governance_enforcement_explicit:
@@ -839,10 +849,24 @@ class AgenticRuntime:
             "mode": self.governance_enforcement_config.mode.value,
             "truth_label": "ENFORCEMENT_BRIDGE",
         }
-        if identity_preflight is not None:
-            artifacts["identity_submit_context"] = identity_submit_preflight_to_artifact(
-                identity_preflight
+        if identity_submit is not None:
+            artifacts["identity_submit_context"] = identity_submit.preflight.to_canonical_dict()
+            artifacts["identity_invariant_enforcement"] = (
+                identity_invariant_enforcement_to_artifact(
+                    identity_submit.invariant_enforcement
+                )
             )
+        else:
+            if identity_preflight is not None:
+                artifacts["identity_submit_context"] = identity_submit_preflight_to_artifact(
+                    identity_preflight
+                )
+            if identity_invariant_enforcement is not None:
+                artifacts["identity_invariant_enforcement"] = (
+                    identity_invariant_enforcement_to_artifact(
+                        identity_invariant_enforcement
+                    )
+                )
         if policy_submit_gate is not None:
             artifacts["policy_submit_influence"] = policy_submit_gate_result_to_artifact(
                 policy_submit_gate
@@ -856,6 +880,7 @@ class AgenticRuntime:
         card: AgentCard,
         *,
         reason: str,
+        identity_submit: IdentitySubmitWithInvariantResult | None = None,
         identity_preflight: IdentitySubmitPreflightResult | None = None,
         policy_submit_gate: PolicyResolverSubmitGateResult | None = None,
     ) -> CommandResult:
@@ -866,9 +891,18 @@ class AgenticRuntime:
         )
         self._attach_submit_governance_artifacts(
             obs,
+            identity_submit=identity_submit,
             identity_preflight=identity_preflight,
             policy_submit_gate=policy_submit_gate,
         )
+        preflight = (
+            identity_submit.preflight
+            if identity_submit is not None
+            else identity_preflight
+        )
+        invariant_status = ""
+        if identity_submit is not None:
+            invariant_status = identity_submit.invariant_enforcement.decision.value
         vres = VerifierResult(
             False,
             "governance_enforcement",
@@ -877,8 +911,9 @@ class AgenticRuntime:
             evidence={
                 "mode": self.governance_enforcement_config.mode.value,
                 "identity_status": (
-                    identity_preflight.status.value if identity_preflight is not None else ""
+                    preflight.status.value if preflight is not None else ""
                 ),
+                "identity_invariant_decision": invariant_status,
                 "policy_status": (
                     policy_submit_gate.status.value if policy_submit_gate is not None else ""
                 ),
@@ -1136,6 +1171,15 @@ def _policy_card_command_class(cmd: CommandEnvelope) -> str:
 def _short(args: dict) -> str:
     s = ", ".join(f"{k}={str(v)[:24]}" for k, v in list(args.items())[:3])
     return s
+
+
+def _identity_submit_block_reason(result: IdentitySubmitWithInvariantResult) -> str:
+    if result.preflight.should_block:
+        return "identity submit context failed closed"
+    artifact = result.invariant_enforcement.artifact
+    if artifact.violations:
+        return artifact.violations[0].message
+    return "identity kernel invariant enforcement failed closed"
 
 
 class _NullLock:

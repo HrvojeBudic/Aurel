@@ -42,6 +42,22 @@ from .governance_enforcement import (
     P1ENFASideEffectProof,
     P1ENFAResult,
 )
+from .identity_invariant_enforcement import (
+    IdentityInvariantCheckInput,
+    IdentityInvariantDecision,
+    IdentityInvariantEnforcementResult,
+    IdentitySubmitWithInvariantResult,
+    discover_identity_kernel_invariants,
+    evaluate_identity_invariant_enforcement,
+    evaluate_identity_submit_with_invariants,
+    identity_invariant_enforcement_to_artifact,
+)
+from .identity_kernel_invariants import (
+    IdentityKernelDiscoveryResult,
+    IdentityKernelInvariantRecord,
+    IdentityKernelSource,
+    SELECTED_INVARIANT_IDS,
+)
 from .identity_submit_context import (
     IdentityMissingContextBehavior,
     IdentitySubmitArtifact,
@@ -248,6 +264,12 @@ __all__ = [
     "IdentitySubmitArtifact", "IdentityMissingContextBehavior", "IdentitySubmitContextLoader",
     "build_identity_submit_context", "evaluate_identity_submit_preflight",
     "load_default_identity_submit_context",
+    "IdentityKernelSource", "IdentityKernelInvariantRecord", "IdentityKernelDiscoveryResult",
+    "SELECTED_INVARIANT_IDS", "discover_identity_kernel_invariants",
+    "IdentityInvariantDecision", "IdentityInvariantCheckInput",
+    "IdentityInvariantEnforcementResult", "IdentitySubmitWithInvariantResult",
+    "evaluate_identity_invariant_enforcement", "evaluate_identity_submit_with_invariants",
+    "identity_invariant_enforcement_to_artifact",
     "EntrypointGovernanceClassification", "EntrypointGovernanceGuard",
     "EntrypointBypassRisk", "EntrypointBypassGuardResult",
     "GovernedDelegationRequirement", "NonExecutingEntrypointProof",

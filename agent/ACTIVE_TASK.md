@@ -1,6 +1,16 @@
-# Active Task: P1.ENF-F-B complete; next P1.ENF-D1 unless operator reruns P2.9-B
+# Active Task: P1.ENF-D1 complete; next P1.ENF-E unless operator reruns P2.9-B
 
-**Status:** P1.ENF-F-B COMPLETE as Roadmap v5.5 canon sync / historical docs archive labeling. P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+**Status:** P1.ENF-D1 COMPLETE as selected Identity Kernel invariant enforcement deepening. P1.ENF-F-B, P1.ENF-C, P1.ENF-A, P1.ENF-A-OMNI-R1, P1.ENF-B, and P1.ENF-F-A remain DONE. P2.9-A remains COMPLETE with P2.9-A-R1 evidence-ref repair applied. P2.9-B remains NOT DONE.
+
+## P1.ENF-D1 Status
+
+**DONE — SELECTED_IDENTITY_INVARIANT_ENFORCEMENT / P2.9-B_NOT_DONE** — Selected Identity Kernel invariants (IK-002, IK-005, IK-006, IK-007) discovered from `config/aurel/identity_kernel.yaml`, structured invariant decision artifacts added, runtime submit/preflight enforcement binding integrated with existing governance modes, 11 focused tests plus regressions passing.
+
+Report: `agent/reports/P1_ENF_D1_IDENTITY_KERNEL_INVARIANT_ENFORCEMENT_DEEPENING.md`
+
+Current / next recommended roadmap task: **P1.ENF-E — Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening**
+
+Reason: P1.ENF-D1 completed selected invariant enforcement without identity CLI refactor, auth/session subsystem, Custos runtime, sandbox hardening, or P2.9-B. Operator may choose P2.9-B rerun if Shell Exit Seal readiness is higher priority.
 
 ## P1.ENF-F-B Status
 

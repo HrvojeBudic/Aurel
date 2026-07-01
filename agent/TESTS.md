@@ -133,6 +133,35 @@ P1.ENF-C is a governance continuity harness only. It does NOT implement P1.ENF-F
 
 Report: `agent/reports/P1_ENF_C_GOLDEN_THREAD_B_GOVERNANCE_CONTINUITY.md`
 
+## P1.ENF-D1 Identity Kernel Invariant Enforcement Deepening Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_identity_kernel_invariants.py -q
+.venv/bin/python -m pytest tests/test_identity_invariant_enforcement_submit.py -q
+.venv/bin/python -m pytest tests/test_identity_submit_context.py tests/test_governance_enforcement_submit.py -q
+.venv/bin/python -m pytest tests/test_entrypoint_governance_guard.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m mypy --follow-imports=silent \
+  --enable-error-code arg-type \
+  --enable-error-code call-arg \
+  --enable-error-code union-attr \
+  src/agentic_runtime/runtime.py \
+  src/agentic_runtime/trace.py \
+  src/agentic_runtime/repo_agent.py \
+  src/agentic_runtime/core_types.py \
+  src/agentic_runtime/__init__.py
+```
+
+Results after P1.ENF-D1: compileall **PASS**; identity kernel invariants **2 passed**; identity invariant enforcement submit **9 passed**; identity submit context **7 passed**; governance enforcement submit **11 passed**; entrypoint governance guard **6 passed**; validation truth + drift gates **18 passed**; Golden Thread B **17 passed**; ruff **PASS**; baseline mypy **PASS** (334 source files); core strict probe unchanged from prior baseline (5-file probe with pre-existing unrelated strict findings). Full suite, coverage, Bandit, and optional selector **NOT RUN**.
+
+P1.ENF-D1 is selected Identity Kernel invariant enforcement only. It does NOT implement full IK enforcement, identity CLI refactor, auth/session subsystem, Custos runtime, sandbox hardening, P1.ENF-E, P2.REVIEW-A, P2.9-B, Shell command router, product UI, LIVE, TRACE_VERIFIED, or P2 complete claim.
+
+Report: `agent/reports/P1_ENF_D1_IDENTITY_KERNEL_INVARIANT_ENFORCEMENT_DEEPENING.md`
+
 ## P1.ENF-F-B Roadmap v5.5 Canon Sync / Historical Docs Archive Validation (COMPLETE)
 
 ```bash

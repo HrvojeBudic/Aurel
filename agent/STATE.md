@@ -1,11 +1,12 @@
 # Repository State
 
-_Last updated: 2026-07-01 (P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Docs Archive)_
+_Last updated: 2026-07-01 (P1.ENF-D1 - Identity Kernel Invariant Enforcement Deepening)_
 
 ## Current Roadmap Pointer
 
 - **Active roadmap canon:** Aurel Roadmap v5.5 (`agent/ROADMAP.md`, `agent/CANON_INDEX.md`)
 - **Current continuity evidence:** Golden Thread B (`P1.ENF-C`, `golden_thread_b.py`)
+- Last completed identity invariant enforcement: **P1.ENF-D1** - selected Identity Kernel invariant discovery and runtime submit/preflight enforcement binding for IK-002/005/006/007
 - Last completed docs/canon sync: **P1.ENF-F-B** - v5.5 active canon pointer, historical doc status labels, canon index
 - Last completed continuity harness: **P1.ENF-C** - Golden Thread B governance continuity spine linking P1.8–P2.9-A and P1.ENF repair/audit/gate chain with truth labels and gap matrix
 - Last completed drift gate pack: **P1.ENF-F-A** - validation truth gates, determinism/dirty worktree gate, tooling truth/core strict probe gate, shadow/enforcement drift gate, contract/live overclaim gate, unknown entrypoint risk gate, report/code claim drift gate
@@ -14,8 +15,8 @@ _Last updated: 2026-07-01 (P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Doc
 - Last completed enforcement bridge: **P1.ENF-A** - policy resolver submit influence, identity submit context binding, and entrypoint bypass classification
 - Last completed Shell repair: **P2.9-A-R1** - Shell Exit Seal Foundation evidence refs repaired; P2.9-B preflight hygiene blocker cleared
 - Last completed: P2.9-A - P2.9.0-P2.9.5 Shell Exit Seal Foundation
-- Current active: **P1.ENF-F-B complete - v5.5 canon sync / historical archive labeling; P1.ENF-D1 is next planned pack unless operator reruns P2.9-B first**
-- Next recommended roadmap task: **P1.ENF-D1 - Identity Kernel Invariant Enforcement Deepening**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
+- Current active: **P1.ENF-D1 complete - selected Identity Kernel invariant enforcement deepening; P1.ENF-E is next planned pack unless operator reruns P2.9-B first**
+- Next recommended roadmap task: **P1.ENF-E - Sandbox Safe Backend Gating / UnsafeLocalSandbox Hardening**, unless operator chooses **P2.9-B - P2.9.6-P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix**
 - Roadmap version: **v5.5 actor-boundary remap over v5.1 Integration-First**
 - P2.0 status: **SEALED_FOR_P2_CONTRACT_SCOPE** — P2.0-A through P2.0-F complete
 - P2.1 status: **SEALED_FOR_P2_1_CONTRACT_SCOPE** — P2.1-A through P2.1-D complete
@@ -41,6 +42,14 @@ _Last updated: 2026-07-01 (P1.ENF-F-B - Roadmap v5.5 Canon Sync / Historical Doc
 - P2.9-B status: **NOT DONE** — rerun next after P2.9-A-R1
 - P2.9-C status: **NOT READY** — blocked until P2.9-B completes
 - AurelShell suite: **1004 passed** (post P2.9-A-R1)
+
+## P1.ENF-D1 Identity Kernel Invariant Enforcement Deepening
+
+P1.ENF-D1 deepens P1.ENF-A identity submit context into selected Identity Kernel invariant enforcement at runtime submit/preflight. Added `identity_kernel_invariants.py` discovery/read model from `config/aurel/identity_kernel.yaml`, `identity_invariant_enforcement.py` resolver/guard for IK-002/005/006/007 plus required-context checks, and runtime binding in `runtime.py` under explicit governance enforcement config.
+
+Boundary: selected invariant enforcement only. No full IK enforcement, identity CLI refactor, operator account model, auth/session subsystem, Custos runtime, sandbox hardening, P1.ENF-E, P2.REVIEW-A, P2.9-B, Shell router, product UI, LIVE, TRACE_VERIFIED, or P2 complete claim.
+
+Validation: compileall PASS; identity kernel invariants 2 passed; identity invariant enforcement submit 9 passed; identity submit context 7 passed; governance enforcement submit 11 passed; entrypoint guard 6 passed; validation truth + drift gates 18 passed; Golden Thread B 17 passed; ruff PASS; baseline mypy PASS. Full suite/coverage/Bandit NOT RUN. Report: `agent/reports/P1_ENF_D1_IDENTITY_KERNEL_INVARIANT_ENFORCEMENT_DEEPENING.md`.
 
 ## P1.ENF-F-B Roadmap v5.5 Canon Sync / Historical Docs Archive
 

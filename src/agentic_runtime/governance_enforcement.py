@@ -30,6 +30,7 @@ class GovernanceEnforcementModeStatus(str, Enum):
 class GovernanceEnforcementBoundary(str, Enum):
     POLICY_RESOLVER_SUBMIT_INFLUENCE = "policy_resolver_submit_influence"
     IDENTITY_SUBMIT_CONTEXT = "identity_submit_context"
+    IDENTITY_KERNEL_INVARIANT = "identity_kernel_invariant"
     ENTRYPOINT_BYPASS_GUARD = "entrypoint_bypass_guard"
     SIDE_EFFECT_PROOF = "side_effect_proof"
 
