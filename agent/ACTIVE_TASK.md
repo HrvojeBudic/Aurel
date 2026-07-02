@@ -1,4 +1,20 @@
-# Active Task: P2.11-C complete; next P2.11-D
+# Active Task: P3-FLOW-A complete (operator override); next P3-FLOW-B
+
+**Status:** P3-FLOW-A COMPLETE — AurelFlow Runtime Foundation Superpack. P3 was opened by explicit operator override on 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 (including the P2.20 Final Seven-Surface Exit Seal) are deferred until after full P3 by operator decision. This is not an organic P2-complete / P3 handoff claim.
+
+## P3-FLOW-A Status
+
+**DONE — AURELFLOW_RUNTIME_FOUNDATION / LOCAL_RUNTIME_SUBSTRATE / NO_EXECUTION_BOUNDARY_ACTIVE / OPERATOR_OVERRIDE_RECORDED / P3_FLOW_B_NEXT** — Implemented Python `WorkflowNode`, `WorkflowEdge`, `WorkflowGraph`, `WorkflowGraphSpec`, `WorkflowGraphValidationResult`, `WorkflowGraphReadModel`, `WorkflowRun`, `WorkflowRunState`, `WorkflowLifecycleStatus`, `WorkflowNodeState`, `WorkflowStateTransition`, `WorkflowStateValidationResult`, `WorkflowStateSnapshot`, `ReadyQueue`, `SchedulableNode`, `SchedulerDecision`, `SchedulerDecisionReason`, `FlowNoExecutionProof`, `FlowRuntimeFoundationReadModel`, and pure helpers (`validate_workflow_graph`, `create_workflow_run`, `transition_workflow_run`, `snapshot_workflow_state`, `calculate_ready_queue`, `make_scheduler_decision`, `build_flow_runtime_read_model`) under `src/agentic_runtime/aurel_flow/` with a DEV_FIXTURE demo and 50 focused tests.
+
+Boundary: AurelFlow orchestrates; the scheduler decides readiness; nothing executes. A workflow graph is definition, not permission. A scheduler decision is a readiness explanation, not an execution capability. Approval nodes wait and are never self-approved. Execution is UNAVAILABLE and belongs to P4 AurelExec. Trace verification is UNAVAILABLE and belongs to P5 AurelTrace. Flow CLI/TUI binding is UNAVAILABLE and belongs to P3.7. Runtime event stream is UNAVAILABLE and belongs to P3.3 / P3-FLOW-B. Approval runtime is UNAVAILABLE and belongs to P3.4. Run state is in-memory only (UNAVAILABLE_PERSISTENCE). No LIVE, TRACE_VERIFIED, tool/command/subprocess/network/sandbox execution, worker/agent dispatch, approval/retry/rollback execution, memory write, policy/identity mutation, global Trace write, or Ledger write claim.
+
+Report: `agent/reports/P3_FLOW_A_AURELFLOW_RUNTIME_FOUNDATION_SUPERPACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-B — Runtime Event Stream / Approval Pause / Retry-Recovery-Rollback Pack (P3.3–P3.5)**
+
+Reason: P3-FLOW-A completed the graph → run state → scheduler decision foundation only. P3-FLOW-B can add the runtime event stream, approval pause/resume runtime, and retry/recovery/rollback runtime over the immutable transition history. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or Custos enforcement claim.
+
+# Prior Active Task (historical): P2.11-C complete; next P2.11-D (P2 tail deferred by operator override until after full P3)
 
 **Status:** P2.11-C COMPLETE — Surface Permission Operator Inspection / CLI-Shell View Binding. P2.9.0-P2.9.20 DONE and sealed (P2.9-A/B/C/D). P2.10-A/B/C/D/E DONE and P2.10 sealed as an honest multi-client Shell foundation. P2.11-A is DONE as a deterministic evidence-bound client x surface x action permission matrix foundation. P2.11-B is DONE as a deterministic projection/read model over that matrix. P2.11-C is DONE as read-only operator inspection / CLI-Shell view binding over that read model. P2.11-D / Surface Permission Inspection Parity / Evidence Consistency Gate is next. P2.11 as a whole is not complete. P2.12+ remains NOT_STARTED. P2.VSLICE-A remains PREFLIGHT_ONLY. Inspection is not enforcement. CLI/Shell view binding is not execution. No Shell LIVE, command execution, tool execution, approval execution, runtime control, sandbox control, full local app, product readiness, final P2 seal, or P3 handoff claim.
 

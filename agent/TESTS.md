@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-A AurelFlow Runtime Foundation Superpack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_state.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_scheduler_ready_queue.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_runtime_read_model.py -q
+.venv/bin/python -m pytest tests/test_p211c_surface_permission_inspection.py tests/test_p211c_permission_inspection_filters.py tests/test_p211c_cli_shell_view_binding.py tests/test_p211c_permission_inspection_no_execution.py tests/test_p211c_p211d_handoff.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results after P3-FLOW-A: compileall **PASS**; P3-FLOW-A focused **50 passed** (graph 15, state 12, scheduler/ready-queue 8, no-execution 6, read model 9); P2.11-C-era regression subset **67 passed**; ruff **PASS**; mypy **PASS** (362 source files). Full suite, coverage, Bandit, and core strict probe **NOT RUN**.
+
+P3-FLOW-A is the AurelFlow runtime foundation only (graph + run state + scheduler decision + read model), opened by explicit operator override with the P2.11-D–P2.20 tail deferred until after full P3. It does NOT implement P3.3 runtime event stream, P3.4 approval runtime, P3.5 retry/recovery/rollback runtime, P3.6 projection pack, P3.7 Flow CLI/TUI binding, P3.9 exit seal, P4 AurelExec execution, P5 trace verification, P9 Custos enforcement, persistence backend, worker/agent dispatch, memory/policy/identity mutation, LIVE, or TRACE_VERIFIED.
+
+Report: `agent/reports/P3_FLOW_A_AURELFLOW_RUNTIME_FOUNDATION_SUPERPACK.md`
+
 ## P2.11-C Surface Permission Operator Inspection / CLI-Shell View Binding Validation (COMPLETE)
 
 ```bash

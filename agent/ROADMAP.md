@@ -11,10 +11,14 @@
 | Active roadmap | Aurel Roadmap v5.5 (this file) |
 | Doc status index | `agent/CANON_INDEX.md` |
 | Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
-| Last completed pack | P2.9-B-R1 |
-| Next planned pack | true P2.9-B — P2.9.6–P2.9.10 Shell Exit Seal Readiness / Validation / Evidence Matrix |
+| Last completed pack | P3-FLOW-A — AurelFlow Runtime Foundation Superpack (P3.0/P3.1/P3.2 capsule coverage) |
+| Next planned pack | P3-FLOW-B — Runtime Event Stream / Approval Pause / Retry-Recovery-Rollback (P3.3–P3.5) |
+| P3 entry basis | Explicit operator override (2026-07-02): "override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3" — not an organic P2 seal |
+| P2 tail status | P2.11-C DONE; P2.11-D through P2.20 (incl. P2.20 Final Seven-Surface Exit Seal) DEFERRED until after full P3; P2 NOT sealed |
 | old P2.9-B (evidence overlay) | DONE — retained; not granular P2.9.x completion |
-| true P2.9-B (P2.9.6–P2.9.10) | NOT DONE |
+| true P2.9-B (P2.9.6–P2.9.10) | DONE (true P2.9-B report); P2.9 sealed by P2.9-D |
+
+Table sync note (2026-07-02, P3-FLOW-A): this table previously lagged repo truth — it still said "Last completed pack: P2.9-B-R1" while ACTIVE_TASK/STATE/git had reached P2.11-C. Synced during the P3-FLOW-A canon update; per-pack history remains in `agent/ACTIVE_TASK.md`, `agent/STATE.md`, and `agent/REPORTS.md`.
 
 Historical roadmap/report eras (v3.2, v5.0/v5.1, v5.4 transition) remain preserved with explicit status labels in `agent/CANON_INDEX.md`. Do not treat historical docs as current task authority.
 

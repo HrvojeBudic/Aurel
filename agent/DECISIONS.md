@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-A AurelFlow Runtime Foundation Superpack
+
+### DEC-P3FLOWA-01: P3 opened by explicit operator override, not by P2 seal
+**Decision:** P3-FLOW-A was dispatched while repo canon pointed to unfinished P2 work (P2.11-C done, P2.11-D next, P2.12–P2.20 NOT_STARTED). The run stopped on the contract's stop condition and reported the blocker; the operator explicitly overrode: "override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3". P3 work proceeds on that basis, recorded verbatim in ACTIVE_TASK/STATE/ROADMAP/report. P2 remains PARTIAL / not sealed and the P2.11-D→P2.20 tail is deferred until after full P3.
+**Why:** Skipping the P2 tail silently would manufacture a fake P2-complete/P3-handoff claim. Recording the override as operator authority keeps the truth chain honest: Operator decides; the runtime does not invent seals.
+
+### DEC-P3FLOWA-02: AurelFlow is a self-contained runtime substrate, not an aurel_shell consumer
+**Decision:** `src/agentic_runtime/aurel_flow/` carries its own canonical serialization/hash helpers, truth labels, and error types instead of importing from `aurel_shell.contracts`.
+**Why:** AurelFlow is runtime substrate; AurelShell is a projection surface. Coupling the runtime foundation to a projection package would invert the "backend is source of truth, Shell is projection" law and entangle P3 runtime evolution with P2 Shell contract history.
+
+### DEC-P3FLOWA-03: Scheduler decisions are readiness explanations, never execution capabilities
+**Decision:** `SchedulerDecision`/`ReadyQueue`/`SchedulableNode` carry permanently-false execution-authority booleans (`is_execution_capability`, `executes_nodes`, `dispatches_work`, `approves_approvals`, `is_execution_grant`) and the scheduler is a pure function over graph + recorded run state. Approval-required nodes return WAITING_APPROVAL until an explicit recorded WAITING_APPROVAL→READY mark exists; the scheduler never performs transitions.
+**Why:** Object-capability boundary: readiness is not authority. If a decision object could execute, P3 would silently become P4 AurelExec without governance.
+
+### DEC-P3FLOWA-04: Run state is immutable snapshots + explicit transitions, in-memory only
+**Decision:** `WorkflowRun` is frozen; `transition_workflow_run` returns a new run with the transition appended to history. Durability is honestly labeled `UNAVAILABLE_PERSISTENCE` ("in-memory only"); no storage backend is claimed.
+**Why:** Explicit transition history gives the P3.3 event stream and future P5 trace/replay layers a deterministic spine to bind to, and prevents hidden procedural mutation. Claiming durability without a store would be a fake persistence claim.
+
 ## 2026-07-02 - P2.11-A Surface Permission Matrix Foundation
 
 ### DEC-P211A-01: Permission matrix is Shell-level pre-execution authority modeling only
