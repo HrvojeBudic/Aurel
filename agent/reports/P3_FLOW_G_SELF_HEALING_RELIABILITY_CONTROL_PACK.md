@@ -316,10 +316,11 @@ autonomy levels. Not started; awaiting explicit dispatch.
 
 ## 26. Commit Hash
 
-Implementation commit: recorded in the follow-up docs(agent) commit, per pack
-convention — a report cannot honestly contain its own commit's hash before
-that commit exists. See `agent/REPORTS.md` and `git log` for the final
-hashes.
+Implementation commit: `4867489` — `feat(flow): add P3-FLOW-G reliability
+control plane` (21 files, +6367/−5). This hash was recorded in the follow-up
+`docs(agent): record P3-FLOW-G commit hash` commit, per pack convention — a
+report cannot honestly contain its own commit's hash before that commit
+exists.
 
 ## 27. Final Git Status
 
