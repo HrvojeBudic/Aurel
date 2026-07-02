@@ -7,7 +7,7 @@
 - Date: 2026-07-02
 - Task ID: P3-FLOW-D
 - Roadmap: Aurel Roadmap v5.5 — P3.10.0–P3.10.24 / P3.11.0–P3.11.24 / P3.12.0–P3.12.24
-- Commit: (recorded post-commit by follow-up docs commit)
+- Commit: `a683238` — `feat(flow): add P3-FLOW-D authority control boundary` (18 files, +3562/−5)
 - AurelFlow gained legal grammar for future action — proposal, permission
   request, execution request, proof expectation, operator review, pause
   hooks, reliability/budget boundary seeds — and none of it can execute,
@@ -265,8 +265,9 @@ After full P3, resume the deferred P2 tail (P2.11-D → P2.20).
 
 ## 21. Commit Hash
 
-`feat(flow): add P3-FLOW-D authority control boundary` — hash recorded
-post-commit by follow-up docs commit.
+`a683238` — `feat(flow): add P3-FLOW-D authority control boundary`
+(18 files changed, 3562 insertions, 5 deletions), followed by this
+hash-recording docs commit.
 
 ## 22. Final Git Status
 
