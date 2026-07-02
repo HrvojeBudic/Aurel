@@ -58,6 +58,25 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-E Dynamic Runtime Graph / Graph Plasticity Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_e_dynamic_graph.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_topology_snapshot.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_graph_revision.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_topology_vulnerability.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_a_no_execution_boundary.py tests/test_p3_flow_a_runtime_read_model.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_runtime_events.py tests/test_p3_flow_b_state_commitment.py tests/test_p3_flow_b_pause_resume.py tests/test_p3_flow_b_retry_recovery.py tests/test_p3_flow_b_no_execution_boundary.py tests/test_p3_flow_b_behavior_read_model.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_projection.py tests/test_p3_flow_c_timeline.py tests/test_p3_flow_c_event_graph.py tests/test_p3_flow_c_wiring_matrix.py tests/test_p3_flow_c_protocol_boundary.py tests/test_p3_flow_c_cli_read_only.py tests/test_p3_flow_c_base_exit_seal.py tests/test_p3_flow_c_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_d_boundary.py tests/test_p3_flow_d_operator_review.py tests/test_p3_flow_d_pause_hooks.py tests/test_p3_flow_d_read_model.py tests/test_p3_flow_d_no_execution_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-02): compileall PASS; P3-FLOW-E 62 passed (12 dynamic graph + 10 topology snapshot + 18 graph revision + 22 topology vulnerability + 6 no-execution boundary); P3-FLOW-A regression 50 passed; P3-FLOW-B regression 53 passed; P3-FLOW-C regression 65 passed; P3-FLOW-D regression 42 passed; ruff "All checks passed!"; mypy "Success: no issues found in 381 source files". Full pytest suite / coverage / Bandit NOT run for this pack (no runtime/security/sandbox/network/subprocess path touched; lean doctrine applies).
+
 ## P3-FLOW-D Authority / Control Boundary Pack Validation (COMPLETE)
 
 ```bash

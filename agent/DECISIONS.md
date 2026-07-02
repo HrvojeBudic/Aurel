@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-E Dynamic Runtime Graph / Graph Plasticity Pack
+
+### DEC-P3FLOWE-01: Graph determination time is a logical run-step anchor, not a wall clock
+**Decision:** `GraphDeterminationTime` carries a `determination_kind` (RUN_STEP/RUNTIME_EVENT/UNAVAILABLE) and a `run_step: int`/`source_event_id: str` rather than a timestamp; `realize_runtime_graph()` defaults it to the run's current `state.step`.
+**Why:** Real wall-clock time would make `realize_runtime_graph()` non-deterministic across two calls with identical inputs, breaking the "same inputs -> same ID/hash" determinism tests used throughout every P3-FLOW pack. Anchoring to the run's own monotonic step counter (the same pattern `WorkflowRunState.step` already uses) keeps realization fully deterministic and testable.
+
+### DEC-P3FLOWE-02: Edge reliability role lives with topology, not with revision candidates
+**Decision:** `EdgeActivationState` and `EdgeReliabilityRole` are defined in `flow_topology.py` (which owns the topology snapshot's edge vocabulary) and imported into `flow_graph_revision.py` for use by `EdgeAddCandidate`/`EdgePruneCandidate`/`EdgeReweightCandidate`, rather than duplicating the enums or reversing the dependency.
+**Why:** The dispatch's "Required Objects" section lists `EdgeActivationState`/`EdgeReliabilityRole` under both the topology-snapshot family and the edge-candidate family. Topology is the layer that *has* edges; revision is the layer that proposes *changing* edges. Making topology the owner and revision the consumer avoids a circular import and matches which layer is conceptually primary.
+
+### DEC-P3FLOWE-03: Locked plasticity modes are enforced by a raising boundary, not a silent no-op
+**Decision:** `create_runtime_graph_revision_proposal()` raises `AurelFlowValidationError` (`FORBIDDEN_BOUNDARY_CLAIM`) when `GraphPlasticityBoundary.revision_blocked` is True (STATIC_LOCKED/TEMPLATE_REALIZED_ONCE/UNAVAILABLE/ERROR modes), rather than returning `None` or a proposal with an unavailable flag set.
+**Why:** "STATIC_LOCKED or equivalent mode blocks revision proposals" (acceptance criterion P3.13.10-14 #9) is a hard boundary, not a soft one — matching the same fail-closed-by-exception pattern P3-FLOW-D uses for forbidden boolean construction. A caller that ignores a return value could accidentally proceed; a caller that ignores an exception cannot.
+
+### DEC-P3FLOWE-04: Redundancy illusion is enforced by a conditional, not an unconditional fail-closed boolean
+**Decision:** `RedundancyIllusionWarning.__post_init__` does not unconditionally forbid `majority_vote_reliable=True` (unlike most other P3-FLOW-D/E booleans); it only raises when `majority_vote_reliable=True` is paired with `diversity_proven=False`. `create_redundancy_illusion_warning()` always constructs `majority_vote_reliable=False` since nothing in this pack can prove diversity.
+**Why:** The law is "majority voting is not reliability unless diversity is proven" — a conditional law, not an absolute prohibition. An unconditional `_forbid_true` would make it impossible for any future pack to ever represent a genuinely diversity-proven redundant group as reliable. The conditional check enforces the actual law while leaving room for a future verifier to legitimately set both fields True together.
+
+### DEC-P3FLOWE-05: Diversity/decomposition object families share one module with topology snapshot/risk
+**Decision:** Sections B (topology snapshot), F (topology vulnerability), G (diversity/redundancy risk), and H (decomposition worthiness) all live in `flow_topology.py`, even though the dispatch describes them as four separate conceptual sections.
+**Why:** The dispatch's allowed-files list names exactly three source modules (`flow_dynamic_graph.py`, `flow_topology.py`, `flow_graph_revision.py`) plus `__init__.py`, with no fourth module for diversity/decomposition. All four sections are topology-adjacent risk/hint layers over a snapshot, so grouping them under `flow_topology.py` respects the file-scope boundary without inventing an unlisted module.
+
 ## 2026-07-02 - P3-FLOW-D Authority / Control Boundary Pack
 
 ### DEC-P3FLOWD-01: Boundary laws are enforced as fail-closed data, not documentation

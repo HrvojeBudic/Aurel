@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-D complete; next P3-FLOW-E
+# Active Task: P3-FLOW-E complete; next P3-FLOW-F
+
+**Status:** P3-FLOW-E COMPLETE — Dynamic Runtime Graph / Graph Plasticity Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-E Status
+
+**DONE — DYNAMIC_RUNTIME_GRAPH / GRAPH_PLASTICITY / TEMPLATE_IS_NOT_REALIZED_GRAPH / TOPOLOGY_IS_NOT_TRACE / REVISION_IS_NOT_EXECUTION / TOPOLOGY_RISK_IS_ADVISORY / MAJORITY_VOTE_REQUIRES_DIVERSITY / NO_EXECUTION / NO_AUTHORITY / NO_PROOF / P3_FLOW_F_NEXT** — Implemented Python `WorkflowTemplate`, `WorkflowTemplateRef`, `RealizedRuntimeGraph`, `RealizedRuntimeGraphRef`, `RuntimeGraphInstance`, `GraphDeterminationTime`, `GraphRealizationReason`, `RuntimeTopologySnapshot`, `RuntimeTopologySnapshotRef`, `RuntimeTopologyNode`, `RuntimeTopologyEdge`, `RuntimeTopologyVersion`, `TopologySnapshotReadModel`, `GraphPlasticityMode`, `GraphPlasticityPolicy`, `GraphPlasticityBoundary`, `RuntimeGraphRevisionProposal`, `RuntimeGraphRevisionDecision`, `RuntimeGraphRevisionReason`, `RuntimeGraphRevisionReadModel`, `GraphRevisionCandidateKind`, `GraphRevisionDecisionKind`, `EdgeAddCandidate`, `EdgePruneCandidate`, `EdgeReweightCandidate`, `EdgeActivationState`, `EdgeReliabilityRole`, `TopologyVulnerabilityScore`, `CascadeAmplificationRisk`, `ErrorPropagationPath`, `FailureAmplificationFrame`, `AggregatorAttenuationFrame`, `IntermediateVerifierPlacementHint`, `TopologyRiskReadModel`, `AgentDiversitySignal`, `TrainingOverlapRisk`, `ErrorCorrelationRisk`, `RedundancyIllusionWarning`, `ArchitecturalDiversityRequirement`, `DiversityRequirementFrame`, `DiversityRiskReadModel`, `DecompositionWorthinessSignal`, `CommunicationOverheadEstimate`, `AgentSplitRiskHint`, and `SubtaskDimensionalityReductionHint` across `flow_dynamic_graph.py` / `flow_topology.py` / `flow_graph_revision.py`, plus 62 focused tests.
+
+Boundary: template is not realized graph; realizing a template does not execute it and does not mutate the template; a runtime topology snapshot is deterministic, read-only, and not Trace; graph plasticity mode is closed-world and STATIC_LOCKED/TEMPLATE_REALIZED_ONCE block revision proposals outright; a revision proposal/decision never dispatches, executes, or grants authority (the decision-kind vocabulary has no EXECUTE/DISPATCH/APPLY_LIVE/APPROVE/AUTHORIZE member); edge add/prune/reweight candidates never mutate the source snapshot's edges; topology vulnerability score, cascade risk, verifier-placement hint, and aggregator-attenuation frame are advisory only — naming a verifier or aggregator placement never runs a verifier or creates a live aggregator; a redundancy-illusion warning structurally cannot claim `majority_vote_reliable=True` unless `diversity_proven=True` — majority voting is not reliability without proven diversity; decomposition worthiness/communication-overhead/agent-split/dimensionality-reduction hints never schedule resources or spawn agents. Execution belongs to P4 AurelExec; proof/trace belongs to P5 AurelTrace; authority belongs to P9 Custos.
+
+Report: `agent/reports/P3_FLOW_E_DYNAMIC_RUNTIME_GRAPH_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-F — Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack (P3.14)**
+
+Reason: P3-FLOW-E completed the dynamic runtime graph / graph plasticity layer only. P3-FLOW-F can add reversible runtime state, fork, checkpoint, and replay contracts. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-D complete; next P3-FLOW-E
 
 **Status:** P3-FLOW-D COMPLETE — Authority / Control Boundary Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 
