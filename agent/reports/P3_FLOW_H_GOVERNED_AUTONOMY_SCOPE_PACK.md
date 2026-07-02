@@ -192,7 +192,7 @@ P3-FLOW-K should measure resolver/gate quality.
 
 ## 16. Commit / Final Git Status
 
-Implementation commit: `PENDING-RECORD` — recorded in the follow-up
+Implementation commit: `f1080cf` — `feat(flow): add P3-FLOW-H governed
+autonomy scope` (20 files, +2863/−5); hash recorded in the follow-up
 `docs(agent): record P3-FLOW-H commit hash` commit, per pack convention.
-Message: `feat(flow): add P3-FLOW-H governed autonomy scope`. Final git
-status clean on master; no branch, no push, no history rewrite.
+Final git status clean on master; no branch, no push, no history rewrite.
