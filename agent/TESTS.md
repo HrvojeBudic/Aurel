@@ -58,6 +58,32 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-C Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_c_projection.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_timeline.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_event_graph.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_wiring_matrix.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_protocol_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_cli_read_only.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_base_exit_seal.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_a_no_execution_boundary.py tests/test_p3_flow_a_runtime_read_model.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_runtime_events.py tests/test_p3_flow_b_state_commitment.py tests/test_p3_flow_b_pause_resume.py tests/test_p3_flow_b_retry_recovery.py tests/test_p3_flow_b_no_execution_boundary.py tests/test_p3_flow_b_behavior_read_model.py -q
+.venv/bin/python -m pytest tests/test_p211c_surface_permission_inspection.py tests/test_p211c_cli_shell_view_binding.py tests/test_p2_command_preflight.py tests/test_validation_truth_gates.py tests/test_drift_gates.py tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+git status --short
+```
+
+Results after P3-FLOW-C: compileall **PASS**; P3-FLOW-C focused **65 passed** (projection 12, timeline 6, event graph 6, wiring matrix 9, protocol boundary 8, CLI read-only 9, base exit seal 9, no-execution 6); P3-FLOW-A regression **50 passed**; P3-FLOW-B regression **53 passed**; canon-gate regression subset **passed** (recorded post-canon-edit); ruff **PASS**; mypy **PASS** (374 source files). Full suite, coverage, Bandit, and core strict probe **NOT RUN**.
+
+P3-FLOW-C is projection / read-only CLI / docs / base P3.9 seal only. Projection is not execution; CLI inspect is not dispatch; the seal is local evidence, not TRACE_VERIFIED (observed honest PARTIAL before the C report existed on disk, PASS after). It does NOT implement P3.10–P3.20, P4 AurelExec execution, P5 trace verification/Ledger, P9 Custos enforcement, Runtime.submit bridge, persistence, Rust/Go migration, Protobuf/Cap'n Proto toolchains, OpenTelemetry export, memory/policy/identity mutation, LIVE, or TRACE_VERIFIED.
+
+Report: `agent/reports/P3_FLOW_C_FLOW_STATE_PROJECTION_CLI_DOCS_BASE_SEAL.md`
+
 ## P3-FLOW-B Runtime Behavior Loop Pack Validation (COMPLETE)
 
 ```bash

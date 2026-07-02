@@ -11,8 +11,8 @@
 | Active roadmap | Aurel Roadmap v5.5 (this file) |
 | Doc status index | `agent/CANON_INDEX.md` |
 | Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
-| Last completed pack | P3-FLOW-B — Runtime Behavior Loop Pack (P3.3/P3.4/P3.5 capsule coverage) |
-| Next planned pack | P3-FLOW-C — Flow State Projection / CLI-TUI / Docs / P3.9 Seal (P3.6–P3.9) |
+| Last completed pack | P3-FLOW-C — Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal (P3.6/P3.7/P3.8/P3.9 capsule coverage; base Flow sealed PASS on local evidence, not TRACE_VERIFIED) |
+| Next planned pack | P3-FLOW-D — Proposal / Permission / Execution / Proof Runtime Boundary + Operator Review / Pause Hooks (P3.10–P3.12) |
 | P3 entry basis | Explicit operator override (2026-07-02): "override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3" — not an organic P2 seal |
 | P2 tail status | P2.11-C DONE; P2.11-D through P2.20 (incl. P2.20 Final Seven-Surface Exit Seal) DEFERRED until after full P3; P2 NOT sealed |
 | old P2.9-B (evidence overlay) | DONE — retained; not granular P2.9.x completion |

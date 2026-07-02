@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-C Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal
+
+### DEC-P3FLOWC-01: Read-only CLI binding implemented via the existing projection-CLI pattern
+**Decision:** P3.7 is bound as a minimal `flow` argparse family in `cli.py` (one `cmd_flow` dispatcher + one registration block), backed by a pure `flow_cli.py` request/response layer. The command-kind vocabulary is a closed-world enum (DEMO/INSPECT/TIMELINE/WIRING/PROTOCOL/SEAL); control verbs (EXECUTE/APPROVE/RESUME/STOP/RETRY/RECOVER/ROLLBACK/DISPATCH/MUTATE/SUBMIT) are unconstructible and argparse rejects them; `FlowCliSideEffects` carries eleven permanently-False fail-closed booleans.
+**Why:** The repo already proves this pattern safe (policy/shell/path-governance read-only families). Making control verbs unrepresentable in the type — not merely unimplemented — means P3-FLOW-D must add control surfaces behind explicit proposal/permission contracts rather than by extending an existing enum.
+
+### DEC-P3FLOWC-02: The base P3.9 seal evaluates real capability and never fakes PASS
+**Decision:** `evaluate_flow_base_exit_seal` exercises the actual demo substrate (graph validation, run lifecycle, scheduler decision, event stream, pause signals, recovery candidates, projection) for P3.0–P3.6/P3.9 checks; P3.7/P3.8 evidence enters as explicit inputs (CLI wired, reports present — defaulting to read-only filesystem truth). Aggregation precedence is FAIL > BLOCKED > PARTIAL/UNAVAILABLE > PASS; missing evidence degrades the seal to PARTIAL rather than being papered over. The seal's boundary states execution/trace/ledger/policy/submit/rust all False and P4/P5/P9 required, fail-closed in both directions.
+**Why:** A seal that asserts capability from a roadmap table is a fake seal. Deriving checks from the objects themselves keeps the seal honest as code evolves, and honest degradation (observed: PARTIAL until the C report existed on disk, PASS after) is the behavior the truth laws demand.
+
+### DEC-P3FLOWC-03: Projections are pure functions over existing objects; wiring truth is declared, fail-closed, and test-pinned
+**Decision:** All C-layer read models are built by pure functions over P3-FLOW-A/B objects (no new lifecycle authority, no mutation — pinned by tests asserting run step/lifecycle/history are unchanged after projection/CLI/seal). Integration truth (runtime.py, entity, repo_agent, build_runtime, trace, policy, persistence, top-level export, Rust core) is declared in the inventory/wiring read models with fail-closed False booleans rather than inferred.
+**Why:** Projection layers drift into shadow runtimes when they gain their own state. Purity plus fail-closed declared wiring means the read model cannot claim an integration that does not exist, and any future wiring change must flip an explicit, tested boolean.
+
+### DEC-P3FLOWC-04: Protocol/hybrid readiness is metadata only; autonomy visibility grants nothing
+**Decision:** The protocol boundary enumerates real contract-version constants, the canonical-JSON/sha256 serialization contract, and advisory portability notes; `rust_core_active`, `go_core_active`, generated-code booleans, and `migration_active` fail closed, and `python_is_implementation_truth` must remain True. The autonomy profile exposes A0–A5 as present, A6=FUTURE_P4, A7=FUTURE_LATER, with `execution_available` and `autonomy_granted_by_this_read_model` fail-closed False. `ExpandedP3ReadinessMatrix` rows carry `implemented=False` fail-closed.
+**Why:** "Protocol-ready" and "autonomy-visible" are the two easiest places to overclaim a migration or a grant that never happened. Encoding them as unconstructible claims keeps hybrid-ready ≠ Rust-active and visibility ≠ authority as type-level facts, not prose.
+
 ## 2026-07-02 - P3-FLOW-B Runtime Behavior Loop Pack
 
 ### DEC-P3FLOWB-01: RuntimeEvent is structurally not TraceEvent and is fail-closed against trace claims

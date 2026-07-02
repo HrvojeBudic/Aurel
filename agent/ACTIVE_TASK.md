@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-B complete; next P3-FLOW-C
+# Active Task: P3-FLOW-C complete; next P3-FLOW-D
+
+**Status:** P3-FLOW-C COMPLETE — Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-C Status
+
+**DONE — FLOW_STATE_PROJECTION / CLI_READ_ONLY / DOCS_SYNCED / BASE_P3_9_SEAL / NO_EXECUTION_BOUNDARY_ACTIVE / P3_FLOW_D_NEXT** — Implemented Python `FlowActualCodeInventoryReadModel`, `FlowStateProjection`, `FlowProjectionTruth`, `FlowCapabilityProjection`, `FlowBehaviorSummary`, `MediatedActorOutputReadModel`, `StateCommitmentReadModel`, `ResponsibilityTransferReadModel`, `PauseDecisionReadModel`, `OperatorDecisionQualityProjection`, `FailureRecoveryProjection`, `RollbackCandidateProjection`, `FlowDemoTruthProjection`, `FlowDemoScenarioReadModel`, `RuntimeBehaviorTimeline`, `RuntimeEventRelationGraph`, `FlowHotColdPathMatrix`, `FlowRuntimeWiringReadModel`, `FlowPersistenceStatusProjection`, `FlowAutonomyProfileReadModel`, `FlowGovernanceProfileReadModel`, `FlowProtocolBoundary`, `FlowSchemaVersion`, `FlowSerializationContract`, `FlowCompatibilityReadModel`, `FlowProtocolEnvelope`, `ExpandedP3ReadinessMatrix`, `FlowObservationFrame`, `FlowBaseExitSeal`/`Result`/`ReadModel`/`Check`/`Status`/`Boundary`, and `FlowCliRequest`/`FlowCliResponse`/`FlowCliSideEffects` with a read-only `flow demo/inspect/timeline/wiring/protocol/seal` CLI family in `src/agentic_runtime/cli.py`, plus 65 focused tests.
+
+Boundary: projection is not execution; inspection is not authority; CLI inspect is not dispatch; seal is not TRACE_VERIFIED. The flow CLI command-kind vocabulary is closed-world read-only (EXECUTE/APPROVE/RESUME/STOP/RETRY/RECOVER/ROLLBACK/DISPATCH/MUTATE/SUBMIT are unconstructible) and every CLI side-effect boolean fails closed. The base P3.9 seal checks P3.0–P3.9 against real package capability and aggregates honestly (PASS on real evidence; PARTIAL when evidence is missing); it states execution_available=False, trace_verified=False, ledger_written=False, policy_enforced_by_flow=False, runtime_submit_wired=False, rust_core_active=False, and that P4/P5/P9 remain required for execution/trace/policy. Protocol-ready is not migration: Python remains the P3 implementation truth. Persistence, top-level export, Runtime.submit bridge, entity/repo-agent/build-runtime wiring all remain honestly UNAVAILABLE / NOT_WIRED.
+
+Report: `agent/reports/P3_FLOW_C_FLOW_STATE_PROJECTION_CLI_DOCS_BASE_SEAL.md`
+
+Current / next recommended roadmap task: **P3-FLOW-D — Proposal / Permission / Execution / Proof Runtime Boundary + Operator Review / Pause Hooks (P3.10–P3.12)**
+
+Reason: P3-FLOW-C completed projection, read-only CLI binding, docs, and the base P3.9 seal only. P3-FLOW-D can add the proposal/permission runtime boundary and operator review/pause hooks. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-B complete; next P3-FLOW-C
 
 **Status:** P3-FLOW-B COMPLETE — Runtime Behavior Loop Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 

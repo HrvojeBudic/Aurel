@@ -730,6 +730,32 @@ def cmd_prompts_render(args: argparse.Namespace) -> int:
         return 1
 
 
+def cmd_flow(args: argparse.Namespace) -> int:
+    # P3.7 read-only AurelFlow binding: every subcommand renders a projection
+    # built from the DEV_FIXTURE demo substrate. Nothing executes, mutates,
+    # approves, resumes, retries, recovers, or rolls back.
+    from .aurel_flow.flow_cli import (
+        FlowCliCommandKind,
+        FlowCliOutputFormat,
+        FlowCliRequest,
+        handle_flow_cli_request,
+        render_flow_cli_response,
+    )
+
+    request = FlowCliRequest(
+        command_kind=FlowCliCommandKind(args.flow_command.upper()),
+        output_format=(
+            FlowCliOutputFormat.JSON
+            if getattr(args, "json", False)
+            else FlowCliOutputFormat.TEXT
+        ),
+        base_p3=getattr(args, "base_p3", True),
+    )
+    response = handle_flow_cli_request(request)
+    print(render_flow_cli_response(response))
+    return response.exit_code
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="agentic-runtime",
@@ -1288,6 +1314,29 @@ def main(argv: list[str] | None = None) -> int:
     p_op_unavailable.add_argument("--json", action="store_true")
     p_op_unavailable.add_argument("--text", action="store_true")
     p_op_unavailable.set_defaults(func=cmd_output_passport_unavailable)
+
+    # P3.7 — AurelFlow read-only projection binding (P3-FLOW-C)
+    p_flow = sub.add_parser(
+        "flow",
+        help="P3.7 AurelFlow projection inspect (read-only; executes nothing)",
+    )
+    flow_sub = p_flow.add_subparsers(dest="flow_command", required=True)
+    for flow_name, flow_help in (
+        ("demo", "show DEV_FIXTURE flow demo state (demo state is not execution)"),
+        ("inspect", "show flow state projection (read-only)"),
+        ("timeline", "show local runtime behavior timeline (not Trace)"),
+        ("wiring", "show hot/cold wiring truth matrix"),
+        ("protocol", "show protocol / hybrid-ready boundary"),
+        ("seal", "show the base P3.9 flow exit seal"),
+    ):
+        p_flow_cmd = flow_sub.add_parser(flow_name, help=flow_help)
+        p_flow_cmd.add_argument("--json", action="store_true")
+        if flow_name == "seal":
+            p_flow_cmd.add_argument(
+                "--base-p3", dest="base_p3", action="store_true", default=True,
+                help="seal scope: base P3.0-P3.9 Flow (the only scope in this pack)",
+            )
+        p_flow_cmd.set_defaults(func=cmd_flow)
 
     p_identity = sub.add_parser("identity", help="identity kernel commands")
     identity_sub = p_identity.add_subparsers(dest="identity_command", required=True)

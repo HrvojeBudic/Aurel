@@ -11,9 +11,14 @@ candidates -> runtime behavior read model. Still nothing executes.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from .pause_resume import (
     OperatorDecisionKind,
+    OperatorDecisionSignal,
+    ResponsibilityTransferFrame,
     WorkflowPauseReason,
+    WorkflowPauseState,
     create_operator_decision_signal,
     create_responsibility_transfer_frame,
     pause_workflow_run,
@@ -22,6 +27,10 @@ from .pause_resume import (
 from .read_model import FlowRuntimeFoundationReadModel, build_flow_runtime_read_model
 from .recovery import (
     DEFAULT_RETRY_POLICY,
+    FailureAssessment,
+    RecoveryProposal,
+    RetryEligibility,
+    RollbackCandidate,
     RollbackCandidateReason,
     build_recovery_frame,
     build_recovery_proposal,
@@ -37,10 +46,13 @@ from .runtime_events import (
     RuntimeEventKind,
     RuntimeEventRelation,
     RuntimeEventSource,
+    RuntimeEventStream,
     append_runtime_event,
     create_runtime_event_stream,
 )
 from .state_commitment import (
+    MediatedActorOutput,
+    RuntimeStateCommitment,
     commit_internal_runtime_state,
     create_mediated_actor_output,
     create_runtime_state_commitment,
@@ -190,13 +202,35 @@ def _mark_node_failed(run, node_id: str):
     return run
 
 
-def run_runtime_behavior_demo() -> RuntimeBehaviorReadModel:
-    """Deterministic P3-FLOW-B demo: the full behavior loop, no execution.
+@dataclass(frozen=True)
+class FlowDemoBundle:
+    """All intermediates of the behavior demo, for P3-FLOW-C projections.
+
+    DEV_FIXTURE state only. Node completions/failures are recorded
+    bookkeeping marks, never execution.
+    """
+
+    graph: WorkflowGraph
+    run: WorkflowRun
+    event_stream: RuntimeEventStream
+    mediated_actor_outputs: tuple[MediatedActorOutput, ...]
+    state_commitments: tuple[RuntimeStateCommitment, ...]
+    pause_states: tuple[WorkflowPauseState, ...]
+    operator_decision_signals: tuple[OperatorDecisionSignal, ...]
+    responsibility_transfer_frames: tuple[ResponsibilityTransferFrame, ...]
+    retry_eligibilities: tuple[RetryEligibility, ...]
+    recovery_proposals: tuple[RecoveryProposal, ...]
+    rollback_candidates: tuple[RollbackCandidate, ...]
+    failure_assessments: tuple[FailureAssessment, ...]
+
+
+def build_flow_demo_bundle() -> FlowDemoBundle:
+    """Deterministic P3-FLOW-B behavior loop as a bundle of intermediates.
 
     Records events with relations, mediates an internal state commitment,
     pauses on the approval gate, records an operator resume signal, marks a
     failure, and produces retry/recovery/rollback candidates — all as local
-    DEV_FIXTURE behavior state.
+    DEV_FIXTURE behavior state. Nothing executes.
     """
 
     graph = build_demo_workflow_graph()
@@ -326,8 +360,9 @@ def run_runtime_behavior_demo() -> RuntimeBehaviorReadModel:
         reason="operator should decide how to continue after fetch failure",
     )
 
-    return build_runtime_behavior_read_model(
-        run.run_id,
+    return FlowDemoBundle(
+        graph=graph,
+        run=run,
         event_stream=stream,
         mediated_actor_outputs=(output,),
         state_commitments=(commitment_result.commitment,),
@@ -338,4 +373,23 @@ def run_runtime_behavior_demo() -> RuntimeBehaviorReadModel:
         recovery_proposals=(proposal,),
         rollback_candidates=(candidate,),
         failure_assessments=(assessment,),
+    )
+
+
+def run_runtime_behavior_demo() -> RuntimeBehaviorReadModel:
+    """Deterministic P3-FLOW-B demo read model built from the demo bundle."""
+
+    bundle = build_flow_demo_bundle()
+    return build_runtime_behavior_read_model(
+        bundle.run.run_id,
+        event_stream=bundle.event_stream,
+        mediated_actor_outputs=bundle.mediated_actor_outputs,
+        state_commitments=bundle.state_commitments,
+        pause_states=bundle.pause_states,
+        operator_decision_signals=bundle.operator_decision_signals,
+        responsibility_transfer_frames=bundle.responsibility_transfer_frames,
+        retry_eligibilities=bundle.retry_eligibilities,
+        recovery_proposals=bundle.recovery_proposals,
+        rollback_candidates=bundle.rollback_candidates,
+        failure_assessments=bundle.failure_assessments,
     )

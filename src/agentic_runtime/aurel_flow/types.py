@@ -23,6 +23,12 @@ AUREL_FLOW_B_PACK_ID = "P3-FLOW-B"
 AUREL_FLOW_B_PACK_TITLE = "Runtime Behavior Loop Pack"
 AUREL_FLOW_B_REPORT_PATH = "agent/reports/P3_FLOW_B_RUNTIME_BEHAVIOR_LOOP_PACK.md"
 
+AUREL_FLOW_C_PACK_ID = "P3-FLOW-C"
+AUREL_FLOW_C_PACK_TITLE = "Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal"
+AUREL_FLOW_C_REPORT_PATH = (
+    "agent/reports/P3_FLOW_C_FLOW_STATE_PROJECTION_CLI_DOCS_BASE_SEAL.md"
+)
+
 EXECUTION_UNAVAILABLE_REASON = (
     "execution is not implemented in P3-FLOW-A; governed execution belongs to P4 AurelExec"
 )
@@ -49,6 +55,23 @@ LEDGER_UNAVAILABLE_REASON = (
     "no Ledger exists or is written in P3-FLOW-B; runtime events and state commitments are local "
     "AurelFlow records only — the evidence spine belongs to P5 AurelTrace"
 )
+POLICY_ENFORCEMENT_UNAVAILABLE_REASON = (
+    "AurelFlow enforces no policy; projections and seals only reveal state — "
+    "policy authority and enforcement belong to P9 Custos"
+)
+MIGRATION_UNAVAILABLE_REASON = (
+    "no Rust/Go migration is active; AurelFlow contracts are protocol-ready "
+    "(canonical JSON, stable hashes, versioned schemas) but Python remains the "
+    "P3 implementation truth — hybrid-ready is not Rust-active"
+)
+TOP_LEVEL_EXPORT_UNAVAILABLE_REASON = (
+    "aurel_flow is not re-exported from agentic_runtime top level; the package "
+    "is imported explicitly as agentic_runtime.aurel_flow"
+)
+OBSERVABILITY_EXPORT_UNAVAILABLE_REASON = (
+    "no OpenTelemetry exporter or network metric export exists; observation "
+    "frames are local, deterministic metric envelopes only"
+)
 
 
 class FlowTruthLabel(str, Enum):
@@ -67,6 +90,8 @@ class FlowTruthLabel(str, Enum):
     LOCAL_RUNTIME_SUBSTRATE = "LOCAL_RUNTIME_SUBSTRATE"
     LOCAL_RUNTIME_BEHAVIOR = "LOCAL_RUNTIME_BEHAVIOR"
     CONTRACT_ONLY = "CONTRACT_ONLY"
+    READ_MODEL_ONLY = "READ_MODEL_ONLY"
+    INTERNAL_ONLY = "INTERNAL_ONLY"
 
 
 class FlowSourceLabel(str, Enum):
