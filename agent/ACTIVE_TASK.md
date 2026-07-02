@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-C complete; next P3-FLOW-D
+# Active Task: P3-FLOW-D complete; next P3-FLOW-E
+
+**Status:** P3-FLOW-D COMPLETE — Authority / Control Boundary Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-D Status
+
+**DONE — AUTHORITY_CONTROL_BOUNDARY / PROPOSAL_IS_NOT_PERMISSION / NO_EXECUTION / NO_AUTHORITY / NO_PROOF / P3_FLOW_E_NEXT** — Implemented Python `ExecutionProposalEnvelope`, `PermissionRequestEnvelope`, `ExecutionRequestEnvelope`, `ProofExpectationEnvelope`, `FlowToSubmitBoundary`, `ControlPlaneDataPlaneBoundary`, `SubmitCompatibilityReadModel`, `BoundaryTruthReadModel`, `OperatorReviewFrame`, `OperatorReviewDecision`, `OperatorReviewDecisionKind`, `ContinueCandidate`, `StopCandidate`, `RejectCandidate`, `RollbackReviewCandidate`, `OperatorReviewReadModel`, `RuntimePauseHook`, `ReasoningPauseHook`, `VerifierPauseHook`, `OperatorPauseHook`, `EvidencePauseHook`, `PauseHookReason`, `PauseHookReadModel`, `ReliabilityControlPlaneBoundary`, `RecoveryPolicyBoundary`, `VerifierNodeExpectation`, `ValidationNodeExpectation`, `ControlPlaneSignal`, `DataPlaneBoundaryRef`, `DiagnosticExpectation`, `RecoveryExecutionBoundary`, `EvidenceRequirement`, `SemanticSupportExpectation`, `UnsupportedOutputRisk`, `SemanticSilentFailureBoundary`, `ProofExpectationReadModel`, `RecoveryBudgetRequirement`, `RecoveryBudgetBoundary`, `BudgetRequiredForAutoContinue`, `BudgetRequiredForRepair`, and `BudgetUnavailableReason` across `flow_boundary.py` / `flow_operator_review.py` / `flow_pause_hooks.py` / `flow_proof_expectation.py`, plus 42 focused tests.
+
+Boundary: proposal is not permission; permission request is not permission; permission is not execution; execution is not proof; proof expectation is not proof. Operator review is not approval (the decision-kind vocabulary has no APPROVE/EXECUTE member); candidates never mutate runtime state (proven against the live demo run); rollback review candidates cannot roll back. Reasoning pause stores a safe category — no chain-of-thought field exists structurally and the boolean fails closed. Verifier pause does not verify; operator pause does not authorize; evidence pause cannot produce evidence; missing evidence and unsupported output are failure candidates, not warnings (bidirectionally fail-closed). Recovery policy proposes but never executes repair; recovery budget requirement is not enforcement. runtime.submit is not wired and is never called; no ApprovalGate/HITL bridge exists. Execution belongs to P4 AurelExec; proof/trace belongs to P5 AurelTrace; authority belongs to P9 Custos.
+
+Report: `agent/reports/P3_FLOW_D_AUTHORITY_CONTROL_BOUNDARY_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-E — Dynamic Runtime Graph / Graph Plasticity Pack (P3.13)**
+
+Reason: P3-FLOW-D completed the authority/control boundary grammar only. P3-FLOW-E can add dynamic runtime graph / graph plasticity contracts. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-C complete; next P3-FLOW-D
 
 **Status:** P3-FLOW-C COMPLETE — Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 

@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-D Authority / Control Boundary Pack
+
+### DEC-P3FLOWD-01: Boundary laws are enforced as fail-closed data, not documentation
+**Decision:** The five P3.10 laws (proposal is not permission; permission request is not permission; permission is not execution; execution is not proof; proof expectation is not proof) exist twice: as the `BOUNDARY_LAWS` tuple carried by `BoundaryTruthReadModel`, and as bidirectional `__post_init__` validation — every granting/dispatching/proving boolean raises `AurelFlowValidationError` if constructed True, and every `*_is_not_*` law boolean raises if constructed False.
+**Why:** A law that lives only in a docstring can drift; a law that raises on violation cannot. This extends the bidirectional fail-closed pattern introduced in P3-FLOW-C (demo truth / readiness matrix) to the authority boundary itself.
+
+### DEC-P3FLOWD-02: Pack constants live in the D modules; types.py/errors.py stay untouched
+**Decision:** `AUREL_FLOW_D_PACK_ID`/`_TITLE`/`_REPORT_PATH` and the D unavailable-reason strings are defined in `flow_boundary.py`/`flow_proof_expectation.py` rather than extending `types.py`; all fail-closed checks reuse the existing `FORBIDDEN_BOUNDARY_CLAIM` error code rather than adding new codes.
+**Why:** The dispatch's allowed-files list names only the four new modules plus `__init__.py` on the src side. Keeping shared modules untouched keeps the diff minimal and the review surface honest; nothing in the D layer needed new error vocabulary.
+
+### DEC-P3FLOWD-03: Operator review approval is unrepresentable, not just forbidden
+**Decision:** `OperatorReviewDecisionKind` contains only review intents (continue/stop/reject/request-*/escalate/hold/unavailable/error). There is no APPROVE, EXECUTE, DISPATCH, GRANT, or AUTHORIZE member, and a test asserts their absence. Review frames validate that decisions use only kinds the frame offered.
+**Why:** Same rationale as the C CLI command-kind decision: making approval structurally unconstructible means a future pack must introduce approval through explicit P9-owned contracts, not by widening an enum.
+
+### DEC-P3FLOWD-04: Reasoning pauses exclude hidden chain-of-thought structurally
+**Decision:** `ReasoningPauseHook` carries only `safe_reasoning_category` and the hook's `safe_state_summary`; no field exists that could hold raw reasoning, the `stores_hidden_chain_of_thought` boolean fails closed, and a test asserts no chain_of_thought/cot_content/raw_reasoning/thoughts field exists on either dataclass level.
+**Why:** "Reasoning pause is runtime state, not hidden chain-of-thought" must be enforced by shape, not by promise — a field that doesn't exist cannot be silently populated later.
+
+### DEC-P3FLOWD-05: No-execution source scan targets calls and imports, not mentions
+**Decision:** The D no-execution boundary test forbids `.submit(` calls and AgenticRuntime/ApprovalGate/TraceLedger construction/imports, while allowing descriptive mentions (e.g. `submit_target="AgenticRuntime.submit"`), with module bindings covered by the AST import allow-list test.
+**Why:** This pack's entire purpose is to *describe* the future submit boundary, so its sources legitimately name it. A mention-level regex would force the boundary objects to lie about what they describe; a call/import-level scan enforces the real rule (never crossed) without the false positive found during implementation.
+
 ## 2026-07-02 - P3-FLOW-C Flow State Projection / CLI-TUI / Docs / Base P3.9 Seal
 
 ### DEC-P3FLOWC-01: Read-only CLI binding implemented via the existing projection-CLI pattern
