@@ -324,8 +324,9 @@ full P3: resume the deferred P2 tail (P2.11-D → P2.20).
 
 ## 21. Commit Hash
 
-Implementation commit: recorded in the follow-up docs commit per repo
-convention (`feat(flow): add P3-FLOW-B runtime behavior loop`).
+Implementation commit: `b73cb46` — `feat(flow): add P3-FLOW-B runtime
+behavior loop` (23 files, 3743 insertions, 6 deletions). Hash recorded in
+this follow-up docs commit per repo convention.
 
 ## 22. Final Git Status
 
