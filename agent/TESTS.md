@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-B Runtime Behavior Loop Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_b_runtime_events.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_state_commitment.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_pause_resume.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_retry_recovery.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_b_behavior_read_model.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_a_no_execution_boundary.py tests/test_p3_flow_a_runtime_read_model.py -q
+.venv/bin/python -m pytest tests/test_p211c_surface_permission_inspection.py tests/test_p211c_permission_inspection_filters.py tests/test_p211c_cli_shell_view_binding.py tests/test_p211c_permission_inspection_no_execution.py tests/test_p211c_p211d_handoff.py -q
+.venv/bin/python -m pytest tests/test_p2_command_preflight.py -q
+.venv/bin/python -m pytest tests/test_validation_truth_gates.py tests/test_drift_gates.py -q
+.venv/bin/python -m pytest tests/test_golden_thread_b_governance_continuity.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results after P3-FLOW-B: compileall **PASS**; P3-FLOW-B focused **53 passed** (runtime events 9, state commitment 7, pause/resume 15, retry/recovery 9, no-execution 6, behavior read model 7); P3-FLOW-A regression **50 passed**; P2.11-C-era regression subset **67 passed**; ruff **PASS**; mypy **PASS** (367 source files). Full suite, coverage, Bandit, and core strict probe **NOT RUN**.
+
+P3-FLOW-B is the AurelFlow runtime behavior loop only (events, mediated internal state commitments, pause/operator signals, responsibility frames, retry/recovery/rollback candidates, behavior read model). RuntimeEvent is not TraceEvent. It does NOT implement P3.6 projection, P3.7 Flow CLI/TUI binding, P3.8 docs pack, P3.9 exit seal, P4 AurelExec execution, P5 trace verification/Ledger, P9 Custos enforcement, retry/recovery/rollback execution, approval authority, worker/agent dispatch, memory/policy/identity mutation, LIVE, or TRACE_VERIFIED.
+
+Report: `agent/reports/P3_FLOW_B_RUNTIME_BEHAVIOR_LOOP_PACK.md`
+
 ## P3-FLOW-A AurelFlow Runtime Foundation Superpack Validation (COMPLETE)
 
 ```bash

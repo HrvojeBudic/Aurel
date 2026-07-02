@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-B Runtime Behavior Loop Pack
+
+### DEC-P3FLOWB-01: RuntimeEvent is structurally not TraceEvent and is fail-closed against trace claims
+**Decision:** `RuntimeEvent` is a frozen local dataclass with `trace_verified`/`ledger_written`/`global_trace_written` locked to False via `__post_init__`, a permanent `RuntimeEventIsNotTraceBoundary`, and append-time rejection of LIVE/TRACE_VERIFIED truth labels. Behavior modules are test-forbidden from importing `agentic_runtime.trace` (whose canonical `TraceEvent` is a dict appended to the hash-chained AurelTraceLog).
+**Why:** The single most likely drift in P3.3 is runtime telemetry quietly becoming "the trace". Structural distinctness plus fail-closed booleans keeps local behavior evidence from ever impersonating the P5 evidence spine.
+
+### DEC-P3FLOWB-02: All authority/execution/side-effect booleans fail closed at construction
+**Decision:** Every behavior object that carries a boundary boolean (`direct_state_mutation_allowed`, `authority_granted`, `execution_permission_granted`, `authority_transferred`, `external_side_effect`, `ledger_written`, `safe_to_execute`, `execution_available`, `retry_executed`, `executable`, plus the trace booleans) raises `FORBIDDEN_BOUNDARY_CLAIM` (or a specific code) in `__post_init__` if constructed True — not just defaulted False.
+**Why:** Defaults document intent; fail-closed constructors enforce it. `dataclasses.replace` or direct construction cannot manufacture authority, execution permission, or trace claims even by accident.
+
+### DEC-P3FLOWB-03: Pause/resume/stop/reject ride the P3-FLOW-A safe transition maps
+**Decision:** `pause_workflow_run`, `resume_workflow_run`, `stop_workflow_run` and `reject_workflow_path` do not introduce a second lifecycle system — they apply the existing P3-FLOW-A `transition_workflow_run` safe maps (RUNNING→PAUSED, PAUSED→RUNNING, →CANCELLED, node→BLOCKED) and attach behavior records beside the immutable run.
+**Why:** Two lifecycle authorities would drift. The behavior layer records *why* (pause reasons, operator signals); the foundation layer remains the only authority on *what states are reachable*.
+
+### DEC-P3FLOWB-04: Retry/recovery/rollback are candidate semantics; operator/policy failures are never retry-eligible
+**Decision:** `calculate_retry_eligibility` marks OPERATOR_REJECTED and POLICY_BLOCKED failures permanently ineligible ("operator/policy decisions are not retried away"), keeps `blocked_by_missing_executor=True` always, and every recovery step/proposal/rollback candidate is declarative with execution unavailable.
+**Why:** A retry loop that retries around an operator rejection or policy block is an authority bypass. Encoding never-eligible classes now prevents P4 from inheriting an unsafe eligibility function.
+
 ## 2026-07-02 - P3-FLOW-A AurelFlow Runtime Foundation Superpack
 
 ### DEC-P3FLOWA-01: P3 opened by explicit operator override, not by P2 seal

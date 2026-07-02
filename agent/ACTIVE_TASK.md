@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-A complete (operator override); next P3-FLOW-B
+# Active Task: P3-FLOW-B complete; next P3-FLOW-C
+
+**Status:** P3-FLOW-B COMPLETE — Runtime Behavior Loop Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-B Status
+
+**DONE — RUNTIME_BEHAVIOR_LOOP / LOCAL_RUNTIME_BEHAVIOR / RUNTIME_EVENT_IS_NOT_TRACE / NO_EXECUTION_BOUNDARY_ACTIVE / P3_FLOW_C_NEXT** — Implemented Python `RuntimeEvent`, `RuntimeEventKind`, `RuntimeEventSeverity`, `RuntimeEventSource`, `RuntimeEventRelation`, `RuntimeEventPayload`, `RuntimeEventStream`, `RuntimeEventStreamSnapshot`, `RuntimeEventAppendResult`, `RuntimeEventReadModel`, `RuntimeEventIsNotTraceBoundary`, `RuntimeSymbolState`, `MediatedActorOutput`, `RuntimeStateCommitment`, `RuntimeStateCommitmentResult`, `WorkflowPauseState`, `WorkflowPauseReason`, `OperatorDecisionSignal`, `WorkflowResumeRequest/Result`, `WorkflowStopRequest/Result`, `WorkflowRejectRequest/Result`, `WorkflowPauseReadModel`, `ResponsibilityTransferFrame`, `FailureClassification`, `FailurePropagationRisk`, `FailureAssessment`, `RetryPolicy`, `RetryEligibility`, `RetryDecision`, `RecoveryFrame`, `RecoveryProposal`, `RecoveryStep`, `RollbackCandidate`, `RollbackCandidateReason`, `FailureRecoveryReadModel`, and `RuntimeBehaviorReadModel` under `src/agentic_runtime/aurel_flow/` with pure helpers, a DEV_FIXTURE behavior demo, and 53 focused tests.
+
+Boundary: AurelFlow can record, pause, accept internal operator decision state, propose recovery, and mark retry/rollback candidates — it cannot execute. RuntimeEvent is not TraceEvent (no Ledger, no global Trace, no TRACE_VERIFIED; fail-closed). Actor outputs cannot mutate shared state directly; COMMITTED_INTERNAL means internal AurelFlow state only. Operator decision signals grant no authority and no execution permission. Responsibility transfer is not authority transfer. Retry eligibility is not retry execution; recovery proposals do not recover; rollback candidates do not roll back (`safe_to_execute=False`). Execution belongs to P4 AurelExec; trace verification and Ledger belong to P5 AurelTrace; authority/enforcement belongs to P9 Custos; Flow CLI/TUI binding belongs to P3.7; flow projection belongs to P3.6.
+
+Report: `agent/reports/P3_FLOW_B_RUNTIME_BEHAVIOR_LOOP_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-C — Flow State Projection / CLI-TUI / Docs / P3.9 Seal (P3.6–P3.9)**
+
+Reason: P3-FLOW-B completed the runtime behavior loop only. P3-FLOW-C can project flow/behavior truth, bind read-only CLI/TUI inspection, produce flow docs/reports, and seal P3 at P3.9. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-A complete (operator override); next P3-FLOW-B
 
 **Status:** P3-FLOW-A COMPLETE — AurelFlow Runtime Foundation Superpack. P3 was opened by explicit operator override on 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 (including the P2.20 Final Seven-Surface Exit Seal) are deferred until after full P3 by operator decision. This is not an organic P2-complete / P3 handoff claim.
 

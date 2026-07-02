@@ -19,6 +19,10 @@ AUREL_FLOW_PACK_ID = "P3-FLOW-A"
 AUREL_FLOW_PACK_TITLE = "AurelFlow Runtime Foundation Superpack"
 AUREL_FLOW_REPORT_PATH = "agent/reports/P3_FLOW_A_AURELFLOW_RUNTIME_FOUNDATION_SUPERPACK.md"
 
+AUREL_FLOW_B_PACK_ID = "P3-FLOW-B"
+AUREL_FLOW_B_PACK_TITLE = "Runtime Behavior Loop Pack"
+AUREL_FLOW_B_REPORT_PATH = "agent/reports/P3_FLOW_B_RUNTIME_BEHAVIOR_LOOP_PACK.md"
+
 EXECUTION_UNAVAILABLE_REASON = (
     "execution is not implemented in P3-FLOW-A; governed execution belongs to P4 AurelExec"
 )
@@ -37,6 +41,14 @@ APPROVAL_RUNTIME_UNAVAILABLE_REASON = (
 PERSISTENCE_UNAVAILABLE_REASON = (
     "workflow run state is in-memory only in P3-FLOW-A; no database, file, or external persistence exists"
 )
+AUTHORITY_UNAVAILABLE_REASON = (
+    "no authority is granted by AurelFlow behavior objects; operator signals and responsibility "
+    "frames record state intent only — authority/enforcement belongs to P9 Custos"
+)
+LEDGER_UNAVAILABLE_REASON = (
+    "no Ledger exists or is written in P3-FLOW-B; runtime events and state commitments are local "
+    "AurelFlow records only — the evidence spine belongs to P5 AurelTrace"
+)
 
 
 class FlowTruthLabel(str, Enum):
@@ -53,6 +65,7 @@ class FlowTruthLabel(str, Enum):
     UNAVAILABLE = "UNAVAILABLE"
     ERROR = "ERROR"
     LOCAL_RUNTIME_SUBSTRATE = "LOCAL_RUNTIME_SUBSTRATE"
+    LOCAL_RUNTIME_BEHAVIOR = "LOCAL_RUNTIME_BEHAVIOR"
     CONTRACT_ONLY = "CONTRACT_ONLY"
 
 
