@@ -337,8 +337,9 @@ Pack** (P3.3–P3.5). After full P3: resume the deferred P2 tail
 
 ## 18. Commit Hash
 
-Implementation commit: recorded in the follow-up docs commit per repo
-convention (see `git log` — `feat(flow): add P3-FLOW-A runtime foundation`).
+Implementation commit: `534b99a` — `feat(flow): add P3-FLOW-A runtime
+foundation` (21 files, 3277 insertions, 5 deletions). Hash recorded in this
+follow-up docs commit per repo convention.
 
 ## 19. Final Git Status
 
