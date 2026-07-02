@@ -1,5 +1,32 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-G Self-Healing Runtime Control Loop / Reliability Control Plane Pack
+
+### DEC-P3FLOWG-01: Eleven object sections map onto five source modules by control-plane role
+**Decision:** The dispatch's object sections were implemented in exactly five new modules: A+B → `flow_reliability_control.py` (the control plane and its Monitor→Detect→Diagnose→Recover-Candidate→Verify-Expectation loop frames), C+D+I → `flow_diagnosis.py` (naming and understanding failures: taxonomy, classification, advisory diagnosis, semantic silent failures), E+F → `flow_recovery_policy.py` (selecting bounded candidates: policy, selection, envelopes, execution/verification requirements), G+H+J → `flow_recovery_budget.py` (bounding and surfacing: budgets, guards, loop health, degradation, escalation), K → `flow_self_healing_projection.py` (projecting for future React). The import DAG is acyclic: diagnosis is the base, reliability_control and recovery_policy import it, recovery_budget is self-contained, and the projection module imports all four.
+**Why:** Groups by what each layer may honestly do (represent the loop / name failures / select candidates / bound and escalate / project), keeps each module's boundary law one sentence, and stays within the dispatch's allowed file list.
+**How to revisit:** Only if a future pack splits the reliability control plane into its own subpackage.
+
+### DEC-P3FLOWG-02: Closed-world vocabulary doctrine extended to phases, confidence, and candidate kinds
+**Decision:** Three G vocabularies are deliberately closed-world: `ControlLoopPhase` has no RECOVERED/HEALED/VERIFIED member (the loop structurally cannot claim a completed or verified heal in P3), `DiagnosisConfidence` has no CERTAIN/PROVEN/VERIFIED member (a diagnosis structurally cannot claim proof-grade confidence), and `RecoveryCandidateKind` has no EXECUTED/APPLIED/COMPLETED member (a candidate structurally cannot claim it ran). This continues the doctrine of `OperatorReviewDecisionKind` (D), `GraphRevisionDecisionKind` (E), and `CheckpointTruthLabel`/`ReplayAvailability` (F): where overclaiming a whole category is out of scope, deleting the vocabulary member is stronger than a boolean guard.
+**Why:** A fail-closed boolean can be argued with; a missing enum member cannot be constructed at all.
+**How to revisit:** P4/P5 packs may introduce successor vocabularies (v2) with execution/verification members; the P3 vocabularies must not be mutated.
+
+### DEC-P3FLOWG-03: Dispatch's ReliabilityControlPlaneBoundary renamed to SelfHealingControlLawBoundary
+**Decision:** The dispatch requested a `ReliabilityControlPlaneBoundary` object, but P3-FLOW-D's `flow_boundary.py` already exports a seed object of that exact name ("Reliability as a bounded control problem. The loop itself is future… this pack seeds the boundary only"). G's law object was therefore named `SelfHealingControlLawBoundary` (version `self_healing_control_law_boundary.v1`), and the D seed boundary was preserved untouched and remains exported.
+**Why:** Shadowing or silently replacing the D seed would rewrite already-sealed D history in the package namespace; the dispatch's acceptance criterion "ReliabilityControlPlaneBoundary exists" remains satisfied by the D object, while G's stronger loop-law object exists under an honest distinct name.
+**How to revisit:** A future consolidation pack may merge the seed and the law object under one name with a v2 version; never by silently dropping the D seed.
+
+### DEC-P3FLOWG-04: Recovery candidate envelopes consume the P3-FLOW-F checkpoint discipline
+**Decision:** `RecoveryCandidateEnvelope` binds a P3-FLOW-F `RecoveryCheckpointRequirement` by id; `create_recovery_candidate_envelope()` auto-derives one via `create_recovery_checkpoint_requirement()` when the caller passes none, and fail-closes on run mismatch when one is passed. A candidate therefore cannot exist without the pre-recovery checkpoint + post-recovery comparison discipline.
+**Why:** The F report's recorded handoff risk said G must consume `RecoveryCheckpointRequirement` rather than invent a parallel checkpoint discipline; auto-derivation makes the discipline structurally inescapable rather than merely conventional.
+**How to revisit:** P4 execution must validate that the named requirement was actually satisfied (a real checkpoint taken) before executing any candidate.
+
+### DEC-P3FLOWG-05: Deterministic totality and structural guard laws instead of runtime checks
+**Decision:** Three laws are enforced at construction time, not at use time: `TargetedRecoveryPolicy` cannot be constructed unless every `RuntimeFailureKind` is covered by exactly one rule (no blind retry, no unmapped failure); a `RootCauseDiagnosis` with VERY_LOW/LOW/UNKNOWN confidence cannot be constructed with `requires_human_review=False`; `RetryStormGuard`/`NoProgressGuard` at or above their limit cannot be constructed with `auto_recovery_blocked=False`. Guard counters and diagnosis confidence remain caller-declared inputs (nothing measures live execution in P3).
+**Why:** Construction-time fail-closure means an unsafe posture is unrepresentable, not merely detectable; deferring measurement honestly to P4/P3-FLOW-K avoids fake telemetry.
+**How to revisit:** P3-FLOW-K harness evaluation should measure real counters and diagnosis quality; P4 must feed real retry/progress counts.
+
 ## 2026-07-02 - P3-FLOW-F Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack
 
 ### DEC-P3FLOWF-01: Nine object sections map onto four source modules by lifecycle stage

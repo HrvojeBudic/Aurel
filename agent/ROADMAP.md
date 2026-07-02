@@ -11,8 +11,8 @@
 | Active roadmap | Aurel Roadmap v5.5 (this file) |
 | Doc status index | `agent/CANON_INDEX.md` |
 | Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
-| Last completed pack | P3-FLOW-F — Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack (P3.14 capsule coverage; checkpoint refs/snapshots, fork candidates, replay plans/cursors, counterfactual candidates, revert/rollback candidates, runtime diffs, recovery checkpoint requirements, React-safe projection + migration readiness — no execution, no persistence, no proof, no UI authority) |
-| Next planned pack | P3-FLOW-G — Self-Healing Runtime Control Loop / Reliability Control Plane Pack (P3.15) |
+| Last completed pack | P3-FLOW-G — Self-Healing Runtime Control Loop / Reliability Control Plane Pack (P3.15 capsule coverage; reliability control plane with closed-world loop phases and no RECOVERED/HEALED member, Monitor→Detect→Diagnose→Recover-Candidate→Verify-Expectation diagnostic loop, closed-world 22-kind failure taxonomy + deterministic classification, advisory root-cause diagnoses, total targeted-recovery policy, candidate envelopes bound to the P3-FLOW-F checkpoint discipline, attempt/latency/cost/depth budgets, retry-storm/no-progress guards, semantic-silent-failure signals, degradation/escalation frames, React-safe self-healing projection — no recovery execution, no verification, no permission, no approval, no UI authority) |
+| Next planned pack | P3-FLOW-H — Governed Autonomy Levels / Scope Envelopes Pack (P3.16) |
 | P3 entry basis | Explicit operator override (2026-07-02): "override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3" — not an organic P2 seal |
 | P2 tail status | P2.11-C DONE; P2.11-D through P2.20 (incl. P2.20 Final Seven-Surface Exit Seal) DEFERRED until after full P3; P2 NOT sealed |
 | old P2.9-B (evidence overlay) | DONE — retained; not granular P2.9.x completion |
