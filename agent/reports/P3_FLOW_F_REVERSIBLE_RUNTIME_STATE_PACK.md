@@ -298,8 +298,8 @@ Rust / Go / generated-schema / external-store migration.
 
 ## 25. Commit Hash
 
-- Implementation commit: recorded in the follow-up `docs(agent)` commit, per pack convention (a report cannot honestly contain its own commit's hash before that commit exists).
-- Commit message: `feat(flow): add P3-FLOW-F reversible runtime state`
+- Implementation commit: `86eabd4` — `feat(flow): add P3-FLOW-F reversible runtime state` (19 files, +5224/−5)
+- Hash recorded by the follow-up `docs(agent): record P3-FLOW-F commit hash` commit, per pack convention.
 
 ## 26. Final Git Status
 
