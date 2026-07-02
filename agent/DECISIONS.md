@@ -1,5 +1,22 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-H Governed Autonomy Levels / Scope Envelopes Pack
+
+### DEC-P3FLOWH-01: The autonomy vocabulary is GovernedAutonomyLevel, distinct from existing autonomy names
+**Decision:** The H closed-world enum is `GovernedAutonomyLevel`, not `AutonomyLevel`: `FlowAutonomyLevel` already exists in `flow_wiring.py` (P3-FLOW-C autonomy *visibility* projection, A0–A7) and `AutonomyLevel` already exists in the identity package. The C visibility vocabulary is preserved untouched; H's vocabulary is the governed operating grammar (A0–A9 + UNAVAILABLE/ERROR, A9 locked).
+**Why:** Shadowing either existing name would silently rewrite sealed history or create cross-package ambiguity; visibility (what a surface may show) and governance (what a mode may represent) are different laws.
+**How to revisit:** A future consolidation may map FlowAutonomyLevel projections onto GovernedAutonomyLevel; never by deleting the C vocabulary.
+
+### DEC-P3FLOWH-02: Total resolver via rules + hard overrides, not a Cartesian table
+**Decision:** `resolve_permission_state` is a total deterministic function over every (level, decision class) pair built from ordered rules: ERROR input → ERROR; UNAVAILABLE input → UNAVAILABLE; side-effect classes → FORBIDDEN_IN_P3 future-bound P4+P9 at every level; REQUEST_PROOF → REQUIRES_P5_PROOF; REQUEST_AUTHORITY → REQUIRES_P9_AUTHORITY; A9 → UNAVAILABLE (locked); REQUEST_EXECUTION → REQUIRES_P4_EXECUTION with operator review; REQUEST_PERMISSION → REQUIRES_OPERATOR_REVIEW; then a tier ladder for read/candidate classes with per-class minimum tiers (suggest≥A1, prepare≥A2, internal advance≥A3, auto internal transition≥A4). Unknown raw inputs fail closed to FORBIDDEN_IN_P3. Property tests iterate all 300 known pairs for totality, safety invariants, the A9 lock, and monotonicity (once allowed at a tier, allowed at every higher tier; A9 sits outside the ladder by design, and ERROR/UNAVAILABLE input levels beat every class rule including proof/authority).
+**Why:** A rules-based total function cannot have holes and cannot silently drift the way a hand-authored 300-cell table can; the seed fixtures pin the dispatch's exemplars without becoming the implementation.
+**How to revisit:** New minimum-tier policy requires a v2 resolver version, never mutation of v1 rules.
+
+### DEC-P3FLOWH-03: Self-upgrade is structurally unrepresentable, and detection is not enforcement
+**Decision:** Three reinforcing mechanisms: `OperatorSelectedAutonomyMode` cannot be constructed with `self_selected=True` or `self_upgrade_allowed=True`; `detect_self_upgrade_violation` turns any non-operator request for a higher (or untiered, e.g. A9) level into a SELF_UPGRADE_ATTEMPTED violation that must mark `attempted_self_upgrade` and require a freeze candidate; a DOWNGRADE_CANDIDATE whose target tier is not strictly lower than its source is unconstructible (an upward "downgrade" is a disguised self-upgrade). Operator requests are never violations — they become `OperatorAutonomyOverrideCandidate`s, which are not authority and, when raising autonomy, structurally require `future_p9_required=True`.
+**Why:** "Aurel cannot self-select a higher autonomy level" is the pack's core law; making the unsafe states unconstructible is stronger than detecting them after the fact, and keeping detection non-enforcing preserves "Operator decides".
+**How to revisit:** P9 Custos may later authorize actual mode transitions; the candidate objects are the handoff surface.
+
 ## 2026-07-02 - P3-FLOW-G Self-Healing Runtime Control Loop / Reliability Control Plane Pack
 
 ### DEC-P3FLOWG-01: Eleven object sections map onto five source modules by control-plane role

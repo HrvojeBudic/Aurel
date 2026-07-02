@@ -58,6 +58,24 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-H Governed Autonomy Levels / Scope Envelopes Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_h_autonomy_levels.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_scope_decision_matrix.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_gates.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_drift_violation.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_projection.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_no_authority_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_h_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_g_reliability_control.py tests/test_p3_flow_g_recovery_budget_guards.py tests/test_p3_flow_g_no_execution_boundary.py tests/test_p3_flow_f_no_execution_boundary.py tests/test_p3_flow_a_no_execution_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-02): compileall PASS; P3-FLOW-H 64 passed (6 autonomy levels + 22 scope/decision matrix incl. 300-pair property tests + 11 gates + 8 drift/violation + 5 projection + 6 no-authority boundary + 6 no-execution boundary); shared-module regression 47 passed (G reliability control 13 + G budget/guards 14 + G no-execution 7 + F no-execution 7 + A no-execution 6 — run because `__init__.py` is shared and the package-wide boundary scans cover the new H modules); ruff "All checks passed!"; mypy "Success: no issues found in 394 source files"; suppression scan over `flow_autonomy*.py` + `test_p3_flow_h_*.py` found zero suppressions. Broader A–F regression NOT re-run (no earlier-pack module modified; risk-based validation per CodeOps Standard). Full pytest suite / coverage / Bandit NOT run (no runtime/security/sandbox/network/subprocess path touched; lean doctrine applies).
+
 ## P3-FLOW-G Self-Healing Runtime Control Loop / Reliability Control Plane Pack Validation (COMPLETE)
 
 ```bash

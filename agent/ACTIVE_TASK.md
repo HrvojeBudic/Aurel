@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-G complete; next P3-FLOW-H
+# Active Task: P3-FLOW-H complete; next P3-FLOW-I
+
+**Status:** P3-FLOW-H COMPLETE — Governed Autonomy Levels / Scope Envelopes Pack (CodeOps Standard). P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-H Status
+
+**DONE — GOVERNED_AUTONOMY / LEVEL_IS_NOT_AUTHORITY / SCOPE_IS_NOT_PERMISSION / NO_SELF_UPGRADE / A9_LIVE_LOCKED / TOTAL_DETERMINISTIC_RESOLVER / GATE_IS_NOT_EXECUTION / OVERRIDE_IS_NOT_CUSTOS / REACT_PROJECTION_ONLY / NO_EXECUTION / NO_AUTHORITY / NO_PROOF / P3_FLOW_I_NEXT** — Implemented Python `GovernedAutonomyLevel` (closed-world A0–A9; A9 heretic live mode locked unavailable; renamed from the dispatch's AutonomyLevel because `FlowAutonomyLevel` (P3-FLOW-C visibility) and identity `AutonomyLevel` already exist), `AutonomyModeSource`, `OperatorSelectedAutonomyMode`, `AutonomyDecisionClass`, `AutonomyPermissionState`, `AutonomyResolution`, `resolve_permission_state` (total deterministic resolver over all 300 level×class pairs — rules + hard overrides, no manual Cartesian table), `resolve_action_boundary`/`AutonomyActionBoundary`, `AutonomyScopeDimension`/`AutonomyScopeLimit`/`AutonomyScopeEnvelope`, `AutonomyGateDecision`/`AutonomyGateInput`/`AutonomyGateResult`/`evaluate_autonomy_gate`, `AutonomySafetyCandidate`/`Kind`/`Trigger`, `AutonomyViolationKind`/`AutonomyViolationSignal`/`detect_self_upgrade_violation`, `OperatorAutonomyOverrideCandidate`, and `GovernedAutonomyProjection` across `flow_autonomy.py` / `flow_autonomy_scope.py` / `flow_autonomy_gates.py` / `flow_autonomy_projection.py`, plus 64 behavior-first tests.
+
+Boundary: a level is not authority and higher autonomy grants nothing; Aurel never self-selects or self-upgrades (a non-operator request for higher autonomy is a SELF_UPGRADE_ATTEMPTED violation requiring review and a freeze candidate); A9 never resolves ALLOWED_*; scope limits and never authorizes/executes; side-effect classes are FORBIDDEN_IN_P3 and future-bound P4+P9 at every level; proof requests are future-bound P5 and authority requests future-bound P9; a gate decision restricts candidates and never executes a stop; a downgrade candidate must strictly lower the tier; an operator override candidate that raises autonomy structurally requires future P9; the projection is read-only with UI toggle/override/execution authority structurally False; persistence remains UNAVAILABLE. Execution belongs to P4 AurelExec; proof belongs to P5 AurelTrace; authority belongs to P9 Custos.
+
+Report: `agent/reports/P3_FLOW_H_GOVERNED_AUTONOMY_SCOPE_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-I — Workflow-Atomic Scheduling Intent / Resource Prediction Pack (P3.17)**
+
+Reason: P3-FLOW-H completed the governed autonomy boundary layer only. P3-FLOW-I can add workflow-atomic scheduling intent / resource prediction over these autonomy levels, scope envelopes (TIME/COST/LATENCY), and gate/guard signals. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-G complete; next P3-FLOW-H
 
 **Status:** P3-FLOW-G COMPLETE — Self-Healing Runtime Control Loop / Reliability Control Plane Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 
