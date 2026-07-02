@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-07-02 - P3-FLOW-F Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack
+
+### DEC-P3FLOWF-01: Nine object sections map onto four source modules by lifecycle stage
+**Decision:** The dispatch's nine object sections (A–I) were implemented in exactly four new modules: A+B → `flow_checkpoint.py` (naming + capturing state points), C+D+E → `flow_replay.py` (branching over a captured point: fork, replay, counterfactual), F+G+H → `flow_reversible_state.py` (judging captured points: revert candidates, diffs, recovery requirements), I → `flow_reversible_projection.py` (projecting all of it for a future React surface).
+**Why:** The allowed-files list caps new source modules at four. Grouping by lifecycle stage (capture → branch → judge → project) keeps each module's imports acyclic — `flow_replay`/`flow_reversible_state` import from `flow_checkpoint`, and `flow_reversible_projection` imports from all three — and mirrors how E split its sections (DEC-P3FLOWE-05).
+
+### DEC-P3FLOWF-02: CheckpointTruthLabel and ReplayAvailability are closed-world vocabularies
+**Decision:** `CheckpointTruthLabel` has no LIVE and no TRACE_VERIFIED member; `ReplayAvailability` has no EXECUTABLE/LIVE member. Overclaiming is unrepresentable rather than merely forbidden.
+**Why:** Same doctrine as `OperatorReviewDecisionKind` (no APPROVE/EXECUTE, DEC in P3-FLOW-D) and `GraphRevisionDecisionKind` (no EXECUTE/DISPATCH, DEC-P3FLOWE): where a whole claim category is out of scope for P3, deleting the vocabulary is stronger than a fail-closed boolean, because no code path — present or future — can construct the claim by accident.
+
+### DEC-P3FLOWF-03: Checkpoint logical sequence anchors to run.state.step, not a wall clock
+**Decision:** `RuntimeCheckpointRef.created_at_logical_sequence` is the run's monotonic `state.step` at naming time; no timestamp field exists anywhere in the F layer.
+**Why:** Direct reuse of DEC-P3FLOWE-01 — wall-clock time would break the "identical inputs → identical IDs/hashes" determinism proven by every pack's twice-built equality tests, and a logical anchor is also what future replay actually needs (a position in recorded history, not a time of day).
+
+### DEC-P3FLOWF-04: Runtime diffs are plain sorted set arithmetic in code, not an agent/heuristic layer
+**Decision:** `build_runtime_state_diff_summary()` computes node/edge/event/commitment deltas with Python set operations over already-recorded local state, emitting sorted tuples; topology edge changes compare `RuntimeTopologyEdge` values directly.
+**Why:** A diff's only claim is "these recorded values differ" — that must be reproducible and cheap, with zero judgment involved, so that `diff_is_not_proof` stays honest: the object cannot know more than the state it compared. Sorting makes the canonical hash independent of set iteration order.
+
+### DEC-P3FLOWF-05: safe_to_execute is unconditionally fail-closed everywhere it appears
+**Decision:** `safe_to_execute` on `RuntimeRevertCandidate`, `ForkSafetyFrame`, `RevertSafetyFrame`, and `RevertCandidateViewModel` (plus `any_safe_to_execute` on `RevertReadModel`) is enforced False via `_forbid_true` in `__post_init__` — there is no constructor path that can set it True in P3.
+**Why:** The dispatch's law is unconditional ("safe_to_execute stays false in P3"), unlike E's conditional majority-vote/diversity law (DEC-P3FLOWE-04). Marking any revert as safe would be a claim about external side effects that only future P4 execution + P5 proof + P9 authority can support; until those exist the safe posture is a structural invariant, not a judgment call.
+
 ## 2026-07-02 - P3-FLOW-E Dynamic Runtime Graph / Graph Plasticity Pack
 
 ### DEC-P3FLOWE-01: Graph determination time is a logical run-step anchor, not a wall clock

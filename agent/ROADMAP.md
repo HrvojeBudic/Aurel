@@ -11,8 +11,8 @@
 | Active roadmap | Aurel Roadmap v5.5 (this file) |
 | Doc status index | `agent/CANON_INDEX.md` |
 | Current continuity evidence | Golden Thread B (`P1.ENF-C`) |
-| Last completed pack | P3-FLOW-E — Dynamic Runtime Graph / Graph Plasticity Pack (P3.13 capsule coverage; template vs realized graph, topology snapshot, graph plasticity/revision, topology vulnerability, diversity/decomposition hints — no execution, no authority, no proof) |
-| Next planned pack | P3-FLOW-F — Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack (P3.14) |
+| Last completed pack | P3-FLOW-F — Reversible Runtime State / Fork / Checkpoint / Replay Contracts Pack (P3.14 capsule coverage; checkpoint refs/snapshots, fork candidates, replay plans/cursors, counterfactual candidates, revert/rollback candidates, runtime diffs, recovery checkpoint requirements, React-safe projection + migration readiness — no execution, no persistence, no proof, no UI authority) |
+| Next planned pack | P3-FLOW-G — Self-Healing Runtime Control Loop / Reliability Control Plane Pack (P3.15) |
 | P3 entry basis | Explicit operator override (2026-07-02): "override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3" — not an organic P2 seal |
 | P2 tail status | P2.11-C DONE; P2.11-D through P2.20 (incl. P2.20 Final Seven-Surface Exit Seal) DEFERRED until after full P3; P2 NOT sealed |
 | old P2.9-B (evidence overlay) | DONE — retained; not granular P2.9.x completion |
