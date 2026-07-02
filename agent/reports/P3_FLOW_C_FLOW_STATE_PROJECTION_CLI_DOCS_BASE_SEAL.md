@@ -6,7 +6,7 @@
 
 **Date:** 2026-07-02
 
-**Commit:** (recorded post-commit) — `feat(flow): add P3-FLOW-C projection and base seal`
+**Commit:** `b83e71c` — `feat(flow): add P3-FLOW-C projection and base seal`
 
 P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed; P2.11-D through P2.20 stay deferred by operator decision.
 
@@ -226,7 +226,7 @@ P3.10–P3.12 authority/control boundary; P3.13–P3.20 (plasticity, reversible 
 
 ## 27. Commit Hash
 
-- Implementation commit: _recorded in the follow-up docs commit_.
+- Implementation commit: `b83e71c feat(flow): add P3-FLOW-C projection and base seal` (28 files, 4812 insertions, 11 deletions).
 
 ## 28. Final Git Status
 
