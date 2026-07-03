@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-03 - P3-FLOW-J Compound Runtime Topology / Model-Agent-Environment Services Pack
+
+### DEC-P3FLOWJ-01: One LogicalServiceRef contract instead of eight service ref classes
+**Decision:** The dispatch's Model/Agent/Environment/Tool/Memory/Verifier/Data/Sandbox service refs are one frozen `LogicalServiceRef` dataclass distinguished by the closed-world `RuntimeServiceKind`; the invocation-bound kind set (`INVOCATION_BOUND_SERVICE_KINDS`) structurally forces `future_p4_required` and `future_p9_required` True, verifier/trace kinds force `future_p5_required`.
+**Why:** Eight near-identical classes would be a fake-complete object forest with no behavioral difference; the kind enum plus fail-closed future flags carries all the semantics, and the CodeOps Standard prefers fewer repo-standard contracts over object count. Same reasoning collapsed `P4ServiceDispatchRequirement`/`P4InvocationBoundary`/`P4TopologyConsumptionReadModel` into one `P4HandoffClarityFrame`.
+
+### DEC-P3FLOWJ-02: The P4 handoff frame must name the full deliberately-absent system list
+**Decision:** `P4HandoffClarityFrame.absent_runtime_systems` must equal the canonical 12-entry `ABSENT_RUNTIME_SYSTEMS` tuple (service_runtime, service_discovery, endpoint_registry, network_transport, message_bus, service_mesh, protocol_client_server, worker_pool, load_balancer, health_probe_runner, telemetry_exporter, persistence); a frame with a truncated list is unconstructible.
+**Why:** P4 ambiguity is reduced as much by naming what is deliberately absent as by naming what is consumable; making the absence list structural prevents a later pack from silently shrinking the declared no-mesh boundary.
+
+### DEC-P3FLOWJ-03: Topology health diagnoses declared contracts only
+**Decision:** `assess_topology_health` derives signals exclusively from declared inputs (empty topology, dependency-graph cycle flag, routing targets outside the topology or without capability envelopes). There is no probe, heartbeat, telemetry, or live check, and `TopologyHealthFrame` keeps `service_health_checked`/`telemetry_active`/`proof_available` unconstructible True.
+**Why:** Live health belongs to P4/P5; a P3 health frame that even *could* represent a live probe result would blur the readiness-vs-monitoring boundary the pack exists to draw.
+
 ## 2026-07-03 - P3-FLOW-I Workflow-Atomic Scheduling Intent / Resource Prediction Pack
 
 ### DEC-P3FLOWI-01: The scheduling gate consumes H truth verbatim and can never out-allow it

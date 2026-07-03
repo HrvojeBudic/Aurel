@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-J Compound Runtime Topology / Model-Agent-Environment Services Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_j_compound_topology.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_service_refs.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_capability_dependency.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_routing_interop.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_health_containment.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_scheduling_projection.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_p4_handoff_clarity.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_no_service_runtime_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_no_network_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_no_invocation_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_j_no_service_mesh_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_scheduling_intent.py tests/test_p3_flow_i_dispatchability.py tests/test_p3_flow_i_resource_prediction.py tests/test_p3_flow_i_queue_concurrency.py tests/test_p3_flow_i_requirements.py tests/test_p3_flow_i_no_dispatch_boundary.py tests/test_p3_flow_i_no_execution_boundary.py tests/test_p3_flow_i_no_resource_allocation.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_b_runtime_events.py tests/test_p3_flow_b_state_commitment.py tests/test_p3_flow_b_no_execution_boundary.py tests/test_p3_flow_c_projection.py tests/test_p3_flow_c_no_execution_boundary.py tests/test_p3_flow_d_boundary.py tests/test_p3_flow_d_no_execution_boundary.py tests/test_p3_flow_e_dynamic_graph.py tests/test_p3_flow_e_no_execution_boundary.py tests/test_p3_flow_f_checkpoint.py tests/test_p3_flow_f_no_execution_boundary.py tests/test_p3_flow_g_reliability_control.py tests/test_p3_flow_g_recovery_budget_guards.py tests/test_p3_flow_g_no_execution_boundary.py tests/test_p3_flow_h_autonomy_levels.py tests/test_p3_flow_h_scope_decision_matrix.py tests/test_p3_flow_h_no_execution_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-03): compileall PASS; P3-FLOW-J 57 passed (5 compound topology + 6 service refs + 7 capability/dependency + 6 routing/interop + 6 health/containment + 8 scheduling bridge/projection + 4 P4 handoff + 4 no-service-runtime + 3 no-network-execution + 4 no-invocation + 4 no-service-mesh); P3-FLOW-I regression 73 passed (J consumes I APIs directly); broader A–H regression subset 203 passed (run because the shared `__init__.py` was modified); ruff "All checks passed!"; mypy "Success: no issues found in 402 source files"; suppression scan over the four J modules + 11 J test files found zero suppressions. Full pytest suite / coverage / Bandit NOT run (no runtime/security/sandbox/network/subprocess path touched; lean doctrine applies).
+
 ## P3-FLOW-I Workflow-Atomic Scheduling Intent / Resource Prediction Pack Validation (COMPLETE)
 
 ```bash

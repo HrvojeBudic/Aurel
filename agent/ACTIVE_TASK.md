@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-I complete; next P3-FLOW-J
+# Active Task: P3-FLOW-J complete; next P3-FLOW-K
+
+**Status:** P3-FLOW-J COMPLETE — Compound Runtime Topology / Model-Agent-Environment Services Pack (CodeOps Standard). P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-J Status
+
+**DONE — TOPOLOGY_MAP_NOT_SERVICE_MESH / SERVICE_REF_IS_NOT_ENDPOINT / NODE_IS_NOT_LIVE_PROCESS / CAPABILITY_IS_NOT_PERMISSION / DEPENDENCY_IS_NOT_TRANSPORT / ROUTING_CANDIDATE_IS_NOT_ROUTING / LAYER_REF_IS_NOT_PROTOCOL / HEALTH_IS_NOT_PROOF / BRIDGE_IS_NOT_DISPATCH / P4_HANDOFF_IS_NOT_P4 / REACT_PROJECTION_ONLY / P3_FLOW_K_NEXT** — Implemented Python `CompoundRuntimeTopology`, `RuntimeServiceNode`, closed-world `RuntimeServiceKind`, one `LogicalServiceRef` contract covering all service kinds (deliberately not eight ref classes — invocation-bound kinds structurally future-bound to P4+P9), candidate-only `ServiceCapabilityEnvelope`/`ServiceCapabilityKind`, deterministic `ServiceDependencyGraph`/`ServiceDependencyEdge`/`ServiceDependencyKind` with declared-cycle detection, `ServiceRoutingCandidate`/`ServiceRoutingReason`, `InteroperabilityLayerRef`/`InteropLayerKind` naming future owners (P4/P5/P9/Shell), `assess_topology_health` + `TopologyHealthFrame`/`TopologyHealthSignalKind` (diagnostic readiness over declared contracts — never probe, never proof), `FailureContainmentBoundary`, `bridge_scheduling_requirements` + `SchedulingTopologyBridge` (consumes I's ExecutionResourceRequirementReadModel and AutonomySchedulingGate as-is; requirement match is not invocation, service match is not routing), `P4HandoffClarityFrame` (consumable refs, convertible candidates, source I read models, full deliberately-absent system list), and one read-only `CompoundTopologyProjection`, across `flow_compound_topology.py` / `flow_service_topology.py` / `flow_interop_topology.py` / `flow_compound_topology_projection.py`, plus 57 behavior-first tests, 73 I regressions, and 203 broader A–H regressions.
+
+Boundary: a compound topology is a map, not a service mesh; no service runtime, discovery, endpoint, transport, message bus, telemetry, or persistence exists; a capability envelope is not permission; a routing candidate routes nothing; the scheduling bridge matches and never dispatches; the P4 handoff frame names what AurelExec may later consume and is not P4; runtime.submit remains not wired; React projection carries no route/invocation/mesh-control authority. Dispatch/execution belong to P4 AurelExec; proof to P5 AurelTrace; authority to P9 Custos.
+
+Report: `agent/reports/P3_FLOW_J_COMPOUND_RUNTIME_TOPOLOGY_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-K — Runtime Harness Evaluation / Quality Operations Pack (P3.19)**
+
+Reason: P3-FLOW-J completed the compound-topology contract layer only. P3-FLOW-K can evaluate scheduling quality, dispatchability, resource prediction, and boundary posture over the I+J read models. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-I complete; next P3-FLOW-J
 
 **Status:** P3-FLOW-I COMPLETE — Workflow-Atomic Scheduling Intent / Resource Prediction Pack (CodeOps Standard). P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 
