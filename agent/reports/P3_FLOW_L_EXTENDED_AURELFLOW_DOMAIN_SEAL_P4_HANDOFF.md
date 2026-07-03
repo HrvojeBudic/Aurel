@@ -177,4 +177,4 @@ P4 must still implement execution; L does not. Known unavailable risks are the 1
 
 ## 20. Commit / Final Git Status
 
-Commit: `feat(flow): seal P3 AurelFlow domain` (hash recorded in `agent/ACTIVE_TASK.md` follow-up note per repo convention). Only in-scope files staged. Final `git status --short`: clean.
+Commit: `8f38ee8` — `feat(flow): seal P3 AurelFlow domain` (23 files changed, 4021 insertions, 6 deletions). Only in-scope files staged. Final `git status --short`: clean.
