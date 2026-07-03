@@ -196,6 +196,6 @@ never trust them as permission).
 
 ## 16. Commit / Final Git Status
 
-Commit: `feat(flow): add P3-FLOW-J compound topology` — hash `PENDING_COMMIT`
-(recorded post-commit in the follow-up canon commit, per repo convention).
+Commit: `fe6fa9c` — `feat(flow): add P3-FLOW-J compound topology` (24 files
+changed, 3282 insertions, 5 deletions).
 Final `git status --short`: clean after commit.
