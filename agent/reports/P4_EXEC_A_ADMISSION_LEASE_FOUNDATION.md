@@ -140,7 +140,7 @@ ExecJob / Attempt / Session / Runtime Submit Bridge — consume `P4ExecAHandoffF
 
 ## 24. Commit Hash
 
-Recorded post-commit in `agent/ACTIVE_TASK.md` follow-up entry; see `git log` — commit message `feat(aurel-exec): add admission and lease foundation`.
+`c99c604` — `feat(aurel-exec): add admission and lease foundation` (23 files, +3072/−4).
 
 ## 25. Final Git Status
 
