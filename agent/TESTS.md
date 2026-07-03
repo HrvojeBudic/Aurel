@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-K Runtime Harness Evaluation / Quality Operations Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_k_harness_evaluation.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_contract_coverage.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_boundary_invariants.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_quality_scorecard.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_p4_handoff_readiness.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_projection_seal_input.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_no_proof_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_k_no_production_claim_boundary.py -q
+# full A–J regression (shared __init__.py modified), batched as in the K report
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_b_runtime_events.py tests/test_p3_flow_b_state_commitment.py tests/test_p3_flow_b_pause_resume.py tests/test_p3_flow_b_retry_recovery.py tests/test_p3_flow_b_no_execution_boundary.py tests/test_p3_flow_b_behavior_read_model.py tests/test_p3_flow_c_projection.py tests/test_p3_flow_c_timeline.py tests/test_p3_flow_c_event_graph.py tests/test_p3_flow_c_wiring_matrix.py tests/test_p3_flow_c_protocol_boundary.py tests/test_p3_flow_c_cli_read_only.py tests/test_p3_flow_c_base_exit_seal.py tests/test_p3_flow_c_no_execution_boundary.py tests/test_p3_flow_d_boundary.py tests/test_p3_flow_d_operator_review.py tests/test_p3_flow_d_pause_hooks.py tests/test_p3_flow_d_read_model.py tests/test_p3_flow_d_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_dynamic_graph.py tests/test_p3_flow_e_topology_snapshot.py tests/test_p3_flow_e_graph_revision.py tests/test_p3_flow_e_topology_vulnerability.py tests/test_p3_flow_e_no_execution_boundary.py tests/test_p3_flow_f_checkpoint.py tests/test_p3_flow_f_fork_replay.py tests/test_p3_flow_f_revert_candidate.py tests/test_p3_flow_f_diff_recovery_checkpoint.py tests/test_p3_flow_f_projection_migration_readiness.py tests/test_p3_flow_f_no_execution_boundary.py tests/test_p3_flow_g_reliability_control.py tests/test_p3_flow_g_failure_taxonomy.py tests/test_p3_flow_g_diagnosis.py tests/test_p3_flow_g_recovery_policy.py tests/test_p3_flow_g_recovery_budget_guards.py tests/test_p3_flow_g_projection.py tests/test_p3_flow_g_no_execution_boundary.py tests/test_p3_flow_h_autonomy_levels.py tests/test_p3_flow_h_scope_decision_matrix.py tests/test_p3_flow_h_gates.py tests/test_p3_flow_h_drift_violation.py tests/test_p3_flow_h_projection.py tests/test_p3_flow_h_no_authority_boundary.py tests/test_p3_flow_h_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_scheduling_intent.py tests/test_p3_flow_i_dispatchability.py tests/test_p3_flow_i_resource_prediction.py tests/test_p3_flow_i_queue_concurrency.py tests/test_p3_flow_i_requirements.py tests/test_p3_flow_i_projection.py tests/test_p3_flow_i_no_dispatch_boundary.py tests/test_p3_flow_i_no_execution_boundary.py tests/test_p3_flow_i_no_resource_allocation.py tests/test_p3_flow_j_compound_topology.py tests/test_p3_flow_j_service_refs.py tests/test_p3_flow_j_capability_dependency.py tests/test_p3_flow_j_routing_interop.py tests/test_p3_flow_j_health_containment.py tests/test_p3_flow_j_scheduling_projection.py tests/test_p3_flow_j_p4_handoff_clarity.py tests/test_p3_flow_j_no_service_runtime_boundary.py tests/test_p3_flow_j_no_network_execution_boundary.py tests/test_p3_flow_j_no_invocation_boundary.py tests/test_p3_flow_j_no_service_mesh_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-03): compileall PASS; P3-FLOW-K 55 passed (6 harness + 8 coverage/fixtures + 8 boundary/invariant probes + 8 scorecard/guards + 6 P4 readiness + 7 projection/seal input + 3 no-execution + 4 no-proof + 5 no-production-claim); full A–J regression 619 passed (A–D 196, E–H 287, I+J 136 — run because the shared `__init__.py` was modified); ruff "All checks passed!"; mypy "Success: no issues found in 406 source files"; suppression scan over the four K modules + 9 K test files found zero suppressions. Full pytest suite / coverage / Bandit NOT run (no runtime/security/sandbox/network/subprocess path touched; lean doctrine applies).
+
 ## P3-FLOW-J Compound Runtime Topology / Model-Agent-Environment Services Pack Validation (COMPLETE)
 
 ```bash

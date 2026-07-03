@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-03 - P3-FLOW-K Runtime Harness Evaluation / Quality Operations Pack
+
+### DEC-P3FLOWK-01: K boundary proofs are Harness-prefixed to avoid shadowing the I proofs
+**Decision:** The dispatched `NoExecutionBoundaryProof`/`NoProofBoundaryProof`/`NoProductionClaimBoundaryProof` are implemented as `HarnessNoExecutionBoundaryProof`/`HarnessNoProofBoundaryProof`/`HarnessNoProductionClaimBoundaryProof` because P3-FLOW-I already exports `NoExecutionBoundaryProof` from `flow_scheduling_projection.py` (and P3-FLOW-A exports `FlowNoExecutionProof`). `P4ReadinessNotP4Proof` had no collision and keeps its dispatched name.
+**Why:** Shadowing an existing sealed export in the shared package namespace would silently change what earlier-pack imports mean; the repo precedent (GovernedAutonomyLevel in H, SelfHealingControlLawBoundary in G) is to rename with a pack-scoped prefix and record the decision.
+
+### DEC-P3FLOWK-02: Probes report honest NOT_APPLICABLE instead of inventing passes
+**Decision:** `run_boundary_compliance_probe` and `probe_runtime_invariant` check only the attributes a subject actually carries: a subject without any of a category's/law's attributes yields NOT_APPLICABLE, never PASS/SATISFIED, and a FAIL/VIOLATED status without findings is unconstructible.
+**Why:** A pass derived from silence would let any object "comply" with boundaries it cannot even express; the evaluation layer must distinguish "checked and clean" from "not checkable" or its coverage claims become theater.
+
+### DEC-P3FLOWK-03: The seal input derives its blocking risks; it cannot be hand-declared seal-ready
+**Decision:** `build_p3_seal_input_frame` computes readiness findings and blocking risks deterministically from the coverage matrix, compliance read model, invariant read model, and P4 assessment; `seal_ready_candidate` is true only when zero risks derive, and a frame claiming readiness while carrying risks is unconstructible. `requires_p3_flow_l` is fail-closed True and `final_seal_performed` fail-closed False.
+**Why:** If seal readiness were a caller-supplied boolean, K would become a rubber stamp for L; deriving it from the four evaluated layers keeps the L handoff evidence-bound while structurally preventing K from performing or pre-approving the seal.
+
 ## 2026-07-03 - P3-FLOW-J Compound Runtime Topology / Model-Agent-Environment Services Pack
 
 ### DEC-P3FLOWJ-01: One LogicalServiceRef contract instead of eight service ref classes

@@ -1,4 +1,20 @@
-# Active Task: P3-FLOW-J complete; next P3-FLOW-K
+# Active Task: P3-FLOW-K complete; next P3-FLOW-L
+
+**Status:** P3-FLOW-K COMPLETE — Runtime Harness Evaluation / Quality Operations Pack. P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
+
+## P3-FLOW-K Status
+
+**DONE — EVALUATION_IS_NOT_EXECUTION / HARNESS_RESULT_IS_NOT_PROOF / COVERAGE_IS_NOT_PRODUCTION_READINESS / FIXTURE_IS_DEV_FIXTURE / PROBE_IS_NOT_ENFORCEMENT / INVARIANT_FINDING_IS_NOT_REPAIR / SCORE_IS_NOT_APPROVAL / GUARD_IS_NOT_CI / P4_READINESS_IS_NOT_P4 / SEAL_INPUT_IS_NOT_FINAL_SEAL / REACT_PROJECTION_ONLY / P3_FLOW_L_NEXT** — Implemented Python `RuntimeHarnessEvaluationSuite`/`Run`/`Case`/`Boundary`/`ReadModel` (a run is a pure function of its suite and never workflow execution), `ContractCoverageMatrix`/`Item`/`Status`/`ReadModel` (closed-world 20 areas × 6 statuses; MISSING/BLOCKED must explain themselves), `HarnessScenarioFixture`/`Kind`/`Catalog`/`ReadModel` (structurally DEV_FIXTURE), `BoundaryComplianceProbe`/`Finding`/`Status`/`ReadModel` (17 read-only categories over real object boolean/truth-label posture; honest NOT_APPLICABLE; FAIL requires findings), `RuntimeInvariantProbe`/`Finding`/`Status`/`ReadModel` (18 AurelFlow laws as deterministic attribute checks; tested SATISFIED over real I/J/H objects and VIOLATED over an overclaiming fake), `RuntimeQualityScorecard`/`QualityMetric`/`QualityMetricStatus`/`QualityMetricItem`/`ReadModel` (advisory only; no approval vocabulary), `RuntimeRegressionGuardRail`/`Finding`/`Status`/`ReadModel` (report-only FAIL>WARNING>PASS ladder; never CI), `P4HandoffReadinessAssessment`/`Gap`/`Risk`/`ReadModel` (unsatisfied check without a gap unconstructible; readiness stays candidate-only), `HarnessEvaluationProjectionEnvelope` + 7 view models + `HarnessEvaluationReactProjectionBoundary` (UI score is not approval; Python source of truth), `P3SealInputFrame`/`ReadinessFinding`/`BlockingRisk`/`ReadModel` (risks derived deterministically from coverage/compliance/invariant/P4 layers; seal-ready candidate with risks unconstructible; final seal not performed), and `HarnessNoExecutionBoundaryProof`/`HarnessNoProofBoundaryProof`/`HarnessNoProductionClaimBoundaryProof`/`P4ReadinessNotP4Proof` across `flow_harness_evaluation.py` / `flow_boundary_probes.py` / `flow_quality_ops.py` / `flow_harness_projection.py`, plus 55 behavior-first tests and 619 A–J regressions.
+
+Boundary: K evaluates P3 and adds no runtime power — no workflow execution, dispatch, runtime.submit, service runtime, network, model/tool/sandbox invocation, Trace/Ledger write, memory/policy/identity mutation, CI enforcement, production-readiness certification, or final P3 seal; harness results are not proof and DEV_FIXTURE is not LIVE. P3-FLOW-L seals; P4 executes; P5 proves; P9 authorizes.
+
+Report: `agent/reports/P3_FLOW_K_RUNTIME_HARNESS_EVALUATION_PACK.md`
+
+Current / next recommended roadmap task: **P3-FLOW-L — Extended AurelFlow Domain Seal / P4 Execution Handoff Pack (P3.20)**
+
+Reason: P3-FLOW-K completed the evaluation/quality-operations layer only and prepared the P3 seal input frame. P3-FLOW-L can perform the extended final P3 seal consuming K's coverage matrix, compliance/invariant findings, scorecard, guard rails, P4 readiness assessment, and seal input. After full P3, resume the deferred P2 tail (P2.11-D → P2.20 Final Seven-Surface Exit Seal). No P4 execution, P5 trace verification, or P9 Custos enforcement claim.
+
+# Prior Active Task (historical): P3-FLOW-J complete; next P3-FLOW-K
 
 **Status:** P3-FLOW-J COMPLETE — Compound Runtime Topology / Model-Agent-Environment Services Pack (CodeOps Standard). P3 remains open under the explicit operator override of 2026-07-02 ("override - start p3-Flow-A now, p2.11D-p2.20 will contiune after full p3"). P2 remains NOT sealed: P2.11-D through P2.20 are deferred until after full P3 by operator decision.
 
