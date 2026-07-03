@@ -58,6 +58,27 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-F Topology / Concurrency / Backpressure / ExecBench Validation (COMPLETE, lean)
+
+Lean-validation pack: focused F tests + compileall + ruff on touched paths only.
+
+**Standing full-suite obligation (now four lean packs old, escalated):** the full
+`tests/aurel_exec` suite has not been executed since P4-EXEC-B. P4-EXEC-G (the
+P4 exit-seal pack) MUST run it as seal evidence — sealing P4 without it would
+be a fake seal.
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_exec tests/aurel_exec
+.venv/bin/python -m pytest \
+  tests/aurel_exec/test_exec_topology.py \
+  tests/aurel_exec/test_exec_concurrency_window.py \
+  tests/aurel_exec/test_exec_backpressure.py \
+  tests/aurel_exec/test_exec_bench.py \
+  tests/aurel_exec/test_exec_topology_projection.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_exec tests/aurel_exec
+```
+
 ## P4-EXEC-E Verifier / Failure / Recovery / Algedonic Validation (COMPLETE, lean)
 
 Lean-validation pack: focused E tests + repaired boundary guards + compileall +

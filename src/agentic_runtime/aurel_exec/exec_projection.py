@@ -844,3 +844,157 @@ def build_judgment_projection(
             and algedonic_signal.operator_attention_required
         ),
     )
+
+
+TOPOLOGY_PROJECTION_VERSION = "topology_projection.v1"
+
+
+@dataclass(frozen=True)
+class TopologyProjection(_ExecCanonicalMixin):
+    """Read-only P4-EXEC-F topology/pressure/backpressure/telemetry view.
+
+    Shows the local control-plane shape honestly. Worker pool, remote/
+    distributed runtime, async dispatcher, durable event log, deterministic
+    replay, Rust/WASM substrate, P5 proof, P9 authority, and Shell/UI are
+    structurally unavailable, and a Python-final-kernel claim is
+    unconstructible. A projection is not runtime control.
+    """
+
+    topology_profile_id: str
+    topology_kind: str
+    local_node_id: str
+    worker_model: str
+    concurrency_window_id: str
+    max_in_flight: int
+    current_in_flight: int
+    available_slots: int
+    queue_depth: int
+    pressure_snapshot_id: str
+    pressure_level: str
+    truth_labels: tuple[ExecTruthLabel, ...]
+    unavailable_reasons: tuple[str, ...]
+    contract_version: str = TOPOLOGY_PROJECTION_VERSION
+    backpressure_signal_id: str | None = None
+    backpressure_decision: str | None = None
+    recommended_delay_ms: int | None = None
+    operator_attention_required: bool = False
+    exec_bench_snapshot_id: str | None = None
+    sample_count: int | None = None
+    avg_duration_ms: int | None = None
+    telemetry_snapshot_id: str | None = None
+    worker_pool_available: bool = False
+    remote_worker_available: bool = False
+    distributed_runtime_available: bool = False
+    async_dispatcher_available: bool = False
+    load_balancer_available: bool = False
+    durable_event_log_available: bool = False
+    deterministic_replay_engine_available: bool = False
+    workflow_exact_copy_available: bool = False
+    rust_wasm_substrate_available: bool = False
+    python_final_kernel_claim: bool = False
+    p5_proof_available: bool = False
+    p9_authority_available: bool = False
+    shell_ui_available: bool = False
+    react_frontend_available: bool = False
+    api_server_available: bool = False
+    read_only: bool = True
+
+    def __post_init__(self) -> None:
+        forbid_true(
+            self,
+            "worker_pool_available",
+            "remote_worker_available",
+            "distributed_runtime_available",
+            "async_dispatcher_available",
+            "load_balancer_available",
+            "durable_event_log_available",
+            "deterministic_replay_engine_available",
+            "workflow_exact_copy_available",
+            "rust_wasm_substrate_available",
+            "python_final_kernel_claim",
+            "p5_proof_available",
+            "p9_authority_available",
+            "shell_ui_available",
+            "react_frontend_available",
+            "api_server_available",
+        )
+        forbid_false(self, "read_only")
+        require_nonempty(self, "topology_profile_id", code=AurelExecErrorCode.EMPTY_FIELD)
+
+
+def build_topology_projection(
+    topology,
+    window,
+    pressure_snapshot,
+    *,
+    backpressure_signal=None,
+    backpressure_decision=None,
+    exec_bench_snapshot=None,
+    telemetry_snapshot=None,
+) -> TopologyProjection:
+    """Project topology/pressure/backpressure/telemetry state read-only."""
+    labels: list[ExecTruthLabel] = []
+    for obj in (
+        topology,
+        window,
+        pressure_snapshot,
+        backpressure_signal,
+        backpressure_decision,
+        exec_bench_snapshot,
+        telemetry_snapshot,
+    ):
+        obj_label = getattr(obj, "truth_label", None)
+        if obj_label is not None and obj_label not in labels:
+            labels.append(obj_label)
+    return TopologyProjection(
+        topology_profile_id=topology.topology_profile_id,
+        topology_kind=topology.topology_kind.value,
+        local_node_id=topology.local_node_id,
+        worker_model=topology.worker_model,
+        concurrency_window_id=window.concurrency_window_id,
+        max_in_flight=window.max_in_flight,
+        current_in_flight=window.current_in_flight,
+        available_slots=window.available_slots,
+        queue_depth=window.queue_depth,
+        pressure_snapshot_id=pressure_snapshot.pressure_snapshot_id,
+        pressure_level=pressure_snapshot.pressure_level.value,
+        truth_labels=tuple(labels),
+        unavailable_reasons=topology.unavailable_reasons,
+        backpressure_signal_id=(
+            backpressure_signal.backpressure_signal_id
+            if backpressure_signal is not None
+            else None
+        ),
+        backpressure_decision=(
+            backpressure_decision.decision.value
+            if backpressure_decision is not None
+            else None
+        ),
+        recommended_delay_ms=(
+            backpressure_decision.recommended_delay_ms
+            if backpressure_decision is not None
+            else None
+        ),
+        operator_attention_required=bool(
+            backpressure_decision is not None
+            and backpressure_decision.requires_operator_attention
+        ),
+        exec_bench_snapshot_id=(
+            exec_bench_snapshot.exec_bench_snapshot_id
+            if exec_bench_snapshot is not None
+            else None
+        ),
+        sample_count=(
+            exec_bench_snapshot.sample_count if exec_bench_snapshot is not None else None
+        ),
+        avg_duration_ms=(
+            exec_bench_snapshot.avg_duration_ms
+            if exec_bench_snapshot is not None
+            else None
+        ),
+        telemetry_snapshot_id=(
+            telemetry_snapshot.telemetry_snapshot_id
+            if telemetry_snapshot is not None
+            else None
+        ),
+    )

@@ -55,6 +55,20 @@ from .exec_algedonic import (
     build_no_rust_rewrite_proof,
     create_algedonic_signal_if_needed,
 )
+from .exec_bench import (
+    EXEC_BENCH_SAMPLE_VERSION,
+    EXEC_BENCH_SNAPSHOT_VERSION,
+    FAKE_THROUGHPUT_FORBIDDEN_REASON,
+    HARNESS_TELEMETRY_SNAPSHOT_VERSION,
+    ExecBenchSample,
+    ExecBenchSnapshot,
+    HarnessTelemetrySnapshot,
+    NoFakeThroughputProof,
+    build_exec_bench_sample,
+    build_exec_bench_snapshot,
+    build_harness_telemetry_snapshot,
+    build_no_fake_throughput_proof,
+)
 from .exec_checkpoint import (
     CHECKPOINT_PERSISTENCE_UNAVAILABLE_REASON,
     EXECUTION_CHECKPOINT_REF_VERSION,
@@ -156,6 +170,29 @@ from .exec_outcome import (
     ExecutionOutcomeStatus,
     normalize_runtime_result,
 )
+from .exec_pressure import (
+    BACKPRESSURE_AUTHORITY_BOUNDARY_REASON,
+    BACKPRESSURE_DECISION_VERSION,
+    BACKPRESSURE_SIGNAL_VERSION,
+    CONCURRENCY_LIMIT_DECISION_VERSION,
+    CONCURRENCY_WINDOW_VERSION,
+    EXECUTION_PRESSURE_SNAPSHOT_VERSION,
+    BackpressureDecision,
+    BackpressureDecisionKind,
+    BackpressureSignal,
+    BackpressureSignalKind,
+    ConcurrencyLimitDecision,
+    ConcurrencyLimitDecisionKind,
+    ConcurrencyWindow,
+    ExecutionPressureLevel,
+    ExecutionPressureSnapshot,
+    build_backpressure_signal_if_needed,
+    build_concurrency_window,
+    build_execution_pressure_snapshot,
+    decide_backpressure,
+    decide_concurrency_limit,
+    derive_pressure_level,
+)
 from .exec_queue import (
     EXEC_QUEUE_ENTRY_VERSION,
     QUEUE_IS_NOT_SCHEDULER_REASON,
@@ -217,6 +254,18 @@ from .exec_session import (
     mark_session_failed,
     mark_session_running,
     open_execution_session,
+)
+from .exec_topology import (
+    ASYNC_DISPATCHER_UNAVAILABLE_REASON,
+    EXECUTION_TOPOLOGY_PROFILE_VERSION,
+    LOCAL_WORKER_MODEL,
+    RUST_WASM_TOPOLOGY_UNAVAILABLE_REASON,
+    WORKER_POOL_TOPOLOGY_UNAVAILABLE_REASON,
+    ExecutionTopologyProfile,
+    NoAsyncDispatcherProof,
+    TopologyProfileKind,
+    build_local_topology_profile,
+    build_no_async_dispatcher_proof,
 )
 from .exec_trace_binding import (
     EXEC_TRACE_BINDING_VERSION,
@@ -304,6 +353,7 @@ from .exec_projection import (
     NoRuntimeSubmitProof,
     NoTraceVerifiedProof,
     P4ExecAHandoffFrame,
+    TopologyProjection,
     RuntimeSubmitUnavailableReason,
     build_exec_projection,
     build_judgment_projection,
@@ -314,6 +364,7 @@ from .exec_projection import (
     build_no_runtime_submit_proof,
     build_no_trace_verified_proof,
     build_p4_exec_a_handoff_frame,
+    build_topology_projection,
 )
 from .exec_types import (
     ADMISSION_GATE_ORDER,

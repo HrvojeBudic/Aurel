@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-F Topology / Concurrency / Backpressure / ExecBench
+
+### DEC-P4EXECF-01: Only local topology kinds are constructible as active profiles, and F ships its own kind vocabulary
+**Decision:** `TopologyProfileKind` is F-local (the A-pack `ExecutionTopologyKind` structural vocabulary is untouched, per the E/K naming precedent); REMOTE_UNAVAILABLE/DISTRIBUTED_UNAVAILABLE/FUTURE_RUST_WASM_SUBSTRATE/ERROR exist as vocabulary but an `ExecutionTopologyProfile` carrying them is unconstructible — only LOCAL_SINGLE_SLOT and LOCAL_BOUNDED_WINDOW can be active, and SINGLE_SLOT structurally means exactly one slot (C canon).
+**Why:** Distributed theater arrives by declaring a remote topology before a remote runtime exists. Making non-local profiles unrepresentable as active state keeps the topology model incapable of describing infrastructure that is not there.
+
+### DEC-P4EXECF-02: Pressure/slot arithmetic is enforced at construction, like the E taxonomy tables
+**Decision:** `ConcurrencyWindow.available_slots` must equal `max(max_in_flight − current_in_flight, 0)` and `ExecutionPressureSnapshot.pressure_level` must equal the pure-integer `derive_pressure_level` derivation — contradicting values are unconstructible. Decision objects enforce flag/kind agreement the same way. Real E judgment objects (FailureClassifications, AlgedonicSignals) feed the derivation as counted inputs, duck-typed so no E module needed edits.
+**Why:** Continues the pack lineage's core move (D registries, E tables): semantics live in one reviewable deterministic function, and data that disagrees with it cannot exist. Duck-typed consumption keeps the judgment layer sealed while making urgency genuinely pressure-relevant.
+
+### DEC-P4EXECF-03: ExecBench has no throughput vocabulary at all
+**Decision:** Samples require both measurement points for a duration; snapshots aggregate exactly the provided samples (invented counts and sample-less durations unconstructible); no throughput/qps/rps/ops-per-second field exists anywhere; `is_synthetic_benchmark`/`is_distributed_metric`/`is_production_claim` are locked False; `NoFakeThroughputProof` is structural.
+**Why:** Benchmark theater is the telemetry-layer analogue of fake TRACE_VERIFIED. The strongest guard is not a False boolean but an absent vocabulary — throughput claims become expressible only when a substrate that actually measures them adds the fields deliberately.
+
+### DEC-P4EXECF-04: Backpressure decisions shape admission only, and ESCALATE is visibility
+**Decision:** `BackpressureDecision` carries `executes_retry`/`executes_recovery`/`executes_rollback`/`grants_authority` unconstructibly True; the ladder's strongest verdict (ESCALATE on CRITICAL) blocks new work and requires operator attention, with the reason text stating escalation is visibility, not authority. Concurrency/backpressure ALLOW verdicts state that allowing admission is not execution — the full A–D guard chain still applies.
+**Why:** The backpressure layer sits exactly where a self-healing loop would sneak in (pressure high → "fix it"). Locking the execution booleans and routing urgency to the operator keeps the E law intact: judgment and pressure inform; the operator and P9 decide.
+
 ## 2026-07-03 - P4-EXEC-E Verifier / Failure Classification / Bounded Recovery / Algedonic Signals
 
 ### DEC-P4EXECE-01: Verified-true is structurally impossible without evidence, and the hook vocabulary cannot claim an available verifier
