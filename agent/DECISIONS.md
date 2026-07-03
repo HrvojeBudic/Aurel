@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-C Worker / Queue / Bus / Checkpoint Runtime Shape
+
+### DEC-P4EXECC-01: The managed helper reuses the B bridge unchanged; blocked shapes perform zero kernel calls
+**Decision:** `run_claimed_queue_entry_once` takes an `ExecRuntimeBridge` instance and calls its existing `submit_once` exactly once; `exec_runtime_bridge.py` was not modified. All claim-coherence and state validation raises before any kernel interaction, and the C modules are sweep-tested to contain no kernel import, no `.dispatch(`, and no asyncio/threading/socket.
+**Why:** The single-submit-site law from B (DEC-P4EXECB-01) must survive the arrival of runtime management — a managed shape that grew its own submit or async dispatch would be the second-executor failure mode wearing a queue costume.
+
+### DEC-P4EXECC-02: "Execution bus" is realized as an immutable local message log, not a bus
+**Decision:** `LocalExecutionMessageLog` is a frozen tuple log whose append returns a new log; it has no subscribers, no publish/route/emit surface, and `is_transport_bus`/`pubsub_available`/`has_subscribers` are unconstructibly True. The roadmap's P4.8 "Execution Bus" is delivered as local causality only.
+**Why:** Local causality before any distributed bus: the ordered message chain gives P4-EXEC-E and P5 real evidence to consume without pretending a transport exists. A representable bus posture would let a data bug claim distributed infrastructure that has never been built.
+
+### DEC-P4EXECC-03: Checkpoint refs hash real local state views; rollback availability is structurally False
+**Decision:** A checkpoint ref claiming `checkpoint_available=True` without a stable hash of an actual local state view is unconstructible; pre-attempt refs hash the job/lease/session/attempt view and post-attempt refs hash the outcome. `ExecutionRollbackRef.rollback_available` and `rollback_executed` are both unconstructibly True in this pack, with P4-EXEC-E under P9 authority named as the owner.
+**Why:** DeltaBox-lite means boundaries, not engines. Hashing a real view keeps the ref honest without a persistence engine; locking rollback availability False (not merely execution) prevents the subtler overclaim that rollback is "ready" when no executor, no sandbox snapshot discipline, and no P9 authority exist.
+
+### DEC-P4EXECC-04: The B-era ExecProjection platform flags keep meaning "no platform"; the local shape gets its own projection
+**Decision:** `ExecProjection.worker_queue_available`/`execution_bus_available`/`checkpoint_available`/`recovery_available` remain structurally False and now mean "no worker/queue/bus/checkpoint/recovery *platform* exists"; the real local shape (queue entry, single slot, claim, log, refs) is projected by the new `ManagedRuntimeProjection`, whose honest True flags are only `local_queue_available`/`local_worker_slot_available`/`single_local_worker_slot_only`/`checkpoint_ref_available`-with-refs.
+**Why:** Flipping the B flags would have retroactively changed what B's sealed tests assert and blurred the platform-vs-local distinction; two projections keep both truths independently checkable — the local substrate exists, the platform does not.
+
 ## 2026-07-03 - P4-EXEC-B First Governed Runtime Submit Bridge
 
 ### DEC-P4EXECB-01: The bridge supervises the existing kernel; the kernel import is sanctioned in exactly one module

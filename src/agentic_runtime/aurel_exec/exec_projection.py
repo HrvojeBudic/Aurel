@@ -20,10 +20,17 @@ from .exec_admission import (
     ExecAdmissionDecision,
     ExecUnavailableReason,
 )
+from .exec_checkpoint import ExecutionCheckpointRef, ExecutionRollbackRef
 from .exec_errors import AurelExecErrorCode, AurelExecValidationError
 from .exec_job import ExecJob, ExecutionAttempt
 from .exec_lease import ExecutionLease, LeaseValidationResult
+from .exec_messages import (
+    TRANSPORT_BUS_UNAVAILABLE_REASON,
+    ExecutionMessage,
+    LocalExecutionMessageLog,
+)
 from .exec_outcome import ExecutionOutcome, ExecutionOutcomeStatus
+from .exec_queue import ExecQueueEntry, ExecQueueState
 from .exec_runtime_bridge import build_unsupported_execution_mode_proofs
 from .exec_session import ExecutionSession, ExecutionSessionStatus
 from .exec_trace_binding import ExecTraceBinding
@@ -444,4 +451,125 @@ def build_p4_exec_a_handoff_frame(
         runtime_submit_unavailable=RuntimeSubmitUnavailableReason(),
         bridge_requirements=STANDARD_BRIDGE_REQUIREMENTS,
         unavailable_reasons=STANDARD_UNAVAILABLE_REASONS,
+    )
+
+
+MANAGED_RUNTIME_PROJECTION_VERSION = "managed_runtime_projection.v1"
+
+
+@dataclass(frozen=True)
+class ManagedRuntimeProjection(_ExecCanonicalMixin):
+    """Read-only P4-EXEC-C managed runtime shape view.
+
+    The local queue and the single in-process worker slot are real
+    (``local_queue_available``/``local_worker_slot_available`` may be True);
+    everything platform-shaped stays structurally False: worker pool,
+    remote/distributed workers, transport bus, checkpoint persistence
+    engine, rollback execution, recovery engine. A projection is not
+    runtime control.
+    """
+
+    queue_state: ExecQueueState | None
+    queue_entry_id: str | None
+    worker_slot_state: str | None
+    worker_slot_id: str | None
+    claim_state: str | None
+    claim_id: str | None
+    local_execution_messages: tuple[ExecutionMessage, ...]
+    checkpoint_refs: tuple[ExecutionCheckpointRef, ...]
+    rollback_refs: tuple[ExecutionRollbackRef, ...]
+    truth_labels: tuple[ExecTruthLabel, ...]
+    unavailable_reasons: tuple[ExecUnavailableReason, ...]
+    contract_version: str = MANAGED_RUNTIME_PROJECTION_VERSION
+    local_queue_available: bool = True
+    local_worker_slot_available: bool = True
+    single_local_worker_slot_only: bool = True
+    queue_is_scheduler: bool = False
+    worker_pool_available: bool = False
+    remote_worker_available: bool = False
+    distributed_worker_available: bool = False
+    transport_bus_available: bool = False
+    network_publish_available: bool = False
+    pubsub_available: bool = False
+    checkpoint_ref_available: bool = False
+    checkpoint_persistence_engine_available: bool = False
+    rollback_available: bool = False
+    rollback_executed: bool = False
+    recovery_engine_available: bool = False
+    retry_engine_available: bool = False
+    concurrency_engine_available: bool = False
+    p5_trace_verification_available: bool = False
+    p9_full_enforcement_available: bool = False
+    shell_ui_available: bool = False
+    react_frontend_available: bool = False
+    api_server_available: bool = False
+    transport_bus_unavailable_reason: str = TRANSPORT_BUS_UNAVAILABLE_REASON
+    read_only: bool = True
+
+    def __post_init__(self) -> None:
+        forbid_true(
+            self,
+            "queue_is_scheduler",
+            "worker_pool_available",
+            "remote_worker_available",
+            "distributed_worker_available",
+            "transport_bus_available",
+            "network_publish_available",
+            "pubsub_available",
+            "checkpoint_persistence_engine_available",
+            "rollback_available",
+            "rollback_executed",
+            "recovery_engine_available",
+            "retry_engine_available",
+            "concurrency_engine_available",
+            "p5_trace_verification_available",
+            "p9_full_enforcement_available",
+            "shell_ui_available",
+            "react_frontend_available",
+            "api_server_available",
+        )
+        forbid_false(self, "single_local_worker_slot_only", "read_only")
+        if self.checkpoint_ref_available and not self.checkpoint_refs:
+            raise AurelExecValidationError(
+                "checkpoint_ref_available requires actual checkpoint refs",
+                code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                field="checkpoint_ref_available",
+            )
+
+
+def build_managed_runtime_projection(
+    *,
+    queue_entry: ExecQueueEntry | None = None,
+    worker_slot: object | None = None,
+    claim: object | None = None,
+    log: LocalExecutionMessageLog | None = None,
+    checkpoint_refs: tuple[ExecutionCheckpointRef, ...] = (),
+    rollback_refs: tuple[ExecutionRollbackRef, ...] = (),
+) -> ManagedRuntimeProjection:
+    """Project managed runtime shape read-only. Mutates and controls nothing."""
+    messages = log.messages if log is not None else ()
+    labels: list[ExecTruthLabel] = []
+    for obj in (queue_entry, worker_slot, claim, *checkpoint_refs, *rollback_refs):
+        obj_label = getattr(obj, "truth_label", None)
+        if obj_label is not None and obj_label not in labels:
+            labels.append(obj_label)
+    return ManagedRuntimeProjection(
+        queue_state=queue_entry.queue_state if queue_entry is not None else None,
+        queue_entry_id=queue_entry.queue_entry_id if queue_entry is not None else None,
+        worker_slot_state=(
+            getattr(worker_slot, "status").value if worker_slot is not None else None
+        ),
+        worker_slot_id=(
+            getattr(worker_slot, "worker_slot_id") if worker_slot is not None else None
+        ),
+        claim_state=(
+            getattr(claim, "claim_status").value if claim is not None else None
+        ),
+        claim_id=getattr(claim, "claim_id") if claim is not None else None,
+        local_execution_messages=messages,
+        checkpoint_refs=checkpoint_refs,
+        rollback_refs=rollback_refs,
+        truth_labels=tuple(labels),
+        unavailable_reasons=STANDARD_UNAVAILABLE_REASONS,
+        checkpoint_ref_available=bool(checkpoint_refs),
     )
