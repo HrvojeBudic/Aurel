@@ -132,7 +132,7 @@ Worker / Queue / Bus / Checkpoint Runtime Shape — wrap runtime management arou
 
 ## 25. Commit Hash
 
-Recorded post-commit: see `git log` — `feat(aurel-exec): add first runtime submit bridge`.
+`57f39e2` — `feat(aurel-exec): add first runtime submit bridge` (29 files, +3167/−60).
 
 ## 26. Final Git Status
 
