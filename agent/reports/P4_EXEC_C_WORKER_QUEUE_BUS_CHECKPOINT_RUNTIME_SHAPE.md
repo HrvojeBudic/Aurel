@@ -128,7 +128,7 @@ Execution Modes Registry / Tool / Model / Terminal Profiles — widen the bridge
 
 ## 29. Commit Hash
 
-Recorded post-commit: see `git log` — `feat(aurel-exec): add managed runtime queue and checkpoint shape`.
+`a6dc80b` — `feat(aurel-exec): add managed runtime queue and checkpoint shape` (20 files, +2343/−6).
 
 ## 30. Final Git Status
 
