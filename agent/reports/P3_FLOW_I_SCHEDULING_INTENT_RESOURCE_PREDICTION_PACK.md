@@ -298,9 +298,8 @@ service boundaries.
 
 ## 26. Commit Hash
 
-Recorded post-commit in `git log`: commit message
-`feat(flow): add P3-FLOW-I scheduling intent`. (Hash appears in the final run
-report and the follow-up canon commit, per repo convention.)
+`bc777fc` — `feat(flow): add P3-FLOW-I scheduling intent` (22 files changed,
+5604 insertions, 5 deletions).
 
 ## 27. Final Git Status
 
