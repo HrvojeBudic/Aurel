@@ -288,9 +288,8 @@ guard rails, P4 readiness assessment, and the P3 seal input frame.
 
 ## 29. Commit Hash
 
-`feat(flow): add P3-FLOW-K runtime harness evaluation` — hash
-`PENDING_COMMIT` (recorded post-commit in the follow-up canon commit, per
-repo convention).
+`7b74ae7` — `feat(flow): add P3-FLOW-K runtime harness evaluation` (22 files
+changed, 5151 insertions, 5 deletions).
 
 ## 30. Final Git Status
 
