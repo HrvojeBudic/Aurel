@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-03 - P3-FLOW-L Extended AurelFlow Domain Seal / P4 Execution Handoff
+
+### DEC-P3FLOWL-01: The seal is fail-closed over gaps but tolerant of honest incompleteness
+**Decision:** `seal_p3_domain` rejects sealing outright when the A–L coverage summary carries MISSING/BLOCKED/ERROR statuses or when the consumed K evaluation summary carries blocking risks or is not a seal-ready candidate; PARTIAL and UNAVAILABLE statuses are explicit in the summary but do not block the seal. Rejection errors name the offending packs/risks.
+**Why:** A seal that can be constructed over known gaps is a fake-complete seal; a seal that refuses honest PARTIAL/UNAVAILABLE truth would force overclaiming coverage to COVERED just to close the domain. Fail-closed on real blockers plus explicit-but-tolerated honesty keeps the seal both strict and truthful.
+
+### DEC-P3FLOWL-02: No new boundary-proof dataclasses — the L boundary tests prove against the fail-closed objects directly
+**Decision:** Unlike K (which added four Harness* proof dataclasses), L adds no `SealNoExecutionProof`-style objects. The four L no-claim test files (`no_execution` / `no_p4_implementation` / `no_production_claim` / `no_trace_verified_claim`) assert the fail-closed booleans and `dataclasses.replace` rejection directly on the seal, ledger, package, map, and candidate objects, plus run the L boundary exit audit over the full L surface.
+**Why:** Lean Seal doctrine: behavior beats object count. The seal objects already carry every boundary boolean structurally; a parallel proof-object forest would duplicate the same booleans without adding a single new behavior, and the boundary exit audit already renders the posture as report evidence.
+
+### DEC-P3FLOWL-03: The runtime.submit status vocabulary has no WIRED member
+**Decision:** `RuntimeSubmitBoundaryStatus` contains only future-bound/unavailable/error members; a map whose primary status is anything other than NOT_WIRED_FUTURE_P4 or UNAVAILABLE is unconstructible, and every map must name the five REQUIRES_AUREL_EXEC/CUSTOS_AUTHORITY/TRACE_PROOF/OPERATOR_REVIEW/PERSISTENCE_STRATEGY requirements.
+**Why:** If a WIRED/SATISFIED posture were representable, a data bug could claim the P4 bridge exists without any code existing; making the wired state structurally unrepresentable in P3 means the boundary map can only ever describe the future, never impersonate it.
+
 ## 2026-07-03 - P3-FLOW-K Runtime Harness Evaluation / Quality Operations Pack
 
 ### DEC-P3FLOWK-01: K boundary proofs are Harness-prefixed to avoid shadowing the I proofs

@@ -58,6 +58,30 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-L Extended AurelFlow Domain Seal / P4 Execution Handoff Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_l_domain_seal.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_coverage_truth_unavailable.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_boundary_exit_audit.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_p4_handoff.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_runtime_submit_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_projection_report.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_no_p4_implementation_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_no_production_claim_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_l_no_trace_verified_claim_boundary.py -q
+# K regression (L consumes the K seal input frame)
+.venv/bin/python -m pytest tests/test_p3_flow_k_harness_evaluation.py tests/test_p3_flow_k_contract_coverage.py tests/test_p3_flow_k_boundary_invariants.py tests/test_p3_flow_k_quality_scorecard.py tests/test_p3_flow_k_p4_handoff_readiness.py tests/test_p3_flow_k_projection_seal_input.py tests/test_p3_flow_k_no_execution_boundary.py tests/test_p3_flow_k_no_proof_boundary.py tests/test_p3_flow_k_no_production_claim_boundary.py -q
+# full A–J regression (shared __init__.py modified)
+.venv/bin/python -m pytest tests/test_p3_flow_[a-j]_*.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-03): compileall PASS; P3-FLOW-L 49 passed (6 domain seal + 8 coverage/truth/unavailable + 5 boundary exit audit + 7 P4 handoff + 5 runtime.submit boundary + 5 projection + 3 no-execution + 3 no-P4-implementation + 4 no-production-claim + 3 no-TRACE_VERIFIED-claim); K regression 55 passed; full A–J regression 633 passed (glob over all A–J test files — run because the shared `__init__.py` was modified); ruff "All checks passed!"; mypy "Success: no issues found in 410 source files"; suppression scan over the four L modules + 10 L test files found zero suppressions. Full pytest suite / coverage / Bandit NOT run (no runtime/security/sandbox/network/subprocess path touched; Lean Seal doctrine applies).
+
 ## P3-FLOW-K Runtime Harness Evaluation / Quality Operations Pack Validation (COMPLETE)
 
 ```bash
