@@ -58,6 +58,35 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-E Verifier / Failure / Recovery / Algedonic Validation (COMPLETE, lean)
+
+Lean-validation pack: focused E tests + repaired boundary guards + compileall +
+ruff on touched paths only. Full pytest, regression globs, full-project mypy,
+coverage, and bandit were deliberately not run per dispatch.
+
+**Standing priority note (now three lean packs old):** the full
+`tests/aurel_exec` suite has not been executed since P4-EXEC-B. P4-EXEC-E found
+and repaired two boundary tests that had been silently failing on committed
+master since P4-EXEC-C. The next non-lean pack (Exec-F or the P4 exit seal)
+must run the full aurel_exec suite.
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_exec tests/aurel_exec
+.venv/bin/python -m pytest \
+  tests/aurel_exec/test_exec_verification.py \
+  tests/aurel_exec/test_exec_failure_classification.py \
+  tests/aurel_exec/test_exec_bounded_recovery.py \
+  tests/aurel_exec/test_exec_algedonic_signal.py \
+  tests/aurel_exec/test_exec_judgment_projection.py \
+  -q
+# repaired stale guards (were failing on master before this pack)
+.venv/bin/python -m pytest \
+  tests/aurel_exec/test_exec_unsupported_modes_boundary.py \
+  tests/aurel_exec/test_exec_no_raw_dispatch_boundary.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_exec tests/aurel_exec
+```
+
 ## P4-EXEC-D Execution Modes Registry Validation (COMPLETE, lean)
 
 Lean-validation pack: focused D tests + compileall + ruff on touched paths only.

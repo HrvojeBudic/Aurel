@@ -111,13 +111,20 @@ def test_blocked_submits_perform_nothing():
 def test_worker_queue_checkpoint_recovery_remain_unavailable():
     """No worker/queue/bus/checkpoint/recovery surface exists in the package."""
     public_names = {name.lower() for name in dir(aurel_exec) if not name.startswith("_")}
+    # Updated by P4-EXEC-E: WorkerSlot/QueueClaim became sealed C-pack canon
+    # (single local slot, deterministic claim — proven not a platform), so
+    # those name fragments moved out of the guard; the platform-shaped
+    # fragments remain forbidden. Boundary-proof objects (NoWorkerPoolProof
+    # etc.) legitimately contain the fragment they negate and are excluded.
+    public_names = {name for name in public_names if "proof" not in name}
     for forbidden_fragment in (
-        "workerslot",
         "workerpool",
-        "queueclaim",
         "executionbus",
         "checkpointmanager",
         "recoveryengine",
+        "selfhealing",
+        "replayengine",
+        "eventlog",
     ):
         assert not any(forbidden_fragment in name for name in public_names), (
             forbidden_fragment

@@ -1,5 +1,27 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-E Verifier / Failure Classification / Bounded Recovery / Algedonic Signals
+
+### DEC-P4EXECE-01: Verified-true is structurally impossible without evidence, and the hook vocabulary cannot claim an available verifier
+**Decision:** `ExecutionVerificationDecision.verified=True` requires PASSED status + availability + non-empty `evidence_refs` at construction; `requires_p5_proof` is locked True and `trace_verified` locked False on every decision. `VerifierHookAvailability` has no AVAILABLE member — hooks are PROFILE_ONLY or UNAVAILABLE until a real evidence-producing verifier pack exists.
+**Why:** The judgment layer's core temptation is fake semantic verification: runtime success quietly promoted to "verified". Making the promotion unconstructible (and making even the *claim* of an available verifier unrepresentable) keeps INCONCLUSIVE/UNAVAILABLE the honest steady states until real verifier canon arrives.
+
+### DEC-P4EXECE-02: Failure and recovery semantics live in total tables that contracts must match
+**Decision:** `FAILURE_METADATA` (class → severity/retryable/recoverable/operator) and `RECOVERY_RECOMMENDATIONS` (class → action/operator/P9/P5) are total over `FailureClass` (tested), and a `FailureClassification` whose metadata contradicts the table is unconstructible. Retry-shaped recommendations without operator approval are unconstructible; exhausted retry budgets deterministically downgrade to REQUEST_OPERATOR_REVIEW.
+**Why:** Tables make the taxonomy a single reviewable artifact rather than logic scattered across branches, keep classification deterministic (same inputs, same hash), and make "automatic retry" not merely absent but unrepresentable — the two structural rules close both self-healing entry points (unapproved retry, retry storm).
+
+### DEC-P4EXECE-03: E-local vocabularies are new names, not widened A-pack enums (BoundedRecoveryActionKind, AlgedonicEscalationKind)
+**Decision:** The A-pack's `RecoveryActionKind` and `AlgedonicSignalKind` (admission-era future vocabularies) were left untouched; E's operational vocabularies ship as `BoundedRecoveryActionKind` and `AlgedonicEscalationKind`, following the K-pack shadowing precedent (DEC-P3FLOWK-01).
+**Why:** Widening sealed enums would silently change what A's exact-set tests assert (outside this lean pack's file scope) and would conflate admission-time reaction vocabulary with post-execution recovery vocabulary — two different judgment surfaces that later packs may reconcile deliberately.
+
+### DEC-P4EXECE-04: Stale boundary guards are repaired to sealed canon in the pack that finds them, and tightened while touched
+**Decision:** Two B-era guards failing on committed master (broken by C's sealed exec_worker/queue/checkpoint files and WorkerSlot/QueueClaim exports, undetected across three lean packs) were repaired in this pack: the filename guard now forbids exec_trace_verifier/custos/shell/api/bus **plus** the E-doctrine substrate files (exec_replay/event_log/self_healing.py); the fragment guard keeps workerpool/executionbus/checkpointmanager/recoveryengine **plus** selfhealing/replayengine/eventlog, with negating proof objects excluded from the sweep.
+**Why:** A known-failing guard is worse than no guard — it trains everyone to ignore red. Repair-to-sealed-canon preserves every still-true prohibition, and tightening with the new substrate guards converts the incident into stronger protection. The episode is recorded as a standing risk: lean packs must not accumulate unexecuted-suite drift indefinitely — the P4 exit seal must run the full aurel_exec suite.
+
+### DEC-P4EXECE-05: The Runtime Substrate Boundary is contract law, not aspiration
+**Decision:** Python AurelExec v1 is documented (module doctrine, proofs, projection, report) as the governance/control/reference layer and contract authority — never the final deterministic durable kernel. `NoFinalPythonKernelClaimProof` and `NoRustRewriteProof` make the kernel claim and substrate availability unconstructible; deterministic replay, durable event logs, and exact copy/fork are structurally unavailable on the projection; judgment contracts use primitive/serializable fields and stable hashes so a future substrate can implement them without redefining governance semantics.
+**Why:** The v1 layer's value is being a readable spec and test oracle for whatever durable substrate follows; the failure mode is Python quietly accreting Temporal-grade claims it cannot honor. Making the boundary structural keeps extraction honest and cheap.
+
 ## 2026-07-03 - P4-EXEC-D Execution Modes Registry / Tool / Model / Terminal Profiles
 
 ### DEC-P4EXECD-01: The registry is total over the mode enum by construction, and only bridge modes can be available

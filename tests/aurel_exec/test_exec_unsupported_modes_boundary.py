@@ -117,6 +117,12 @@ def test_projection_lists_unsupported_modes_unavailable():
 
 
 def test_no_p5_p9_shell_ui_surface_exists():
+    # Updated by P4-EXEC-E: exec_queue/worker/checkpoint.py became sealed
+    # canon in P4-EXEC-C (local shape, proven not a platform) and
+    # exec_recovery.py in P4-EXEC-E (plan-only, proven not an engine), so
+    # the stale filename guards moved to what is still genuinely forbidden:
+    # P5 verifier, P9 custos, Shell/API surfaces, transport bus, and the
+    # future-substrate replay/event-log modules.
     package_dir = Path(aurel_exec.__file__).parent
     filenames = {path.name for path in package_dir.glob("*.py")}
     for forbidden in (
@@ -124,11 +130,10 @@ def test_no_p5_p9_shell_ui_surface_exists():
         "exec_custos.py",
         "exec_shell.py",
         "exec_api.py",
-        "exec_worker.py",
-        "exec_queue.py",
         "exec_bus.py",
-        "exec_checkpoint.py",
-        "exec_recovery.py",
+        "exec_replay.py",
+        "exec_event_log.py",
+        "exec_self_healing.py",
     ):
         assert forbidden not in filenames
     public_names = {name.lower() for name in dir(aurel_exec) if not name.startswith("_")}

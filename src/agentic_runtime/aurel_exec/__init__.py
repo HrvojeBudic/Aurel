@@ -42,6 +42,19 @@ from .exec_errors import (
     AurelExecValidationError,
     reject,
 )
+from .exec_algedonic import (
+    ALGEDONIC_AUTHORITY_BOUNDARY_REASON,
+    ALGEDONIC_SIGNAL_VERSION,
+    RUNTIME_SUBSTRATE_BOUNDARY_REASON,
+    AlgedonicEscalationKind,
+    AlgedonicSeverity,
+    AlgedonicSignal,
+    NoFinalPythonKernelClaimProof,
+    NoRustRewriteProof,
+    build_no_final_python_kernel_claim_proof,
+    build_no_rust_rewrite_proof,
+    create_algedonic_signal_if_needed,
+)
 from .exec_checkpoint import (
     CHECKPOINT_PERSISTENCE_UNAVAILABLE_REASON,
     EXECUTION_CHECKPOINT_REF_VERSION,
@@ -58,6 +71,15 @@ from .exec_checkpoint import (
     create_post_attempt_checkpoint_ref,
     create_pre_attempt_checkpoint_ref,
     create_rollback_ref,
+)
+from .exec_failure import (
+    FAILURE_CLASSIFICATION_VERSION,
+    FAILURE_METADATA,
+    FailureClass,
+    FailureClassification,
+    FailureSeverity,
+    classify_execution_failure,
+    classify_pre_submit_block,
 )
 from .exec_job import (
     EXEC_JOB_VERSION,
@@ -171,6 +193,19 @@ from .exec_runtime_bridge import (
     build_unsupported_execution_mode_proofs,
     describe_unavailable_mode,
 )
+from .exec_recovery import (
+    AUTOMATIC_RETRY_UNAVAILABLE_REASON,
+    BOUNDED_RECOVERY_PLAN_VERSION,
+    RECOVERY_RECOMMENDATIONS,
+    SELF_HEALING_UNAVAILABLE_REASON,
+    BoundedRecoveryActionKind,
+    BoundedRecoveryPlan,
+    NoAutomaticRetryProof,
+    NoSelfHealingProof,
+    build_no_automatic_retry_proof,
+    build_no_self_healing_proof,
+    create_bounded_recovery_plan,
+)
 from .exec_session import (
     ACTIVE_SESSION_STATUSES,
     EXECUTION_SESSION_VERSION,
@@ -187,6 +222,28 @@ from .exec_trace_binding import (
     EXEC_TRACE_BINDING_VERSION,
     ExecTraceBinding,
     build_exec_trace_binding,
+)
+from .exec_verification import (
+    EXECUTION_VERIFICATION_DECISION_VERSION,
+    EXECUTION_VERIFICATION_REQUEST_VERSION,
+    P5_PROOF_UNAVAILABLE_REASON,
+    P9_AUTHORITY_UNAVAILABLE_REASON,
+    VERIFIER_HOOK_VERSION,
+    VERIFIER_UNAVAILABLE_REASON,
+    ExecutionVerificationDecision,
+    ExecutionVerificationRequest,
+    NoModelVerifierCallProof,
+    NoP5ProofProof,
+    NoP9AuthorityProof,
+    VerificationStatus,
+    VerifierHook,
+    VerifierHookAvailability,
+    build_execution_verification_request,
+    build_no_model_verifier_call_proof,
+    build_no_p5_proof_proof,
+    build_no_p9_authority_proof,
+    build_profile_only_verifier_hook,
+    decide_verification,
 )
 from .exec_worker import (
     MANAGED_RUNTIME_RESULT_VERSION,
@@ -239,6 +296,7 @@ from .exec_projection import (
     ExecLeaseProjectionState,
     ExecProjection,
     FutureRuntimeBridgeRequirement,
+    JudgmentProjection,
     ManagedRuntimeProjection,
     ModeProjection,
     NoCustosEnforcementProof,
@@ -248,6 +306,7 @@ from .exec_projection import (
     P4ExecAHandoffFrame,
     RuntimeSubmitUnavailableReason,
     build_exec_projection,
+    build_judgment_projection,
     build_managed_runtime_projection,
     build_mode_projection,
     build_no_custos_enforcement_proof,

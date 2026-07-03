@@ -694,3 +694,153 @@ def build_mode_projection(registry, *, decision=None) -> ModeProjection:
             decision.missing_requirements if decision is not None else ()
         ),
     )
+
+
+JUDGMENT_PROJECTION_VERSION = "judgment_projection.v1"
+
+
+@dataclass(frozen=True)
+class JudgmentProjection(_ExecCanonicalMixin):
+    """Read-only P4-EXEC-E post-execution judgment view.
+
+    Shows verification, failure classification, bounded recovery, and
+    algedonic state honestly. Recovery execution, automatic retry, rollback
+    execution, P5 proof, P9 authority, deterministic replay, durable event
+    logs, and Rust/WASM substrate are structurally unavailable, and a final
+    Python kernel claim is unconstructible. A projection is not runtime
+    control.
+    """
+
+    truth_labels: tuple[ExecTruthLabel, ...]
+    unavailable_reasons: tuple[ExecUnavailableReason, ...]
+    contract_version: str = JUDGMENT_PROJECTION_VERSION
+    verification_status: str | None = None
+    verification_available: bool = False
+    verified: bool = False
+    verification_reason: str | None = None
+    failure_class: str | None = None
+    failure_severity: str | None = None
+    retryable: bool = False
+    recoverable: bool = False
+    operator_action_required: bool = False
+    recovery_plan_available: bool = False
+    recommended_recovery_action: str | None = None
+    recovery_executed: bool = False
+    algedonic_signal_present: bool = False
+    algedonic_severity: str | None = None
+    operator_attention_required: bool = False
+    p5_proof_required: bool = True
+    p9_authority_required_for_high_risk_recovery: bool = True
+    automatic_retry_available: bool = False
+    rollback_execution_available: bool = False
+    recovery_execution_available: bool = False
+    self_healing_available: bool = False
+    deterministic_replay_engine_available: bool = False
+    durable_event_log_available: bool = False
+    workflow_exact_copy_available: bool = False
+    rust_wasm_substrate_available: bool = False
+    python_final_kernel_claim: bool = False
+    p5_trace_verification_available: bool = False
+    p9_full_enforcement_available: bool = False
+    shell_ui_available: bool = False
+    react_frontend_available: bool = False
+    api_server_available: bool = False
+    read_only: bool = True
+
+    def __post_init__(self) -> None:
+        forbid_true(
+            self,
+            "recovery_executed",
+            "automatic_retry_available",
+            "rollback_execution_available",
+            "recovery_execution_available",
+            "self_healing_available",
+            "deterministic_replay_engine_available",
+            "durable_event_log_available",
+            "workflow_exact_copy_available",
+            "rust_wasm_substrate_available",
+            "python_final_kernel_claim",
+            "p5_trace_verification_available",
+            "p9_full_enforcement_available",
+            "shell_ui_available",
+            "react_frontend_available",
+            "api_server_available",
+        )
+        forbid_false(self, "p5_proof_required", "read_only")
+        if self.verified and self.verification_status != "PASSED":
+            raise AurelExecValidationError(
+                "projection cannot claim verified without a PASSED decision",
+                code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                field="verified",
+            )
+
+
+def build_judgment_projection(
+    *,
+    verification_decision=None,
+    failure_classification=None,
+    recovery_plan=None,
+    algedonic_signal=None,
+) -> JudgmentProjection:
+    """Project post-execution judgment state read-only. Controls nothing."""
+    labels: list[ExecTruthLabel] = []
+    for obj in (
+        verification_decision,
+        failure_classification,
+        recovery_plan,
+        algedonic_signal,
+    ):
+        obj_label = getattr(obj, "truth_label", None)
+        if obj_label is not None and obj_label not in labels:
+            labels.append(obj_label)
+    return JudgmentProjection(
+        truth_labels=tuple(labels) or (ExecTruthLabel.UNAVAILABLE,),
+        unavailable_reasons=STANDARD_UNAVAILABLE_REASONS,
+        verification_status=(
+            verification_decision.verification_status.value
+            if verification_decision is not None
+            else None
+        ),
+        verification_available=bool(
+            verification_decision is not None
+            and verification_decision.verification_available
+        ),
+        verified=bool(
+            verification_decision is not None and verification_decision.verified
+        ),
+        verification_reason=(
+            verification_decision.reason if verification_decision is not None else None
+        ),
+        failure_class=(
+            failure_classification.failure_class.value
+            if failure_classification is not None
+            else None
+        ),
+        failure_severity=(
+            failure_classification.severity.value
+            if failure_classification is not None
+            else None
+        ),
+        retryable=bool(
+            failure_classification is not None and failure_classification.retryable
+        ),
+        recoverable=bool(
+            failure_classification is not None and failure_classification.recoverable
+        ),
+        operator_action_required=bool(
+            failure_classification is not None
+            and failure_classification.operator_action_required
+        ),
+        recovery_plan_available=recovery_plan is not None,
+        recommended_recovery_action=(
+            recovery_plan.recommended_action.value if recovery_plan is not None else None
+        ),
+        algedonic_signal_present=algedonic_signal is not None,
+        algedonic_severity=(
+            algedonic_signal.severity.value if algedonic_signal is not None else None
+        ),
+        operator_attention_required=bool(
+            algedonic_signal is not None
+            and algedonic_signal.operator_attention_required
+        ),
+    )
