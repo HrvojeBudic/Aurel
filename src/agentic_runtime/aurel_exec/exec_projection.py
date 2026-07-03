@@ -43,6 +43,7 @@ from .exec_types import (
     ExecCustosStatus,
     ExecLifecycleState,
     ExecTruthLabel,
+    ExecutionMode,
     _ExecCanonicalMixin,
     forbid_false,
     forbid_true,
@@ -572,4 +573,124 @@ def build_managed_runtime_projection(
         truth_labels=tuple(labels),
         unavailable_reasons=STANDARD_UNAVAILABLE_REASONS,
         checkpoint_ref_available=bool(checkpoint_refs),
+    )
+
+
+MODE_PROJECTION_VERSION = "mode_projection.v1"
+
+
+@dataclass(frozen=True)
+class ModeProjection(_ExecCanonicalMixin):
+    """Read-only P4-EXEC-D execution mode view.
+
+    Shows which modes are available (only TOOL, only through the existing
+    bridge), profile-only, unavailable, or blocked — with reasons. Risky
+    execution claims (model call, terminal/shell, eval/script, new sandbox,
+    P5/P9/Shell/API) are structurally False. A projection is not runtime
+    control and a mode status is not permission.
+    """
+
+    mode_registry_id: str
+    supported_modes: tuple[str, ...]
+    profile_only_modes: tuple[str, ...]
+    unavailable_modes: tuple[str, ...]
+    blocked_modes: tuple[str, ...]
+    tool_profile_status: str
+    model_profile_status: str
+    terminal_profile_status: str
+    code_profile_status: str
+    truth_labels: tuple[ExecTruthLabel, ...]
+    contract_version: str = MODE_PROJECTION_VERSION
+    requested_execution_mode: str | None = None
+    mode_profile_id: str | None = None
+    mode_available: bool = False
+    mode_blocked_reason: str | None = None
+    mode_missing_requirements: tuple[str, ...] = ()
+    silent_fallback_allowed: bool = False
+    direct_dispatch_allowed: bool = False
+    model_call_allowed: bool = False
+    terminal_execution_available: bool = False
+    shell_allowed: bool = False
+    subprocess_allowed: bool = False
+    code_execution_available: bool = False
+    eval_allowed: bool = False
+    script_execution_allowed: bool = False
+    new_sandbox_execution_available: bool = False
+    network_execution_available: bool = False
+    p5_trace_verification_available: bool = False
+    p9_full_enforcement_available: bool = False
+    shell_ui_available: bool = False
+    react_frontend_available: bool = False
+    api_server_available: bool = False
+    read_only: bool = True
+
+    def __post_init__(self) -> None:
+        forbid_true(
+            self,
+            "silent_fallback_allowed",
+            "direct_dispatch_allowed",
+            "model_call_allowed",
+            "terminal_execution_available",
+            "shell_allowed",
+            "subprocess_allowed",
+            "code_execution_available",
+            "eval_allowed",
+            "script_execution_allowed",
+            "new_sandbox_execution_available",
+            "network_execution_available",
+            "p5_trace_verification_available",
+            "p9_full_enforcement_available",
+            "shell_ui_available",
+            "react_frontend_available",
+            "api_server_available",
+        )
+        forbid_false(self, "read_only")
+        require_nonempty(self, "mode_registry_id", code=AurelExecErrorCode.EMPTY_FIELD)
+        if self.mode_available and self.requested_execution_mode not in self.supported_modes:
+            raise AurelExecValidationError(
+                "mode_available requires the requested mode to be a "
+                "registry-supported mode",
+                code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                field="mode_available",
+            )
+        if not self.mode_available and self.requested_execution_mode is not None:
+            if not (self.mode_blocked_reason or self.mode_missing_requirements):
+                raise AurelExecValidationError(
+                    "a non-available requested mode must carry a blocked reason",
+                    code=AurelExecErrorCode.EMPTY_FIELD,
+                    field="mode_blocked_reason",
+                )
+
+
+def build_mode_projection(registry, *, decision=None) -> ModeProjection:
+    """Project registry + optional compatibility decision read-only."""
+    tool_status = registry.profile_for(ExecutionMode.TOOL).availability_status.value
+    model_status = registry.profile_for(ExecutionMode.MODEL).availability_status.value
+    terminal_status = registry.profile_for(ExecutionMode.TERMINAL).availability_status.value
+    code_status = registry.profile_for(ExecutionMode.CODE).availability_status.value
+    labels: list[ExecTruthLabel] = [registry.truth_label]
+    if decision is not None and decision.truth_label not in labels:
+        labels.append(decision.truth_label)
+    return ModeProjection(
+        mode_registry_id=registry.registry_id,
+        supported_modes=registry.supported_modes,
+        profile_only_modes=registry.profile_only_modes,
+        unavailable_modes=registry.unavailable_modes,
+        blocked_modes=registry.blocked_modes,
+        tool_profile_status=tool_status,
+        model_profile_status=model_status,
+        terminal_profile_status=terminal_status,
+        code_profile_status=code_status,
+        truth_labels=tuple(labels),
+        requested_execution_mode=(
+            decision.requested_execution_mode if decision is not None else None
+        ),
+        mode_profile_id=decision.profile_id if decision is not None else None,
+        mode_available=bool(decision is not None and decision.allowed),
+        mode_blocked_reason=(
+            decision.reason if decision is not None and decision.blocked else None
+        ),
+        mode_missing_requirements=(
+            decision.missing_requirements if decision is not None else ()
+        ),
     )

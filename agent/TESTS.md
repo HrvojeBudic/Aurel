@@ -58,6 +58,25 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-D Execution Modes Registry Validation (COMPLETE, lean)
+
+Lean-validation pack: focused D tests + compileall + ruff on touched paths only.
+Full pytest, broad regression globs, and full-project mypy were deliberately not
+run in this pack per dispatch; the next non-lean pack should re-run the full
+`tests/aurel_exec` suite (standing note carried from P4-EXEC-C).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_exec tests/aurel_exec
+.venv/bin/python -m pytest \
+  tests/aurel_exec/test_exec_modes.py \
+  tests/aurel_exec/test_exec_tool_profile.py \
+  tests/aurel_exec/test_exec_risky_mode_profiles.py \
+  tests/aurel_exec/test_exec_mode_compatibility.py \
+  tests/aurel_exec/test_exec_mode_projection.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_exec tests/aurel_exec
+```
+
 ## P4-EXEC-C Worker / Queue / Bus / Checkpoint Runtime Shape Validation (COMPLETE, lean)
 
 Lean-validation pack: focused C tests + compileall + ruff on touched paths only.

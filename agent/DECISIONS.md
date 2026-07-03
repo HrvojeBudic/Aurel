@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-D Execution Modes Registry / Tool / Model / Terminal Profiles
+
+### DEC-P4EXECD-01: The registry is total over the mode enum by construction, and only bridge modes can be available
+**Decision:** `ExecutionModeRegistry` rejects construction unless every `ExecutionMode` member carries exactly one profile, and `ExecutionModeProfile` rejects `AVAILABLE_FOR_EXISTING_BRIDGE` for any mode outside the bridge's `SUPPORTED_BRIDGE_EXECUTION_MODES`. Silent fallback is unrepresentable: `ModeCompatibilityDecision.fallback_mode` must be None and `allowed == blocked` is unconstructible.
+**Why:** Mode safety fails through gaps and redirects — an unclassified mode or a "helpful" fallback to tool mode is how risky execution leaks in. Totality-by-construction and unrepresentable fallback make both failure modes impossible in data, not just discouraged in review.
+
+### DEC-P4EXECD-02: PROFILE_ONLY/BLOCKED live in ExecutionModeAvailability, not in ExecTruthLabel
+**Decision:** The dispatch's PROFILE_ONLY/BLOCKED truth posture is carried by the new `ExecutionModeAvailability` status enum; `ExecTruthLabel` was not widened. Risky profiles carry the UNAVAILABLE truth label; registry/decision/tool-profile logic carries LIVE per the dispatch's explicit truth posture.
+**Why:** Widening the sealed A-pack label vocabulary would require updating its exact-set test, which is outside this lean pack's allowed files. Availability-as-status keeps the semantics precise (a mode's availability and an object's truth are different axes) without destabilizing sealed tests; if a future pack widens the label enum, the A test must move in the same commit.
+
+### DEC-P4EXECD-03: The mode hook is additive and opt-in; C modules and the bridge took zero edits
+**Decision:** `enforce_mode_compatibility_before_claim` and `require_mode_compatibility` live in `exec_modes.py` and reuse the existing C `block_queue_entry` helper; `exec_queue.py`, `exec_worker.py`, and `exec_runtime_bridge.py` were not modified. Making the compatibility check a mandatory internal step of the managed helper is deferred to P4-EXEC-E, which owns the guard-placement decision.
+**Why:** Under lean validation (A/B/C suites not re-run), editing proven modules risks silent regressions with reduced detection. The additive hook delivers the safety surface now; the mandatory-wiring decision belongs to the pack that will re-run the full suite and design the verifier/recovery guard chain around the same call sites.
+
+### DEC-P4EXECD-04: Risky profiles carry mandatory future requirements, not optional flags
+**Decision:** On `ModelExecutionProfile` the router/budget/policy/prompt-contract/output-contract/verifier requirements are unconstructibly True; on terminal/code profiles the sandbox/operator/verifier/P9 requirements likewise. Mutating tools are structurally outside the tool profile (must be read-only AND within the bridge path — both smuggling routes rejected).
+**Why:** A profile with optional requirements is a door left ajar: a future pack could flip one boolean and "legally" execute. Mandatory requirements make each risky mode's activation checklist part of the contract, so opening a mode requires building the named canon (router, sandbox discipline, verifier, P9), not editing a flag.
+
 ## 2026-07-03 - P4-EXEC-C Worker / Queue / Bus / Checkpoint Runtime Shape
 
 ### DEC-P4EXECC-01: The managed helper reuses the B bridge unchanged; blocked shapes perform zero kernel calls
