@@ -58,6 +58,28 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-A AurelExec Doctrine / Contracts / Admission / Lease Foundation Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+# focused AurelExec suite (76 tests)
+.venv/bin/python -m pytest tests/aurel_exec -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_types.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_admission.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_lease.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_job_guards.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_projection.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_no_runtime_submit_boundary.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_no_trace_verified_boundary.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_no_custos_enforcement_boundary.py -q
+# P3 handoff regression (aurel_exec consumes P3 candidate semantics)
+.venv/bin/python -m pytest tests/test_p3_flow_i_scheduling_intent.py tests/test_p3_flow_j_p4_handoff_clarity.py tests/test_p3_flow_k_p4_handoff_readiness.py tests/test_p3_flow_l_domain_seal.py -q
+# full P3 A–L regression (737 tests)
+.venv/bin/python -m pytest tests/test_p3_flow_*.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
 ## P3-FLOW-L Extended AurelFlow Domain Seal / P4 Execution Handoff Validation (COMPLETE)
 
 ```bash

@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-A AurelExec Doctrine / Contracts / Admission / Lease Foundation
+
+### DEC-P4EXECA-01: The P4 truth-label vocabulary has no TRACE_VERIFIED member and LIVE is unassignable
+**Decision:** `ExecTruthLabel` deliberately omits TRACE_VERIFIED (unlike P3's `FlowTruthLabel`, which carries it as never-assigned vocabulary), and LIVE is present but rejected at construction on every P4-EXEC-A object via `FORBIDDEN_EXEC_TRUTH_LABELS`. Canonical serialization/hash helpers are imported from `aurel_flow.types` rather than duplicated.
+**Why:** P4 is the layer most tempted to overclaim: once execution objects exist, a representable TRACE_VERIFIED or assignable LIVE would let a data bug claim proof or live execution without any runtime existing. Omitting the member makes the claim unconstructible rather than merely forbidden; reusing the P3 serialization canon prevents a second hash/JSON dialect.
+
+### DEC-P4EXECA-02: Admission is a deterministic eight-gate chain where the first blocker locks the outcome
+**Decision:** `decide_admission` is a pure function over a fixed gate order (source validity → P3 readiness marker → authority → sandbox → budget → verifier → trace-binding availability → policy/Custos availability); evaluation stops at the first non-ADMIT gate and the decision records exactly the gates evaluated. Admission requests are constructible with gaps (empty source ref, missing sandbox) so gates — not constructors — produce the deterministic REJECT/HOLD/REQUIRE_* verdicts.
+**Why:** NCF-style primary-blocker locking keeps the decision explainable (one locked reason, not a soup of parallel failures) and deterministic (same request, same decision ID and hash). If constructors rejected incomplete candidates, the admission layer could never say *why* a candidate fails — the gate chain is the explanation surface.
+
+### DEC-P4EXECA-03: Lease-before-attempt is enforced by construction, and lease time is a caller-supplied logical tick
+**Decision:** `ExecutionAttempt` can only be produced by `create_execution_attempt`, which fail-closes on expired/revoked/job-mismatched leases with distinct error codes, and `runtime_submit_called=True` is unconstructible. Lease issuance/expiry use integer logical ticks passed by the caller; no wall clock is read anywhere in the package.
+**Why:** The lease is the execution key: if an attempt could exist without a currently valid lease, P4-EXEC-B would inherit an unguarded path to runtime.submit. Logical ticks keep every lease test and validation deterministic and leave the clock-ownership question explicitly open for P4-EXEC-B rather than answering it silently with `time.time()`.
+
+### DEC-P4EXECA-04: The P4-EXEC-B handoff pins the full bridge chain and a truncated chain is unconstructible
+**Decision:** `P4ExecAHandoffFrame.future_bridge_steps` must equal the six-step chain ExecJob → ExecutionLease → ExecutionAttempt → CommandEnvelope → AgenticRuntime.submit() → ExecutionOutcome; any other tuple raises at construction. The frame carries consumable decision/lease/job/attempt IDs and the bound scope, with `is_p4_exec_b`/`runtime_submit_wired`/`execution_performed` unconstructibly False.
+**Why:** The main P4-EXEC-B risk is scope drift — building a partial bridge and calling it the bridge. Pinning the chain in data (mirroring the L pack's mandatory five-requirement `RuntimeSubmitBoundaryMap`) makes the handoff surface a checkable contract instead of prose.
+
 ## 2026-07-03 - P3-FLOW-L Extended AurelFlow Domain Seal / P4 Execution Handoff
 
 ### DEC-P3FLOWL-01: The seal is fail-closed over gaps but tolerant of honest incompleteness
