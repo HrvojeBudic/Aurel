@@ -58,6 +58,30 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-B First Governed Runtime Submit Bridge Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+# full AurelExec suite (140 tests: A foundation + B bridge)
+.venv/bin/python -m pytest tests/aurel_exec -q
+# focused B files
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_job_lifecycle.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_session.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_runtime_bridge.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_outcome.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_trace_binding.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_first_read_file_demo.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_no_raw_dispatch_boundary.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_no_trace_verified_boundary_b.py -q
+.venv/bin/python -m pytest tests/aurel_exec/test_exec_unsupported_modes_boundary.py -q
+# runtime kernel regression subset (bridge consumes AgenticRuntime.submit)
+.venv/bin/python -m pytest tests/test_runtime*.py tests/test_tool*.py tests/test_sandbox*.py tests/test_trace*.py -q
+# P3 regression
+.venv/bin/python -m pytest tests/test_p3_flow_*.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
 ## P4-EXEC-A AurelExec Doctrine / Contracts / Admission / Lease Foundation Validation (COMPLETE)
 
 ```bash

@@ -37,8 +37,10 @@ def test_package_imports_cleanly_and_contract_version_exists():
 
 
 def test_exec_truth_label_is_closed_world_with_no_trace_verified_member():
+    # TRACE_BOUND was added by P4-EXEC-B for real captured runtime trace refs.
     assert {label.value for label in ExecTruthLabel} == {
         "LIVE",
+        "TRACE_BOUND",
         "DEV_FIXTURE",
         "SIMULATED",
         "UNAVAILABLE",
@@ -66,17 +68,40 @@ def test_admission_state_vocabulary_is_exact():
     }
 
 
-def test_lifecycle_has_no_execution_state_member():
+def test_lifecycle_is_closed_world_with_no_verified_or_completed_member():
+    # P4-EXEC-B legitimately added the submit-aware states because a real
+    # governed bridge now exists; SUCCEEDED means runtime submit success only.
     assert {state.value for state in ExecLifecycleState} == {
         "CANDIDATE",
         "ADMITTED",
         "LEASED",
+        "SESSION_BOUND",
         "ATTEMPT_PENDING",
+        "READY_TO_SUBMIT",
+        "RUNNING",
+        "SUBMITTED",
+        "SUCCEEDED",
+        "FAILED",
         "BLOCKED",
         "ERROR",
     }
-    for forbidden in ("RUNNING", "EXECUTING", "EXECUTED", "COMPLETED", "SUCCEEDED"):
+    for forbidden in ("EXECUTED", "COMPLETED", "VERIFIED", "TRACE_VERIFIED", "PROVEN"):
         assert forbidden not in ExecLifecycleState.__members__
+
+
+def test_lifecycle_transition_maps_are_total_over_the_enum():
+    from agentic_runtime.aurel_exec import (
+        ATTEMPT_LIFECYCLE_TRANSITIONS,
+        JOB_LIFECYCLE_TRANSITIONS,
+    )
+
+    assert set(JOB_LIFECYCLE_TRANSITIONS) == set(ExecLifecycleState)
+    assert set(ATTEMPT_LIFECYCLE_TRANSITIONS) == set(ExecLifecycleState)
+    # attempt-only states are unreachable for jobs and vice versa
+    assert JOB_LIFECYCLE_TRANSITIONS[ExecLifecycleState.READY_TO_SUBMIT] == ()
+    assert JOB_LIFECYCLE_TRANSITIONS[ExecLifecycleState.SUBMITTED] == ()
+    assert ATTEMPT_LIFECYCLE_TRANSITIONS[ExecLifecycleState.CANDIDATE] == ()
+    assert ATTEMPT_LIFECYCLE_TRANSITIONS[ExecLifecycleState.SESSION_BOUND] == ()
 
 
 def test_execution_mode_and_topology_vocabularies():

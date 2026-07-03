@@ -23,12 +23,17 @@ from .exec_admission import (
 from .exec_errors import AurelExecErrorCode, AurelExecValidationError
 from .exec_job import ExecJob, ExecutionAttempt
 from .exec_lease import ExecutionLease, LeaseValidationResult
+from .exec_outcome import ExecutionOutcome, ExecutionOutcomeStatus
+from .exec_runtime_bridge import build_unsupported_execution_mode_proofs
+from .exec_session import ExecutionSession, ExecutionSessionStatus
+from .exec_trace_binding import ExecTraceBinding
 from .exec_types import (
     CUSTOS_ENFORCEMENT_UNAVAILABLE_REASON,
     RAW_EXECUTION_UNAVAILABLE_REASON,
     RUNTIME_SUBMIT_UNAVAILABLE_REASON,
     TRACE_VERIFICATION_UNAVAILABLE_REASON,
     ExecAdmissionState,
+    ExecCustosStatus,
     ExecLifecycleState,
     ExecTruthLabel,
     _ExecCanonicalMixin,
@@ -71,7 +76,13 @@ class ExecAttemptGuardState(str, Enum):
 
 @dataclass(frozen=True)
 class ExecProjection(_ExecCanonicalMixin):
-    """Read-only admission/lease/job/attempt-guard view. Not execution."""
+    """Read-only admission/lease/session/job/attempt/outcome view.
+
+    P4-EXEC-B expansion: ``runtime_submit_available=True`` is constructible
+    only with ``runtime_submit_called=True`` — availability may only be
+    claimed on actual submit evidence, never declared. Worker/queue/bus/
+    checkpoint/recovery availability is structurally False.
+    """
 
     admission_state: ExecAdmissionState
     lease_state: ExecLeaseProjectionState
@@ -80,22 +91,51 @@ class ExecProjection(_ExecCanonicalMixin):
     truth_labels: tuple[ExecTruthLabel, ...]
     unavailable_reasons: tuple[ExecUnavailableReason, ...]
     contract_version: str = EXEC_PROJECTION_VERSION
+    session_state: ExecutionSessionStatus | None = None
+    attempt_state: ExecLifecycleState | None = None
     runtime_submit_available: bool = False
+    runtime_submit_called: bool = False
+    runtime_submit_ref: str | None = None
+    outcome_status: ExecutionOutcomeStatus | None = None
+    outcome_summary: str | None = None
+    trace_bound: bool = False
+    policy_p9_status: ExecCustosStatus = ExecCustosStatus.ENFORCEMENT_UNAVAILABLE
+    unsupported_modes_unavailable: tuple[str, ...] = ()
     runtime_submit_unavailable_reason: str = RUNTIME_SUBMIT_UNAVAILABLE_REASON
     trace_verified_available: bool = False
     trace_verified_unavailable_reason: str = TRACE_VERIFICATION_UNAVAILABLE_REASON
     policy_enforcement_available: bool = False
     policy_enforcement_unavailable_reason: str = CUSTOS_ENFORCEMENT_UNAVAILABLE_REASON
+    worker_queue_available: bool = False
+    execution_bus_available: bool = False
+    checkpoint_available: bool = False
+    recovery_available: bool = False
     read_only: bool = True
 
     def __post_init__(self) -> None:
         forbid_true(
             self,
-            "runtime_submit_available",
             "trace_verified_available",
             "policy_enforcement_available",
+            "worker_queue_available",
+            "execution_bus_available",
+            "checkpoint_available",
+            "recovery_available",
         )
         forbid_false(self, "read_only")
+        if self.runtime_submit_available and not self.runtime_submit_called:
+            raise AurelExecValidationError(
+                "runtime_submit_available may only be claimed with actual "
+                "submit evidence (runtime_submit_called=True)",
+                code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                field="runtime_submit_available",
+            )
+        if self.trace_bound and not self.runtime_submit_called:
+            raise AurelExecValidationError(
+                "trace_bound requires an actual runtime submit",
+                code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                field="trace_bound",
+            )
         require_nonempty(
             self, "runtime_submit_unavailable_reason", code=AurelExecErrorCode.EMPTY_FIELD
         )
@@ -116,8 +156,12 @@ def build_exec_projection(
     lease_validation: LeaseValidationResult | None = None,
     job: ExecJob | None = None,
     attempt: ExecutionAttempt | None = None,
+    session: ExecutionSession | None = None,
+    outcome: ExecutionOutcome | None = None,
+    trace_binding: ExecTraceBinding | None = None,
 ) -> ExecProjection:
-    """Project admission/lease/job/attempt state read-only. Mutates nothing."""
+    """Project admission/lease/session/job/attempt/outcome state read-only.
+    Mutates nothing and executes nothing."""
     if lease is None:
         lease_state = ExecLeaseProjectionState.NO_LEASE
     elif lease_validation is not None and lease_validation.revoked:
@@ -139,10 +183,14 @@ def build_exec_projection(
         attempt_guard_state = ExecAttemptGuardState.BLOCKED_NO_VALID_LEASE
 
     labels: list[ExecTruthLabel] = [decision.truth_label]
-    for obj in (lease, job, attempt):
+    for obj in (lease, job, attempt, session, outcome, trace_binding):
         if obj is not None and obj.truth_label not in labels:
             labels.append(obj.truth_label)
 
+    runtime_submit_called = bool(attempt is not None and attempt.runtime_submit_called)
+    unsupported_modes = tuple(
+        proof.mode.value for proof in build_unsupported_execution_mode_proofs()
+    )
     return ExecProjection(
         admission_state=decision.state,
         lease_state=lease_state,
@@ -150,6 +198,18 @@ def build_exec_projection(
         attempt_guard_state=attempt_guard_state,
         truth_labels=tuple(labels),
         unavailable_reasons=decision.unavailable_reasons,
+        session_state=session.status if session is not None else None,
+        attempt_state=attempt.lifecycle_state if attempt is not None else None,
+        runtime_submit_available=runtime_submit_called,
+        runtime_submit_called=runtime_submit_called,
+        runtime_submit_ref=(
+            attempt.runtime_submit_ref if attempt is not None else None
+        ),
+        outcome_status=outcome.runtime_status if outcome is not None else None,
+        outcome_summary=outcome.result_summary if outcome is not None else None,
+        trace_bound=bool(trace_binding is not None and trace_binding.trace_bound),
+        policy_p9_status=decision.custos_status,
+        unsupported_modes_unavailable=unsupported_modes,
     )
 
 

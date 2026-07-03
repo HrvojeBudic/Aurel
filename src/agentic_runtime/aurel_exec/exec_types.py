@@ -46,8 +46,9 @@ AUREL_EXEC_PACK_TITLE = "AurelExec Doctrine / Contracts / Admission / Lease Foun
 AUREL_EXEC_REPORT_PATH = "agent/reports/P4_EXEC_A_ADMISSION_LEASE_FOUNDATION.md"
 
 RUNTIME_SUBMIT_UNAVAILABLE_REASON = (
-    "runtime.submit is not wired and never called in P4-EXEC-A; the governed "
-    "runtime submit bridge belongs to P4-EXEC-B"
+    "runtime.submit is never called at admission/lease time; execution is "
+    "available only through the P4-EXEC-B ExecRuntimeBridge with a valid "
+    "lease and session on the supported read-only path"
 )
 RAW_EXECUTION_UNAVAILABLE_REASON = (
     "no tool, model, verifier, terminal, code, sandbox, subprocess, or network "
@@ -83,14 +84,19 @@ enter the gate chain; every later gate can still hold or reject it.
 
 
 class ExecTruthLabel(str, Enum):
-    """Honest truth labels for AurelExec foundation objects.
+    """Honest truth labels for AurelExec objects.
 
-    LIVE exists in the vocabulary but is never assignable to P4-EXEC-A
-    objects (fail-closed at construction): nothing in this pack is live
-    runtime execution. There is deliberately no TRACE_VERIFIED member.
+    LIVE is assignable only to P4-EXEC-B bridge results/outcomes produced by
+    an actual ``AgenticRuntime.submit()`` call; admission/lease/job/attempt
+    eligibility objects still reject it fail-closed at construction.
+    TRACE_BOUND (added by P4-EXEC-B) is assignable only when an actual
+    runtime trace/transition ref was captured. There is deliberately no
+    TRACE_VERIFIED member — that claim is structurally unconstructible
+    until P5 AurelTrace performs real verification.
     """
 
     LIVE = "LIVE"
+    TRACE_BOUND = "TRACE_BOUND"
     DEV_FIXTURE = "DEV_FIXTURE"
     SIMULATED = "SIMULATED"
     UNAVAILABLE = "UNAVAILABLE"
@@ -117,15 +123,110 @@ class ExecAdmissionState(str, Enum):
 
 
 class ExecLifecycleState(str, Enum):
-    """Closed-world lifecycle. There is no RUNNING/EXECUTED/COMPLETED member:
-    execution states are unconstructible until P4-EXEC-B."""
+    """Closed-world job/attempt lifecycle.
+
+    P4-EXEC-A shipped the eligibility states only; P4-EXEC-B adds the
+    submit-aware states (SESSION_BOUND, READY_TO_SUBMIT, RUNNING, SUBMITTED,
+    SUCCEEDED, FAILED) because a real governed submit bridge now exists.
+    ATTEMPT_PENDING doubles as the attempt's PENDING state. There is still
+    no EXECUTED/COMPLETED/VERIFIED member: SUCCEEDED means runtime submit
+    success only — runtime success is not semantic success and not proof.
+    """
 
     CANDIDATE = "CANDIDATE"
     ADMITTED = "ADMITTED"
     LEASED = "LEASED"
+    SESSION_BOUND = "SESSION_BOUND"
     ATTEMPT_PENDING = "ATTEMPT_PENDING"
+    READY_TO_SUBMIT = "READY_TO_SUBMIT"
+    RUNNING = "RUNNING"
+    SUBMITTED = "SUBMITTED"
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
     BLOCKED = "BLOCKED"
     ERROR = "ERROR"
+
+
+JOB_LIFECYCLE_TRANSITIONS: dict[ExecLifecycleState, tuple[ExecLifecycleState, ...]] = {
+    ExecLifecycleState.CANDIDATE: (
+        ExecLifecycleState.ADMITTED,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.ADMITTED: (
+        ExecLifecycleState.LEASED,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.LEASED: (
+        ExecLifecycleState.SESSION_BOUND,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.SESSION_BOUND: (
+        ExecLifecycleState.ATTEMPT_PENDING,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.ATTEMPT_PENDING: (
+        ExecLifecycleState.RUNNING,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.RUNNING: (
+        ExecLifecycleState.SUCCEEDED,
+        ExecLifecycleState.FAILED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.READY_TO_SUBMIT: (),
+    ExecLifecycleState.SUBMITTED: (),
+    ExecLifecycleState.SUCCEEDED: (),
+    ExecLifecycleState.FAILED: (),
+    ExecLifecycleState.BLOCKED: (),
+    ExecLifecycleState.ERROR: (),
+}
+"""Deterministic ExecJob transition map. READY_TO_SUBMIT/SUBMITTED are
+attempt-only states and are unreachable for jobs."""
+
+ATTEMPT_LIFECYCLE_TRANSITIONS: dict[ExecLifecycleState, tuple[ExecLifecycleState, ...]] = {
+    ExecLifecycleState.ATTEMPT_PENDING: (
+        ExecLifecycleState.READY_TO_SUBMIT,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.READY_TO_SUBMIT: (
+        ExecLifecycleState.RUNNING,
+        ExecLifecycleState.BLOCKED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.RUNNING: (
+        ExecLifecycleState.SUBMITTED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.SUBMITTED: (
+        ExecLifecycleState.SUCCEEDED,
+        ExecLifecycleState.FAILED,
+        ExecLifecycleState.ERROR,
+    ),
+    ExecLifecycleState.CANDIDATE: (),
+    ExecLifecycleState.ADMITTED: (),
+    ExecLifecycleState.LEASED: (),
+    ExecLifecycleState.SESSION_BOUND: (),
+    ExecLifecycleState.SUCCEEDED: (),
+    ExecLifecycleState.FAILED: (),
+    ExecLifecycleState.BLOCKED: (),
+    ExecLifecycleState.ERROR: (),
+}
+"""Deterministic ExecutionAttempt transition map. ATTEMPT_PENDING is the
+attempt's PENDING state; job-only states are unreachable for attempts."""
+
+SUBMIT_AWARE_ATTEMPT_STATES: tuple[ExecLifecycleState, ...] = (
+    ExecLifecycleState.SUBMITTED,
+    ExecLifecycleState.SUCCEEDED,
+    ExecLifecycleState.FAILED,
+)
+"""The only attempt states in which runtime_submit_called=True is
+constructible. An attempt claiming a submit before submitting is impossible."""
 
 
 class ExecutionMode(str, Enum):

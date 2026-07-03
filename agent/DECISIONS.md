@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-03 - P4-EXEC-B First Governed Runtime Submit Bridge
+
+### DEC-P4EXECB-01: The bridge supervises the existing kernel; the kernel import is sanctioned in exactly one module
+**Decision:** `ExecRuntimeBridge` takes an injected kernel and uses only its `submit(cmd, card)` surface; the `from ..runtime import` reference exists only in `exec_runtime_bridge.py`, under `TYPE_CHECKING`, and the A-pack boundary sweep was updated to enforce exactly that (forbidden in every other module, checked line-level to be inside the TYPE_CHECKING block). A recording fake exposing only `submit` completes a full bridge pass in tests, proving behaviorally that no dispatch/sandbox/trace surface is needed.
+**Why:** The single most dangerous P4 failure mode is a second executor growing beside the governed kernel. Making the kernel reference single-sited, injection-based, and type-only keeps the bridge structurally incapable of quiet bypass, and keeps every policy/budget/approval/governance gate inside `AgenticRuntime.submit()` authoritative.
+
+### DEC-P4EXECB-02: Submit truth is structural on the attempt, and there is no retry
+**Decision:** `runtime_submit_called=True` is unconstructible outside SUBMITTED/SUCCEEDED/FAILED with a command id and bound session; SUBMITTED/SUCCEEDED without the call are unconstructible; an already-submitted attempt is refused (SUBMIT_STATE_INVALID) before any kernel call. ATTEMPT_PENDING doubles as the attempt's PENDING state rather than adding a duplicate member.
+**Why:** An attempt that can claim a submit that never happened — or repeat one silently — would poison every later trace/proof layer. No-retry keeps Exec-B a single act; correlated retries belong to bounded recovery (Exec-E) where budgets and storm guards already have canon (P3-FLOW-G).
+
+### DEC-P4EXECB-03: A-pack enum/test expansion is a sanctioned pack-boundary evolution, not a weakening
+**Decision:** `ExecLifecycleState` gained the six submit-aware states and `ExecTruthLabel` gained TRACE_BOUND; the A tests asserting the old exact sets and the "no RUNNING/SUCCEEDED member" rule were updated in the same commit, with the surviving prohibitions (no EXECUTED/COMPLETED/VERIFIED/PROVEN member; no TRACE_VERIFIED label; LIVE unassignable on eligibility objects) intact and newly tested transition-map totality added.
+**Why:** The A prohibitions encoded "no execution states until a real bridge exists." The bridge now exists and is proven against the real kernel, so the states are honest; what must stay unconstructible shifted from execution vocabulary to verification/completion vocabulary, and the tests moved with the law rather than being deleted.
+
+### DEC-P4EXECB-04: LIVE/TRACE_BOUND labels attach to the call, not the candidate
+**Decision:** Bridge results and outcomes from an actual kernel call carry LIVE even when the admitted candidate is DEV_FIXTURE; trace bindings carry TRACE_BOUND only when a real `StateTransitionRecord` ref was captured (structural: bound ⟺ ref present ⟺ TRACE_BOUND label). Eligibility objects (request/decision/lease/job/attempt/session) still reject LIVE at construction.
+**Why:** The submit is real even in a test sandbox — the kernel's policy/approval/trace machinery genuinely ran — while the candidate remains fixture data. Labeling the two layers separately keeps both truths visible instead of averaging them into a lie in either direction.
+
 ## 2026-07-03 - P4-EXEC-A AurelExec Doctrine / Contracts / Admission / Lease Foundation
 
 ### DEC-P4EXECA-01: The P4 truth-label vocabulary has no TRACE_VERIFIED member and LIVE is unassignable

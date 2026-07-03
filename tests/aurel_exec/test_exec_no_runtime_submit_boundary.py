@@ -24,7 +24,10 @@ from agentic_runtime.aurel_exec import (
 )
 
 _PACKAGE_DIR = Path(aurel_exec.__file__).parent
-_FORBIDDEN_IMPORTS = (
+
+# Forbidden everywhere in aurel_exec: raw side-effect surfaces and the
+# tool-dispatch layer. No module may touch these — the bridge included.
+_FORBIDDEN_IMPORTS_EVERYWHERE = (
     "import subprocess",
     "import socket",
     "import requests",
@@ -32,21 +35,45 @@ _FORBIDDEN_IMPORTS = (
     "import urllib",
     "from subprocess",
     "from socket",
-    "from ..runtime import",
-    "from agentic_runtime.runtime import",
-    "from ..tool_runtime import",
-    "from agentic_runtime.tool_runtime import",
+    "from ..tools import",
+    "from agentic_runtime.tools import",
     "from ..entity import",
     "ToolRuntime",
     "AgenticEntity",
+    ".dispatch(",
 )
+
+# The runtime kernel import is sanctioned in exactly one place: the
+# P4-EXEC-B bridge (type-checking import only; the kernel is injected).
+_KERNEL_IMPORT_MARKERS = (
+    "from ..runtime import",
+    "from agentic_runtime.runtime import",
+)
+_SANCTIONED_KERNEL_IMPORT_MODULE = "exec_runtime_bridge.py"
 
 
 def test_package_source_has_no_runtime_or_side_effect_imports():
     for module_path in sorted(_PACKAGE_DIR.glob("*.py")):
         source = module_path.read_text(encoding="utf-8")
-        for forbidden in _FORBIDDEN_IMPORTS:
+        for forbidden in _FORBIDDEN_IMPORTS_EVERYWHERE:
             assert forbidden not in source, f"{module_path.name} contains {forbidden!r}"
+        if module_path.name != _SANCTIONED_KERNEL_IMPORT_MODULE:
+            for marker in _KERNEL_IMPORT_MARKERS:
+                assert marker not in source, (
+                    f"{module_path.name} imports the runtime kernel; only "
+                    f"{_SANCTIONED_KERNEL_IMPORT_MODULE} may reference it"
+                )
+
+
+def test_bridge_kernel_import_is_type_checking_only():
+    source = (_PACKAGE_DIR / _SANCTIONED_KERNEL_IMPORT_MODULE).read_text(encoding="utf-8")
+    # the kernel import exists but only under TYPE_CHECKING: the kernel is
+    # injected by the caller, never constructed or imported at runtime
+    assert "if TYPE_CHECKING:" in source
+    marker_line = next(
+        line for line in source.splitlines() if "from ..runtime import" in line
+    )
+    assert marker_line.startswith("    "), "kernel import must live in the TYPE_CHECKING block"
 
 
 def test_no_runtime_submit_proof_is_fail_closed():
@@ -108,9 +135,13 @@ def test_no_pack_object_exposes_a_submit_or_dispatch_callable():
             assert not hasattr(obj, name), f"{type(obj).__name__}.{name} must not exist"
 
 
-def test_public_api_has_no_submit_or_dispatch_verb():
+def test_public_api_has_no_ambient_submit_or_dispatch_callable():
+    # No module-level callable offers an ambient submit/dispatch verb; the
+    # only submit surface is ExecRuntimeBridge.submit_once, which requires
+    # an injected kernel plus a valid lease, session, job, and attempt.
     for name in dir(aurel_exec):
         lowered = name.lower()
-        assert "submit_execution" not in lowered
-        assert not lowered.startswith("submit")
-        assert not lowered.startswith("dispatch")
+        if lowered.startswith("_") or not callable(getattr(aurel_exec, name)):
+            continue
+        assert not lowered.startswith("submit"), name
+        assert not lowered.startswith("dispatch"), name
