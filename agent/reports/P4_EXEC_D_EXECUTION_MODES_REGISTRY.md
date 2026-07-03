@@ -127,7 +127,7 @@ Verifier / Failure Classification / Bounded Recovery / Algedonic Signals — att
 
 ## 28. Commit Hash
 
-Recorded post-commit: see `git log` — `feat(aurel-exec): add execution mode registry`.
+`7229c6e` — `feat(aurel-exec): add execution mode registry` (17 files, +1776/−6).
 
 ## 29. Final Git Status
 
