@@ -137,7 +137,7 @@ Topology / Concurrency / Backpressure / ExecBench — consume failure classes, r
 
 ## 30. Commit Hash
 
-Recorded post-commit: see `git log` — `feat(aurel-exec): add execution judgment layer`.
+`d39d5ec` — `feat(aurel-exec): add execution judgment layer` (21 files, +2394/−12).
 
 ## 31. Final Git Status
 
