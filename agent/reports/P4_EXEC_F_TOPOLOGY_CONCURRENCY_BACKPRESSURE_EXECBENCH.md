@@ -146,7 +146,7 @@ Runtime Substrate Boundary / Rust-WASM Future Extraction Contract — formalize 
 
 ## 33. Commit Hash
 
-Recorded post-commit: see `git log` — `feat(aurel-exec): add topology backpressure and execbench telemetry`.
+`70b9433` — `feat(aurel-exec): add topology backpressure and execbench telemetry` (18 files, +2195/−6).
 
 ## 34. Final Git Status
 
