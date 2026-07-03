@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-03 - P3-FLOW-I Workflow-Atomic Scheduling Intent / Resource Prediction Pack
+
+### DEC-P3FLOWI-01: The scheduling gate consumes H truth verbatim and can never out-allow it
+**Decision:** `SchedulingActionBoundaryCheck` wraps the P3-FLOW-H `resolve_action_boundary` output field-for-field, and `evaluate_autonomy_scheduling_gate` derives its decision only from that check plus the scope check — it re-derives no permission rule of its own. H-forbidden classes always BLOCK_SCHEDULING; P9-bound classes always REQUIRE_P9_AUTHORITY; a missing scope envelope fails closed to HOLD_SCHEDULING.
+**Why:** Two parallel permission ladders would drift; the scheduling layer must be structurally unable to grant more than the governed autonomy layer, and absence of scope evidence must never read as inside-scope.
+
+### DEC-P3FLOWI-02: A fully ready unit classifies as READY_BUT_NO_P4, never as dispatchable
+**Decision:** `classify_dispatchability` resolves a unit with every P3-representable readiness dimension green to `dispatchable_candidate=True` with reason READY_BUT_NO_P4 and `dispatch_available`/`dispatched` structurally False; `ReadyStateFrame` cannot even represent policy/proof/execution readiness (fields fail-closed False, dimension enum carries *_UNAVAILABLE members).
+**Why:** Ready is not dispatchable. The strongest positive statement P3 may make about a unit is "everything representable is ready and only the missing P4 dispatch plane blocks it" — encoding that as a reason string keeps the boundary honest and gives P4 a precise handoff.
+
+### DEC-P3FLOWI-03: Queue placement is derived, total, and never inserted
+**Decision:** `derive_queue_placement_candidate` is a total deterministic mapping over all 14 `DispatchabilityReason` members (totality is unit-tested against the enum), and `QueuePlacementCandidate` keeps `queue_candidate_only=True` with insertion/worker booleans unconstructible True. The I modules are additionally scanned to contain no queue.Queue/threading/multiprocessing/concurrent.futures machinery.
+**Why:** A queue candidate exists for scheduling visibility only; deriving it from dispatchability truth (instead of accepting free-form placement) keeps the read model deterministic and prevents any path where a "placement" becomes real queueing before P4.
+
 ## 2026-07-02 - P3-FLOW-H Governed Autonomy Levels / Scope Envelopes Pack
 
 ### DEC-P3FLOWH-01: The autonomy vocabulary is GovernedAutonomyLevel, distinct from existing autonomy names

@@ -58,6 +58,29 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P3-FLOW-I Workflow-Atomic Scheduling Intent / Resource Prediction Pack Validation (COMPLETE)
+
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m pytest tests/test_p3_flow_i_scheduling_intent.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_dispatchability.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_resource_prediction.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_queue_concurrency.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_requirements.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_projection.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_no_dispatch_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_i_no_resource_allocation.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_a_workflow_graph.py tests/test_p3_flow_a_workflow_state.py tests/test_p3_flow_a_scheduler_ready_queue.py tests/test_p3_flow_b_runtime_events.py tests/test_p3_flow_b_state_commitment.py tests/test_p3_flow_b_pause_resume.py tests/test_p3_flow_b_retry_recovery.py tests/test_p3_flow_b_no_execution_boundary.py tests/test_p3_flow_b_behavior_read_model.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_c_projection.py tests/test_p3_flow_c_timeline.py tests/test_p3_flow_c_event_graph.py tests/test_p3_flow_c_wiring_matrix.py tests/test_p3_flow_c_protocol_boundary.py tests/test_p3_flow_c_cli_read_only.py tests/test_p3_flow_c_base_exit_seal.py tests/test_p3_flow_c_no_execution_boundary.py tests/test_p3_flow_d_boundary.py tests/test_p3_flow_d_operator_review.py tests/test_p3_flow_d_pause_hooks.py tests/test_p3_flow_d_read_model.py tests/test_p3_flow_d_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_e_dynamic_graph.py tests/test_p3_flow_e_topology_snapshot.py tests/test_p3_flow_e_graph_revision.py tests/test_p3_flow_e_topology_vulnerability.py tests/test_p3_flow_e_no_execution_boundary.py tests/test_p3_flow_f_checkpoint.py tests/test_p3_flow_f_fork_replay.py tests/test_p3_flow_f_revert_candidate.py tests/test_p3_flow_f_diff_recovery_checkpoint.py tests/test_p3_flow_f_projection_migration_readiness.py tests/test_p3_flow_f_no_execution_boundary.py -q
+.venv/bin/python -m pytest tests/test_p3_flow_g_reliability_control.py tests/test_p3_flow_g_failure_taxonomy.py tests/test_p3_flow_g_diagnosis.py tests/test_p3_flow_g_recovery_policy.py tests/test_p3_flow_g_recovery_budget_guards.py tests/test_p3_flow_g_projection.py tests/test_p3_flow_g_no_execution_boundary.py tests/test_p3_flow_h_autonomy_levels.py tests/test_p3_flow_h_scope_decision_matrix.py tests/test_p3_flow_h_gates.py tests/test_p3_flow_h_drift_violation.py tests/test_p3_flow_h_projection.py tests/test_p3_flow_h_no_authority_boundary.py tests/test_p3_flow_h_no_execution_boundary.py -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+```
+
+Results (2026-07-03): compileall PASS; P3-FLOW-I 79 passed (13 scheduling intent + 9 dispatchability + 9 resource prediction + 10 queue/concurrency + 8 requirements + 6 projection + 10 no-dispatch boundary + 6 no-execution boundary + 8 no-resource-allocation); regression 483 passed (A+B 89, C+D 107, E+F 134, G+H 153 — full A–H dispatched command sets re-run because `__init__.py` is shared); ruff "All checks passed!"; mypy "Success: no issues found in 398 source files"; suppression scan over the four I modules found zero suppressions (enforced by `test_p3_flow_i_no_execution_boundary.py`). Full pytest suite / coverage / Bandit NOT run (no runtime/security/sandbox/network/subprocess path touched; lean doctrine applies).
+
 ## P3-FLOW-H Governed Autonomy Levels / Scope Envelopes Pack Validation (COMPLETE)
 
 ```bash
