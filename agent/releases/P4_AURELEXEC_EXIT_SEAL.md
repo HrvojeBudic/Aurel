@@ -19,7 +19,7 @@ P4 built the governed execution kernel foundation in seven packs. AurelExec can 
 | P4-EXEC-D | Closed-world execution mode registry + tool/model/terminal/code profiles | 7229c6e |
 | P4-EXEC-E | Verification, failure taxonomy, bounded recovery plans, algedonic signals; substrate boundary doctrine | d39d5ec |
 | P4-EXEC-F | Topology, concurrency windows, pressure/backpressure, ExecBench telemetry | 70b9433 |
-| P4-EXEC-G | Status read model, CLI/Shell binding contract, audits, handoff matrix, exit seal | this commit |
+| P4-EXEC-G | Status read model, CLI/Shell binding contract, audits, handoff matrix, exit seal | 045b2a4 |
 
 ## Capability Coverage (P4.0–P4.20)
 

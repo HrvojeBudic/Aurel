@@ -100,4 +100,4 @@ Untouched: `exec_projection.py` (this pack added no class there — status lives
 
 ## 18. Commit Hash / Final Git Status
 
-Recorded post-commit: see `git log` — commit message `feat(aurel-exec): add projection status and p4 exit seal`. Final `git status --short` clean.
+`045b2a4` — `feat(aurel-exec): add projection status and p4 exit seal` (17 files, +1904/−6). Final `git status --short` clean.
