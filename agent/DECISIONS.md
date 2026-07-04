@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-04 - P4-EXEC-G Exec Projection / CLI / Shell Binding / P4 Exit Seal
+
+### DEC-P4EXECG-01: The seal verdict is derived from recorded gates, never declared
+**Decision:** `ValidationSummary.all_required_gates_pass` must match the recorded gate results at construction, and `P4ExitSeal.seal_status=SEALED` is unconstructible unless both the focused and large validation summaries pass and the truth-label audit passed. Promoting a blocked seal via `dataclasses.replace` raises. NOT_APPLICABLE/NOT_REQUIRED/WAIVED are acceptable gate results; NOT_RUN on a required gate blocks.
+**Why:** A seal is the single highest-value overclaim target in the whole pack lineage. Making the verdict arithmetic over recorded evidence (same move as the D registries, E tables, and F derivations) means a fake seal requires fabricating gate records outright, not flipping one enum — and the tests attempt the promotion attack directly.
+
+### DEC-P4EXECG-02: The status read model is total over 26 canonical categories with structural honesty rules
+**Decision:** `ExecStatusReadModel` must cover every P4-A…F state category exactly once in canonical order; UNAVAILABLE categories must carry reasons; a category valued TRACE_VERIFIED is unconstructible; empty aggregation yields all-UNAVAILABLE with the UNAVAILABLE truth label. The aggregator is a pure function that consumes objects and never touches the kernel (behaviorally proven with the recording fake).
+**Why:** Operator visibility fails in two directions — silently missing categories (gaps read as "fine") and fabricated ones (fake LIVE). Totality-with-reasons closes both, and the TRACE_VERIFIED category guard extends the label-level prohibition to the string-valued projection surface where enum protection cannot reach.
+
+### DEC-P4EXECG-03: CLI wiring is deferred with reason; the binding contract ships tested
+**Decision:** The read-only CLI/Shell binding (closed-world STATUS/COVERAGE/HANDOFF/SEAL vocabulary with mutating verbs unconstructible, deterministic JSON renderer) is implemented and tested in `exec_status.py`, but registration into `agentic_runtime/cli.py` was deliberately not performed in the seal pack — `cli_wiring_available=False` with reason, verified by a test that cli.py contains no aurel_exec reference.
+**Why:** The seal pack's job is to prove the accumulated stack stable, not to widen the CLI surface hours before sealing it. The flow-CLI precedent makes future wiring mechanical; deferring it keeps the seal's full-pytest gate over exactly the stack being sealed.
+
+### DEC-P4EXECG-04: Coverage/handoff/unavailable matrices are total-by-construction with repo-truth statuses
+**Decision:** `ExecCapabilityCoverageMatrix` is total over P4.0–P4.20 in order (P4.12/P4.14 honestly PROFILE_ONLY, P4.13 UNAVAILABLE — not LIVE-washed); `UnavailableStateAudit` requires all eight absent systems with structurally-enforced owners; `P4HandoffMatrix` requires the five owners in order with `handoff_is_implementation` unconstructible.
+**Why:** Seal-time matrices drift toward flattery — every row LIVE, absences forgotten. Totality plus enforced owners makes the honest shape the only representable shape, and the two profile-only rows preserve the D/E laws (a profile is not permission; a hook without an AVAILABLE member cannot be claimed available) into the sealed record.
+
 ## 2026-07-03 - P4-EXEC-F Topology / Concurrency / Backpressure / ExecBench
 
 ### DEC-P4EXECF-01: Only local topology kinds are constructible as active profiles, and F ships its own kind vocabulary

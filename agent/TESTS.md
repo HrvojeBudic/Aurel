@@ -58,6 +58,37 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P4-EXEC-G Projection / CLI / Shell Binding / P4 Exit Seal Validation (FULL PRE-SEAL GATE)
+
+The seal pack ran the full accumulated validation gate — the standing
+full-suite obligation (four lean packs old) is discharged here. Exact
+results and the seal verdict live in the G report's validation table
+(`agent/reports/P4_EXEC_G_PROJECTION_CLI_SHELL_BINDING_EXIT_SEAL.md`) and
+the release evidence (`agent/releases/P4_AURELEXEC_EXIT_SEAL.md`).
+
+```bash
+# focused implementation gate
+.venv/bin/python -m compileall src/agentic_runtime/aurel_exec tests/aurel_exec
+.venv/bin/python -m pytest \
+  tests/aurel_exec/test_exec_status_projection.py \
+  tests/aurel_exec/test_exec_projection_truth_labels.py \
+  tests/aurel_exec/test_exec_cli_status_binding.py \
+  tests/aurel_exec/test_exec_p4_handoff_matrix.py \
+  tests/aurel_exec/test_exec_p4_exit_seal.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_exec tests/aurel_exec
+
+# large pre-seal gate (all required before a SEALED verdict)
+.venv/bin/python -m pytest tests/aurel_exec -q
+.venv/bin/python -m pytest tests/test_runtime*.py tests/test_tool*.py tests/test_sandbox*.py tests/test_trace*.py -q
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src/agentic_runtime
+.venv/bin/python -m pytest tests/ --cov=src/agentic_runtime --cov-report=term --cov-fail-under=75 -q
+.venv/bin/python -m bandit -r src/agentic_runtime -ll
+git status --short
+```
+
 ## P4-EXEC-F Topology / Concurrency / Backpressure / ExecBench Validation (COMPLETE, lean)
 
 Lean-validation pack: focused F tests + compileall + ruff on touched paths only.
