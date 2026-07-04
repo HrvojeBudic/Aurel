@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-04 - P5-TRACE-A Existing Trace Inventory / Doctrine / Canonical Envelope / TraceRef / Hash Verification
+
+### DEC-P5TRACEA-01: P5 is an adapter over the existing ledger, reusing its own hash truth — not a second trace engine
+**Decision:** `aurel_trace` imports downward only (from `agentic_runtime.trace` and `core_types`), adds no ledger/persistence, iterates ledgers read-only (`envelopes_from_ledger`/`trace_run_ref_from_ledger` never append or mutate), and computes verification with the ledger's *own* `sha`/`canonical_json`/`GENESIS` so there is exactly one hash truth. `trace.py`, `contracts/trace.py`, and `contracts/projections.py` were read-only references and were not modified.
+**Why:** The highest risk of the first P5 pack is manufacturing a duplicate trace source of truth. Making the package structurally downstream and reusing the existing hash scheme means P5 verification cannot diverge from what the ledger already wrote, and the doctrine's `duplicate_trace_spine_allowed == False` is backed by the actual import graph.
+
+### DEC-P5TRACEA-02: The truth vocabulary has no TRACE_VERIFIED member; the strongest label is TRACE_INTEGRITY_VERIFIED
+**Decision:** `TraceTruthLabel` = {LIVE, TRACE_BOUND, TRACE_INTEGRITY_VERIFIED, UNAVAILABLE, ERROR}. A PASS verification result is unconstructible with `invalid_count > 0`, and only a PASS result may carry `verified=True` / the `TRACE_INTEGRITY_VERIFIED` label. Envelopes, refs, and bindings are TRACE_BOUND and cannot be constructed carrying the integrity-verified label.
+**Why:** "TRACE_VERIFIED for record presence" and "hash-valid implies semantic correctness" are the two overclaim traps named in the contract. Removing the broad `TRACE_VERIFIED` member from the vocabulary makes the overclaim literally unrepresentable, and the separate integrity label keeps hash-chain integrity honestly distinct from semantic/business correctness.
+
+### DEC-P5TRACEA-03: The operational trace.py ledger records are the P5-A normalization target; the contracts.trace canonical event form is deferred
+**Decision:** The nine `core_types` hash-chained record types (via the `trace.TraceEntry` union) are the supported envelope target, verified against the in-memory ledger invariant `entry_hash = sha(prev_entry_hash, payload_hash())`. The separate `contracts.trace.AurelTraceLog` canonical event form — which already owns same-named `TraceEventRef`/`TraceBindingRef` and a distinct `compute_event_hash` scheme — is catalogued as unsupported/deferred, and the naming overlap is reported, not silently unified. The P5 refs live in the `aurel_trace` namespace.
+**Why:** Repo truth over prompt assumption: the prompt anticipated single-system trace, but two exist. Adapting the operational ledger first (the thing the kernel actually writes and that lacks ref objects) delivers the foundation without colliding with or replacing the contract-first event form; reconciling the two layers is future work, honestly deferred rather than faked.
+
+### DEC-P5TRACEA-04: Canonical hash material is deterministic and timestamp-free; unsupported records never silently pass
+**Decision:** `canonical_event_id` is derived from a stable `TraceHashMaterial` (sorted-key canonical JSON) built from record type, kind, index, payload hash, entry hash, and prev hash — never Python `repr`, and the record's nondeterministic `created_at` is metadata only, excluded from hash material (proven: a +999s shift leaves the id unchanged). Unsupported records raise `TraceEnvelopeUnsupportedError` (strict) or report `supported=False` (lenient), and `verify_trace_records` folds an UNSUPPORTED_RECORD_TYPE finding that prevents PASS (yields PARTIAL). Verification never repairs — inputs are unmutated.
+**Why:** Deterministic hash material is required for stable refs and reproducible verification; folding wall-clock time in would make the same record hash differently across runs. Refusing to let unsupported records pass, and refusing auto-repair, keeps verification honest evidence rather than a rubber stamp or a mutator.
+
 ## 2026-07-04 - P4-EXEC-G Exec Projection / CLI / Shell Binding / P4 Exit Seal
 
 ### DEC-P4EXECG-01: The seal verdict is derived from recorded gates, never declared

@@ -1,0 +1,122 @@
+"""AurelTrace Spine — P5-TRACE-A foundation.
+
+P5-TRACE-A is an adapter and structured hash-verification foundation *over* the
+existing trace implementation (``agentic_runtime.trace`` +
+``agentic_runtime.core_types`` records). It does not replace ``trace.py``, does
+not create a second trace source of truth, does not execute, does not authorize,
+and does not implement replay, Shell UI, an API server, an event bus, P9
+enforcement, or any Rust/WASM substrate.
+
+Law: Runtime emits. Trace canonicalizes. P5 verifies. Projections derive.
+Custos authorizes. Operator decides.
+"""
+
+from __future__ import annotations
+
+from .trace_doctrine import (
+    AUREL_TRACE_DOCTRINE_ID,
+    AurelTraceDoctrine,
+    build_aurel_trace_doctrine,
+)
+from .trace_envelope import (
+    SUPPORTED_RECORD_EVENT_KINDS,
+    CanonicalTraceEventEnvelope,
+    EnvelopeAdaptationResult,
+    TraceEnvelopeUnsupportedError,
+    canonical_envelope_from_existing_record,
+    envelopes_from_ledger,
+    is_supported_record,
+    trace_run_ref_from_ledger,
+    try_canonical_envelope,
+)
+from .trace_hash import (
+    AUREL_TRACE_CONTRACT_VERSION,
+    CANONICAL_ENVELOPE_SCHEMA_VERSION,
+    GENESIS_ENTRY_HASH,
+    AurelTraceError,
+    TraceHashMaterial,
+    TraceIntegrityStatus,
+    TraceTruthLabel,
+    canonical_event_hash_material,
+    canonical_event_id_from_hash_material,
+    canonical_payload_hash,
+    canonical_trace_json,
+    recompute_entry_hash,
+    trace_sha,
+)
+from .trace_inventory import (
+    EXISTING_TRACE_INVENTORY_ID,
+    ExistingTraceInventory,
+    build_existing_trace_inventory,
+)
+from .trace_refs import (
+    TraceBindingRef,
+    TraceEntryRef,
+    TraceEventRef,
+    TraceRunRef,
+    build_trace_binding_ref,
+    build_trace_entry_ref,
+    build_trace_event_ref,
+    build_trace_run_ref,
+)
+from .trace_verify import (
+    HashChainVerificationSummary,
+    TraceFindingSeverity,
+    TraceHashFinding,
+    TraceHashFindingKind,
+    TraceHashVerificationRequest,
+    TraceHashVerificationResult,
+    TraceVerificationScope,
+    TraceVerificationStatus,
+    verify_canonical_trace_hash_chain,
+    verify_trace_records,
+)
+
+__all__ = [
+    "AUREL_TRACE_CONTRACT_VERSION",
+    "AUREL_TRACE_DOCTRINE_ID",
+    "CANONICAL_ENVELOPE_SCHEMA_VERSION",
+    "EXISTING_TRACE_INVENTORY_ID",
+    "GENESIS_ENTRY_HASH",
+    "SUPPORTED_RECORD_EVENT_KINDS",
+    "AurelTraceDoctrine",
+    "AurelTraceError",
+    "CanonicalTraceEventEnvelope",
+    "EnvelopeAdaptationResult",
+    "ExistingTraceInventory",
+    "HashChainVerificationSummary",
+    "TraceBindingRef",
+    "TraceEntryRef",
+    "TraceEnvelopeUnsupportedError",
+    "TraceEventRef",
+    "TraceFindingSeverity",
+    "TraceHashFinding",
+    "TraceHashFindingKind",
+    "TraceHashMaterial",
+    "TraceHashVerificationRequest",
+    "TraceHashVerificationResult",
+    "TraceIntegrityStatus",
+    "TraceRunRef",
+    "TraceTruthLabel",
+    "TraceVerificationScope",
+    "TraceVerificationStatus",
+    "build_aurel_trace_doctrine",
+    "build_existing_trace_inventory",
+    "build_trace_binding_ref",
+    "build_trace_entry_ref",
+    "build_trace_event_ref",
+    "build_trace_run_ref",
+    "canonical_envelope_from_existing_record",
+    "canonical_event_hash_material",
+    "canonical_event_id_from_hash_material",
+    "canonical_payload_hash",
+    "canonical_trace_json",
+    "envelopes_from_ledger",
+    "is_supported_record",
+    "recompute_entry_hash",
+    "trace_run_ref_from_ledger",
+    "trace_sha",
+    "try_canonical_envelope",
+    "verify_canonical_trace_hash_chain",
+    "verify_trace_records",
+]

@@ -58,6 +58,34 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-A Trace Inventory / Doctrine / Envelope / Refs / Hash Verification Validation (COMPLETE, lean)
+
+P5-TRACE-A is an adapter-only pack over the existing trace ledger: it adds no
+runtime execution path and does not modify `trace.py`, `contracts/trace.py`, or
+`runtime.py`, so lean focused validation applies (no full-suite obligation). The
+legacy trace subset and the P4 seal-adjacent projection tests are run as
+regression to prove nothing broke. Results live in the P5-TRACE-A report's
+validation table (`agent/reports/P5_TRACE_A_INVENTORY_DOCTRINE_ENVELOPE_REF_HASH.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_trace_inventory.py \
+  tests/aurel_trace/test_trace_doctrine.py \
+  tests/aurel_trace/test_canonical_trace_envelope.py \
+  tests/aurel_trace/test_trace_refs.py \
+  tests/aurel_trace/test_trace_hash_verification.py \
+  -q
+# legacy trace + P4 seal-adjacent regression (must stay green)
+.venv/bin/python -m pytest \
+  tests/test_trace.py tests/test_trace_merkle_integrity.py tests/test_trace_persistence_p06.py \
+  tests/aurel_exec/test_exec_status_projection.py tests/aurel_exec/test_exec_p4_exit_seal.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P4-EXEC-G Projection / CLI / Shell Binding / P4 Exit Seal Validation (FULL PRE-SEAL GATE)
 
 The seal pack ran the full accumulated validation gate — the standing
