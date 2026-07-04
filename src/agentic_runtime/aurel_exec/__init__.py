@@ -285,6 +285,7 @@ from .exec_session import (
     open_execution_session,
 )
 from .exec_status import (
+    CLI_WIRING_AVAILABLE_REASON,
     CLI_WIRING_UNAVAILABLE_REASON,
     EXEC_STATUS_READ_MODEL_VERSION,
     SHELL_BINDING_CONTRACT_VERSION,

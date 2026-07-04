@@ -54,8 +54,15 @@ P2_10_D_TEST_CLI_REF = "tests/test_p210d_cli_commands.py"
 P2_10_D_CLI_MODULE_REF = "src/agentic_runtime/cli_modules/shell_commands.py"
 P2_10_D_TERMINAL_MODULE_REF = "src/agentic_runtime/aurel_shell/terminal_shell_client.py"
 
+# Historical truth at the P2.10-D seal moment (preserved for pack regression evidence).
 P2_10_E_NOT_STARTED = True
 P2_10_E_IMPLEMENTED = False
+
+# Operator canon aligned with agent/STATE.md and surface_permission_inspection.py.
+OPERATOR_CANON_LAST_COMPLETED_PACK = "P2.11-C"
+OPERATOR_CANON_NEXT_PACK = "P2.11-D"
+OPERATOR_CANON_NEXT_NOT_STARTED = True
+P2_11_C_REPORT_PATH = "agent/reports/P2_11_C_SURFACE_PERMISSION_OPERATOR_INSPECTION.md"
 
 
 class P210DPrerequisiteGateStatus(str, Enum):
@@ -182,7 +189,11 @@ _NO_OVERCLAIM_BOUNDARIES: tuple[tuple[str, str, str], ...] = (
         "P2.10-D exposes inspection commands only",
     ),
     ("NO_FULL_TUI_PRODUCT_CLAIM", "full TUI product", "TUI is contract-only text parity"),
-    ("NO_P2_10_E_CLAIM", "P2.10-E done", "P2.10-E remains next and NOT_DONE"),
+    (
+        "NO_P2_20_SEAL_CLAIM",
+        "final P2 seal",
+        "P2 is not sealed; P2.20 final exit seal remains NOT_DONE",
+    ),
 )
 
 _PARITY_CLIENTS: tuple[ShellClientKind, ...] = (
@@ -455,8 +466,33 @@ def build_terminal_shell_no_overclaim_boundaries() -> tuple[TerminalShellNoOverc
     return tuple(boundaries)
 
 
+def _operator_next_pack(*, operator_canon: bool) -> str:
+    return OPERATOR_CANON_NEXT_PACK if operator_canon else P2_10_D_NEXT_PACK
+
+
+def _operator_limitations(*, operator_canon: bool) -> tuple[str, ...]:
+    if operator_canon:
+        return (
+            "terminal Shell client is read-only",
+            "commands render read model data only",
+            "P2.VSLICE-A remains PREFLIGHT_ONLY",
+            "command execution, tool execution, runtime control, and sandbox control are disabled",
+            f"{OPERATOR_CANON_NEXT_PACK} is next and not implemented",
+            f"{OPERATOR_CANON_LAST_COMPLETED_PACK} is complete per agent canon",
+        )
+    return (
+        "terminal Shell client is read-only",
+        "commands render read model data only",
+        "P2.VSLICE-A remains PREFLIGHT_ONLY",
+        "command execution, tool execution, runtime control, and sandbox control are disabled",
+        "P2.10-E is next and not implemented",
+    )
+
+
 def build_terminal_shell_client_contract(
     client_kind: TerminalShellClientKind = TerminalShellClientKind.CLI,
+    *,
+    operator_canon: bool = True,
 ) -> TerminalShellClientContract:
     web_read_model = build_web_shell_read_model()
     desktop_read_model = build_desktop_shell_read_model()
@@ -532,7 +568,7 @@ def build_terminal_shell_client_contract(
             "TUI is contract-only text parity, not a full TUI product",
         ),
         "no_overclaim_boundaries": no_overclaim,
-        "next_pack": P2_10_D_NEXT_PACK,
+        "next_pack": _operator_next_pack(operator_canon=operator_canon),
     }
     # Keep source model hashes in local variables so they are built and validated.
     _ = (web_read_model.read_model_hash, desktop_read_model.read_model_hash)
@@ -639,7 +675,7 @@ def build_terminal_shell_parity_matrix() -> TerminalShellParityMatrix:
     return matrix
 
 
-def build_terminal_shell_read_model() -> TerminalShellReadModel:
+def build_terminal_shell_read_model(*, operator_canon: bool = True) -> TerminalShellReadModel:
     cli_state = build_shell_client_state(ShellClientKind.CLI)
     web_read_model = build_web_shell_read_model()
     desktop_read_model = build_desktop_shell_read_model()
@@ -648,6 +684,7 @@ def build_terminal_shell_read_model() -> TerminalShellReadModel:
     surface_statuses = _build_terminal_surface_statuses()
     p210a_run_modes = build_shell_client_local_run_modes()
 
+    operator_evidence = (P2_11_C_REPORT_PATH,) if operator_canon else ()
     evidence_refs = tuple(
         dict.fromkeys(
             cli_state.evidence_refs
@@ -662,6 +699,7 @@ def build_terminal_shell_read_model() -> TerminalShellReadModel:
                 P2_10_D_CLI_MODULE_REF,
                 P2_VSLICE_A_REPORT_PATH,
             )
+            + operator_evidence
         )
     )
     payload = {
@@ -679,17 +717,11 @@ def build_terminal_shell_read_model() -> TerminalShellReadModel:
         "evidence_refs": evidence_refs,
         "local_run_modes": run_modes,
         "parity_summary": parity_matrix.terminal_parity_summary,
-        "limitations": (
-            "terminal Shell client is read-only",
-            "commands render read model data only",
-            "P2.VSLICE-A remains PREFLIGHT_ONLY",
-            "command execution, tool execution, runtime control, and sandbox control are disabled",
-            "P2.10-E is next and not implemented",
-        ),
+        "limitations": _operator_limitations(operator_canon=operator_canon),
         "p2_vslice_status": ShellClientTruthLabel.PREFLIGHT_ONLY,
         "json_export_available": True,
         "execution_disabled": True,
-        "next_pack_pointer": P2_10_D_NEXT_PACK,
+        "next_pack_pointer": _operator_next_pack(operator_canon=operator_canon),
         "source_shell_state_hash": cli_state.state_hash,
         "source_web_read_model_hash": web_read_model.read_model_hash,
         "source_desktop_read_model_hash": desktop_read_model.read_model_hash,
@@ -734,8 +766,8 @@ def build_p2_10_d_terminal_shell_result(
     if not skip_prerequisite_gate:
         assert_p2_10_d_prerequisite_gate_passed(gate)
 
-    contract = build_terminal_shell_client_contract()
-    read_model = build_terminal_shell_read_model()
+    contract = build_terminal_shell_client_contract(operator_canon=False)
+    read_model = build_terminal_shell_read_model(operator_canon=False)
     parity_matrix = build_terminal_shell_parity_matrix()
     command_specs = build_terminal_shell_command_specs()
     proof = P210DSideEffectProof()

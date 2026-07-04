@@ -6,9 +6,10 @@ import argparse
 import json
 
 from ..aurel_shell.terminal_shell_client import (
-    P2_10_D_NEXT_PACK,
+    OPERATOR_CANON_LAST_COMPLETED_PACK,
+    OPERATOR_CANON_NEXT_NOT_STARTED,
+    OPERATOR_CANON_NEXT_PACK,
     TerminalShellParityDimension,
-    build_p2_10_d_terminal_shell_result,
     build_terminal_shell_parity_matrix,
     build_terminal_shell_read_model,
     serialize_terminal_shell_read_model,
@@ -21,16 +22,16 @@ def _print_json(payload: object) -> None:
 
 
 def format_shell_status_text() -> str:
-    result = build_p2_10_d_terminal_shell_result()
-    rm = result.terminal_read_model
+    rm = build_terminal_shell_read_model()
     lines = [
         "Aurel Shell Terminal Client",
         f"status: {rm.terminal_client_status}",
         f"execution_disabled: {str(rm.execution_disabled).lower()}",
         f"p2_vslice_status: {rm.p2_vslice_status.value}",
         f"json_export_available: {str(rm.json_export_available).lower()}",
+        f"last_completed_pack: {OPERATOR_CANON_LAST_COMPLETED_PACK}",
         f"next_pack: {rm.next_pack_pointer}",
-        f"p210e_not_started: {str(result.p210e_not_started).lower()}",
+        f"next_pack_not_started: {str(OPERATOR_CANON_NEXT_NOT_STARTED).lower()}",
         "truth_labels:",
     ]
     for label in rm.truth_label_summary:
@@ -105,16 +106,17 @@ def format_shell_run_modes_text() -> str:
 
 def cmd_shell_status(args: argparse.Namespace) -> int:
     if args.json:
-        result = build_p2_10_d_terminal_shell_result()
+        rm = build_terminal_shell_read_model()
         _print_json(
             {
-                "covered_pack": result.covered_pack,
-                "status": result.terminal_read_model.terminal_client_status,
-                "execution_disabled": result.terminal_read_model.execution_disabled,
-                "p2_vslice_status": result.terminal_read_model.p2_vslice_status.value,
-                "next_pack": result.next_pack,
-                "p210e_not_started": result.p210e_not_started,
-                "result_hash": result.result_hash,
+                "covered_pack": "P2.10-D",
+                "status": rm.terminal_client_status,
+                "execution_disabled": rm.execution_disabled,
+                "p2_vslice_status": rm.p2_vslice_status.value,
+                "last_completed_pack": OPERATOR_CANON_LAST_COMPLETED_PACK,
+                "next_pack": rm.next_pack_pointer,
+                "next_pack_not_started": OPERATOR_CANON_NEXT_NOT_STARTED,
+                "read_model_hash": rm.read_model_hash,
             }
         )
     else:
@@ -192,4 +194,4 @@ def terminal_parity_dimension_names() -> list[str]:
 
 
 def next_pack_pointer() -> str:
-    return P2_10_D_NEXT_PACK
+    return OPERATOR_CANON_NEXT_PACK

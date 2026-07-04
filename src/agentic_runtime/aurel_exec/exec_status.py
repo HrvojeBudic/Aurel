@@ -8,9 +8,9 @@ never writes trace, and never enforces policy — projection is not control.
 
 The CLI/Shell surface here is a **binding contract**: a closed-world
 read-only command vocabulary plus a deterministic renderer over the status
-read model (mirroring the proven P3 flow-CLI shape). Live wiring into the
-``agentic_runtime`` CLI is honestly UNAVAILABLE in this pack — a binding
-contract is not a shipped CLI, and Shell UI remains UNAVAILABLE (P2 owns it).
+read model (mirroring the proven P3 flow-CLI shape). The ``exec status`` CLI
+command is wired read-only via ``cli_modules/exec_commands.py``. Shell UI
+remains UNAVAILABLE (P2 owns it).
 """
 
 from __future__ import annotations
@@ -40,6 +40,10 @@ CLI_WIRING_UNAVAILABLE_REASON = (
     "but live wiring into the agentic_runtime CLI is deliberately not "
     "performed in the seal pack — surface registration follows the proven "
     "flow-CLI pattern as a follow-up or lands with the P2 Shell binding"
+)
+CLI_WIRING_AVAILABLE_REASON = (
+    "read-only exec status wired via agentic_runtime.cli exec status; "
+    "projection is not control"
 )
 SHELL_UI_UNAVAILABLE_REASON = (
     "no Shell UI, React frontend, or API server exists for AurelExec; "
@@ -390,12 +394,24 @@ class ShellBindingContract(_ExecCanonicalMixin):
         forbid_false(self, "read_only")
         forbid_true(
             self,
-            "cli_wiring_available",
             "shell_ui_available",
             "mutates_runtime",
             "api_server_available",
             "react_frontend_available",
         )
+        if self.cli_wiring_available:
+            if self.cli_wiring_unavailable_reason.strip():
+                raise AurelExecValidationError(
+                    "wired CLI binding must not carry an unavailable reason",
+                    code=AurelExecErrorCode.FORBIDDEN_BOUNDARY_CLAIM,
+                    field="cli_wiring_unavailable_reason",
+                )
+        else:
+            require_nonempty(
+                self,
+                "cli_wiring_unavailable_reason",
+                code=AurelExecErrorCode.EMPTY_FIELD,
+            )
         allowed = {kind.value for kind in ExecCliCommandKind}
         for command in self.supported_commands:
             if command not in allowed:
@@ -407,12 +423,19 @@ class ShellBindingContract(_ExecCanonicalMixin):
                 )
 
 
-def build_shell_binding_contract() -> ShellBindingContract:
+def build_shell_binding_contract(
+    *,
+    cli_wiring_available: bool = True,
+) -> ShellBindingContract:
     return ShellBindingContract(
         contract_id="exec-shell-binding-"
         + stable_hash(tuple(kind.value for kind in ExecCliCommandKind))[:16],
         supported_commands=tuple(kind.value for kind in ExecCliCommandKind),
         truth_label=ExecTruthLabel.LIVE,
+        cli_wiring_available=cli_wiring_available,
+        cli_wiring_unavailable_reason=(
+            "" if cli_wiring_available else CLI_WIRING_UNAVAILABLE_REASON
+        ),
     )
 
 

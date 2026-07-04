@@ -16,8 +16,9 @@ def test_shell_status_json_is_read_only():
     assert payload["status"] == "READ_ONLY"
     assert payload["execution_disabled"] is True
     assert payload["p2_vslice_status"] == "PREFLIGHT_ONLY"
-    assert payload["next_pack"] == "P2.10-E"
-    assert payload["p210e_not_started"] is True
+    assert payload["last_completed_pack"] == "P2.11-C"
+    assert payload["next_pack"] == "P2.11-D"
+    assert payload["next_pack_not_started"] is True
 
 
 def test_shell_clients_command_lists_expected_clients():

@@ -55,7 +55,7 @@ def test_terminal_no_overclaim_boundaries_include_required_forbidden_claims():
         "NO_SHELL_LIVE_CLAIM",
         "NO_FULL_CLI_AUTOMATION_CLAIM",
         "NO_FULL_TUI_PRODUCT_CLAIM",
-        "NO_P2_10_E_CLAIM",
+        "NO_P2_20_SEAL_CLAIM",
     ):
         assert boundaries[boundary_id].active is True
 

@@ -46,7 +46,7 @@ def test_p210d_prerequisite_gate_blocks_missing_report():
 
 
 def test_terminal_client_contract_is_read_only_and_source_bound():
-    contract = build_terminal_shell_client_contract()
+    contract = build_terminal_shell_client_contract(operator_canon=False)
 
     assert contract.client_kind is TerminalShellClientKind.CLI
     assert "multi_client_foundation.py:ShellClientState" in contract.source_shell_state_ref
@@ -81,7 +81,7 @@ def test_terminal_client_contract_is_read_only_and_source_bound():
 
 
 def test_terminal_read_model_derives_from_p210a_cli_state():
-    read_model = build_terminal_shell_read_model()
+    read_model = build_terminal_shell_read_model(operator_canon=False)
     cli_state = build_shell_client_state(ShellClientKind.CLI)
 
     assert read_model.source_shell_state_hash == cli_state.state_hash
@@ -97,7 +97,7 @@ def test_terminal_read_model_derives_from_p210a_cli_state():
 
 
 def test_terminal_read_model_preserves_truth_labels_and_evidence_refs():
-    read_model = build_terminal_shell_read_model()
+    read_model = build_terminal_shell_read_model(operator_canon=False)
 
     assert ShellClientTruthLabel.READ_ONLY in read_model.truth_label_summary
     assert ShellClientTruthLabel.CONTRACT_ONLY in read_model.truth_label_summary

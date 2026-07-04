@@ -437,6 +437,9 @@ from .cli_modules.identity_commands import (
     cmd_identity_p14_seal_list_checks,
     cmd_identity_p14_seal_run_check,
 )
+from .cli_modules.exec_commands import (
+    cmd_exec_status,
+)
 from .cli_modules.evaluation_commands import (
     cmd_evaluation_foundation_scope,
     cmd_evaluation_foundation_status,
@@ -1077,6 +1080,18 @@ def main(argv: list[str] | None = None) -> int:
     p_harness_run.add_argument("--case", default="", help="run a single case by id")
     p_harness_run.add_argument("--json", action="store_true")
     p_harness_run.set_defaults(func=cmd_policy_harness_run)
+
+    # P4-EXEC-G — AurelExec read-only status binding
+    p_exec = sub.add_parser(
+        "exec",
+        help="P4 AurelExec read model (read-only)",
+    )
+    exec_sub = p_exec.add_subparsers(dest="exec_command", required=True)
+    p_exec_status = exec_sub.add_parser(
+        "status",
+        help="show AurelExec status read model (read-only JSON)",
+    )
+    p_exec_status.set_defaults(func=cmd_exec_status)
 
     # P2.10-D — Shell terminal client parity binding
     p_shell = sub.add_parser(
