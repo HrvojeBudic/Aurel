@@ -20,10 +20,13 @@ import shutil
 import subprocess  # nosec B404 - subprocess is the explicit execution backend for sandbox implementations
 import tempfile
 from dataclasses import dataclass, field
-from typing import Callable, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Callable, Optional, Protocol, runtime_checkable
 
 from .canonical_path import CanonicalPathResolver, PathResolutionError
 from .core_types import new_id, sha
+
+if TYPE_CHECKING:
+    from .state_store import StateStore
 
 # Retained write snapshots per workspace backend. Oldest entries are evicted under pressure.
 DEFAULT_MAX_SNAPSHOTS = 64
@@ -299,6 +302,32 @@ class _WorkspaceBackend:
 
     def state_hash(self) -> str:
         return _tree_hash(self.root)
+
+    # ----------------------------------------------------------------------- #
+    #  Content-addressed state store (M0) — additive, retained, parallel to the
+    #  ephemeral snapshot/rollback path below. These never mutate ``_snapshots``.
+    # ----------------------------------------------------------------------- #
+    def commit_state(self, store: "StateStore") -> str:
+        """Persist the current workspace into the content-addressed store.
+
+        Returns the content hash (== ``state_hash()``). Unlike ``snapshot()``,
+        the committed state is keyed by content and retained for later
+        ``checkout`` / fork; it does not participate in ``rollback``.
+        """
+        return store.put(self.root)
+
+    def checkout(
+        self, store: "StateStore", state_hash: str, *, root: Optional[str] = None
+    ) -> "_WorkspaceBackend":
+        """Materialize a stored state into a fresh backend of the same kind.
+
+        Reconstructs ``state_hash`` into a new (empty) root and returns a new
+        backend rooted there. The receiver is left untouched.
+        """
+        new_root = root or tempfile.mkdtemp(prefix="ar_checkout_")
+        os.makedirs(new_root, exist_ok=True)
+        store.materialize(state_hash, new_root)
+        return type(self)(root=new_root)
 
     def snapshot(self) -> str:
         snap_dir = tempfile.mkdtemp(prefix="ar_snap_")

@@ -170,6 +170,7 @@ from .sandbox import (
     UnsafeLocalSandbox,
     create_sandbox,
 )
+from .state_store import StateStore
 from .sandbox_policy import (
     ProfiledSandbox,
     SandboxDiagnostics,
@@ -299,7 +300,7 @@ __all__ = [
     "classify_entrypoint_with_audit_symbol",
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
-    "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend",
+    "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
     "SandboxMode", "SandboxUnavailableError", "create_sandbox", "ExecResult",
     "SandboxProfile", "SandboxProfileName", "SandboxPolicy", "SandboxDiagnostics",
     "SandboxViolation", "SandboxDecision", "SandboxExecutionContext",
