@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-F Privacy / Export / Persistent Backend Integrity
+
+### DEC-P5TRACEF-01: A RedactedTraceView is a safe read model that never mutates source; UNKNOWN/LOCAL_ONLY/SECRET/EXPORT_RESTRICTED fail closed
+**Decision:** Redaction is a deterministic *decision* (strictest of the privacy-derived and locality-derived `TraceRedactionMode`) that produces a `RedactedTraceView` over the frozen P5-E feed/Golden-Thread/replay material without mutating it (`RedactedTraceView.mutates` unconstructible; proven that the source `feed.to_dict()` is byte-identical before and after). `RedactedTraceItem` cannot carry a raw `safe_value` unless the mode is NONE, and EXCLUDE carries no payload. Unmapped or UNKNOWN/LOCAL_ONLY/SECRET/EXPORT_RESTRICTED labels resolve to a non-raw mode (SUMMARY_ONLY or EXCLUDE) — never NONE.
+**Why:** The pack's high-risk failure is leaking raw restricted content or silently treating unlabeled material as public. Making redaction a decision over a read model (not a source edit) and failing closed on the sensitive/unknown labels means restricted material can never reach a raw export path, and the original trace material is provably untouched.
+
+### DEC-P5TRACEF-02: TraceExportManifest / TraceAuditBundle are audit/export contracts, not external export or legal compliance certification
+**Decision:** `TraceExportManifest` and `TraceAuditBundle` are in-memory read-model contracts whose `is_external_export`/`uploads`/`encrypts`/`certifies_compliance`/`is_legal_certification` are unconstructible True. Only NONE-mode material lands in `included_refs` (raw); everything else is routed to redacted/hashed/summary-only/excluded refs, and every manifest always lists `unavailable_compliance_claims` (legal compliance certification, external export/upload, encryption/KMS, PII/secret detection, production distributed ledger). An ast boundary-sweep proves the modules contain no upload/network/DB/crypto/filesystem-write fragments or imports.
+**Why:** Manifests and bundles are the most tempting place to fake compliance or a cloud export. Making the "this is not certification / not an external export / not encrypted" facts structural (unconstructible booleans + an always-present unavailable-claims list) keeps the audit surface honest — it packages references and redaction decisions, and nothing more.
+
+### DEC-P5TRACEF-03: PersistentTraceBackendProfile is an integrity posture, not production storage; LOCAL_DURABLE is not a production distributed ledger
+**Decision:** `PersistentTraceBackendProfile.migrates_storage`/`replaces_backend`/`is_distributed_ledger`/`certifies_durability` are unconstructible True. `profile_persistent_trace_backend` derives status from declared capability flags — IN_MEMORY→DEV_ONLY (durability checks structurally UNSUPPORTED), JSONL/FILE_SYSTEM/SQLITE→LOCAL_DURABLE only with append-only+hash-chain+fsync else PARTIAL, EXTERNAL_DB→UNAVAILABLE unless profiled, UNKNOWN→UNSUPPORTED — and a LOCAL_DURABLE profile is *required* to record the "not a production distributed ledger" limitation. `assess_persistent_trace_backend` lists missing guarantees and certifies nothing.
+**Why:** Overstating a local file/JSONL backend as production-grade durable storage would be a dangerous fake. Forcing the profile to describe posture from explicit flags, keeping durability checks unsupported for a volatile backend, and hard-coding that LOCAL_DURABLE is not a distributed ledger keeps the persistence story an honest assessment that P5-G can seal against.
+
 ## 2026-07-05 - P5-TRACE-E Projection Feed / Golden Thread / Replay Readiness
 
 ### DEC-P5TRACEE-01: A projection feed reflects resolver truth and never assigns TRACE_VERIFIED

@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-F Privacy / Export / Persistent Backend Integrity Validation (COMPLETE, lean)
+
+P5-TRACE-F adds three read-only privacy/export/integrity modules over the P5-E
+material; it does not modify runtime execution and touches only `aurel_trace/`.
+Lean focused validation applies; the full `tests/aurel_trace` suite and legacy
+trace are run as regression. Results live in the P5-TRACE-F report's validation
+table (`agent/reports/P5_TRACE_F_PRIVACY_EXPORT_PERSISTENT_INTEGRITY.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_privacy_labels.py \
+  tests/aurel_trace/test_redacted_trace_view.py \
+  tests/aurel_trace/test_trace_export_manifest.py \
+  tests/aurel_trace/test_trace_audit_bundle.py \
+  tests/aurel_trace/test_persistent_integrity_profile.py \
+  tests/aurel_trace/test_privacy_export_boundaries.py \
+  -q
+# A–E + legacy trace regression (must stay green)
+.venv/bin/python -m pytest tests/aurel_trace tests/test_trace*.py -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P5-TRACE-E Projection Feed / Golden Thread / Replay Readiness Validation (COMPLETE, lean)
 
 P5-TRACE-E adds three read-only projection/causal modules over the P5-D resolver
