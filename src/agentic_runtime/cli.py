@@ -440,6 +440,12 @@ from .cli_modules.identity_commands import (
 from .cli_modules.exec_commands import (
     cmd_exec_status,
 )
+from .cli_modules.trace_commands import (
+    cmd_trace_audit,
+    cmd_trace_inspect,
+    cmd_trace_status,
+    cmd_trace_verify,
+)
 from .cli_modules.evaluation_commands import (
     cmd_evaluation_foundation_scope,
     cmd_evaluation_foundation_status,
@@ -1092,6 +1098,37 @@ def main(argv: list[str] | None = None) -> int:
         help="show AurelExec status read model (read-only JSON)",
     )
     p_exec_status.set_defaults(func=cmd_exec_status)
+
+    # P5-TRACE-D — AurelTrace TRACE_VERIFIED resolver / query / CLI (read-only)
+    p_trace = sub.add_parser(
+        "trace",
+        help="P5 AurelTrace verification status (read-only)",
+    )
+    trace_sub = p_trace.add_subparsers(dest="trace_command", required=True)
+    p_trace_status = trace_sub.add_parser(
+        "status",
+        help="show TRACE_VERIFIED resolver decisions over the demo substrate",
+    )
+    p_trace_status.add_argument("--json", action="store_true", help="emit JSON")
+    p_trace_status.set_defaults(func=cmd_trace_status)
+    p_trace_verify = trace_sub.add_parser(
+        "verify",
+        help="show per-target trace verification summaries (read-only)",
+    )
+    p_trace_verify.add_argument("--json", action="store_true", help="emit JSON")
+    p_trace_verify.set_defaults(func=cmd_trace_verify)
+    p_trace_inspect = trace_sub.add_parser(
+        "inspect",
+        help="inspect one resolver decision by target id (read-only)",
+    )
+    p_trace_inspect.add_argument("--target", help="target id to inspect")
+    p_trace_inspect.set_defaults(func=cmd_trace_inspect)
+    p_trace_audit = trace_sub.add_parser(
+        "audit",
+        help="show the trace verification audit summary (read-only)",
+    )
+    p_trace_audit.add_argument("--json", action="store_true", help="emit JSON")
+    p_trace_audit.set_defaults(func=cmd_trace_audit)
 
     # P2.10-D — Shell terminal client parity binding
     p_shell = sub.add_parser(

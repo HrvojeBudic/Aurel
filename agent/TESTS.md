@@ -58,6 +58,35 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-D TRACE_VERIFIED Resolver / Query Read Model / CLI Validation (COMPLETE, lean)
+
+P5-TRACE-D adds the single `TRACE_VERIFIED` resolver gate, a read-only query
+model, and read-only `trace` CLI commands. It does not modify runtime execution;
+the only edit outside `aurel_trace/`/`cli_modules/` is the additive `trace`
+subcommand registration in `cli.py`. Lean focused validation applies; the full
+`tests/aurel_trace` suite, legacy trace, and a CLI-adjacent subset are run as
+regression. Results live in the P5-TRACE-D report's validation table
+(`agent/reports/P5_TRACE_D_TRACE_VERIFIED_RESOLVER_QUERY_CLI.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace src/agentic_runtime/cli_modules tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_trace_verified_resolver.py \
+  tests/aurel_trace/test_trace_verified_overclaim_guard.py \
+  tests/aurel_trace/test_trace_query_read_model.py \
+  tests/aurel_trace/test_trace_cli_commands.py \
+  tests/aurel_trace/test_trace_cli_read_only_boundaries.py \
+  -q
+# A/B/C + legacy trace regression (must stay green)
+.venv/bin/python -m pytest tests/aurel_trace tests/test_trace*.py -q
+# CLI smoke (read-only, must exit 0, resolver-backed)
+.venv/bin/python -m agentic_runtime.cli trace status
+.venv/bin/python -m agentic_runtime.cli trace verify
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace src/agentic_runtime/cli_modules tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace src/agentic_runtime/cli_modules
+git status --short
+```
+
 ## P5-TRACE-C Runtime Submit Bridge / P3-P4 Binding / EvidenceRef Validation (COMPLETE, lean)
 
 P5-TRACE-C is an additive adapter/read-model pack: it adds no runtime execution

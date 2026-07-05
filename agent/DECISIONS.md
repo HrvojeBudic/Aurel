@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-D TRACE_VERIFIED Resolver / Query Read Model / CLI
+
+### DEC-P5TRACED-01: TRACE_VERIFIED may only be assigned by the P5 TraceVerifiedResolver, and it is a resolver-local status, not a TraceTruthLabel member
+**Decision:** `TRACE_VERIFIED` is added **only** as a member of the resolver-local `TraceVerificationStatus` enum in `trace_resolver.py`. It is **not** added to `TraceTruthLabel` (which remains, across P5-A/B/C/D, capped at `TRACE_INTEGRITY_VERIFIED`). Only a `TraceVerificationDecision` produced by `TraceVerifiedResolver`/`resolve_*` can carry the status, and `verified` is true iff `status is TRACE_VERIFIED` (enforced at construction; a TRACE_VERIFIED decision with any blocking finding or missing evidence is unconstructible). The query read model and CLI copy the status from decisions and cannot self-assign it.
+**Why:** The pack's critical failure mode is a fake `TRACE_VERIFIED`. Keeping the verdict out of the object-level truth vocabulary means no envelope/ref/receipt/binding can self-declare it — the only path to the status is the one resolver gate — and making `verified` structurally track the status removes any way to mint the flag without passing the gate.
+
+### DEC-P5TRACED-02: The gate requires corroboration beyond any single dimension — hash PASS, a receipt, an EvidenceRef, and a COMPLETE binding are each not enough
+**Decision:** The resolver's fail-closed ladder downgrades every single dimension: a passing hash result without a receipt caps at TRACE_BOUND; a PASS receipt with no corroborating required-evidence or binding caps at TRACE_BOUND; present evidence or a COMPLETE binding without an integrity proof is UNAVAILABLE; missing required evidence or a non-COMPLETE binding is PARTIAL; blocking findings or an unsupported/unknown schema decision are DENIED. TRACE_VERIFIED requires a PASS receipt **and** all required evidence present **and** COMPLETE binding coverage (when supplied) **and** a compatible schema decision (when supplied) **and** zero blocking findings — proven both negatively (overclaim-guard tests) and positively.
+**Why:** High-integrity verification needs a single authority that combines evidence, not distributed labels that each imply the whole. Proving what is *not* enough is as important as proving the pass path; the negative tests lock the gate against the four most tempting overclaims (hash pass, receipt, evidence ref, binding complete).
+
+### DEC-P5TRACED-03: The trace CLI and query model are read-only reporters; the resolver decides trace/evidence integrity only, not semantic/business/policy correctness
+**Decision:** `trace_resolver.py` and `trace_query.py` are pure (ast-swept: no runtime/exec/flow/policy/memory imports, no submit/dispatch/append fragments). The `trace` CLI (`status`/`verify`/`inspect`/`audit`) is read-only over a DEV_FIXTURE demo substrate, exposes no mutating subcommand, and a test cross-checks that it cannot print TRACE_VERIFIED for a target the resolver did not verify. Semantic, business, and policy correctness are explicitly UNAVAILABLE — the resolver verifies trace/evidence integrity only. `TRACE_VERIFIED` was not routed through `cli.py` beyond additive subcommand registration.
+**Why:** A CLI or query layer that could invent truth would defeat the single-authority design. Confining them to formatting resolver decisions, and stating plainly that integrity is not correctness, keeps the operator surface honest and prevents the resolver from drifting into a semantic/business/policy engine.
+
 ## 2026-07-05 - P5-TRACE-C Runtime Submit Bridge / P3-P4 Binding / EvidenceRef
 
 ### DEC-P5TRACEC-01: Bindings use closed-world source-object-kind descriptors, not live P3/P4 imports
