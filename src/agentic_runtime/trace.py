@@ -308,6 +308,10 @@ class PersistentTraceLedger:
         self._events: list[TraceEvent] = []
         self._checkpoint_head = GENESIS
         self._started_at = now()
+        # M1 — genesis world-state address (set only for retained runs). When
+        # None the metadata carries no initial_state_hash key (byte-identical to
+        # today); when set it makes fork-from-genesis verifiable.
+        self._initial_state_hash: Optional[str] = None
 
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.events_path.touch(exist_ok=True)
@@ -620,9 +624,24 @@ class PersistentTraceLedger:
         _append_jsonl(self.checkpoints_path, cp)
         self._checkpoint_head = cp["checkpoint_hash"]
 
+    def record_initial_state_hash(self, state_hash: str) -> None:
+        """Record the genesis world-state address in metadata (retained runs).
+
+        Additive: only ever called on a retained run's first submit. Non-retained
+        runs never invoke it, so their metadata is unchanged.
+        """
+        self._initial_state_hash = state_hash
+        status, final_status = "open", ""
+        if self.metadata_path.exists():
+            md = json.loads(self.metadata_path.read_text(encoding="utf-8"))
+            status = md.get("status", "open")
+            final_status = md.get("final_status", "")
+        self._write_metadata(status=status, final_status=final_status)
+
     def _load_existing(self) -> None:
         md = json.loads(self.metadata_path.read_text(encoding="utf-8"))
         self._started_at = md.get("started_at", now())
+        self._initial_state_hash = md.get("initial_state_hash")
         events = _load_jsonl(self.events_path)
         for ev in events:
             self._events.append(ev)
@@ -641,6 +660,8 @@ class PersistentTraceLedger:
             "checkpoint_every": self.checkpoint_every,
             "genesis_hash": GENESIS,
         }
+        if self._initial_state_hash is not None:
+            md["initial_state_hash"] = self._initial_state_hash
         self.metadata_path.write_text(
             json.dumps(md, indent=2, sort_keys=True),
             encoding="utf-8",
