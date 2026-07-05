@@ -189,6 +189,22 @@ def cmd_shell_read_model(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_shell_run_view(args: argparse.Namespace) -> int:
+    """SPINE-LIVE-4 — live operator view of a persisted spine run.
+
+    Reads the S3 persisted trace from disk; LIVE when a run exists, honest
+    UNAVAILABLE otherwise. Read-only: dispatches and mutates nothing.
+    """
+    from ..spine.shell_run_view import build_shell_run_view, format_shell_run_view_text
+
+    view = build_shell_run_view(args.trace_dir, args.run_id)
+    if args.json:
+        _print_json(view.to_dict())
+    else:
+        print(format_shell_run_view_text(view))
+    return 0 if view.shell_binding_live else 1
+
+
 def terminal_parity_dimension_names() -> list[str]:
     return [dimension.value for dimension in TerminalShellParityDimension]
 

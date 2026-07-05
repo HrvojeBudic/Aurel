@@ -148,6 +148,31 @@ class ModelRouter:
             self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
         ), "router"
 
+    def complete_with_evidence(
+        self, profile: str, system: str, user: str
+    ):
+        """SPINE-LIVE-0: ``complete()`` plus a live-with-evidence ref.
+
+        Additive over ``complete()`` — same completion path, plus a
+        ``ModelCallEvidenceRef`` proving a real model call happened. Refusals
+        are captured honestly and are never ``available``. Imported lazily so
+        the spine primitive stays optional and cycle-free.
+        """
+        from .spine.live_evidence import (
+            ModelCallEvidenceRef,
+            capture_model_call_evidence,
+        )
+
+        raw, model_name = self.complete(profile, system, user)
+        evidence: ModelCallEvidenceRef = capture_model_call_evidence(
+            profile=profile,
+            model_name=model_name,
+            system=system,
+            user=user,
+            raw_response=raw,
+        )
+        return raw, model_name, evidence
+
     def complete_structured(
         self,
         profile: str,

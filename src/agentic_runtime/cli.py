@@ -484,9 +484,11 @@ from .cli_modules.shell_commands import (
     cmd_shell_parity,
     cmd_shell_read_model,
     cmd_shell_run_modes,
+    cmd_shell_run_view,
     cmd_shell_status,
     cmd_shell_surfaces,
 )
+from .cli_modules.spine_commands import cmd_spine_run
 from .cli_modules.shell_permission_commands import (
     cmd_shell_permissions_actions,
     cmd_shell_permissions_clients,
@@ -1130,6 +1132,20 @@ def main(argv: list[str] | None = None) -> int:
     p_trace_audit.add_argument("--json", action="store_true", help="emit JSON")
     p_trace_audit.set_defaults(func=cmd_trace_audit)
 
+    # SPINE-LIVE-5 — end-to-end living thread (model->flow->exec->trace->shell)
+    p_spine = sub.add_parser(
+        "spine",
+        help="SPINE-LIVE end-to-end slice (governed live execution)",
+    )
+    spine_sub = p_spine.add_subparsers(dest="spine_command", required=True)
+    p_spine_run = spine_sub.add_parser(
+        "run", help="run the end-to-end spine slice and print evidence JSON"
+    )
+    p_spine_run.add_argument("--trace-dir", default=None, help="trace base dir")
+    p_spine_run.add_argument("--run-id", default=None, help="explicit run id")
+    p_spine_run.add_argument("--json", action="store_true", help="compact JSON")
+    p_spine_run.set_defaults(func=cmd_spine_run)
+
     # P2.10-D — Shell terminal client parity binding
     p_shell = sub.add_parser(
         "shell",
@@ -1160,6 +1176,17 @@ def main(argv: list[str] | None = None) -> int:
     p_shell_run_modes = shell_sub.add_parser("run-modes", help="list terminal run modes")
     p_shell_run_modes.add_argument("--json", action="store_true")
     p_shell_run_modes.set_defaults(func=cmd_shell_run_modes)
+
+    p_shell_run_view = shell_sub.add_parser(
+        "run-view",
+        help="SPINE-LIVE-4 live view of a persisted spine run (read-only)",
+    )
+    p_shell_run_view.add_argument("run_id", help="persisted trace run id")
+    p_shell_run_view.add_argument(
+        "--trace-dir", default=".traces", help="trace base dir (default .traces)"
+    )
+    p_shell_run_view.add_argument("--json", action="store_true")
+    p_shell_run_view.set_defaults(func=cmd_shell_run_view)
 
     p_shell_export = shell_sub.add_parser(
         "export-json",
