@@ -58,6 +58,36 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-C Runtime Submit Bridge / P3-P4 Binding / EvidenceRef Validation (COMPLETE, lean)
+
+P5-TRACE-C is an additive adapter/read-model pack: it adds no runtime execution
+path, does not modify `runtime.submit()`/`trace.py`/`aurel_exec`/`aurel_flow`,
+and its binding modules import no runtime/P3/P4 module (side-effect freedom is
+structural, proven by an ast source-sweep). Lean focused validation applies; the
+P5-A/B subset, legacy trace, and the P4 status projection are run as regression.
+Results live in the P5-TRACE-C report's validation table
+(`agent/reports/P5_TRACE_C_RUNTIME_SUBMIT_P3_P4_EVIDENCE_BINDING.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_evidence_refs.py \
+  tests/aurel_trace/test_runtime_submit_trace_bridge.py \
+  tests/aurel_trace/test_p3_trace_binding.py \
+  tests/aurel_trace/test_p4_trace_binding.py \
+  tests/aurel_trace/test_submit_bridge_boundaries.py \
+  -q
+# P5-A/B + legacy trace + P4 projection regression (must stay green)
+.venv/bin/python -m pytest \
+  tests/aurel_trace \
+  tests/test_trace*.py \
+  tests/aurel_exec/test_exec_status_projection.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P5-TRACE-B Receipts / Schema Registry / Submit Coverage Audit Validation (COMPLETE, lean)
 
 P5-TRACE-B is an additive, read-only pack over the P5-A foundation: it adds no

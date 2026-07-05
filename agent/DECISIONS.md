@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-C Runtime Submit Bridge / P3-P4 Binding / EvidenceRef
+
+### DEC-P5TRACEC-01: Bindings use closed-world source-object-kind descriptors, not live P3/P4 imports
+**Decision:** `P3TraceBinding`/`P4TraceBinding` and the runtime submit binding take a closed-world `source_object_kind` enum plus a string `source_object_id` — they do not import `aurel_flow`/`aurel_exec`/`runtime` and never accept live objects. The enum values name the real repo classes they reference (documented mapping incl. `RECOVERY_PLAN`→`BoundedRecoveryPlan`, `EXECUTION_FAILURE`→`FailureClassification`, `FLOW_SEAL_REPORT`→`P3DomainSeal`, `READY_CANDIDATE`→`ExecutionRequestCandidateSurface`). An `ast` source-sweep test proves the four modules contain no `AgenticRuntime`/`ToolRuntime`/`.submit(`/`.dispatch(`/`trace.append` call fragments and import only relative aurel_trace or stdlib modules.
+**Why:** The pack's critical failure mode is binding accidentally becoming runtime behavior. Not importing the runtime/P3/P4 execution modules at all makes "does not execute a workflow/job, does not dispatch, does not mutate scheduling" **structural** rather than merely tested — a binding physically cannot reach an execution path. Repo truth also differs from the prompt's conceptual class names, so descriptors avoid brittle coupling to exact class shapes while the documented mapping keeps P5-D able to resolve them.
+
+### DEC-P5TRACEC-02: An EvidenceRef references evidence; it is not verification and grants no authority
+**Decision:** `EvidenceRef` has a deterministic id, a closed-world `EvidenceKind`, and an `EvidenceStatus`. `PRESENT`/`TRACE_BOUND` do not imply verification; the `TRACE_INTEGRITY_VERIFIED` truth label is constructible **only** when backed by an explicit `verification_receipt_id`; `MISSING`/`UNSUPPORTED` refs must carry a reason; unknown evidence kinds fail closed. There is no `TRACE_VERIFIED` label and `evidence_ref_has_no_authority` holds.
+**Why:** High-risk automation needs explicit, referenceable evidence objects, but an evidence reference must not masquerade as a verification verdict or a permission. Gating the integrity label on a real receipt keeps hash-chain integrity (from P5-A/B) as the only route to that label, and leaving broad `TRACE_VERIFIED` unavailable defers the actual verification verdict to the P5-TRACE-D resolver.
+
+### DEC-P5TRACEC-03: A COMPLETE binding coverage is not TRACE_VERIFIED, and missing evidence stays explicit
+**Decision:** `TraceBindingCoverageStatus` (COMPLETE/PARTIAL/MISSING/UNSUPPORTED/ERROR) is derived from the binding's evidence refs (COMPLETE iff all present, MISSING iff none, else PARTIAL). Bindings keep their truth label `TRACE_BOUND` regardless of coverage, and the runtime submit binding built from the real P5-B report is honestly PARTIAL — its 2 missing + 5 partial evidence refs are preserved with reasons, not hidden. `submits_command`/`calls_tool`/`appends_trace`/`authorizes`/`trace_verified` (runtime) and the P3/P4 execution booleans are unconstructible True.
+**Why:** "COMPLETE coverage" is structural completeness of the binding for the current schema — it is a precondition for verification, not verification itself. Overclaiming it as `TRACE_VERIFIED` would repeat exactly the overclaim the P5 vocabulary was designed to forbid. Surfacing missing evidence explicitly makes P5-TRACE-D's bridge work evidence-driven rather than faked.
+
 ## 2026-07-05 - P5-TRACE-B Receipts / Schema Registry / Submit Coverage Audit
 
 ### DEC-P5TRACEB-01: A receipt is portable verification evidence, never ledger truth or semantic correctness, and never upgrades a FAIL
