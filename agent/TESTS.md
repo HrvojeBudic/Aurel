@@ -58,6 +58,31 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-G P5 Exit Seal / P6-P8-P9 Handoff Validation (COMPLETE — P5 SEALED)
+
+P5-TRACE-G adds two read-only meta-modules (`p5_seal.py`, `p5_handoff.py`) that
+seal P5 over the six P5-A→F reports; it does not modify runtime and touches only
+`aurel_trace/`. Lean focused validation applies; the full `tests/aurel_trace`
+suite and legacy trace are run as regression. Results live in the P5-TRACE-G
+report (`agent/reports/P5_TRACE_G_EXIT_SEAL_P6_P8_P9_HANDOFF.md`) and the release
+evidence (`agent/releases/P5_TRACE_EXIT_SEAL.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_p5_trace_seal.py \
+  tests/aurel_trace/test_p5_capability_coverage_matrix.py \
+  tests/aurel_trace/test_p5_truth_label_audit.py \
+  tests/aurel_trace/test_p5_handoff_contracts.py \
+  tests/aurel_trace/test_p5_exit_seal_boundaries.py \
+  -q
+# A–F + legacy trace regression (must stay green)
+.venv/bin/python -m pytest tests/aurel_trace tests/test_trace*.py -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P5-TRACE-F Privacy / Export / Persistent Backend Integrity Validation (COMPLETE, lean)
 
 P5-TRACE-F adds three read-only privacy/export/integrity modules over the P5-E

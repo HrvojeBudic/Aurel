@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-G P5 Exit Seal / P6-P8-P9 Handoff
+
+### DEC-P5TRACEG-01: The P5 exit seal is evidence-backed v1 contract closure, derived never declared, and BLOCKS on missing evidence or overclaim
+**Decision:** `P5ExitSealReport.seal_status` is computed by `_derive_seal_status` from four inputs — the seal checklist (BLOCKED if any of the six P5-A→F reports is absent), the truth-label audit (must pass with no BLOCKING finding), the presence of all three P6/P8/P9 handoff contracts, and the capability matrix (no blocked rows). SEALED is never a self-assigned boolean, and the report's `claims_production_readiness`/`claims_legal_compliance`/`claims_replay_live`/`claims_p6/p8/p9_implemented` are unconstructible True. Report presence is discovered read-only via `Path.exists()`.
+**Why:** The pack's critical failure is a fake seal or fake production maturity. Deriving the verdict from checked evidence — and hard-blocking on a missing report or a blocking overclaim — means P5 can only be sealed when its contract scope is actually present and honestly labeled. SEALED means v1 trace/evidence contract closure, not a production or platform seal.
+
+### DEC-P5TRACEG-02: The truth-label audit enumerates the forbidden-live surfaces; any claimed live is a blocking overclaim
+**Decision:** `build_p5_truth_label_audit` checks a closed set of ten surfaces that MUST be unavailable (trace_verified-as-label, replay, external export/compliance, production durability, Shell/API, P6/P8/P9 implementation, policy authority, object-plane ownership). Any surface claimed live yields a BLOCKING `P5TruthLabelFinding` of the matching kind, which blocks the seal; the honest default (nothing claimed live) passes. A passed audit cannot carry a blocking finding (enforced).
+**Why:** Downstream domains must not inherit fake labels — a fake TRACE_VERIFIED, fake replay, fake compliance, or fake production durability would poison P6/P8/P9. Making the overclaim set explicit and blocking keeps the seal honest and gives the audit a concrete, testable contract.
+
+### DEC-P5TRACEG-03: Handoff contracts describe boundaries and do not implement P6/P8/P9; provided artifacts are named by string
+**Decision:** `P5HandoffContract.implements_target_domain` is unconstructible True, and `p5_handoff.py` references the provided P5 artifacts (TraceRunRef, EvidenceRef, TraceExportManifest, …) by **string name** rather than importing them — so it instantiates nothing from P6/P8/P9 and stays a pure boundary description. Each contract lists provided artifacts, downstream-owned work (ObjectRef/DataRef for P6, model routing for P8, policy enforcement for P9), required invariants, consumption rules, unavailable claims, and risks.
+**Why:** A handoff that imported or instantiated downstream code could drift into implementing it. Keeping the contracts string-named and side-effect-free makes "P5 does not implement P6/P8/P9" structural, while still giving those domains an explicit, machine-readable list of what they may safely consume and what they must own.
+
 ## 2026-07-05 - P5-TRACE-F Privacy / Export / Persistent Backend Integrity
 
 ### DEC-P5TRACEF-01: A RedactedTraceView is a safe read model that never mutates source; UNKNOWN/LOCAL_ONLY/SECRET/EXPORT_RESTRICTED fail closed
