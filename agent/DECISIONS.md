@@ -1,5 +1,23 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-B Receipts / Schema Registry / Submit Coverage Audit
+
+### DEC-P5TRACEB-01: A receipt is portable verification evidence, never ledger truth or semantic correctness, and never upgrades a FAIL
+**Decision:** `TraceVerificationReceipt` derives from an actual P5-A `TraceHashVerificationResult` and preserves its `status`/`verified`/`finding_count`. `verified` is true **iff** the source status is `PASS` (enforced at construction), only a PASS-derived receipt may carry `TRACE_INTEGRITY_VERIFIED`, and every other receipt is `TRACE_BOUND`. `TraceCheckpointReceipt` is buildable only from a PASS receipt and its `is_replay_checkpoint`/`is_snapshot_restore`/`enables_workflow_fork` are unconstructible True. No `TRACE_VERIFIED` label exists to claim.
+**Why:** The named failure mode of this pack is treating a receipt as ledger truth, semantic approval, or replay state. Making a receipt a strict derivation that cannot upgrade a FAIL, cannot mint a stronger label than its source, and cannot claim replay keeps it honest portable evidence — it proves only that a verification result was produced for a scope and chain head.
+
+### DEC-P5TRACEB-02: Receipt hashes are deterministic and timestamp-free
+**Decision:** `receipt_hash`, `range_hash`, and the checkpoint/head receipt hashes are stable canonical JSON (sorted keys) over the verification material; the nondeterministic `created_at` is metadata only and excluded from hash material (proven: two receipts with different `created_at` share a hash). Changing the chain head or the event count changes the receipt identity.
+**Why:** Portable evidence must be referenceable and reproducible; folding wall-clock time into the hash would make the same verification hash differently across runs, defeating the point of a receipt.
+
+### DEC-P5TRACEB-03: The schema registry is closed-world with no silent fallback, and the upcaster is declared-only — not a migration engine
+**Decision:** `TraceSchemaRegistry` is seeded from the P5-A `ExistingTraceInventory` (nine `core_types` records SUPPORTED, `AurelTraceLog` UNSUPPORTED) so the two layers cannot drift. `registry.decide()` returns an explicit `TraceSchemaCompatibilityDecision` — an unknown record type yields `UNKNOWN` with a reason even when the caller passes the default version (no silent fallback), unsupported yields `UNSUPPORTED` with a reason, and every non-COMPATIBLE decision must carry a reason. `TraceEventUpcasterContract` defaults to `DECLARED_ONLY`, cannot be `SUPPORTED` in P5-B, and cannot claim `rewrites_records`/`migrates_records`. `silent_fallback_used`/`is_migration_engine` are unconstructible True.
+**Why:** Silent compatibility is dangerous — an unknown schema slipping through as the default would let unverifiable records masquerade as verifiable. Declaring the upcaster boundary before implementing any upcaster keeps the registry a schema-contract layer and defers real historical-record migration (which would rewrite old records) to a later, explicitly-scoped pack.
+
+### DEC-P5TRACEB-04: The submit trace coverage audit is read-only diagnostic, not runtime integration; missing evidence is P5-C handoff
+**Decision:** `SubmitTraceCoverageAudit` is derived from a documented evidence map grounded in a read-only inspection of the submit path; it performs no ledger writes, imports no runtime side-effect path, and its `modifies_submit`/`adds_trace_append`/`is_bridge` are unconstructible True. It classifies all 14 `SubmitEvidenceRequirementKind`s (7 covered / 5 partial / 2 missing), and `SubmitTraceCoverageReport` turns every gap into an explicit `SubmitTraceGap` P5-C recommendation, reporting `coverage_percent` honestly below 100% while it cannot claim complete coverage over a required gap. `runtime.submit()` was not modified.
+**Why:** The critical risk is the audit becoming integration — modifying submit to make coverage look complete. Keeping it a deterministic read-only mapping, with the several PARTIAL/MISSING kinds surfaced as explicit handoff material rather than hidden, makes P5-TRACE-C evidence-driven: bridge the named gaps, do not fake completion.
+
 ## 2026-07-04 - P5-TRACE-A Existing Trace Inventory / Doctrine / Canonical Envelope / TraceRef / Hash Verification
 
 ### DEC-P5TRACEA-01: P5 is an adapter over the existing ledger, reusing its own hash truth — not a second trace engine

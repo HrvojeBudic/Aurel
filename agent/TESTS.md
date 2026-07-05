@@ -58,6 +58,36 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-B Receipts / Schema Registry / Submit Coverage Audit Validation (COMPLETE, lean)
+
+P5-TRACE-B is an additive, read-only pack over the P5-A foundation: it adds no
+runtime execution path and does not modify `runtime.submit()`, `trace.py`, or any
+kernel module, so lean focused validation applies (no full-suite obligation). The
+P5-A subset and the legacy trace subset are run as regression to prove nothing
+broke. Results live in the P5-TRACE-B report's validation table
+(`agent/reports/P5_TRACE_B_RECEIPTS_SCHEMA_SUBMIT_COVERAGE.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_trace_receipts.py \
+  tests/aurel_trace/test_trace_schema_registry.py \
+  tests/aurel_trace/test_trace_schema_compatibility.py \
+  tests/aurel_trace/test_submit_trace_coverage_audit.py \
+  tests/aurel_trace/test_submit_trace_coverage_report.py \
+  -q
+# P5-A + legacy trace regression (must stay green)
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_trace_hash_verification.py \
+  tests/aurel_trace/test_canonical_trace_envelope.py \
+  tests/aurel_trace/test_trace_refs.py \
+  tests/test_trace*.py \
+  -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P5-TRACE-A Trace Inventory / Doctrine / Envelope / Refs / Hash Verification Validation (COMPLETE, lean)
 
 P5-TRACE-A is an adapter-only pack over the existing trace ledger: it adds no
