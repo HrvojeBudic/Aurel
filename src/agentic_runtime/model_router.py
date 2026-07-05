@@ -338,7 +338,7 @@ class ModelRouter:
 
     def _provider_enabled(self, provider: ProviderProfile) -> bool:
         runtime = self._config.runtime
-        if provider.type not in {"mock", "ollama", "openai", "anthropic"}:
+        if provider.type not in {"mock", "ollama", "openai", "anthropic", "deepseek"}:
             return runtime.allow_unconfigured_providers
         if runtime.local_only and provider.is_remote:
             return False
@@ -446,6 +446,9 @@ def create_provider(name: str | None) -> ModelProvider:
     if provider == "ollama":
         from .model_providers.ollama_provider import OllamaProvider
         return OllamaProvider()
+    if provider == "deepseek":
+        from .model_providers.deepseek_provider import DeepSeekProvider
+        return DeepSeekProvider()
     return MockProvider(
         ModelProviderConfig(provider_name="mock", model_name="mock-deterministic"),
         failure_mode="refusal",
@@ -488,6 +491,9 @@ def create_provider_from_profile(
     if profile.type == "ollama":
         from .model_providers.ollama_provider import OllamaProvider
         return OllamaProvider(config)
+    if profile.type == "deepseek":
+        from .model_providers.deepseek_provider import DeepSeekProvider
+        return DeepSeekProvider(config)
     return MockProvider(config, failure_mode="refusal")
 
 

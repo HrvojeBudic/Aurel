@@ -121,6 +121,41 @@ def _auto_hard_sandbox() -> Any | None:
     return _try_backend(BubblewrapSandbox) or _try_backend(DockerSandbox)
 
 
+_DEEPSEEK_MODELS = {
+    "pro": "deepseek-v4-pro",
+    "flash": "deepseek-v4-flash",
+    "deepseek-v4-pro": "deepseek-v4-pro",
+    "deepseek-v4-flash": "deepseek-v4-flash",
+}
+
+
+def build_deepseek_client(model: str = "deepseek-v4-pro") -> Any:
+    """Build a live DeepSeek model client for the spine cognition leg.
+
+    ``model`` accepts ``pro``/``flash`` shorthands or full ids. The provider
+    reads ``DEEPSEEK_API_KEY`` from the environment; without it the call fails
+    closed to a refusal (non-available evidence), never a fake plan.
+    """
+    from ..model_providers.base import ModelProviderConfig
+    from ..model_providers.deepseek_provider import (
+        DEEPSEEK_API_KEY_ENV,
+        DEEPSEEK_DEFAULT_BASE_URL,
+        DeepSeekProvider,
+    )
+    from ..model_router import ProviderModelClient
+
+    model_id = _DEEPSEEK_MODELS.get(model, model)
+    provider = DeepSeekProvider(
+        ModelProviderConfig(
+            provider_name="deepseek",
+            model_name=model_id,
+            api_key_env=DEEPSEEK_API_KEY_ENV,
+            base_url=DEEPSEEK_DEFAULT_BASE_URL,
+        )
+    )
+    return ProviderModelClient(provider)
+
+
 def _model_leg(model_client: Any | None) -> ModelCallEvidenceRef:
     router = ModelRouter()
     router.register("balanced", [model_client or MockModelClient()])
@@ -229,4 +264,5 @@ __all__ = [
     "SPINE_SLICE_RESULT_VERSION",
     "SpineSliceResult",
     "run_spine_slice",
+    "build_deepseek_client",
 ]

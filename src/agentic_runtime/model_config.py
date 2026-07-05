@@ -9,8 +9,10 @@ from typing import Any, Optional
 from .secrets import SecretBoundaryViolation, assert_no_raw_secrets_in_yaml
 from .yaml_minimal import YamlParseError, load_yaml
 
-SUPPORTED_PROVIDER_TYPES = frozenset({"mock", "ollama", "openai", "anthropic"})
-REMOTE_PROVIDER_TYPES = frozenset({"openai", "anthropic"})
+SUPPORTED_PROVIDER_TYPES = frozenset(
+    {"mock", "ollama", "openai", "anthropic", "deepseek"}
+)
+REMOTE_PROVIDER_TYPES = frozenset({"openai", "anthropic", "deepseek"})
 LOCAL_PROVIDER_TYPES = frozenset({"mock", "ollama"})
 
 

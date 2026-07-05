@@ -34,3 +34,14 @@ providers:
     default_model_env: AUREL_ANTHROPIC_MODEL
     default_base_url: https://api.anthropic.com
     default_model: claude-3-5-haiku-latest
+
+  deepseek:
+    type: deepseek
+    description: DeepSeek remote API (OpenAI-compatible; requires DEEPSEEK_API_KEY)
+    residency: remote
+    api_key_env: DEEPSEEK_API_KEY
+    base_url_env: AUREL_DEEPSEEK_BASE_URL
+    default_model_env: AUREL_DEEPSEEK_MODEL
+    default_base_url: https://api.deepseek.com
+    # v4-pro = strongest; v4-flash = fast/cheap (legacy chat/reasoner retired 2026-07-24)
+    default_model: deepseek-v4-pro

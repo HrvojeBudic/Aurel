@@ -1143,6 +1143,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_spine_run.add_argument("--trace-dir", default=None, help="trace base dir")
     p_spine_run.add_argument("--run-id", default=None, help="explicit run id")
+    p_spine_run.add_argument(
+        "--live", action="store_true",
+        help="use DeepSeek for the cognition leg (needs DEEPSEEK_API_KEY)",
+    )
+    p_spine_run.add_argument(
+        "--model", default="pro",
+        help="live model: pro (deepseek-v4-pro) | flash (deepseek-v4-flash)",
+    )
     p_spine_run.add_argument("--json", action="store_true", help="compact JSON")
     p_spine_run.set_defaults(func=cmd_spine_run)
 
