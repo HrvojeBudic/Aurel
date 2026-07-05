@@ -58,6 +58,30 @@ Run full pytest/coverage/Bandit only when:
 
 Docs-only patches (agent reports/state) require `git status --short` verification only.
 
+## P5-TRACE-E Projection Feed / Golden Thread / Replay Readiness Validation (COMPLETE, lean)
+
+P5-TRACE-E adds three read-only projection/causal modules over the P5-D resolver
+decisions; it does not modify runtime execution and touches only `aurel_trace/`.
+Lean focused validation applies; the full `tests/aurel_trace` suite and legacy
+trace are run as regression. Results live in the P5-TRACE-E report's validation
+table (`agent/reports/P5_TRACE_E_PROJECTION_FEED_GOLDEN_THREAD_REPLAY_READINESS.md`).
+
+```bash
+.venv/bin/python -m compileall src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m pytest \
+  tests/aurel_trace/test_trace_projection_feed.py \
+  tests/aurel_trace/test_golden_thread.py \
+  tests/aurel_trace/test_causal_graph_read_only.py \
+  tests/aurel_trace/test_replay_readiness.py \
+  tests/aurel_trace/test_projection_feed_boundaries.py \
+  -q
+# A–D + legacy trace regression (must stay green)
+.venv/bin/python -m pytest tests/aurel_trace tests/test_trace*.py -q
+.venv/bin/python -m ruff check src/agentic_runtime/aurel_trace tests/aurel_trace
+.venv/bin/python -m mypy src/agentic_runtime/aurel_trace
+git status --short
+```
+
 ## P5-TRACE-D TRACE_VERIFIED Resolver / Query Read Model / CLI Validation (COMPLETE, lean)
 
 P5-TRACE-D adds the single `TRACE_VERIFIED` resolver gate, a read-only query

@@ -1,5 +1,19 @@
 # Decisions Log
 
+## 2026-07-05 - P5-TRACE-E Projection Feed / Golden Thread / Replay Readiness
+
+### DEC-P5TRACEE-01: A projection feed reflects resolver truth and never assigns TRACE_VERIFIED
+**Decision:** `TraceProjectionFeedEntry` copies a P5-D `TraceVerificationDecision`'s `status`, `verified`, `missing_evidence`, and `blocking_findings` verbatim; its own `truth_label` is `LIVE` and the resolver verdict travels only in `verification_status`. `verified` is enforced to be true iff `verification_status is TRACE_VERIFIED`, so an entry cannot claim verified unless its source decision did. The feed builders take already-made decisions and never call the resolver, and `TraceProjectionFeed.is_api_server`/`is_event_bus`/`is_shell_ui`/`mutates` are unconstructible True.
+**Why:** The pack's critical failure mode is a feed that fabricates projection truth or becomes a live surface. Making entries a strict verbatim reflection of resolver decisions — and keeping the feed a read model that is provably not an API/event bus/Shell UI — means the single resolver gate from P5-D remains the only source of `TRACE_VERIFIED`, and future consumers can package trace truth without minting it.
+
+### DEC-P5TRACEE-02: The Golden Thread / causal graph is diagnostic; it never executes, schedules, or replays
+**Decision:** `GoldenThreadSegment`/`GoldenThreadRef` are `TRACE_BOUND` link refs with explicit `missing_links`; `CausalGraphNode`/`CausalGraphEdge` use closed-world kinds that fail closed on unknown values, and a `MISSING_LINK` edge must carry a reason. `GoldenThreadGraph.executes`/`schedules`/`replays`/`mutates`/`repairs` are unconstructible True. `build_causal_graph` derives nodes and CAUSED/MISSING_LINK edges from segments without touching any source object.
+**Why:** Graph-shaped causal models are valuable for operator audit but dangerous if they drift into execution DAGs, schedulers, or planners. Locking the graph as a diagnostic read model, and surfacing missing causal links rather than silently bridging them, keeps the Golden Thread an honest causal story rather than a control surface.
+
+### DEC-P5TRACEE-03: ReplayReadinessAssessment READY_FOR_ANALYSIS does not mean replay is implemented; actual replay stays UNAVAILABLE
+**Decision:** `ReplayReadinessAssessment.replay_implemented`/`supports_fork`/`supports_exact_copy`/`supports_state_restore`/`executes` are unconstructible True, and every assessment — including a `READY_FOR_ANALYSIS` one — carries an `unavailable_reason` stating that actual replay/fork/exact-copy/state-restore is not implemented. `TraceTimeSliceRef` is a range pointer whose `is_replay`/`is_snapshot`/`is_state_restore`/`is_fork` are unconstructible and whose inverted ranges fail closed. `assess_replay_readiness` downgrades over the closed-world input set (UNSUPPORTED / MISSING_REQUIRED_DATA / PARTIAL) rather than overclaiming.
+**Why:** The most tempting overclaim in this pack is treating readiness as replay. Separating "structurally analyzable later" (`READY_FOR_ANALYSIS`) from "replay works" — and keeping every replay/restore/fork capability structurally False with an explicit unavailable reason — lets P5 prepare for future replay tooling without ever pretending replay exists.
+
 ## 2026-07-05 - P5-TRACE-D TRACE_VERIFIED Resolver / Query Read Model / CLI
 
 ### DEC-P5TRACED-01: TRACE_VERIFIED may only be assigned by the P5 TraceVerifiedResolver, and it is a resolver-local status, not a TraceTruthLabel member
