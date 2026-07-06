@@ -33,6 +33,15 @@ jobs:
       - name: Mypy type check
         run: mypy src/agentic_runtime
 
+      - name: Lint/type debt ratchet (may only shrink)
+        run: python scripts/lint_ratchet.py --check
+
+      - name: Architectural guards (doc registry + governance resolver)
+        run: python scripts/governance_guards.py --check
+
+      - name: Host capability report (informative)
+        run: python -m agentic_runtime.cli doctor --json || true
+
       - name: Run tests with coverage
         run: pytest -q --cov=agentic_runtime --cov-report=term-missing --cov-fail-under=75
 

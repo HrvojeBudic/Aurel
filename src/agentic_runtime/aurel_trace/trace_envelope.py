@@ -24,6 +24,7 @@ from ..core_types import (
     PlanningFailureRecord,
     PraxisEventRecord,
     RuntimeStatusTransitionRecord,
+    SandboxAttestationRecord,
     SandboxViolationRecord,
     StateTransitionRecord,
     ToolContractViolationRecord,
@@ -57,6 +58,7 @@ SUPPORTED_RECORD_EVENT_KINDS: dict[str, str] = {
     ApprovalReceiptRecord.__name__: "approval_receipt",
     PraxisEventRecord.__name__: "praxis_event",
     SandboxViolationRecord.__name__: "sandbox_violation",
+    SandboxAttestationRecord.__name__: "sandbox_attestation",
 }
 
 

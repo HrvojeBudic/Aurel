@@ -39,15 +39,7 @@ class AlphaSealReport:
         }
 
 
-_REQUIRED_DOCS = (
-    "README.md",
-    "agent/ARCHITECTURE.md",
-    "agent/STATE.md",
-    "agent/ROADMAP.md",
-    "agent/TESTS.md",
-    "agent/P1_0_ALPHA_SEAL.md",
-    "docs/DEPLOYMENT.md",
-)
+from .doc_registry import alpha_seal_required_paths
 
 _REQUIRED_CI = ".github/workflows/ci.yml"
 
@@ -67,10 +59,9 @@ def run_alpha_seal(
     root = repo_root or _repo_root()
     checks: list[SealCheck] = []
 
-    for rel in _REQUIRED_DOCS:
-        path = root / rel
+    for label, path in alpha_seal_required_paths():
         checks.append(SealCheck(
-            name=f"doc:{rel}",
+            name=f"doc:{label}",
             passed=path.is_file(),
             detail="present" if path.is_file() else "missing",
         ))

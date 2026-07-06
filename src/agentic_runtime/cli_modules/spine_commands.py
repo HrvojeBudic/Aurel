@@ -40,6 +40,38 @@ def cmd_spine_run(args: argparse.Namespace) -> int:
     return 0 if result.spine_live else 1
 
 
+def cmd_spine_replay(args: argparse.Namespace) -> int:
+    """Record a run's model I/O then replay it from the cassette — no network.
+
+    Determinism is reported at the governed-mutation world-state level: every
+    write node must reproduce the same ``after_state_hash`` and every node the
+    same outcome, driving the model from the cassette alone. Uses a real hard
+    sandbox when available, else an honest UNAVAILABLE.
+    """
+    import tempfile
+
+    from ..spine.harness import _auto_hard_sandbox, replay_spine_run
+
+    trace_dir = args.trace_dir or tempfile.mkdtemp(prefix="spine_replay_")
+
+    def _factory():
+        sbx = _auto_hard_sandbox()
+        if sbx is None:
+            from ..sandbox import UnsafeLocalSandbox
+
+            # honest: unsafe local can still demonstrate replay determinism of
+            # mutations, but it is not a security boundary.
+            sbx = UnsafeLocalSandbox()
+        return sbx
+
+    kwargs = {"plan_driven": bool(getattr(args, "plan_driven", False))}
+    if getattr(args, "goal", None):
+        kwargs["goal"] = args.goal
+    report = replay_spine_run(trace_dir=trace_dir, sandbox_factory=_factory, **kwargs)
+    print(json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 0 if report["deterministic"] else 1
+
+
 def cmd_spine_serve(args: argparse.Namespace) -> int:
     """Launch the local SPINE-LIVE web console (blocking)."""
     from ..spine.webui import serve_spine_ui

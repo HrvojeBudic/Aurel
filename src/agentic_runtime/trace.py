@@ -9,17 +9,26 @@ from __future__ import annotations
 
 import json
 import os
+import threading
+from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterator, Optional, Protocol, Union
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Protocol, Union
+
+try:
+    import fcntl  # POSIX advisory file locking for cross-process single-writer
+except ImportError:  # pragma: no cover - non-POSIX
+    fcntl = None  # type: ignore[assignment]
 
 if TYPE_CHECKING:
     from .worldline import ForkRef
+    from .trace_anchor import AnchorSink
 
 from .core_types import (
     ApprovalReceiptRecord,
     BudgetDecisionRecord,
     MemoryGovernanceRecord,
     PraxisEventRecord,
+    SandboxAttestationRecord,
     SandboxViolationRecord,
     RuntimeStatusTransitionRecord,
     PlanningFailureRecord,
@@ -43,10 +52,15 @@ TraceEntry = Union[
     ApprovalReceiptRecord,
     PraxisEventRecord,
     SandboxViolationRecord,
+    SandboxAttestationRecord,
 ]
 TraceEvent = dict[str, Any]
 
 GENESIS = sha("AGENTIC_RUNTIME_GENESIS")
+
+
+class TraceOwnershipError(RuntimeError):
+    """Raised when a second process appends to an open run it does not own."""
 
 
 class TraceLedgerBackend(Protocol):
@@ -65,6 +79,7 @@ class TraceLedgerBackend(Protocol):
     def append_approval_receipt(self, rec: ApprovalReceiptRecord) -> ApprovalReceiptRecord: ...
     def append_praxis_event(self, rec: PraxisEventRecord) -> PraxisEventRecord: ...
     def append_sandbox_violation(self, rec: SandboxViolationRecord) -> SandboxViolationRecord: ...
+    def append_sandbox_attestation(self, rec: SandboxAttestationRecord) -> SandboxAttestationRecord: ...
     def planning_failures(self) -> list[PlanningFailureRecord]: ...
     def verify_chain(self) -> tuple[bool, Optional[int]]: ...
     def replay(self) -> Iterator[dict]: ...
@@ -145,6 +160,14 @@ class InMemoryTraceLedger:
         return rec
 
     def append_sandbox_violation(self, rec: SandboxViolationRecord) -> SandboxViolationRecord:
+        rec.prev_entry_hash = self.head
+        rec.entry_hash = sha(rec.prev_entry_hash, rec.payload_hash())
+        self._entries.append(rec)
+        return rec
+
+    def append_sandbox_attestation(
+        self, rec: SandboxAttestationRecord
+    ) -> SandboxAttestationRecord:
         rec.prev_entry_hash = self.head
         rec.entry_hash = sha(rec.prev_entry_hash, rec.payload_hash())
         self._entries.append(rec)
@@ -246,6 +269,16 @@ class InMemoryTraceLedger:
                     "reason": rec.reason,
                     "path": rec.attempted_path,
                 }
+            elif isinstance(rec, SandboxAttestationRecord):
+                yield {
+                    "kind": "sandbox_attestation",
+                    "backend": rec.backend,
+                    "available": rec.available,
+                    "hard_isolated": rec.hard_isolated,
+                    "reason": rec.reason,
+                    "probe": rec.probe,
+                    "host": rec.host,
+                }
             else:
                 yield {
                     "kind": "state_transition",
@@ -299,10 +332,16 @@ class PersistentTraceLedger:
         run_id: Optional[str] = None,
         checkpoint_every: int = 5,
         parent_ref: "ForkRef | None" = None,
+        anchor_sink: "AnchorSink | None" = None,
     ) -> None:
         self.base_dir = Path(base_dir)
         self.run_id = run_id or new_id("run")
         self.checkpoint_every = max(1, int(checkpoint_every))
+        # M2 — serialize the append path (head read → event build → jsonl write)
+        # so concurrent writers can never interleave sequence numbers. The
+        # in-process lock guards threads; the advisory file lock guards processes.
+        self._append_lock = threading.RLock()
+        self._anchor_sink = anchor_sink
         self.run_dir = self.base_dir / "runs" / self.run_id
         self.events_path = self.run_dir / "events.jsonl"
         self.checkpoints_path = self.run_dir / "checkpoints.jsonl"
@@ -335,99 +374,86 @@ class PersistentTraceLedger:
     def head(self) -> str:
         return self._events[-1]["entry_hash"] if self._events else self._genesis
 
-    def append(self, rec: StateTransitionRecord) -> StateTransitionRecord:
-        rec.prev_entry_hash = self.head
-        event = _state_transition_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
+    @contextmanager
+    def _write_guard(self) -> Iterator[None]:
+        """Serialize the append path within and across processes.
+
+        The in-process ``RLock`` prevents thread interleaving; an advisory
+        exclusive lock on the events file prevents a second process from
+        interleaving sequence numbers. Cross-process ownership is enforced so a
+        stale second writer fails closed rather than corrupting the chain.
+        """
+        with self._append_lock:
+            lock_fh = None
+            if fcntl is not None:
+                lock_fh = open(self.events_path, "a", encoding="utf-8")
+                try:
+                    fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+                except OSError as e:  # pragma: no cover - platform dependent
+                    lock_fh.close()
+                    raise TraceOwnershipError(
+                        f"could not acquire trace write lock: {e}"
+                    ) from e
+            try:
+                yield
+            finally:
+                if lock_fh is not None:
+                    try:
+                        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
+                    finally:
+                        lock_fh.close()
+
+    def _locked_append(
+        self,
+        build_event: Callable[[str, int, Any], TraceEvent],
+        rec: Any,
+    ) -> Any:
+        """Atomic append: head read → event build → jsonl write → checkpoint."""
+        with self._write_guard():
+            rec.prev_entry_hash = self.head
+            event = build_event(self.run_id, len(self._events) + 1, rec)
+            rec.entry_hash = event["entry_hash"]
+            self._events.append(event)
+            self._entries.append(rec)
+            _append_jsonl(self.events_path, event)
+            self._maybe_checkpoint(event)
         return rec
 
+    def append(self, rec: StateTransitionRecord) -> StateTransitionRecord:
+        return self._locked_append(_state_transition_event, rec)
+
     def append_planning_failure(self, rec: PlanningFailureRecord) -> PlanningFailureRecord:
-        rec.prev_entry_hash = self.head
-        event = _planning_failure_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_planning_failure_event, rec)
 
     def append_status_transition(
         self, rec: RuntimeStatusTransitionRecord
     ) -> RuntimeStatusTransitionRecord:
-        rec.prev_entry_hash = self.head
-        event = _runtime_status_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_runtime_status_event, rec)
 
     def append_budget_decision(self, rec: BudgetDecisionRecord) -> BudgetDecisionRecord:
-        rec.prev_entry_hash = self.head
-        event = _budget_decision_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_budget_decision_event, rec)
 
     def append_memory_event(self, rec: MemoryGovernanceRecord) -> MemoryGovernanceRecord:
-        rec.prev_entry_hash = self.head
-        event = _memory_governance_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_memory_governance_event, rec)
 
     def append_tool_contract_violation(
         self, rec: ToolContractViolationRecord
     ) -> ToolContractViolationRecord:
-        rec.prev_entry_hash = self.head
-        event = _tool_contract_violation_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_tool_contract_violation_event, rec)
 
     def append_approval_receipt(self, rec: ApprovalReceiptRecord) -> ApprovalReceiptRecord:
-        rec.prev_entry_hash = self.head
-        event = _approval_receipt_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_approval_receipt_event, rec)
 
     def append_praxis_event(self, rec: PraxisEventRecord) -> PraxisEventRecord:
-        rec.prev_entry_hash = self.head
-        event = _praxis_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_praxis_event, rec)
 
     def append_sandbox_violation(self, rec: SandboxViolationRecord) -> SandboxViolationRecord:
-        rec.prev_entry_hash = self.head
-        event = _sandbox_violation_event(self.run_id, len(self._events) + 1, rec)
-        rec.entry_hash = event["entry_hash"]
-        self._events.append(event)
-        self._entries.append(rec)
-        _append_jsonl(self.events_path, event)
-        self._maybe_checkpoint(event)
-        return rec
+        return self._locked_append(_sandbox_violation_event, rec)
+
+    def append_sandbox_attestation(
+        self, rec: SandboxAttestationRecord
+    ) -> SandboxAttestationRecord:
+        return self._locked_append(_sandbox_attestation_event, rec)
 
     def __len__(self) -> int:
         return len(self._events)
@@ -489,13 +515,59 @@ class PersistentTraceLedger:
                     "event_count": len(events),
                 }
 
+        # M2 — external anchor check. A full re-forge (rewriting events,
+        # checkpoints, and receipt so the internal chain re-verifies) still
+        # cannot match the merkle root committed outside the agent's write
+        # domain. The anchor records the root over the first ``sequence`` events;
+        # we recompute that prefix and require a match. A ledger shorter than the
+        # anchored prefix means events were truncated — also a tamper.
+        anchored = False
+        sink = self._resolve_anchor_sink()
+        if sink is not None:
+            latest = sink.latest(self.run_id)
+            if latest is not None:
+                anchored = True
+                seq = latest.sequence
+                if len(events) < seq:
+                    return {
+                        "ok": False,
+                        "broken_index": None,
+                        "reason": "anchored events truncated (possible re-forge)",
+                        "event_count": len(events),
+                        "anchored": True,
+                    }
+                prefix_root = _merkle_root_of_events(events[:seq])
+                if latest.merkle_root != prefix_root:
+                    return {
+                        "ok": False,
+                        "broken_index": None,
+                        "reason": "anchor merkle_root mismatch (possible re-forge)",
+                        "event_count": len(events),
+                        "anchored": True,
+                    }
+
         return {
             "ok": True,
             "broken_index": None,
             "reason": "",
             "event_count": len(events),
             "final_chain_hash": final_hash,
+            "anchored": anchored,
         }
+
+    def _resolve_anchor_sink(self):
+        """Anchor sink bound to this ledger, or the default when one exists."""
+        if self._anchor_sink is not None:
+            return self._anchor_sink
+        try:
+            from .trace_anchor import default_anchor_sink
+
+            sink = default_anchor_sink()
+            # Only use it for verification if it actually holds an anchor for
+            # this run — never invent one.
+            return sink if sink.latest(self.run_id) is not None else None
+        except Exception:  # noqa: BLE001
+            return None
 
     def replay(self) -> Iterator[dict]:
         for rec in self._entries:
@@ -573,6 +645,16 @@ class PersistentTraceLedger:
                     "reason": rec.reason,
                     "path": rec.attempted_path,
                 }
+            elif isinstance(rec, SandboxAttestationRecord):
+                yield {
+                    "kind": "sandbox_attestation",
+                    "backend": rec.backend,
+                    "available": rec.available,
+                    "hard_isolated": rec.hard_isolated,
+                    "reason": rec.reason,
+                    "probe": rec.probe,
+                    "host": rec.host,
+                }
             else:
                 yield {
                     "kind": "state_transition",
@@ -604,6 +686,7 @@ class PersistentTraceLedger:
     def seal_run(self, final_status: str, verification_summary: Optional[dict] = None) -> dict:
         if verification_summary is None:
             verification_summary = self.verify_persisted()
+        anchor_receipt = self._anchor_now(final=True)
         receipt = {
             "run_id": self.run_id,
             "final_status": final_status,
@@ -613,12 +696,30 @@ class PersistentTraceLedger:
             "started_at": self._started_at,
             "ended_at": now(),
         }
+        if anchor_receipt is not None:
+            receipt["anchor"] = {
+                "sink": anchor_receipt.sink,
+                "anchor_id": anchor_receipt.anchor_id,
+                "sequence": anchor_receipt.sequence,
+                "merkle_root": anchor_receipt.merkle_root,
+            }
         self.receipt_path.write_text(
             json.dumps(receipt, indent=2, sort_keys=True),
             encoding="utf-8",
         )
         self._write_metadata(status="sealed", final_status=final_status)
         return receipt
+
+    def _anchor_now(self, final: bool = False):
+        """Commit the current merkle root to the external anchor sink, if any."""
+        if self._anchor_sink is None:
+            return None
+        try:
+            return self._anchor_sink.anchor(
+                self.run_id, len(self._events), self.merkle_root()
+            )
+        except Exception:  # noqa: BLE001 - anchoring must never break a run
+            return None
 
     def _maybe_checkpoint(self, event: TraceEvent) -> None:
         seq = event["sequence"]
@@ -633,6 +734,8 @@ class PersistentTraceLedger:
         cp["checkpoint_hash"] = sha(canonical_json(cp))
         _append_jsonl(self.checkpoints_path, cp)
         self._checkpoint_head = cp["checkpoint_hash"]
+        # Anchor periodically so a re-forge is caught even before seal.
+        self._anchor_now()
 
     def record_initial_state_hash(self, state_hash: str) -> None:
         """Record the genesis world-state address in metadata (retained runs).
@@ -941,6 +1044,35 @@ def _sandbox_violation_event(
     return event
 
 
+def _sandbox_attestation_event(
+    run_id: str,
+    sequence: int,
+    rec: SandboxAttestationRecord,
+) -> TraceEvent:
+    event = {
+        "event_id": rec.id,
+        "run_id": run_id,
+        "sequence": sequence,
+        "timestamp": rec.created_at,
+        "event_type": "sandbox_attestation",
+        "agent_id": None,
+        "command_hash": None,
+        "observation_hash": None,
+        "verifier_hash": None,
+        "prev_entry_hash": rec.prev_entry_hash,
+        "payload": {
+            "backend": rec.backend,
+            "available": rec.available,
+            "hard_isolated": rec.hard_isolated,
+            "reason": rec.reason,
+            "probe": rec.probe,
+            "host": rec.host,
+        },
+    }
+    event["entry_hash"] = _entry_hash(event)
+    return event
+
+
 def _record_from_event(ev: TraceEvent) -> TraceEntry:
     payload = ev.get("payload", {})
     if ev.get("event_type") == "planning_failure":
@@ -1074,6 +1206,20 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),
         )
+    if ev.get("event_type") == "sandbox_attestation":
+        return SandboxAttestationRecord(
+            id=ev["event_id"],
+            run_id=ev.get("run_id", ""),
+            backend=payload.get("backend", ""),
+            available=payload.get("available", False),
+            hard_isolated=payload.get("hard_isolated", False),
+            reason=payload.get("reason", ""),
+            probe=payload.get("probe", ""),
+            host=payload.get("host", {}),
+            created_at=ev.get("timestamp", now()),
+            prev_entry_hash=ev.get("prev_entry_hash", ""),
+            entry_hash=ev.get("entry_hash", ""),
+        )
 
     vr = payload.get("verifier_result", {})
     rec = StateTransitionRecord(
@@ -1103,6 +1249,21 @@ def _entry_hash(event: TraceEvent) -> str:
     body = dict(event)
     body.pop("entry_hash", None)
     return sha(canonical_json(body))
+
+
+def _merkle_root_of_events(events: list[TraceEvent]) -> str:
+    """Merkle root over on-disk events — must match ``merkle_root`` on live events."""
+    if not events:
+        return GENESIS
+    layer = [_entry_hash(e) for e in events]
+    while len(layer) > 1:
+        nxt = []
+        for i in range(0, len(layer), 2):
+            a = layer[i]
+            b = layer[i + 1] if i + 1 < len(layer) else layer[i]
+            nxt.append(sha(a, b))
+        layer = nxt
+    return layer[0]
 
 
 def _append_jsonl(path: Path, item: dict[str, Any]) -> None:

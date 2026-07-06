@@ -373,7 +373,7 @@ def resolve_criteria_for_subject(
             blocking_criteria=(),
             warnings=tuple(warnings),
             blockers=tuple(blockers),
-            summary=f"Blocked: no matching criteria schema.",
+            summary="Blocked: no matching criteria schema.",
         )
 
     # Collect criteria from matched schemas

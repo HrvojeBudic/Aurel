@@ -531,3 +531,197 @@ Legacy next-cycle notes remain in `agent/releases/P1.0_NEXT_CYCLE_ROADMAP.md` wh
 - P0.19 P0.20 Demo Harness
 - P0.20 First Real Coding Agent Demo (PASS)
 - P0.21 LLM Planning Bridge for Repository Agent (PASS)
+
+## Roadmap v6.0 — Durable Governed Agency (P6.0.0 – P30.20.30)
+
+**Macro canon update (post-P5 seal):**  
+P5 (AurelTrace) is SEALED as a v1 evidence contract layer.  
+The six primary screens defined in `docs/Aurel-Product-IA-v1.0.md` (HQ, Corp, HUB, Lab, WorkOPS, System) constitute the canonical product surface.  
+P2 Shell evolves to realize these screens as governed projections.  
+P6 provides the durable foundation (especially Library, Command, Board, and AurelEU state).  
+P9 provides runtime enforcement across all surfaces.  
+P25 = Aurel v0.9 (full IA vertical completeness).  
+P30.20.30 = Aurel v1.0 (mature, production-grade Durable Governed Agency platform).
+
+**Governing principles for this extension:**
+- Integration-First vertical slices for every pack.
+- Honest truth labels (CONTRACT_ONLY, READ_MODEL_ONLY, DEV_FIXTURE, UNAVAILABLE, LIVE, TRACE_VERIFIED).
+- AurelEU is the only component permitted to perform fluid role changes and legislation-aware dispatching.
+- Library is the primary durable memory and asset surface.
+- All screens expose trace, governance status, approvals, and provenance.
+- Business value (Corp), operator experience (Design), advanced intelligence (HQ.Intelligence + HUB + Lab), and research outputs are first-class requirements.
+
+### P6 — Durable Data, Memory & Execution Spine (P6.0.0 – P6.20.30)
+
+**Owner:** Durability + Data/Memory plane (P5 handoff).  
+**Theme:** Turn the P5 trace spine + worldline into a real replayable, restartable, durable fabric. MemoryFabric and workflow state become reconstructible and persistent. The six-screen IA becomes durable.
+
+**P6.0.0–P6.0.5 Durable Spine Foundation**  
+- New modules: `durable_state.py`, `durable_memory.py`, `replay_engine.py`, `object_ref.py`, `durable_checkpoint.py`.  
+- `DurableStateBackend` protocol + initial JSONL/SQLite implementations.  
+- `DurableMemoryFabric` extends existing MemoryFabric (all 5 tiers now support durable backend with provenance).  
+- `ReplayEngine` (deterministic reconstruction from trace + last durable checkpoint).  
+- `ObjectRef` / `DataRef` / `ArtifactRef` contracts (closed-world, hashable).  
+- `WorkflowRun` + `RealizedRuntimeGraph` become reconstructible.  
+- **IA mapping:** Library becomes durable asset + memory graph; HQ.AurelEU state persistence; HQ.Command + HQ.Board get durable state views.  
+- **New vertical requirements (Design + Business + Research + Intelligence):** Operator-facing durable memory/replay inspector contracts; audit-ready exports; replay fidelity benchmarks; long-horizon reflection patterns.  
+- Explicitly NOT: actual side-effect execution, real worker dispatch, Rust substrate, P9 enforcement, distributed.  
+- Vertical slice: backend + contracts + `flow durable status` / `memory durable` / Library CLI + trace evidence + report + research dataset seed.  
+- Handoff: P6.0.6.
+
+**P6.0.6–P6.0.10 Durable Checkpoints, Memory Persistence & Command Surfaces**  
+- Real materialized checkpoints (fsync + CAS + worldline binding).  
+- Durable memory writes + promotions (still strictly under P1.6.7 governance gates).  
+- `DurableCheckpointRef` + `DurableMemorySnapshot`.  
+- Memory writes during durable runs emit strong `DurableMemoryGovernanceRecord`.  
+- **IA mapping:** HQ.Command + HQ.Board + Library with real durable state.  
+- **Design:** First production-grade Shell components for inspecting durable memory and replaying runs (usability gates).  
+- **Innovation:** Plugin points for custom durable memory backends.  
+- **Research:** Empirical study on operator understanding of durable state (early benchmark).  
+- Vertical slice + evidence.
+
+**P6.0.11–P6.0.15 Replay Engine, Resume & AurelEU Role Engine**  
+- `replay_run(run_id, to_checkpoint)` — deterministic reconstruction.  
+- `resume_from_durable_checkpoint(...)` — gated by fresh policy/lease/identity.  
+- Durable `MemoryFabric` reconstruction proven against trace.  
+- AurelEU role switching + legislation dispatcher (durable).  
+- **IA mapping:** HQ.AurelEU core + dispatcher + HQ.Intelligence long-horizon reflection using durable memory.  
+- **Intelligence:** Durable memory enables cross-run learning and emergent patterns stored in Library.  
+- **Business:** ROI framing for “replay as compliance and debugging superpower.”  
+- Vertical slice with country-deployment demo (AurelEU under specific legislation).
+
+**P6.0.16–P6.0.20 Durable Execution Bridge & P6 Foundation Seal**  
+- First wiring of P3 Flow + P4 lease to durable state (Library + Command).  
+- `DurableExecSession` + durable job state.  
+- Memory mutations during bridged execution are durable + replay-safe.  
+- **P6.20 Exit Seal** now includes: durable memory integrity, operator comprehension scores (Design), business audit artifact quality, research reproducibility package.  
+- **P6 SEALED** (contract + first durable IA vertical).
+
+**P6.11.0–P6.15.30 Durable Memory Deepening & HUB/Lab Seeds**  
+- Versioned durable memory + eviction/retention policies (durable).  
+- Semantic search over durable memory with provenance (Library).  
+- Early durable asset integration for HUB and Lab.  
+- **Innovation:** Third-party durable memory modules.  
+- **Business:** Memory as a monetizable governed asset.
+
+**P6.16.0–P6.20.30 P6 Full Exit Seal & P7 Handoff**  
+- Full P6 capability matrix, truth-label audit, unavailable ledger.  
+- `p6_control_plane_sealed` unconstructible if durable memory/replay/IA claims are missing.  
+- Explicit handoff to P7 (real recovery execution), P8, P9, and IA screen owners.  
+- **P6 SEALED**.
+
+### P7 — Real Execution, Recovery & Rollback (P7.0.0 – P7.20.30)
+
+**P7.0.0–P7.0.5 Real Recovery Execution Foundation**  
+- Turn P4 recovery plans and rollback refs into executable paths (under lease + P9 gate).  
+- Rollback using durable checkpoint + worldline materialization + memory restore (Library).  
+- Durable worker slot reclamation from trace.  
+- **IA mapping:** HQ.Command + Corp.Operations + WorkOPS.Code.
+
+**P7.0.6–P7.0.10 Durable Worker & Queue**  
+- Real local durable worker (multiple slots now constructible).  
+- Durable queue entries with full trace binding.  
+- Pre/post attempt durable checkpoints.  
+- Vertical slice with IA surfaces.
+
+**P7.11.0–P7.15.30 Bounded Recovery & Algedonic Execution**  
+- Actual execution of recovery actions.  
+- Algedonic signals can now trigger governed recovery.  
+- **Design + Business:** Operator recovery dashboards and “recovery as a service” value framing.  
+- **Intelligence:** Recovery strategies that learn from durable history.
+
+**P7.16.0–P7.20.30 P7 Exit Seal**  
+- First end-to-end durable run that survives restart + recovers with full IA visibility.  
+- Handoff to P8/P9.  
+- **P7 SEALED**.
+
+### P8 — Model & Intelligence Routing Layer (P8.0.0 – P8.20.30)
+
+- Governed, durable model profiles and routing decisions (P5 handoff).  
+- Model calls become first-class durable events with cost/trace binding.  
+- Strong integration with HQ.Intelligence and Lab.  
+- Emergent intelligence patterns stored in Library.  
+- **P8.20 Seal** + handoff to P9.
+
+### P9 — Full Custos Authority & Runtime Enforcement (P9.0.0 – P9.20.30)
+
+- Runtime policy resolver that actually blocks/approves (no longer shadow-only).  
+- Enforcement of durable memory writes, tool dispatch, autonomy levels, and recovery across all six screens.  
+- AurelEU legislation enforcement becomes runtime-active.  
+- **Business + Research:** Compliance-ready enforcement logs and formal verification of enforcement.  
+- **P9.20 Seal** (major cross-IA governance milestone).
+
+### P10–P14 — Sovereign Agency & Long-Lived Agents
+
+**P10.0.0–P10.20.30 Durable Multi-Agent Flow**  
+- Long-running, resumable multi-agent workflows with durable shared memory (Library).  
+- Durable coordination primitives visible in HQ.Board and Corp.Operations.
+
+**P11.0.0–P11.20.30 Enforceable Autonomy**  
+- Runtime enforcement of A0–A9 tiers.  
+- Self-upgrade violation detection now has teeth.  
+- **Design:** Human oversight patterns at scale in Board and WorkOPS.
+
+**P12.0.0–P12.20.30 Durable Agent Identity Mesh**  
+- Long-lived agents with durable identity + memory across restarts/forks.  
+- Full non-repudiation for agent actions and memory contributions (Corp.Agency + Library + HQ.AurelEU).
+
+**P13.0.0–P13.20.30 Advanced Evaluation & Provenance**  
+- Replay-based evaluation.  
+- Durable Output Passports at scale.  
+- **Research + Intelligence:** Strong benchmark and cognitive architecture contributions.
+
+**P14.0.0–P14.20.30 P14 Major Seal**  
+- Sovereign agency IA vertical complete.  
+- **P14.20 Seal**.
+
+### P15–P19 — Distributed & Hybrid Runtime
+
+**P15.0.0–P15.20.30 Distributed Durable Topology**  
+- Leased distributed workers with durable state.  
+- Cross-node replay and state materialization.  
+- Surfaces: HQ.Command, Corp.Operations, WorkOPS.Code, Lab.
+
+**P16.0.0–P16.20.30 Hybrid Substrate (Python + Rust)**  
+- Rust (or WASM) hot paths for replay engine, durable state materialization, checkpointing, worker execution.  
+- Python remains sole governance/authority layer.  
+- **P16.20 Seal**.
+
+**P17–P18** — Performance, backpressure at scale, durable observability.  
+**P19.0.0–P19.20.30 P19 Seal** — Distributed hybrid durability proven.
+
+### P20–P25 — Ecosystem, Hubs & v0.9
+
+**P20–P21** — Handoff protocols, external durable integration.  
+**P22** — L-Hub (Lab) full vertical (research-grade durable experimentation platform).  
+**P23** — A-Hub (Agency) full vertical (enterprise business processes with governed durable agents).  
+**P24** — S-Hub + IDE full vertical with world-class operator experience (WorkOPS + Corp.Studio).  
+**P25.0.0–P25.20.30 Aurel v0.9 Stabilization Seal**  
+- Large cross-surface integration seal.  
+- All six screens + submodules at vertical-slice completeness.  
+- Business adoption metrics, design system completeness, innovation ecosystem health, intelligence benchmarks, and research publications required for seal.  
+- **P25 = Aurel v0.9 SEALED**.
+
+### P26–P30 — Maturity & Aurel v1.0
+
+**P26.0.0–P26.20.30 Production Hardening**  
+- Multi-tenancy, security audits, regulatory bundles (System + Corp).  
+- Full chaos + durability testing across all screens.
+
+**P27.0.0–P27.20.30 Operator & Deployment Maturity**  
+- Production packaging, runbooks, migration tools.  
+- Mature dashboards in all six screens.
+
+**P28.0.0–P28.20.30 Ecosystem Completeness**  
+**P29.0.0–P29.20.30 v0.9 Hardening & Pre-v1.0 Audit**
+
+**P30.0.0–P30.20.30 Aurel v1.0 Final Seal**  
+- Complete, production-grade realization of the six-screen IA (HQ, Corp, HUB, Lab, WorkOPS, System).  
+- AurelEU role fluidity, durable Library, full governance everywhere.  
+- Business adoption, excellent operator experience, advanced durable intelligence, thriving innovation ecosystem, strong research foundation.  
+- **P30.20.30 = Aurel v1.0 (Durable Governed Agency) SEALED**.
+
+---
+
+**End of v6.0 extension.**  
+This section supersedes earlier forward hooks for P6+. All future work must follow the IA defined in `docs/Aurel-Product-IA-v1.0.md` and the vertical-slice + seal discipline of v5.5.
