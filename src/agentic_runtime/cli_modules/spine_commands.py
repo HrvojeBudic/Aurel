@@ -26,8 +26,23 @@ def cmd_spine_run(args: argparse.Namespace) -> int:
     live = args.live or os.environ.get("AUREL_LIVE") == "1"
     model_client = build_deepseek_client(args.model) if live else None
 
+    kwargs = {}
+    if getattr(args, "goal", None):
+        kwargs["goal"] = args.goal
     result = run_spine_slice(
-        trace_dir=trace_dir, run_id=args.run_id, model_client=model_client
+        trace_dir=trace_dir,
+        run_id=args.run_id,
+        model_client=model_client,
+        plan_driven=bool(getattr(args, "plan_driven", False)),
+        **kwargs,
     )
     print(json.dumps(result.to_dict(), sort_keys=True, indent=2 if not args.json else None))
     return 0 if result.spine_live else 1
+
+
+def cmd_spine_serve(args: argparse.Namespace) -> int:
+    """Launch the local SPINE-LIVE web console (blocking)."""
+    from ..spine.webui import serve_spine_ui
+
+    serve_spine_ui(host=args.host, port=args.port)
+    return 0

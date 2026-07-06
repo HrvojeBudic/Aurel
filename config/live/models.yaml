@@ -1,0 +1,31 @@
+# LIVE model profiles — DeepSeek v4 pro/flash plus the local mock.
+profiles:
+  local_fast:
+    provider: mock
+    model: mock-deterministic
+    purpose: local_fast
+    allowed_tasks:
+      - fast
+      - general
+      - local_fast
+
+  deepseek_pro:
+    provider: deepseek
+    model: deepseek-v4-pro
+    purpose: planning
+    allowed_tasks:
+      - planning
+      - coding
+      - balanced
+      - patch_planning
+      - repo_planning
+
+  deepseek_flash:
+    provider: deepseek
+    model: deepseek-v4-flash
+    purpose: summarization
+    allowed_tasks:
+      - fast
+      - general
+      - summarization
+      - review

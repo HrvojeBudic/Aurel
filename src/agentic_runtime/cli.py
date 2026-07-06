@@ -488,7 +488,7 @@ from .cli_modules.shell_commands import (
     cmd_shell_status,
     cmd_shell_surfaces,
 )
-from .cli_modules.spine_commands import cmd_spine_run
+from .cli_modules.spine_commands import cmd_spine_run, cmd_spine_serve
 from .cli_modules.shell_permission_commands import (
     cmd_shell_permissions_actions,
     cmd_shell_permissions_clients,
@@ -1151,8 +1151,20 @@ def main(argv: list[str] | None = None) -> int:
         "--model", default="pro",
         help="live model: pro (deepseek-v4-pro) | flash (deepseek-v4-flash)",
     )
+    p_spine_run.add_argument(
+        "--plan-driven", action="store_true",
+        help="realize the model's own plan as the flow (entity proposes steps)",
+    )
+    p_spine_run.add_argument("--goal", default=None, help="task goal for the planner")
     p_spine_run.add_argument("--json", action="store_true", help="compact JSON")
     p_spine_run.set_defaults(func=cmd_spine_run)
+
+    p_spine_serve = spine_sub.add_parser(
+        "serve", help="launch the local SPINE-LIVE web console (browser UI)"
+    )
+    p_spine_serve.add_argument("--host", default="127.0.0.1")
+    p_spine_serve.add_argument("--port", type=int, default=8765)
+    p_spine_serve.set_defaults(func=cmd_spine_serve)
 
     # P2.10-D — Shell terminal client parity binding
     p_shell = sub.add_parser(

@@ -41,10 +41,20 @@ _FIXED_CALC = "VALUE = 2\n"
 _CALC_TEST = "import calc, sys\nsys.exit(0 if calc.VALUE == 2 else 1)\n"
 
 _PLANNER_SYSTEM = (
-    "You are the planning core of a governed runtime. Emit a JSON plan; you do "
-    "not act."
+    "You are the planning core of a governed runtime. You do NOT act; you emit "
+    "a JSON plan. To fix a bug, write the corrected file with write_file, then "
+    "verify with run_tests. Each step needs: step_id, tool, args, risk, reason. "
+    "Prefer the smallest safe change."
 )
-_PLANNER_USER = "GOAL: fix buggy_calculator so its test passes\n"
+_DEFAULT_GOAL = (
+    "Fix calc.py so that its test (test_calc.py) passes. calc.py currently "
+    "defines VALUE = 1 but the test expects VALUE == 2. Use write_file to set "
+    "calc.py to 'VALUE = 2\\n', then run_tests with test_file test_calc.py."
+)
+
+
+def _planner_user(goal: str) -> str:
+    return f"GOAL: {goal}\n\nRespond with a single JSON plan object."
 
 _NO_HARD_SANDBOX_REASON = (
     "no hard-isolated sandbox (Bubblewrap/Docker) available; mutating spine "
@@ -71,6 +81,9 @@ class SpineSliceResult:
     dispatch: dict | None
     trace_evidence: dict | None
     shell_view: dict | None
+    goal: str = ""
+    plan_driven: bool = False
+    plan: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -78,6 +91,8 @@ class SpineSliceResult:
             "scenario": self.scenario,
             "run_id": self.run_id,
             "trace_dir": self.trace_dir,
+            "goal": self.goal,
+            "plan_driven": self.plan_driven,
             "model_call_available": self.model_call_available,
             "execution_available": self.execution_available,
             "trace_verified": self.trace_verified,
@@ -85,6 +100,7 @@ class SpineSliceResult:
             "dispatch_success": self.dispatch_success,
             "spine_live": self.spine_live,
             "unavailable_reason": self.unavailable_reason,
+            "plan": self.plan,
             "model_evidence": self.model_evidence,
             "dispatch": self.dispatch,
             "trace_evidence": self.trace_evidence,
@@ -156,13 +172,13 @@ def build_deepseek_client(model: str = "deepseek-v4-pro") -> Any:
     return ProviderModelClient(provider)
 
 
-def _model_leg(model_client: Any | None) -> ModelCallEvidenceRef:
+def _model_leg(model_client: Any | None, goal: str) -> tuple[ModelCallEvidenceRef, str]:
     router = ModelRouter()
     router.register("balanced", [model_client or MockModelClient()])
-    _raw, _name, evidence = router.complete_with_evidence(
-        "balanced", _PLANNER_SYSTEM, _PLANNER_USER
+    raw, _name, evidence = router.complete_with_evidence(
+        "balanced", _PLANNER_SYSTEM, _planner_user(goal)
     )
-    return evidence
+    return evidence, raw
 
 
 def run_spine_slice(
@@ -172,12 +188,20 @@ def run_spine_slice(
     sandbox: Any | None = None,
     model_client: Any | None = None,
     scenario: str = "spine_buggy_calculator",
+    goal: str = _DEFAULT_GOAL,
+    plan_driven: bool = False,
 ) -> SpineSliceResult:
-    """Run the full thread and aggregate every phase's evidence flag."""
+    """Run the full thread and aggregate every phase's evidence flag.
+
+    With ``plan_driven=True`` the model's own validated plan is realized as the
+    flow graph (the entity proposes the steps); otherwise a fixed patch/test
+    graph is used and the model call is evidence-only.
+    """
     from .. import build_runtime
 
     run_id = run_id or new_id("spine")
-    model_evidence = _model_leg(model_client)
+    model_evidence, model_raw = _model_leg(model_client, goal)
+    plan_dict: dict | None = None
 
     def _unavailable(reason: str) -> SpineSliceResult:
         return SpineSliceResult(
@@ -196,6 +220,9 @@ def run_spine_slice(
             dispatch=None,
             trace_evidence=None,
             shell_view=None,
+            goal=goal,
+            plan_driven=plan_driven,
+            plan=plan_dict,
         )
 
     sandbox = sandbox if sandbox is not None else _auto_hard_sandbox()
@@ -214,14 +241,38 @@ def run_spine_slice(
     kernel.sandbox.write_file("calc.py", _BUGGY_CALC)
     kernel.sandbox.write_file("test_calc.py", _CALC_TEST)
 
-    session = SpineToolExecSession(kernel.runtime, _spine_card())
-    graph = build_patch_test_graph()
+    card = _spine_card()
+    session = SpineToolExecSession(kernel.runtime, card)
+
+    if plan_driven:
+        from ..plan_validator import PlanValidator
+        from .plan_flow import DEFAULT_PLAN_TOOL_ALLOWLIST, PlanRealizationError, plan_to_flow
+
+        validator = PlanValidator(
+            set(kernel.tools.registered), allowed_tools=list(card.allowed_tools)
+        )
+        parsed = validator.parse_and_validate(model_raw)
+        if not parsed.valid or not parsed.steps:
+            return _unavailable(
+                f"model plan invalid or empty: {parsed.status.value}"
+            )
+        plan_dict = {"steps": parsed.steps, "status": parsed.status.value}
+        allow = tuple(t for t in DEFAULT_PLAN_TOOL_ALLOWLIST if t in set(card.allowed_tools))
+        try:
+            graph, tasks = plan_to_flow(parsed.steps, allowed_tools=allow)
+        except PlanRealizationError as e:
+            return _unavailable(f"plan not realizable: {e}")
+        ordered_steps = list(tasks.values())
+    else:
+        graph = build_patch_test_graph()
+        tasks = {
+            "patch": ("write_file", {"path": "calc.py", "content": _FIXED_CALC}),
+            "test": ("run_tests", {"test_file": "test_calc.py"}),
+        }
+        ordered_steps = [tasks["patch"], tasks["test"]]
+
     run = create_workflow_run(graph)
-    tasks = {
-        "patch": ("write_file", {"path": "calc.py", "content": _FIXED_CALC}),
-        "test": ("run_tests", {"test_file": "test_calc.py"}),
-    }
-    lease = session.issue_lease([tasks["patch"], tasks["test"]])
+    lease = session.issue_lease(ordered_steps)
 
     try:
         dispatch = FlowDispatcher(session).dispatch(graph, run, tasks, lease)
@@ -257,6 +308,9 @@ def run_spine_slice(
         dispatch=dispatch.to_dict(),
         trace_evidence=trace_ev.to_dict(),
         shell_view=shell_view.to_dict(),
+        goal=goal,
+        plan_driven=plan_driven,
+        plan=plan_dict,
     )
 
 

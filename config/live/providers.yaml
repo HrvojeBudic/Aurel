@@ -1,0 +1,19 @@
+# LIVE provider registry — opt-in remote profile for operator testing.
+# Secrets referenced by env var name only. This dir is a deliberate live
+# override; the canonical safe defaults remain in agent/config/.
+providers:
+  mock:
+    type: mock
+    description: Deterministic offline mock provider
+    residency: local
+    default_model: mock-deterministic
+
+  deepseek:
+    type: deepseek
+    description: DeepSeek remote API (OpenAI-compatible; requires DEEPSEEK_API_KEY)
+    residency: remote
+    api_key_env: DEEPSEEK_API_KEY
+    base_url_env: AUREL_DEEPSEEK_BASE_URL
+    default_model_env: AUREL_DEEPSEEK_MODEL
+    default_base_url: https://api.deepseek.com
+    default_model: deepseek-v4-pro

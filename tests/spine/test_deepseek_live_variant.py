@@ -81,7 +81,8 @@ def test_spine_cognition_leg_live_with_deepseek(monkeypatch):
     _stub_ok(monkeypatch)
     from agentic_runtime.spine.harness import _model_leg
 
-    evidence = _model_leg(build_deepseek_client("pro"))
+    evidence, raw = _model_leg(build_deepseek_client("pro"), "fix calc")
     assert evidence.available is True
     assert evidence.model_name == "deepseek"
     assert evidence.response_hash
+    assert raw

@@ -22,7 +22,12 @@ from .flow_dispatch import (
     build_patch_test_graph,
     create_workflow_run,
 )
-from .harness import SpineSliceResult, run_spine_slice
+from .harness import SpineSliceResult, build_deepseek_client, run_spine_slice
+from .plan_flow import (
+    DEFAULT_PLAN_TOOL_ALLOWLIST,
+    PlanRealizationError,
+    plan_to_flow,
+)
 from .shell_run_view import (
     ShellRunView,
     build_shell_run_view,
@@ -76,4 +81,8 @@ __all__ = [
     "capture_hard_isolation_evidence",
     "SpineSliceResult",
     "run_spine_slice",
+    "build_deepseek_client",
+    "DEFAULT_PLAN_TOOL_ALLOWLIST",
+    "PlanRealizationError",
+    "plan_to_flow",
 ]

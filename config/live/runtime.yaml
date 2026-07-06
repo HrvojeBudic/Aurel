@@ -1,0 +1,12 @@
+# LIVE runtime model policy — remote models enabled for operator testing.
+# This is a deliberate opt-in override of the safe defaults in
+# agent/config/runtime.yaml (which keep local_only: true). Secret redaction
+# stays on and raw prompts/responses are never stored.
+local_only: false
+allow_remote_models: true
+allow_unconfigured_providers: false
+require_secret_redaction: true
+trace_model_calls: true
+trace_prompt_summaries_only: true
+store_raw_prompts: false
+store_raw_provider_responses: false
