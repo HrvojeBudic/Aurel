@@ -177,6 +177,7 @@ from .worldline import (
     ForkRef,
     ForkResult,
     WorldLineForest,
+    verify_fork,
 )
 from .sandbox_policy import (
     ProfiledSandbox,
@@ -308,7 +309,7 @@ __all__ = [
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
-    "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult",
+    "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult", "verify_fork",
     "SandboxMode", "SandboxUnavailableError", "create_sandbox", "ExecResult",
     "SandboxProfile", "SandboxProfileName", "SandboxPolicy", "SandboxDiagnostics",
     "SandboxViolation", "SandboxDecision", "SandboxExecutionContext",
