@@ -36,10 +36,15 @@ if TYPE_CHECKING:  # pragma: no cover
     from ..runtime import CommandResult
 
 _FLAG = "AUREL_DUAL_KERNEL"
+_FLAG_MATERIALIZE = "AUREL_DK_MATERIALIZE"
 
 
 def _flag_enabled() -> bool:
     return os.environ.get(_FLAG, "").strip() in ("1", "true", "TRUE", "on")
+
+
+def _materialize_enabled() -> bool:
+    return os.environ.get(_FLAG_MATERIALIZE, "").strip() in ("1", "true", "TRUE", "on")
 
 
 @dataclass
@@ -62,10 +67,12 @@ class DualKernelRuntime:
         gate: Optional[MergeGate] = None,
         spec_approver: Optional[Any] = None,
         ledger: Optional[DualKernelLedger] = None,
+        materialize: Optional[bool] = None,
     ) -> None:
         self.kernel = kernel
         self.runtime = kernel.runtime
         self.enabled = _flag_enabled() if enabled is None else enabled
+        self.materialize = _materialize_enabled() if materialize is None else materialize
         self.sigma_gov = sigma_gov or SigmaGovernor()
         self.gate = gate or MergeGate()
         self._spec_approver = spec_approver
@@ -89,6 +96,11 @@ class DualKernelRuntime:
             result = self.runtime.submit(cmd, card)
             rec.executed = True
             rec.verdict = "inner_" + ("ok" if result.ok else "blocked")
+        elif self.materialize and self._can_materialize():
+            # GOVERNED — execute ONCE in a fork, then materialise-to-live on PASS.
+            result, verdict = self._execute_materialize(cmd, card, sigma, decision)
+            rec.verdict = verdict.final_status.value
+            rec.executed = result.transition is not None
         else:  # GOVERNED — speculative preflight, then real-on-pass
             verdict = self._preflight(cmd, card, sigma)
             rec.verdict = verdict.final_status.value
@@ -167,6 +179,78 @@ class DualKernelRuntime:
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
 
+    # ---- materialize-to-live (execute once, merge fork into live) ------- #
+    def _can_materialize(self) -> bool:
+        store = getattr(self.runtime, "_state_store", None)
+        root = getattr(self.runtime.tools.sandbox, "root", None)
+        return store is not None and bool(root)
+
+    def _execute_materialize(
+        self,
+        cmd: CommandEnvelope,
+        card: AgentCard,
+        sigma: GovernanceStateVector,
+        decision: Any,
+    ) -> "tuple[CommandResult, DeploymentReadinessDecision]":
+        from .. import build_runtime
+        from ..runtime import CommandResult
+        from ..sandbox import UnsafeLocalSandbox
+
+        store = self.runtime._state_store
+        live_sb = self.runtime.tools.sandbox
+        live_root = live_sb.root
+        before_hash = live_sb.state_hash()
+        store.put(live_root)  # retain the pre-state (rollback anchor)
+
+        tmp = tempfile.mkdtemp(prefix="ar_mat_")
+        try:
+            store.materialize(before_hash, tmp)  # exact CoW fork
+            child = build_runtime(
+                sandbox=UnsafeLocalSandbox(root=tmp),
+                approval_gate=self._spec_approver or _permissive_approver(),
+                trace_backend="memory")
+            cr = child.runtime.submit(cmd, card)   # the ONLY execution
+            after_hash = store.put(tmp)
+
+            ctx = MergeContext(
+                cmd=cmd, verifier_result=cr.verifier, sigma=sigma, card=card,
+                child_write_paths=_writes_of(cmd),
+                evidence_refs=(after_hash,), simulation_resolved=True,
+                rollback_path_defined=True, is_isolated_fork=True)
+            verdict = self.gate.evaluate(ctx)
+
+            if not (verdict.mergeable and cr.ok):
+                return self._blocked_result(cmd, verdict), verdict  # discard fork
+
+            # merge the fork's post-state into live, then self-verify.
+            self._materialize_into(store, after_hash, live_root)
+            got = live_sb.state_hash()
+            if got != after_hash:
+                self._materialize_into(store, before_hash, live_root)  # restore
+                v = _integrity_fail_decision(got, after_hash)
+                return self._blocked_result(cmd, v), v
+
+            rec = self.runtime._append_transition(
+                cmd, decision.verdict, cr.observation, cr.verifier,
+                before_hash, after_hash)
+            result = CommandResult(
+                observation=cr.observation, verifier=cr.verifier,
+                decision=decision, transition=rec)
+            return result, verdict
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    @staticmethod
+    def _materialize_into(store: Any, state_hash: str, root: str) -> None:
+        """Clear ``root`` then reconstruct ``state_hash`` — exact, incl. deletions."""
+        for name in os.listdir(root):
+            p = os.path.join(root, name)
+            if os.path.isdir(p) and not os.path.islink(p):
+                shutil.rmtree(p, ignore_errors=True)
+            else:
+                os.remove(p)
+        store.materialize(state_hash, root)
+
     # ---- helpers -------------------------------------------------------- #
     def _key(self, cmd: CommandEnvelope) -> str:
         return cmd.parent_intent_id or "task_unbound"
@@ -221,3 +305,12 @@ def _auto_pass(
         verdict=MergeVerdict.PASS, final_status=MergeVerdict.PASS,
         simulation_live_status="RESOLVED", authority_status="RESOLVED",
         reasons=["non-filesystem sandbox: preflight skipped, inner submit governs"])
+
+
+def _integrity_fail_decision(got: str, expected: str) -> DeploymentReadinessDecision:
+    from .merge_gate import MergeVerdict
+    return DeploymentReadinessDecision(
+        verdict=MergeVerdict.BLOCKING_FAIL, final_status=MergeVerdict.BLOCKING_FAIL,
+        blockers=["materialize_integrity"], simulation_live_status="UNRESOLVED",
+        reasons=[f"materialised live state {got[:12]} != expected {expected[:12]};"
+                 " live restored to pre-state"])
