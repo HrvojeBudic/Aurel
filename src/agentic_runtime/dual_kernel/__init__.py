@@ -38,6 +38,7 @@ from .nc_bindings import (
     load_bindings,
     validate_coverage,
 )
+from .kernel import DualKernelRuntime, RouteRecord
 from .praxis import Praxis, SpeculativeOutcome
 from .routing import AdmitDecision, Route, autonomy_index, route_for
 from .sigma import GovernanceStateVector, SigmaGovernor
@@ -63,6 +64,8 @@ __all__ = [
     "DeploymentReadinessDecision",
     "Praxis",
     "SpeculativeOutcome",
+    "DualKernelRuntime",
+    "RouteRecord",
     "NCBinding",
     "load_bindings",
     "binding_for",
