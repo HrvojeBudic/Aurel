@@ -151,6 +151,10 @@ class DualKernelRuntime:
             # so the real inner submit (fully governed) still runs.
             return _auto_pass(cmd, sigma, card)
 
+        # honestly charge the speculative twin against the parent run's budget
+        # (over-budget denies the speculation before any compute is spent).
+        self.runtime.budget.charge_simulation()
+
         from .. import build_runtime
         from ..sandbox import UnsafeLocalSandbox
 
@@ -201,6 +205,9 @@ class DualKernelRuntime:
         live_root = live_sb.root
         before_hash = live_sb.state_hash()
         store.put(live_root)  # retain the pre-state (rollback anchor)
+
+        # honestly charge the speculative twin against the parent run's budget.
+        self.runtime.budget.charge_simulation()
 
         tmp = tempfile.mkdtemp(prefix="ar_mat_")
         try:
