@@ -38,6 +38,7 @@ from .nc_bindings import (
     load_bindings,
     validate_coverage,
 )
+from .praxis import Praxis, SpeculativeOutcome
 from .routing import AdmitDecision, Route, autonomy_index, route_for
 from .sigma import GovernanceStateVector, SigmaGovernor
 
@@ -60,6 +61,8 @@ __all__ = [
     "MergeContext",
     "MergeGate",
     "DeploymentReadinessDecision",
+    "Praxis",
+    "SpeculativeOutcome",
     "NCBinding",
     "load_bindings",
     "binding_for",
