@@ -30,6 +30,11 @@ class BudgetPolicy:
     max_estimated_tokens: int = 200_000
     max_estimated_cost_cents: int = 500
     max_llm_calls: int = 40
+    # P0-S.2 — reasoning / simulation compute caps
+    max_thinking_tokens: int = 200_000
+    max_thinking_calls: int = 40
+    max_reasoning_passes_per_run: int = 12
+    max_simulation_execs: int = 120
 
 
 class BudgetExceeded(Exception):
@@ -60,6 +65,9 @@ class BudgetLedger:
     memory_writes: int = 0
     estimated_tokens: int = 0
     thinking_tokens: int = 0        # reasoning / extended-thinking tokens, distinct from output
+    thinking_calls: int = 0         # reasoning-model invocations
+    reasoning_passes: int = 0       # replan / step-verify passes
+    simulation_execs: int = 0       # disposable-twin simulation runs
     estimated_cost_cents: float = 0.0
     # scoped usage
     per_run: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -92,6 +100,9 @@ class BudgetLedger:
             "retries": {},
             "estimated_tokens": 0,
             "thinking_tokens": 0,
+            "thinking_calls": 0,
+            "reasoning_passes": 0,
+            "simulation_execs": 0,
             "estimated_cost_cents": 0.0,
             "substantiated_charges": 0,
             "estimate_only_charges": 0,
@@ -158,6 +169,39 @@ class BudgetLedger:
             run["estimated_cost_cents"],
             self.policy.max_estimated_cost_cents,
         )
+        if reasoning > 0:
+            self._check("max_thinking_tokens", run["thinking_tokens"],
+                        self.policy.max_thinking_tokens)
+
+    def charge_reasoning(self, tokens: int = 0, passes: int = 1) -> None:
+        """Charge a reasoning pass (System-2 / step-verify / replan). Counts the
+        call and pass, optionally reserves ``tokens`` of thinking budget, and
+        enforces the thinking caps through ``_check`` (overspend → BudgetExceeded
+        + traced deny). Proposal-side seam; allocation ≠ authority."""
+        run = self._run_usage()
+        self.thinking_calls += passes
+        self.reasoning_passes += passes
+        run["thinking_calls"] = run.get("thinking_calls", 0) + passes
+        run["reasoning_passes"] = run.get("reasoning_passes", 0) + passes
+        if tokens:
+            self.thinking_tokens += tokens
+            run["thinking_tokens"] = run.get("thinking_tokens", 0) + tokens
+        self._check("max_thinking_calls", run["thinking_calls"],
+                    self.policy.max_thinking_calls)
+        self._check("max_reasoning_passes_per_run", run["reasoning_passes"],
+                    self.policy.max_reasoning_passes_per_run)
+        self._check("max_thinking_tokens", run["thinking_tokens"],
+                    self.policy.max_thinking_tokens)
+
+    def charge_simulation(self, execs: int = 1) -> None:
+        """Charge a disposable-twin simulation run (Track C sim-gate / dual-kernel
+        speculative fork). Enforced through ``_check`` (overspend → BudgetExceeded
+        + traced deny). Simulation is evidence, never authority."""
+        run = self._run_usage()
+        self.simulation_execs += execs
+        run["simulation_execs"] = run.get("simulation_execs", 0) + execs
+        self._check("max_simulation_execs", run["simulation_execs"],
+                    self.policy.max_simulation_execs)
 
     def precheck_command(self, command_id: str, tool: str, agent_id: str) -> None:
         run = self._run_usage()
@@ -259,6 +303,9 @@ class BudgetLedger:
             "memory_writes": run.get("memory_writes", 0),
             "estimated_tokens": run.get("estimated_tokens", 0),
             "thinking_tokens": run.get("thinking_tokens", 0),
+            "thinking_calls": run.get("thinking_calls", 0),
+            "reasoning_passes": run.get("reasoning_passes", 0),
+            "simulation_execs": run.get("simulation_execs", 0),
             "estimated_cost_cents": round(run.get("estimated_cost_cents", 0.0), 3),
             "substantiated_charges": run.get("substantiated_charges", 0),
             "estimate_only_charges": run.get("estimate_only_charges", 0),
@@ -286,6 +333,10 @@ class BudgetLedger:
                 "max_memory_writes": self.policy.max_memory_writes,
                 "max_estimated_tokens": self.policy.max_estimated_tokens,
                 "max_estimated_cost_cents": self.policy.max_estimated_cost_cents,
+                "max_thinking_tokens": self.policy.max_thinking_tokens,
+                "max_thinking_calls": self.policy.max_thinking_calls,
+                "max_reasoning_passes_per_run": self.policy.max_reasoning_passes_per_run,
+                "max_simulation_execs": self.policy.max_simulation_execs,
             },
         }
 
