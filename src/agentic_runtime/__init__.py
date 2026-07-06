@@ -170,6 +170,15 @@ from .sandbox import (
     UnsafeLocalSandbox,
     create_sandbox,
 )
+from .state_store import StateStore
+from .worldline import (
+    CheckoutError,
+    ForkError,
+    ForkRef,
+    ForkResult,
+    WorldLineForest,
+    verify_fork,
+)
 from .sandbox_policy import (
     ProfiledSandbox,
     SandboxDiagnostics,
@@ -299,7 +308,8 @@ __all__ = [
     "classify_entrypoint_with_audit_symbol",
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
-    "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend",
+    "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
+    "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult", "verify_fork",
     "SandboxMode", "SandboxUnavailableError", "create_sandbox", "ExecResult",
     "SandboxProfile", "SandboxProfileName", "SandboxPolicy", "SandboxDiagnostics",
     "SandboxViolation", "SandboxDecision", "SandboxExecutionContext",
@@ -397,6 +407,8 @@ def build_runtime(
     enable_policy_shadow_projection: bool = False,
     governance_enforcement_config: GovernanceEnforcementConfig | None = None,
     identity_context_loader: IdentitySubmitContextLoader | None = None,
+    retain_states: bool = False,
+    state_store: StateStore | None = None,
 ) -> Kernel:
     sandbox_policy: Optional[SandboxPolicy] = None
     if sandbox is None:
@@ -473,6 +485,11 @@ def build_runtime(
         router.configure_default()
 
     approval_gate = approval_gate or AutoApprover()
+    # M1 — content-addressed state retention (opt-in). When on and no store is
+    # provided, default one under the trace base so states (base_dir/states) sit
+    # beside runs (base_dir/runs) in the eventual world-line forest layout.
+    if retain_states and state_store is None:
+        state_store = StateStore(trace_dir)
     runtime = AgenticRuntime(
         tools, policy, verifier, trace, memory,
         approval_gate, budget,
@@ -483,6 +500,8 @@ def build_runtime(
         enable_policy_shadow_projection=enable_policy_shadow_projection,
         governance_enforcement_config=governance_enforcement_config,
         identity_context_loader=identity_context_loader,
+        retain_states=retain_states,
+        state_store=state_store,
     )
     return Kernel(sandbox, tools, policy, verifier, trace, memory, budget,
                   router, skills, runtime, sandbox_policy=sandbox_policy)

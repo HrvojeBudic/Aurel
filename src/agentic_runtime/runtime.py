@@ -25,7 +25,10 @@ from __future__ import annotations
 
 import threading
 from dataclasses import dataclass, replace
-from typing import Any, Literal, Protocol
+from typing import TYPE_CHECKING, Any, Literal, Protocol
+
+if TYPE_CHECKING:
+    from .state_store import StateStore
 
 from .budget import BudgetExceeded, BudgetLedger
 from .governance_enforcement import (
@@ -141,7 +144,9 @@ class AgenticRuntime:
                  policy_card_registry: PolicyCardRegistry | None = None,
                  enable_policy_shadow_projection: bool = False,
                  governance_enforcement_config: GovernanceEnforcementConfig | None = None,
-                 identity_context_loader: IdentitySubmitContextLoader | None = None) -> None:
+                 identity_context_loader: IdentitySubmitContextLoader | None = None,
+                 retain_states: bool = False,
+                 state_store: "StateStore | None" = None) -> None:
         self.tools = tool_runtime
         self.policy = policy
         self.verifier = verifier
@@ -164,9 +169,32 @@ class AgenticRuntime:
         self.input_validator = ToolInputValidator()
         self.output_validator = ToolOutputValidator()
         self._write_lock = threading.Lock()  # single-writer canonical state
+        # M1 — content-addressed state retention (opt-in; off = zero change).
+        self._retain_states = retain_states
+        self._state_store = state_store
+        self._initial_state_committed = False
+
+    def _maybe_commit_initial_state(self, state_hash: str) -> None:
+        """Once per run, persist the genesis workspace state to the CAS.
+
+        ``state_hash`` is the pre-command state of the first submit — the run's
+        initial world-state. Committing it (and recording ``initial_state_hash``
+        in the trace metadata) is what later makes fork-from-genesis verifiable.
+        Behind the retain flag; a no-op when off.
+        """
+        if not self._retain_states or self._state_store is None:
+            return
+        if self._initial_state_committed:
+            return
+        self._initial_state_committed = True
+        self._state_store.put(self.tools.sandbox.root)
+        setter = getattr(self.trace, "record_initial_state_hash", None)
+        if setter is not None:
+            setter(state_hash)
 
     def submit(self, cmd: CommandEnvelope, card: AgentCard) -> CommandResult:
         pre_policy_hash = self.tools.sandbox.state_hash()
+        self._maybe_commit_initial_state(pre_policy_hash)
 
         if cmd.issuer_card_id != card.id:
             return self._issuer_mismatch_blocked(pre_policy_hash, cmd, card)
@@ -422,6 +450,12 @@ class AgenticRuntime:
                     vres = self._verifier_with_rollback_failure(vres, rollback_err)
             elif is_write and vres.passed:
                 self.tools.sandbox.release_snapshot(snap_id)
+                # M1 — retain the just-verified post-state in the CAS. The
+                # committed hash equals `after_hash` (== the after_state_hash
+                # recorded in the trace transition below). Behind the flag; the
+                # ephemeral snapshot/rollback path above is untouched.
+                if self._retain_states and self._state_store is not None:
+                    self._state_store.put(self.tools.sandbox.root)
 
         # ---- 8. TRACE (hash-chained) ---------------------------------- #
         if not output_check.ok:
