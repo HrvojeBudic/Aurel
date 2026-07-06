@@ -45,29 +45,32 @@ def cmd_spine_replay(args: argparse.Namespace) -> int:
 
     Determinism is reported at the governed-mutation world-state level: every
     write node must reproduce the same ``after_state_hash`` and every node the
-    same outcome, driving the model from the cassette alone. Uses a real hard
-    sandbox when available, else an honest UNAVAILABLE.
+    same outcome, driving the model from the cassette alone. Requires a real
+    hard-isolated sandbox: with none available the command fails closed with an
+    honest UNAVAILABLE report (exit 1) rather than silently downgrading to the
+    unsafe local backend. ``--allow-unsafe`` is an explicit dev-only opt-in that
+    runs on the unsafe backend but labels it ``UNSAFE`` — never a silent claim.
     """
     import tempfile
 
-    from ..spine.harness import _auto_hard_sandbox, replay_spine_run
+    from ..spine.harness import (
+        replay_spine_run,
+        resolve_replay_sandbox,
+        unavailable_replay_report,
+    )
+
+    allow_unsafe = bool(getattr(args, "allow_unsafe", False))
+    factory, posture = resolve_replay_sandbox(allow_unsafe=allow_unsafe)
+    if factory is None:
+        report = unavailable_replay_report(posture)
+        print(json.dumps(report, indent=2, sort_keys=True, default=str))
+        return 1
 
     trace_dir = args.trace_dir or tempfile.mkdtemp(prefix="spine_replay_")
-
-    def _factory():
-        sbx = _auto_hard_sandbox()
-        if sbx is None:
-            from ..sandbox import UnsafeLocalSandbox
-
-            # honest: unsafe local can still demonstrate replay determinism of
-            # mutations, but it is not a security boundary.
-            sbx = UnsafeLocalSandbox()
-        return sbx
-
     kwargs = {"plan_driven": bool(getattr(args, "plan_driven", False))}
     if getattr(args, "goal", None):
         kwargs["goal"] = args.goal
-    report = replay_spine_run(trace_dir=trace_dir, sandbox_factory=_factory, **kwargs)
+    report = replay_spine_run(trace_dir=trace_dir, sandbox_factory=factory, **kwargs)
     print(json.dumps(report, indent=2, sort_keys=True, default=str))
     return 0 if report["deterministic"] else 1
 

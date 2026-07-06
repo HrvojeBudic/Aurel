@@ -103,3 +103,45 @@ def test_plan_driven_invalid_plan_is_honest_unavailable(tmp_path):
     assert result.spine_live is False
     assert result.execution_available is False
     assert "invalid" in result.unavailable_reason or "realizable" in result.unavailable_reason
+
+
+def test_plan_driven_offline_uses_supported_planner(tmp_path):
+    # AUREL-REPAIR-01: with no live model attached, plan-driven mode uses the
+    # deterministic offline planner whose plan is in the spine card allowlist —
+    # so it no longer fails with the misleading ``unsupported_command`` reason.
+    result = run_spine_slice(
+        trace_dir=tmp_path,
+        run_id="plan-offline",
+        sandbox=_FakeHardSandbox(),
+        model_client=None,  # <- the CLI / Web UI offline path
+        plan_driven=True,
+    )
+    assert result.plan_driven is True
+    assert result.unavailable_reason == ""
+    assert result.plan is not None
+    assert [s["tool"] for s in result.plan["steps"]] == ["write_file", "run_tests"]
+    assert [s["node_id"] for s in result.dispatch["step_results"]] == ["patch", "verify"]
+    assert result.spine_live is True
+    assert result.trace_verified is True
+
+
+def test_plan_driven_unsupported_tool_still_fails_closed(tmp_path):
+    # A plan that names a tool outside the spine card allowlist must fail closed,
+    # never be silently coerced into a no-op or a broadened tool surface.
+    bad_plan = (
+        '{"intent_summary": "escape", "plan": [{"step_id": "x", "tool": '
+        '"run_shell", "args": {"cmd": "id"}, "risk": "high", "reason": "no"}], '
+        '"confidence": 0.9, "requires_approval": true, "assumptions": [], '
+        '"refusal_reason": null}'
+    )
+    result = run_spine_slice(
+        trace_dir=tmp_path,
+        run_id="plan-unsupported",
+        sandbox=_FakeHardSandbox(),
+        model_client=_ScriptedClient(bad_plan),
+        plan_driven=True,
+    )
+    assert result.spine_live is False
+    assert result.execution_available is False
+    assert result.dispatch is None
+    assert result.unavailable_reason  # honest reason, not a success shape

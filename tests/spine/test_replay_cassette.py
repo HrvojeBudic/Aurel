@@ -56,3 +56,8 @@ def test_replay_is_state_hash_deterministic(tmp_path):
     # the reconstructed run reaches the identical per-node world states
     assert report["deterministic"], report
     assert report["original_state_hashes"] == report["replay_state_hashes"]
+    # AUREL-REPAIR-01: the report honestly surfaces which sandbox actually ran.
+    assert report["available"] is True
+    assert report["sandbox"]["hard_isolated"] is True
+    assert report["sandbox"]["security_boundary"] is True
+    assert report["truth_label"] == "LIVE"

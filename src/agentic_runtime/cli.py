@@ -1198,6 +1198,11 @@ def main(argv: list[str] | None = None) -> int:
     p_spine_replay.add_argument("--trace-dir", default=None, help="trace base dir")
     p_spine_replay.add_argument("--goal", default=None, help="task goal for the planner")
     p_spine_replay.add_argument("--plan-driven", action="store_true")
+    p_spine_replay.add_argument(
+        "--allow-unsafe", action="store_true",
+        help="dev-only: run replay on the UNSAFE local backend when no hard "
+        "sandbox exists (labelled UNSAFE — not a security boundary)",
+    )
     p_spine_replay.set_defaults(func=cmd_spine_replay)
 
     p_spine_serve = spine_sub.add_parser(

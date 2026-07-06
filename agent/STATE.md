@@ -1,6 +1,23 @@
 # Repository State
 
-_Last updated: 2026-07-05 (P5-TRACE-G - P5 Exit Seal / P6-P8-P9 Handoff; **P5 SEALED as a v1 trace/evidence contract layer; next domain P6**)_
+_Last updated: 2026-07-06 (AUREL-REPAIR-01 — Spine safety / default sandbox / plan-driven truth repair; roadmap continuation remains at P6)_
+
+> **AUREL-REPAIR-01 (2026-07-06) — Spine truth repair (hardening, not a roadmap feature).**
+> Repaired the Spine slice so it cannot overclaim: (1) removed the silent
+> `UnsafeLocalSandbox` fallback from **both** the Web UI (`spine/webui.py`) and
+> `spine replay` CLI replay paths — they now go through one honest chokepoint
+> `harness.resolve_replay_sandbox()`; without a hard sandbox they fail closed
+> (`available=false, truth_label=UNAVAILABLE`, CLI exit 1); `--allow-unsafe` is an
+> explicit dev opt-in labelled `UNSAFE`, and the S1 write-gate still blocks
+> mutations on it. (2) `spine run --plan-driven --json` now succeeds honestly via a
+> contained `_SpineOfflinePlanner` (allowlist-aligned calc plan) instead of failing
+> with `unsupported_command`; unsupported-tool plans still fail closed. (3) Replay
+> reports surface real sandbox posture. (4) Removed the stale `type: ignore` at
+> `trace.py:20`; mypy spine clean. Default `sandbox-status` posture verified honest.
+> Report: `agent/reports/AUREL_REPAIR_01_SPINE_SAFETY_DEFAULT_SANDBOX_PLAN_DRIVEN_TRUTH_REPAIR.md`.
+> Known pre-existing (out-of-scope, flagged) failure: `test_m0_sandbox_attestation.py::test_attestation_tamper_breaks_chain` (M0 attestation forgery-detection gap; fails on pristine tree). Full pytest seal UNVERIFIED (suite >10min here).
+
+_Prior update: 2026-07-05 (P5-TRACE-G - P5 Exit Seal / P6-P8-P9 Handoff; **P5 SEALED as a v1 trace/evidence contract layer; next domain P6**)_
 
 ## Current Roadmap Pointer
 

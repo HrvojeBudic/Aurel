@@ -17,6 +17,7 @@ outcome, not a failure. Tests inject a hard sandbox to exercise the green path.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -61,6 +62,55 @@ _NO_HARD_SANDBOX_REASON = (
     "no hard-isolated sandbox (Bubblewrap/Docker) available; mutating spine "
     "execution is fail-closed UNAVAILABLE — this is a valid governed outcome"
 )
+
+# A deterministic, validated plan for the fixed spine calc goal, aligned to the
+# spine card's tool allowlist (write_file, run_tests). Emitted by the offline
+# planner below so plan-driven mode has an honest, supported plan when no live
+# model is attached — the alternative (the generic mock ``list_dir`` plan) is not
+# in the spine card allowlist and fails the plan closed as ``unsupported_command``.
+_SPINE_PLAN_JSON = json.dumps(
+    {
+        "intent_summary": "fix calc.py so its test passes",
+        "plan": [
+            {
+                "step_id": "patch",
+                "tool": "write_file",
+                "args": {"path": "calc.py", "content": _FIXED_CALC},
+                "risk": "medium",
+                "reason": "set VALUE to 2",
+                "expected_effect": "calc.py fixed",
+            },
+            {
+                "step_id": "verify",
+                "tool": "run_tests",
+                "args": {"test_file": "test_calc.py"},
+                "risk": "low",
+                "reason": "confirm the fix",
+                "expected_effect": "test passes",
+            },
+        ],
+        "confidence": 0.9,
+        "requires_approval": True,
+        "assumptions": [],
+        "refusal_reason": None,
+    }
+)
+
+
+class _SpineOfflinePlanner:
+    """Deterministic offline planner for the fixed spine calc goal.
+
+    Stands in for a live model when plan-driven mode runs without one. It emits
+    the validated ``write_file`` + ``run_tests`` plan that fixes calc.py, aligned
+    to the spine card's tool allowlist. Honest: this is a local deterministic
+    fixture (``DEV_FIXTURE`` cognition), not an external model call — the model
+    evidence records it as such.
+    """
+
+    name = "spine-offline-planner"
+
+    def complete(self, system: str, user: str) -> str:
+        return _SPINE_PLAN_JSON
 
 
 @dataclass(frozen=True)
@@ -145,6 +195,80 @@ def _auto_hard_sandbox() -> Any | None:
     return _try_backend(BubblewrapSandbox) or _try_backend(DockerSandbox)
 
 
+def _sandbox_posture(sbx: Any) -> dict:
+    """Honest, operator-visible posture of the sandbox actually in use."""
+    mode = getattr(sbx, "mode", None)
+    backend = getattr(mode, "value", None) or (
+        str(mode) if mode is not None else type(sbx).__name__
+    )
+    return {
+        "backend": backend,
+        "hard_isolated": bool(getattr(sbx, "is_hard_isolated", False)),
+        "security_boundary": bool(getattr(sbx, "is_security_boundary", False)),
+    }
+
+
+def resolve_replay_sandbox(*, allow_unsafe: bool = False) -> tuple[Any | None, dict]:
+    """Resolve a replay sandbox factory *without* silent unsafe fallback.
+
+    Returns ``(factory, posture)``:
+
+    * A hard-isolated backend is functionally available → a factory for it and a
+      ``LIVE`` posture.
+    * None available and ``allow_unsafe`` is False → ``(None, posture)`` with
+      ``truth_label='UNAVAILABLE'`` and a reason. The caller MUST fail closed and
+      must not claim a live/verified/deterministic result.
+    * None available and ``allow_unsafe`` is True → an explicit, dev-only opt-in:
+      an ``UnsafeLocalSandbox`` factory with ``truth_label='UNSAFE'`` and
+      ``security_boundary=False`` so the downgrade is visible, never silent.
+    """
+    hard = _auto_hard_sandbox()
+    if hard is not None:
+        posture = _sandbox_posture(hard)
+        posture.update(truth_label="LIVE", reason="")
+        return (lambda: _auto_hard_sandbox()), posture
+    if allow_unsafe:
+        from ..sandbox import UnsafeLocalSandbox
+
+        posture = _sandbox_posture(UnsafeLocalSandbox())
+        posture.update(
+            truth_label="UNSAFE",
+            reason=(
+                "no hard-isolated sandbox available; replay ran on the UNSAFE "
+                "local backend (explicit dev opt-in) — determinism is shown but "
+                "this is NOT a security boundary"
+            ),
+        )
+        return (lambda: UnsafeLocalSandbox()), posture
+    return None, {
+        "backend": "",
+        "hard_isolated": False,
+        "security_boundary": False,
+        "truth_label": "UNAVAILABLE",
+        "reason": _NO_HARD_SANDBOX_REASON,
+    }
+
+
+def unavailable_replay_report(posture: dict) -> dict:
+    """Honest fail-closed replay report — makes no false determinism claim.
+
+    No ``TRACE_VERIFIED``, no ``LIVE``, no deterministic success shape: the
+    operator sees exactly why replay could not run.
+    """
+    return {
+        "available": False,
+        "deterministic": False,
+        "outcomes_match": False,
+        "cassette_size": 0,
+        "original_state_hashes": [],
+        "replay_state_hashes": [],
+        "replay_used_network": False,
+        "sandbox": posture,
+        "truth_label": posture.get("truth_label", "UNAVAILABLE"),
+        "unavailable_reason": posture.get("reason", _NO_HARD_SANDBOX_REASON),
+    }
+
+
 _DEEPSEEK_MODELS = {
     "pro": "deepseek-v4-pro",
     "flash": "deepseek-v4-flash",
@@ -209,7 +333,13 @@ def run_spine_slice(
     from .. import build_runtime
 
     run_id = run_id or new_id("spine")
-    model_evidence, model_raw = _model_leg(model_client, goal)
+    # Plan-driven mode needs a plan whose tools are in the spine card allowlist.
+    # With no live model attached, use the deterministic offline planner rather
+    # than the generic mock (whose ``list_dir`` plan is unsupported here).
+    planner = model_client
+    if planner is None and plan_driven:
+        planner = _SpineOfflinePlanner()
+    model_evidence, model_raw = _model_leg(planner, goal)
     plan_dict: dict | None = None
 
     def _unavailable(reason: str) -> SpineSliceResult:
@@ -374,11 +504,20 @@ def replay_spine_run(
     base = Path(trace_dir)
     cassette = ModelCassette(base / "cassette.jsonl")
 
+    # Plan-driven replay needs a supported plan; use the offline planner when no
+    # live model is attached (mirrors run_spine_slice's plan-driven default).
+    inner = model_client
+    if inner is None and plan_driven:
+        inner = _SpineOfflinePlanner()
     record_client = RecordingModelClient(
-        model_client or MockModelClient(), cassette, model_id="spine-model"
+        inner or MockModelClient(), cassette, model_id="spine-model"
     )
+    # Introspect the real sandbox posture so the report never hides which backend
+    # actually ran the replay.
+    sbx_record = sandbox_factory()
+    posture = _sandbox_posture(sbx_record)
     original = run_spine_slice(
-        trace_dir=base / "record", run_id="replay-record", sandbox=sandbox_factory(),
+        trace_dir=base / "record", run_id="replay-record", sandbox=sbx_record,
         model_client=record_client, goal=goal, plan_driven=plan_driven,
     )
 
@@ -391,7 +530,11 @@ def replay_spine_run(
     original_hashes = _mutation_state_hashes(original)
     replay_hashes = _mutation_state_hashes(replay)
     outcomes_match = _node_outcomes(original) == _node_outcomes(replay)
+    truth_label = posture.get("truth_label") or (
+        "LIVE" if posture["security_boundary"] else "UNSAFE"
+    )
     return {
+        "available": True,
         # Deterministic = every governed mutation reproduced the same world-state
         # AND every node reached the same outcome, driving the model from the
         # cassette alone (no provider contacted on replay).
@@ -405,6 +548,8 @@ def replay_spine_run(
         "original_state_hashes": original_hashes,
         "replay_state_hashes": replay_hashes,
         "replay_used_network": False,
+        "sandbox": posture,
+        "truth_label": truth_label,
         "original_unavailable_reason": original.unavailable_reason,
         "replay_unavailable_reason": replay.unavailable_reason,
     }
@@ -415,5 +560,7 @@ __all__ = [
     "SpineSliceResult",
     "run_spine_slice",
     "replay_spine_run",
+    "resolve_replay_sandbox",
+    "unavailable_replay_report",
     "build_deepseek_client",
 ]

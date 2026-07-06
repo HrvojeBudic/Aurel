@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Protocol, U
 try:
     import fcntl  # POSIX advisory file locking for cross-process single-writer
 except ImportError:  # pragma: no cover - non-POSIX
-    fcntl = None  # type: ignore[assignment]
+    fcntl = None
 
 if TYPE_CHECKING:
     from .worldline import ForkRef

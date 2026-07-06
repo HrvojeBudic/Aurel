@@ -1,6 +1,22 @@
-# Active Task: P5-TRACE-G complete; P5 SEALED as a v1 trace/evidence contract layer; next domain P6
+# Active Task: AUREL-REPAIR-01 complete (Spine truth repair); roadmap continuation remains at P6
 
-**Status:** P5-TRACE-G COMPLETE — P5 Exit Seal / P6-P8-P9 Handoff. **P5 is SEALED** as an evidence-backed v1 trace/evidence contract layer, with explicit P6/P8/P9 handoff contracts. The seal is a **derived** verdict, never declared: `build_p5_exit_seal_report` returns SEALED only when the seal checklist is not BLOCKED, the truth-label audit passes with no blocking overclaim, all three handoff contracts are present, and the capability matrix has no blocked rows. It reads the six P5-A→F reports (present) as seal evidence. SEALED means v1 trace/evidence contract closure only — it does **not** mean production readiness, legal compliance, actual replay, production distributed ledger, external export, Shell/API availability, or P6/P8/P9 implementation, all of which remain UNAVAILABLE and are explicitly registered. `TRACE_VERIFIED` is only ever a P5-D resolver decision, never a truth label. Nothing here executes, mutates, or implements a downstream domain.
+**AUREL-REPAIR-01 (2026-07-06) — DONE (hardening patch, not a roadmap feature).** Repaired the Spine
+slice's safety/truth gaps found in the latest audit: no silent `UnsafeLocalSandbox` fallback on
+replay/live paths (one honest `resolve_replay_sandbox()` chokepoint used by Web UI + `spine replay`
+CLI; missing hard sandbox → fail-closed `UNAVAILABLE` with reason, CLI exit 1; `--allow-unsafe` dev
+opt-in labelled `UNSAFE` and still write-gate-blocked); `spine run --plan-driven --json` now succeeds
+honestly via a contained `_SpineOfflinePlanner` (was `unsupported_command`), unsupported tools still
+fail closed; replay reports surface real sandbox posture; stale `type: ignore` at `trace.py:20`
+removed (mypy spine clean). Focused validation green (tests/spine 61, aurel_trace 251, aurel_exec 286,
+p3_flow 737, ruff+mypy clean). Report:
+`agent/reports/AUREL_REPAIR_01_SPINE_SAFETY_DEFAULT_SANDBOX_PLAN_DRIVEN_TRUTH_REPAIR.md`. Pre-existing
+out-of-scope failure flagged: `test_m0_sandbox_attestation.py::test_attestation_tamper_breaks_chain`
+(M0 attestation forgery detection). Full pytest seal UNVERIFIED (suite >10min). **Next: fix M0
+attestation tamper detection; then resume P6.**
+
+---
+
+**Prior status:** P5-TRACE-G COMPLETE — P5 Exit Seal / P6-P8-P9 Handoff. **P5 is SEALED** as an evidence-backed v1 trace/evidence contract layer, with explicit P6/P8/P9 handoff contracts. The seal is a **derived** verdict, never declared: `build_p5_exit_seal_report` returns SEALED only when the seal checklist is not BLOCKED, the truth-label audit passes with no blocking overclaim, all three handoff contracts are present, and the capability matrix has no blocked rows. It reads the six P5-A→F reports (present) as seal evidence. SEALED means v1 trace/evidence contract closure only — it does **not** mean production readiness, legal compliance, actual replay, production distributed ledger, external export, Shell/API availability, or P6/P8/P9 implementation, all of which remain UNAVAILABLE and are explicitly registered. `TRACE_VERIFIED` is only ever a P5-D resolver decision, never a truth label. Nothing here executes, mutates, or implements a downstream domain.
 
 ## P5-TRACE-G Status
 
