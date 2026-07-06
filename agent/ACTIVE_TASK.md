@@ -1,4 +1,12 @@
-# Active Task: AUREL-REPAIR-02 complete (M0 attestation tamper-detection); roadmap continuation remains at P6
+# Active Task: AUREL-SEAL-01 complete (full pytest suite sealed clean); roadmap continuation remains at P6
+
+**AUREL-SEAL-01 (2026-07-06) — DONE (validation seal, no source change).** Ran the canonical full suite
+to genuine completion at HEAD `f3734e4` on a clean tree: **8434 passed, 3 skipped, 0 failed (exit 0) in
+25:43** — discharging the "full pytest not sealed" item REPAIR-01/02 left UNVERIFIED. No failures to
+triage. Coverage/Bandit not re-run this pass (optional). Report:
+`agent/reports/AUREL_SEAL_01_FULL_SUITE.md`. **Next: resume P6 (optionally a dedicated coverage+Bandit seal).**
+
+---
 
 **AUREL-REPAIR-02 (2026-07-06) — DONE (test integrity, no source change).** RCA'd the REPAIR-01-flagged
 `test_attestation_tamper_breaks_chain` failure: **not** a verification hole — `verify_persisted →

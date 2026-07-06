@@ -1,6 +1,18 @@
 # Repository State
 
-_Last updated: 2026-07-06 (AUREL-REPAIR-02 — M0 sandbox attestation tamper-detection test integrity; roadmap continuation remains at P6)_
+_Last updated: 2026-07-06 (AUREL-SEAL-01 — full pytest suite sealed clean; roadmap continuation remains at P6)_
+
+> **AUREL-SEAL-01 (2026-07-06) — Full pytest suite sealed (validation only, no source change).**
+> Ran the canonical full suite (`.venv/bin/python -m pytest -q --tb=short -p no:cacheprovider`)
+> to genuine completion at HEAD `f3734e4` on a clean tree — discharging the "full
+> pytest not sealed" item that REPAIR-01/02 left UNVERIFIED (their 10-min windows
+> couldn't finish the ~25-min suite). **Result: 8434 passed, 3 skipped, 0 failed,
+> 0 errors (exit 0) in 1543.72s (25:43).** No failures to triage; REPAIR-01/02
+> changes are green in-suite. Coverage/Bandit deliberately not re-run this pass
+> (optional extras; last recorded coverage 89.21% at the P4-EXEC-G seal).
+> Report: `agent/reports/AUREL_SEAL_01_FULL_SUITE.md`.
+
+_Prior update: 2026-07-06 (AUREL-REPAIR-02 — M0 sandbox attestation tamper-detection test integrity; roadmap continuation remains at P6)_
 
 > **AUREL-REPAIR-02 (2026-07-06) — M0 attestation tamper-detection (test integrity, no source change).**
 > RCA of the REPAIR-01-flagged `test_attestation_tamper_breaks_chain` failure found
