@@ -91,6 +91,36 @@ def cmd_trace_verify(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_trace_anchor_verify(args: argparse.Namespace) -> int:
+    """Verify a persisted run against its external anchor (M2).
+
+    Read-only: re-verifies the on-disk chain and, when an anchor exists for the
+    run outside the agent's write domain, confirms the anchored merkle root
+    still matches — catching a full re-forge that internal verification alone
+    would miss.
+    """
+    from ..trace import PersistentTraceLedger
+
+    led = PersistentTraceLedger(
+        base_dir=args.trace_dir, run_id=args.run_id, checkpoint_every=args.checkpoint_every
+    )
+    report = led.verify_persisted()
+    if getattr(args, "json", False):
+        print(json.dumps(report, indent=2, sort_keys=True, default=str))
+    else:
+        status = "OK" if report["ok"] else "FAIL"
+        anchored = report.get("anchored")
+        print(f"trace anchor-verify [{status}] run={args.run_id}")
+        print(f"  events: {report.get('event_count')}")
+        print(f"  anchored: {anchored}")
+        if not report["ok"]:
+            print(f"  reason: {report.get('reason')}")
+        elif not anchored:
+            print("  note: no external anchor recorded for this run "
+                  "(internal chain verified only)")
+    return 0 if report["ok"] else 1
+
+
 def cmd_trace_inspect(args: argparse.Namespace) -> int:
     target = getattr(args, "target", None)
     model = _read_model()

@@ -441,6 +441,7 @@ from .cli_modules.exec_commands import (
     cmd_exec_status,
 )
 from .cli_modules.trace_commands import (
+    cmd_trace_anchor_verify,
     cmd_trace_audit,
     cmd_trace_inspect,
     cmd_trace_status,
@@ -488,7 +489,9 @@ from .cli_modules.shell_commands import (
     cmd_shell_status,
     cmd_shell_surfaces,
 )
-from .cli_modules.spine_commands import cmd_spine_run, cmd_spine_serve
+from .cli_modules.spine_commands import cmd_spine_replay, cmd_spine_run, cmd_spine_serve
+from .cli_modules.doctor import cmd_doctor
+from .cli_modules.governance_commands import cmd_governance_audit, cmd_governance_levels
 from .cli_modules.shell_permission_commands import (
     cmd_shell_permissions_actions,
     cmd_shell_permissions_clients,
@@ -780,6 +783,27 @@ def main(argv: list[str] | None = None) -> int:
 
     p_demo = sub.add_parser("demo", help="run the end-to-end governed demo")
     p_demo.set_defaults(func=cmd_demo)
+
+    p_doctor = sub.add_parser(
+        "doctor", help="host capability diagnostics (functional sandbox probes)")
+    p_doctor.add_argument("--json", action="store_true", help="emit JSON")
+    p_doctor.add_argument("--no-cache", action="store_true",
+                          help="re-run probes, ignoring the cached results")
+    p_doctor.set_defaults(func=cmd_doctor)
+
+    p_gov = sub.add_parser("governance", help="governance scale G0–G5 (M6)")
+    gov_sub = p_gov.add_subparsers(dest="governance_command", required=True)
+    p_gov_levels = gov_sub.add_parser("levels", help="show the G0–G5 spectrum")
+    p_gov_levels.add_argument("--json", action="store_true", help="emit JSON")
+    p_gov_levels.set_defaults(func=cmd_governance_levels)
+    p_gov_audit = gov_sub.add_parser(
+        "audit", help="detect drift above a run's declared governance level")
+    p_gov_audit.add_argument("run_id", help="run id under the trace dir")
+    p_gov_audit.add_argument("--declared", default="G1",
+                             help="declared level (G0..G5); default G1")
+    p_gov_audit.add_argument("--trace-dir", default=".traces", help="trace base dir")
+    p_gov_audit.add_argument("--checkpoint-every", type=int, default=5)
+    p_gov_audit.set_defaults(func=cmd_governance_audit)
 
     p_verify = sub.add_parser("verify", help="run the pytest suite")
     p_verify.add_argument("-v", "--verbose", action="store_true")
@@ -1131,6 +1155,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_trace_audit.add_argument("--json", action="store_true", help="emit JSON")
     p_trace_audit.set_defaults(func=cmd_trace_audit)
+    p_trace_anchor = trace_sub.add_parser(
+        "anchor-verify",
+        help="verify a persisted run against its external anchor (catches re-forge)",
+    )
+    p_trace_anchor.add_argument("run_id", help="run id under the trace dir")
+    p_trace_anchor.add_argument("--trace-dir", default=".traces", help="trace base dir")
+    p_trace_anchor.add_argument("--checkpoint-every", type=int, default=5)
+    p_trace_anchor.add_argument("--json", action="store_true", help="emit JSON")
+    p_trace_anchor.set_defaults(func=cmd_trace_anchor_verify)
 
     # SPINE-LIVE-5 — end-to-end living thread (model->flow->exec->trace->shell)
     p_spine = sub.add_parser(
@@ -1158,6 +1191,14 @@ def main(argv: list[str] | None = None) -> int:
     p_spine_run.add_argument("--goal", default=None, help="task goal for the planner")
     p_spine_run.add_argument("--json", action="store_true", help="compact JSON")
     p_spine_run.set_defaults(func=cmd_spine_run)
+
+    p_spine_replay = spine_sub.add_parser(
+        "replay", help="record then replay a run from a model cassette (no network)"
+    )
+    p_spine_replay.add_argument("--trace-dir", default=None, help="trace base dir")
+    p_spine_replay.add_argument("--goal", default=None, help="task goal for the planner")
+    p_spine_replay.add_argument("--plan-driven", action="store_true")
+    p_spine_replay.set_defaults(func=cmd_spine_replay)
 
     p_spine_serve = spine_sub.add_parser(
         "serve", help="launch the local SPINE-LIVE web console (browser UI)"

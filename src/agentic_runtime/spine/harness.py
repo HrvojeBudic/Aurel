@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from ..core_types import AgentCard, AgentClass, AuthorityScope, RiskLevel, new_id
+from ..governance.profile import GovernanceLevel, governed_approver, profile_for
 from ..hitl import AutoApprover
 from ..model_router import MockModelClient, ModelRouter
 from .flow_dispatch import (
@@ -122,6 +123,8 @@ def _spine_card() -> AgentCard:
 
 
 def _try_backend(backend: Any) -> Any | None:
+    # ``is_available`` is now a functional probe (real sandboxed exec), so a
+    # host where isolation is only nominally present no longer yields a backend.
     try:
         if backend.is_available():
             return backend.create()
@@ -131,7 +134,12 @@ def _try_backend(backend: Any) -> Any | None:
 
 
 def _auto_hard_sandbox() -> Any | None:
-    """Return a real hard-isolated backend if one is available, else None."""
+    """Return a real hard-isolated backend if one is functionally available, else None.
+
+    bwrap is preferred (cheap), docker is the fallback; both are gated on a
+    functional probe so this returns None on a host that cannot actually
+    isolate — an honest UNAVAILABLE rather than a backend that fails at dispatch.
+    """
     from ..sandbox import BubblewrapSandbox, DockerSandbox
 
     return _try_backend(BubblewrapSandbox) or _try_backend(DockerSandbox)
@@ -190,6 +198,7 @@ def run_spine_slice(
     scenario: str = "spine_buggy_calculator",
     goal: str = _DEFAULT_GOAL,
     plan_driven: bool = False,
+    retry: bool = False,
 ) -> SpineSliceResult:
     """Run the full thread and aggregate every phase's evidence flag.
 
@@ -234,9 +243,10 @@ def run_spine_slice(
         trace_backend="persistent",
         trace_dir=str(trace_dir),
         trace_run_id=run_id,
-        approval_gate=AutoApprover(
-            lambda r: True, allow_r2=True, allow_r3=True, allow_r4=True, allow_r5=True
-        ),
+        # M6 — the approver is materialized from a declared governance level, not
+        # hand-rolled as fully-permissive. G4 (frontier) auto-approves the slice's
+        # reversible writes and test runs while keeping the level auditable.
+        approval_gate=governed_approver(profile_for(GovernanceLevel.G4)),
     )
     kernel.sandbox.write_file("calc.py", _BUGGY_CALC)
     kernel.sandbox.write_file("test_calc.py", _CALC_TEST)
@@ -275,7 +285,13 @@ def run_spine_slice(
     lease = session.issue_lease(ordered_steps)
 
     try:
-        dispatch = FlowDispatcher(session).dispatch(graph, run, tasks, lease)
+        retry_policy = None
+        if retry:
+            from ..aurel_flow.recovery import DEFAULT_RETRY_POLICY
+            retry_policy = DEFAULT_RETRY_POLICY
+        dispatch = FlowDispatcher(session).dispatch(
+            graph, run, tasks, lease, retry_policy=retry_policy
+        )
     except SpineExecutionBlocked as e:
         return _unavailable(f"execution blocked: {e}")
 
@@ -314,9 +330,90 @@ def run_spine_slice(
     )
 
 
+# Tools whose post-state is a governed, reproducible mutation. Verification/exec
+# tools (run_tests/run_shell) leave incidental, non-deterministic artifacts
+# (e.g. __pycache__ with embedded temp paths), so their post-state is compared
+# for outcome but not for byte-identical world-state — see docs/DEPLOYMENT.md.
+_MUTATION_TOOLS = frozenset({"write_file", "patch_file", "edit_file", "delete_file"})
+
+
+def _mutation_state_hashes(result: "SpineSliceResult") -> list[str]:
+    """Ordered post-state hashes of governed *mutation* nodes only."""
+    out: list[str] = []
+    dispatch = result.to_dict().get("dispatch") or {}
+    for step in dispatch.get("step_results", []):
+        ev = step.get("exec_evidence") or {}
+        if ev.get("tool") in _MUTATION_TOOLS:
+            out.append(ev.get("after_state_hash", ""))
+    return out
+
+
+def _node_outcomes(result: "SpineSliceResult") -> list[bool]:
+    dispatch = result.to_dict().get("dispatch") or {}
+    return [bool(s.get("success")) for s in dispatch.get("step_results", [])]
+
+
+def replay_spine_run(
+    *,
+    trace_dir: str | Path,
+    sandbox_factory: Any,
+    model_client: Any | None = None,
+    goal: str = _DEFAULT_GOAL,
+    plan_driven: bool = False,
+) -> dict:
+    """Record a run's model I/O, then replay it from the cassette — no network.
+
+    Runs the slice once wrapping the model in a recording cassette, then a second
+    time in a fresh trace dir with a fail-closed ``ReplayModelClient`` fed only by
+    that cassette (no provider is contacted on replay). Determinism is asserted at
+    the world-state-hash level: the ordered per-node ``after_state_hash`` list
+    must match. ``sandbox_factory`` supplies a fresh sandbox per run.
+    """
+    from ..model_cassette import ModelCassette, RecordingModelClient, ReplayModelClient
+
+    base = Path(trace_dir)
+    cassette = ModelCassette(base / "cassette.jsonl")
+
+    record_client = RecordingModelClient(
+        model_client or MockModelClient(), cassette, model_id="spine-model"
+    )
+    original = run_spine_slice(
+        trace_dir=base / "record", run_id="replay-record", sandbox=sandbox_factory(),
+        model_client=record_client, goal=goal, plan_driven=plan_driven,
+    )
+
+    replay_client = ReplayModelClient(cassette, model_id="spine-model")
+    replay = run_spine_slice(
+        trace_dir=base / "replay", run_id="replay-run", sandbox=sandbox_factory(),
+        model_client=replay_client, goal=goal, plan_driven=plan_driven,
+    )
+
+    original_hashes = _mutation_state_hashes(original)
+    replay_hashes = _mutation_state_hashes(replay)
+    outcomes_match = _node_outcomes(original) == _node_outcomes(replay)
+    return {
+        # Deterministic = every governed mutation reproduced the same world-state
+        # AND every node reached the same outcome, driving the model from the
+        # cassette alone (no provider contacted on replay).
+        "deterministic": (
+            original_hashes == replay_hashes
+            and bool(original_hashes)
+            and outcomes_match
+        ),
+        "outcomes_match": outcomes_match,
+        "cassette_size": len(cassette),
+        "original_state_hashes": original_hashes,
+        "replay_state_hashes": replay_hashes,
+        "replay_used_network": False,
+        "original_unavailable_reason": original.unavailable_reason,
+        "replay_unavailable_reason": replay.unavailable_reason,
+    }
+
+
 __all__ = [
     "SPINE_SLICE_RESULT_VERSION",
     "SpineSliceResult",
     "run_spine_slice",
+    "replay_spine_run",
     "build_deepseek_client",
 ]

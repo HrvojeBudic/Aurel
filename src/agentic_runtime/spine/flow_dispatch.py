@@ -18,6 +18,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping
 
+from ..aurel_flow.recovery import (
+    DEFAULT_RETRY_POLICY,
+    RetryPolicy,
+    build_recovery_frame,
+    build_recovery_proposal,
+    calculate_retry_eligibility,
+    classify_failure,
+)
 from ..aurel_flow.scheduler import calculate_ready_queue
 from ..aurel_flow.workflow_graph import (
     WorkflowGraph,
@@ -44,6 +52,24 @@ FLOW_DISPATCH_RESULT_VERSION = "flow_dispatch_result.v1"
 # node_id -> (tool, args)
 NodeTaskMap = Mapping[str, tuple[str, Mapping[str, Any]]]
 PausePredicate = Callable[[str, WorkflowRun], bool]
+
+
+def _make_step(
+    node_id: str,
+    node_state_after: "WorkflowNodeState",
+    evidence: "ToolExecEvidenceRef",
+    attempts: int,
+    attempt_evidence: list["ToolExecEvidenceRef"],
+) -> "FlowDispatchStepResult":
+    return FlowDispatchStepResult(
+        node_id=node_id,
+        node_state_after=node_state_after,
+        exec_evidence=evidence,
+        dispatched=evidence.available,
+        success=evidence.success,
+        attempts=attempts,
+        attempt_evidence=tuple(attempt_evidence),
+    )
 
 
 @dataclass(frozen=True)
@@ -81,6 +107,8 @@ class FlowDispatchStepResult:
     exec_evidence: ToolExecEvidenceRef | None
     dispatched: bool
     success: bool
+    attempts: int = 1
+    attempt_evidence: tuple[ToolExecEvidenceRef, ...] = ()
 
     def to_dict(self) -> dict:
         return {
@@ -89,6 +117,8 @@ class FlowDispatchStepResult:
             "exec_evidence": self.exec_evidence.to_dict() if self.exec_evidence else None,
             "dispatched": self.dispatched,
             "success": self.success,
+            "attempts": self.attempts,
+            "attempt_evidence": [e.to_dict() for e in self.attempt_evidence],
         }
 
 
@@ -104,6 +134,7 @@ class FlowDispatchResult:
     lifecycle_status: WorkflowLifecycleStatus
     success: bool
     paused: bool
+    recovery_proposal: dict | None = None
 
     @property
     def execution_available(self) -> bool:
@@ -125,6 +156,7 @@ class FlowDispatchResult:
             "success": self.success,
             "paused": self.paused,
             "execution_available": self.execution_available,
+            "recovery_proposal": self.recovery_proposal,
         }
 
 
@@ -194,10 +226,16 @@ class FlowDispatcher:
         current_tick: int = 0,
         pause_before: PausePredicate | None = None,
         max_steps: int = 256,
+        retry_policy: RetryPolicy | None = None,
     ) -> FlowDispatchResult:
         step_results: list[FlowDispatchStepResult] = []
         checkpoints: list[FlowDispatchCheckpoint] = []
         paused = False
+        recovery_proposal: dict | None = None
+        # Retry is opt-in: without a policy the dispatcher is single-shot and a
+        # failing node fails the run (unchanged behavior). Pass ``retry_policy``
+        # (or ``DEFAULT_RETRY_POLICY``) to enable rollback-and-retry.
+        policy = retry_policy
 
         run = self._begin(run)
         for _ in range(max_steps):
@@ -221,19 +259,36 @@ class FlowDispatcher:
                 break
 
             checkpoints.append(self._checkpoint("before", node_id, run))
-            run, step = self._dispatch_node(run, node_id, node_tasks, lease, current_tick)
+            run, step, proposal = self._dispatch_node_with_retry(
+                graph, run, node_id, node_tasks, lease, current_tick, policy
+            )
             step_results.append(step)
             checkpoints.append(self._checkpoint("after", node_id, run))
 
             if not step.success:
-                run = transition_workflow_run(
-                    run,
-                    lifecycle_transition(
-                        WorkflowLifecycleStatus.RUNNING,
-                        WorkflowLifecycleStatus.FAILED,
-                        reason=f"node {node_id} failed",
-                    ),
-                )
+                # A retriable failure that exhausted its budget yields an operator
+                # recovery proposal → PAUSE for review. A non-retriable failure
+                # (policy/operator) has no proposal → fail closed.
+                if proposal is not None:
+                    recovery_proposal = proposal
+                    run = transition_workflow_run(
+                        run,
+                        lifecycle_transition(
+                            WorkflowLifecycleStatus.RUNNING,
+                            WorkflowLifecycleStatus.PAUSED,
+                            reason=f"node {node_id} failed; awaiting operator recovery",
+                        ),
+                    )
+                    paused = True
+                else:
+                    run = transition_workflow_run(
+                        run,
+                        lifecycle_transition(
+                            WorkflowLifecycleStatus.RUNNING,
+                            WorkflowLifecycleStatus.FAILED,
+                            reason=f"node {node_id} failed",
+                        ),
+                    )
                 break
 
         run = self._finalize(run, paused)
@@ -246,7 +301,141 @@ class FlowDispatcher:
             lifecycle_status=run.state.lifecycle_status,
             success=run.state.lifecycle_status is WorkflowLifecycleStatus.COMPLETED,
             paused=paused,
+            recovery_proposal=recovery_proposal,
         )
+
+    def _dispatch_node_with_retry(
+        self,
+        graph: WorkflowGraph,
+        run: WorkflowRun,
+        node_id: str,
+        node_tasks: NodeTaskMap,
+        lease: ToolExecLease,
+        current_tick: int,
+        policy: RetryPolicy | None,
+    ) -> tuple[WorkflowRun, FlowDispatchStepResult, dict | None]:
+        """Dispatch one node, retrying flaky failures within the eligibility budget.
+
+        The retry *decision* is delegated to the sealed recovery read-models
+        (``classify_failure`` + ``calculate_retry_eligibility``); the retry
+        *execution* — rolling the sandbox back to the pre-node snapshot and
+        re-submitting — happens here, in the executor layer. On budget
+        exhaustion of a retriable failure an operator ``RecoveryProposal`` is
+        returned. Without a ``policy`` the node is dispatched exactly once.
+        """
+        # No retry policy, or a structural (no-task) node: single-shot dispatch.
+        if policy is None or node_tasks.get(node_id) is None:
+            run, step = self._dispatch_node(run, node_id, node_tasks, lease, current_tick)
+            return run, step, None
+
+        # Move the node to RUNNING once; it stays RUNNING across attempts and
+        # only settles to COMPLETED/FAILED at the end (FAILED is terminal, so a
+        # retry must not pass through it).
+        run = transition_workflow_run(
+            run,
+            node_transition(node_id, WorkflowNodeState.NOT_STARTED, WorkflowNodeState.READY),
+        )
+        run = transition_workflow_run(
+            run,
+            node_transition(node_id, WorkflowNodeState.READY, WorkflowNodeState.RUNNING),
+        )
+
+        pre_snapshot = self._snapshot_sandbox()
+        attempts: list[ToolExecEvidenceRef] = []
+        attempt_count = 0
+        evidence = self._submit_task_raw(node_id, node_tasks, lease, current_tick)
+        attempt_count += 1
+        attempts.append(evidence)
+
+        while not evidence.success:
+            # Classify from the observed evidence: an approval/policy block is
+            # never retried; a verifier/validation failure is.
+            policy_blocked = bool(evidence.blocked_reason)
+            assessment = classify_failure(
+                target_run_id=run.run_id,
+                target_node_id=node_id,
+                graph=graph,
+                policy_blocked=policy_blocked,
+                validation_failed=not policy_blocked,
+                detail=evidence.blocked_reason or "validation failure",
+            )
+            eligibility = calculate_retry_eligibility(
+                policy, assessment, attempt_count=attempt_count
+            )
+            if not eligibility.eligible:
+                run = transition_workflow_run(
+                    run,
+                    node_transition(node_id, WorkflowNodeState.RUNNING,
+                                    WorkflowNodeState.FAILED,
+                                    reason=f"failed after {attempt_count} attempt(s)"),
+                )
+                proposal = None
+                if not policy_blocked:
+                    frame = build_recovery_frame(assessment)
+                    proposal = build_recovery_proposal(
+                        frame,
+                        step_descriptions=(
+                            f"review node {node_id} after {attempt_count} failed attempts",
+                            "operator decides: adjust inputs, skip, or abort",
+                        ),
+                        metadata={"attempts": str(attempt_count)},
+                    ).to_canonical_dict()
+                step = _make_step(node_id, WorkflowNodeState.FAILED, evidence,
+                                  attempt_count, attempts)
+                return run, step, proposal
+
+            # Roll the sandbox back to the pre-node state and retry (still RUNNING).
+            self._rollback_sandbox(pre_snapshot)
+            evidence = self._submit_task_raw(node_id, node_tasks, lease, current_tick)
+            attempt_count += 1
+            attempts.append(evidence)
+
+        run = transition_workflow_run(
+            run,
+            node_transition(node_id, WorkflowNodeState.RUNNING, WorkflowNodeState.COMPLETED),
+        )
+        self._release_snapshot(pre_snapshot)
+        step = _make_step(node_id, WorkflowNodeState.COMPLETED, evidence,
+                          attempt_count, attempts)
+        return run, step, None
+
+    def _submit_task_raw(
+        self,
+        node_id: str,
+        node_tasks: NodeTaskMap,
+        lease: ToolExecLease,
+        current_tick: int,
+    ) -> ToolExecEvidenceRef:
+        """Submit a node's task and return evidence, without any state transition."""
+        tool, args = node_tasks[node_id]
+        return self.session.submit_step(tool, args, lease, current_tick=current_tick)
+
+    def _snapshot_sandbox(self) -> str | None:
+        fn = getattr(self.session.sandbox, "snapshot", None)
+        try:
+            return fn() if callable(fn) else None
+        except Exception:
+            return None
+
+    def _rollback_sandbox(self, snapshot_id: str | None) -> None:
+        if snapshot_id is None:
+            return
+        fn = getattr(self.session.sandbox, "rollback", None)
+        try:
+            if callable(fn):
+                fn(snapshot_id)
+        except Exception:
+            pass
+
+    def _release_snapshot(self, snapshot_id: str | None) -> None:
+        if snapshot_id is None:
+            return
+        fn = getattr(self.session.sandbox, "release_snapshot", None)
+        try:
+            if callable(fn):
+                fn(snapshot_id)
+        except Exception:
+            pass
 
     def _begin(self, run: WorkflowRun) -> WorkflowRun:
         if run.state.lifecycle_status is WorkflowLifecycleStatus.CREATED:
@@ -326,7 +515,18 @@ class FlowDispatcher:
                 success=True,
             )
 
-        tool, args = task
+        return self._run_task(run, node_id, node_tasks, lease, current_tick)
+
+    def _run_task(
+        self,
+        run: WorkflowRun,
+        node_id: str,
+        node_tasks: NodeTaskMap,
+        lease: ToolExecLease,
+        current_tick: int,
+    ) -> tuple[WorkflowRun, FlowDispatchStepResult]:
+        """Submit a node's bound task once (node already in RUNNING)."""
+        tool, args = node_tasks[node_id]
         evidence = self.session.submit_step(tool, args, lease, current_tick=current_tick)
         target = (
             WorkflowNodeState.COMPLETED if evidence.success else WorkflowNodeState.FAILED

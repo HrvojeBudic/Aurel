@@ -86,7 +86,13 @@ from .core_types import (
     Intent,
     RiskLevel,
 )
-from .core_types import MemoryGovernanceRecord, MemoryTruthState, PraxisEventRecord, SandboxViolationRecord
+from .core_types import (
+    MemoryGovernanceRecord,
+    MemoryTruthState,
+    PraxisEventRecord,
+    SandboxAttestationRecord,
+    SandboxViolationRecord,
+)
 from .approval import (
     ApprovalDecision,
     ApprovalMode,
@@ -176,8 +182,13 @@ from .worldline import (
     ForkError,
     ForkRef,
     ForkResult,
+    MergeConflict,
+    MergeError,
+    MergeRef,
+    MergeResult,
     WorldLineForest,
     verify_fork,
+    verify_merge,
 )
 from .sandbox_policy import (
     ProfiledSandbox,
@@ -310,6 +321,7 @@ __all__ = [
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
     "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult", "verify_fork",
+    "MergeError", "MergeConflict", "MergeRef", "MergeResult", "verify_merge",
     "SandboxMode", "SandboxUnavailableError", "create_sandbox", "ExecResult",
     "SandboxProfile", "SandboxProfileName", "SandboxPolicy", "SandboxDiagnostics",
     "SandboxViolation", "SandboxDecision", "SandboxExecutionContext",
@@ -352,7 +364,8 @@ __all__ = [
     "ApprovalRequest", "ApprovalDecision", "ApprovalReceipt",
     "ApprovalPolicy", "ApprovalRequirement", "ApprovalRiskClass",
     "ApprovalMode", "ApprovalOutcome", "ApprovalPreview",
-    "ApprovalReceiptRecord", "PraxisEventRecord", "SandboxViolationRecord", "build_preview", "classify_risk",
+    "ApprovalReceiptRecord", "PraxisEventRecord", "SandboxViolationRecord",
+    "SandboxAttestationRecord", "build_preview", "classify_risk",
     "ConsoleApprover", "DenyAllApprover", "PreviewOnlyApprover",
     "make_approval_gate",
     "PraxisExperience", "PraxisEvidence", "PraxisReport", "PraxisMetabolism",
@@ -403,6 +416,7 @@ def build_runtime(
     trace_dir: str = ".traces",
     trace_run_id: Optional[str] = None,
     trace_checkpoint_every: int = 5,
+    trace_anchor: bool = False,
     policy_card_registry: PolicyCardRegistry | None = None,
     enable_policy_shadow_projection: bool = False,
     governance_enforcement_config: GovernanceEnforcementConfig | None = None,
@@ -464,13 +478,27 @@ def build_runtime(
     test_integrity = TestIntegrityVerifier(sandbox_backend)
     verifier = StateVerifier(sandbox_backend, test_integrity=test_integrity)
     if trace_backend == "persistent":
+        anchor_sink = None
+        if trace_anchor:
+            from .trace_anchor import default_anchor_sink
+            anchor_sink = default_anchor_sink()
         trace: TraceLedgerBackend = PersistentTraceLedger(
             base_dir=trace_dir,
             run_id=trace_run_id,
             checkpoint_every=trace_checkpoint_every,
+            anchor_sink=anchor_sink,
         )
     else:
         trace = InMemoryTraceLedger(run_id=trace_run_id)
+    # M0 — attest the isolation the host can actually provide for hard backends.
+    # Functional-probe result (cached) is hash-chained into the run so the trace
+    # records the true isolation posture, not a version/info check.
+    if sandbox_backend.mode in (SandboxMode.BUBBLEWRAP, SandboxMode.DOCKER):
+        from .sandbox import probe_backend
+        attestation = probe_backend(sandbox_backend.mode)
+        trace.append_sandbox_attestation(
+            SandboxAttestationRecord.make(trace.run_id, attestation)
+        )
     memory = MemoryFabric()
     memory.bind_trace(trace)
     budget = budget or BudgetLedger()

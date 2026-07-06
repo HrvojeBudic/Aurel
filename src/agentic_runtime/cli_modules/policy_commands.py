@@ -68,7 +68,7 @@ def format_policy_unavailable_text(contract: PolicyProjectionContract) -> str:
             else "unavailable"
         )
         lines.append(f"{section.section_id}: {section.title}")
-        lines.append(f"  source: UNAVAILABLE")
+        lines.append("  source: UNAVAILABLE")
         lines.append(f"  status: {section.status.value}")
         lines.append(f"  reason: {reason}")
     return "\n".join(lines)

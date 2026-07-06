@@ -372,13 +372,13 @@ def validate_behavioral_contract(
     # Subject
     if contract.subject.subject_type.value not in _VALID_SUBJECT_TYPES:
         errors.append(_make_issue("INVALID_ENUM",
-                                   f"subject.subject_type invalid",
+                                   "subject.subject_type invalid",
                                    field="subject.subject_type"))
 
     # Scope
     if contract.scope.scope_type.value not in _VALID_SCOPE_TYPES:
         errors.append(_make_issue("INVALID_ENUM",
-                                   f"scope.scope_type invalid",
+                                   "scope.scope_type invalid",
                                    field="scope.scope_type"))
 
     # Policy card refs

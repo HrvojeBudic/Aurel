@@ -158,9 +158,9 @@ def main() -> None:
     if res.verifier.verifier == "hitl":
         print(f"  hitl outcome: DENIED — {res.verifier.reason}")
     elif res.ok:
-        print(f"  outcome: ALLOWED and executed")
+        print("  outcome: ALLOWED and executed")
     else:
-        print(f"  outcome: allowed by policy but failed in sandbox")
+        print("  outcome: allowed by policy but failed in sandbox")
         print(f"  stderr: {res.observation.stderr[:80]}")
 
     banner("5b. TEST INTEGRITY — weakening test_calc.py is DENIED")

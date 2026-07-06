@@ -15,12 +15,14 @@ from __future__ import annotations
 
 import enum
 import os
+import platform
 import resource
 import shutil
 import subprocess  # nosec B404 - subprocess is the explicit execution backend for sandbox implementations
 import tempfile
+import time
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Callable, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol, runtime_checkable
 
 from .canonical_path import CanonicalPathResolver, PathResolutionError
 from .core_types import new_id, sha
@@ -45,6 +47,28 @@ MAX_SNAPSHOTS = DEFAULT_MAX_SNAPSHOTS
 
 DEFAULT_MAX_OUTPUT_BYTES = 256 * 1024
 DEFAULT_TIMEOUT_S = 10.0
+
+# Functional availability probes execute a trivial command through the same
+# invocation the backend uses for real workloads, so "available" can never be
+# claimed on a host where actual isolation fails (e.g. userns restrictions,
+# snap-docker seccomp). Results are cached per process with a short TTL.
+_PROBE_TTL_S = 60.0
+_PROBE_CACHE: dict[str, tuple[float, bool, str]] = {}
+
+
+def _cached_probe(key: str, prober: "Callable[[], tuple[bool, str]]") -> tuple[bool, str]:
+    hit = _PROBE_CACHE.get(key)
+    now_m = time.monotonic()
+    if hit is not None and now_m - hit[0] < _PROBE_TTL_S:
+        return hit[1], hit[2]
+    ok, reason = prober()
+    _PROBE_CACHE[key] = (now_m, ok, reason)
+    return ok, reason
+
+
+def clear_probe_cache() -> None:
+    """Drop cached probe results (tests / doctor --no-cache)."""
+    _PROBE_CACHE.clear()
 
 
 class SandboxMode(str, enum.Enum):
@@ -429,22 +453,36 @@ LocalSubprocessSandbox = UnsafeLocalSandbox  # deprecated alias
 #  Bubblewrap — Linux hard isolation
 # --------------------------------------------------------------------------- #
 def _bubblewrap_available() -> tuple[bool, str]:
+    """Functional probe: run ``/bin/true`` through the production bwrap invocation.
+
+    ``bwrap --version`` succeeds on hosts where namespace creation is blocked
+    (e.g. ``kernel.apparmor_restrict_unprivileged_userns=1``), so availability
+    is only claimed after a real sandboxed execution exits 0.
+    """
+    return _cached_probe("bubblewrap", _probe_bubblewrap)
+
+
+def _probe_bubblewrap() -> tuple[bool, str]:
     executable, reason = _resolve_executable_path("bwrap")
     if executable is None:
         return False, reason
+    workspace = tempfile.mkdtemp(prefix="ar_bwrap_probe_")
     try:
-        proc = subprocess.run(  # nosec B603 - fixed local availability probe for the resolved bwrap executable
-            [executable, "--version"], capture_output=True, text=True, timeout=5)
+        probe_cmd = _bubblewrap_cmd(workspace, ["/bin/true"], executable)
+        proc = subprocess.run(  # nosec B603 - fixed functional probe through the production invocation
+            probe_cmd, capture_output=True, text=True, timeout=15)
         if proc.returncode == 0:
-            version = (proc.stdout or proc.stderr or "ok").strip()
-            return True, f"{executable} ({version})"
-        return False, proc.stderr or f"exit {proc.returncode}"
+            return True, f"{executable} (functional probe ok)"
+        detail = (proc.stderr or proc.stdout or f"exit {proc.returncode}").strip()
+        return False, f"bwrap functional probe failed: {detail}"
     except FileNotFoundError:
         return False, "bwrap executable not found"
     except subprocess.TimeoutExpired:
-        return False, "bwrap --version timed out"
+        return False, "bwrap functional probe timed out"
     except OSError as e:
         return False, str(e)
+    finally:
+        shutil.rmtree(workspace, ignore_errors=True)
 
 
 def _bubblewrap_cmd(workspace: str, cmd: list[str], executable: str) -> list[str]:
@@ -519,20 +557,54 @@ class BubblewrapSandbox(_WorkspaceBackend):
 # --------------------------------------------------------------------------- #
 #  Docker — container hard isolation
 # --------------------------------------------------------------------------- #
-def _docker_available() -> tuple[bool, str]:
+DOCKER_DEFAULT_IMAGE = "python:3.12-slim"
+
+
+def _docker_hardening_flags(mem_mb: int, pids: int) -> list[str]:
+    """Isolation flags shared by the functional probe and ``run_shell``.
+
+    Keeping these in one place means the availability probe exercises the exact
+    security posture real workloads run under — so a host where a flag such as
+    ``--security-opt no-new-privileges`` breaks exec (snap-docker) reports
+    UNAVAILABLE instead of a false green.
+    """
+    return [
+        "--rm", "--network", "none",
+        "--memory", f"{mem_mb}m", "--pids-limit", str(pids),
+        "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+        "--read-only", "--tmpfs", f"{SANDBOX_TMPDIR}:exec",
+    ]
+
+
+def _docker_available(image: str = DOCKER_DEFAULT_IMAGE) -> tuple[bool, str]:
+    """Functional probe: run ``true`` in a fully hardened container.
+
+    ``docker info`` succeeds on daemons where the hardened container cannot
+    actually exec (seccomp/apparmor under snap), so availability is claimed
+    only after a real hardened run exits 0.
+    """
+    return _cached_probe(f"docker::{image}", lambda: _probe_docker(image))
+
+
+def _probe_docker(image: str) -> tuple[bool, str]:
     executable, reason = _resolve_executable_path("docker")
     if executable is None:
         return False, reason
+    docker_cmd = [
+        executable, "run", *_docker_hardening_flags(64, 64),
+        image, "true",
+    ]
     try:
-        proc = subprocess.run(  # nosec B603 - fixed local availability probe for the resolved docker executable
-            [executable, "info"], capture_output=True, text=True, timeout=10)
+        proc = subprocess.run(  # nosec B603 - functional probe through the production hardened invocation
+            docker_cmd, capture_output=True, text=True, timeout=120)
         if proc.returncode == 0:
-            return True, executable
-        return False, proc.stderr or f"exit {proc.returncode}"
+            return True, f"{executable} (hardened probe ok, image {image})"
+        detail = (proc.stderr or proc.stdout or f"exit {proc.returncode}").strip()
+        return False, f"docker hardened probe failed: {detail}"
     except FileNotFoundError:
         return False, "docker executable not found"
     except subprocess.TimeoutExpired:
-        return False, "docker info timed out"
+        return False, "docker hardened probe timed out"
     except OSError as e:
         return False, str(e)
 
@@ -540,7 +612,7 @@ def _docker_available() -> tuple[bool, str]:
 class DockerSandbox(_WorkspaceBackend):
     """Docker container backend — hard isolation when docker is available."""
 
-    def __init__(self, image: str = "python:3.12-slim", root: Optional[str] = None,
+    def __init__(self, image: str = DOCKER_DEFAULT_IMAGE, root: Optional[str] = None,
                  mem_mb: int = 512, pids: int = 128,
                  max_output_bytes: int = DEFAULT_MAX_OUTPUT_BYTES) -> None:
         root = root or tempfile.mkdtemp(prefix="ar_docker_")
@@ -558,7 +630,7 @@ class DockerSandbox(_WorkspaceBackend):
 
     @classmethod
     def create(cls, root: Optional[str] = None, **kwargs) -> DockerSandbox:
-        ok, reason = _docker_available()
+        ok, reason = _docker_available(kwargs.get("image", DOCKER_DEFAULT_IMAGE))
         if not ok:
             raise SandboxUnavailableError(SandboxMode.DOCKER, reason)
         return cls(root=root, **kwargs)
@@ -574,10 +646,7 @@ class DockerSandbox(_WorkspaceBackend):
                 error_kind="unavailable",
             )
         docker_cmd = [
-            executable, "run", "--rm", "--network", "none",
-            "--memory", f"{self.mem_mb}m", "--pids-limit", str(self.pids),
-            "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
-            "--read-only", "--tmpfs", f"{SANDBOX_TMPDIR}:exec",
+            executable, "run", *_docker_hardening_flags(self.mem_mb, self.pids),
             "-v", f"{self.root}:/work:rw", "-w", "/work", self.image, *cmd,
         ]
         return _run_subprocess(
@@ -585,6 +654,62 @@ class DockerSandbox(_WorkspaceBackend):
             sandbox_mode=self.mode, max_output=self.max_output_bytes,
             fs_root=self.root,
         )
+
+
+# --------------------------------------------------------------------------- #
+#  Host attestation — proof of what isolation the host can actually provide
+# --------------------------------------------------------------------------- #
+def _read_userns_sysctl() -> str:
+    """Best-effort read of the apparmor userns restriction, for the fingerprint."""
+    for path in (
+        "/proc/sys/kernel/apparmor_restrict_unprivileged_userns",
+        "/proc/sys/kernel/unprivileged_userns_clone",
+    ):
+        try:
+            with open(path, encoding="utf-8") as f:
+                return f"{os.path.basename(path)}={f.read().strip()}"
+        except OSError:
+            continue
+    return "userns_sysctl=unknown"
+
+
+def host_fingerprint() -> dict[str, str]:
+    """Stable identity of the host's isolation-relevant configuration."""
+    return {
+        "system": platform.system(),
+        "release": platform.release(),
+        "machine": platform.machine(),
+        "userns": _read_userns_sysctl(),
+    }
+
+
+def probe_backend(mode: SandboxMode) -> dict[str, Any]:
+    """Run the functional probe for one backend and return an attestation dict.
+
+    This is the single source of truth for "can this host provide backend X",
+    consumed by ``build_runtime`` (attestation record), ``doctor``, and
+    ``_auto_hard_sandbox``.
+    """
+    if mode is SandboxMode.BUBBLEWRAP:
+        ok, reason = _bubblewrap_available()
+        probe = "bwrap /bin/true through production invocation"
+    elif mode is SandboxMode.DOCKER:
+        ok, reason = _docker_available()
+        probe = "docker run --cap-drop ALL --security-opt no-new-privileges --read-only true"
+    elif mode is SandboxMode.UNSAFE_LOCAL:
+        ok, reason = True, "unsafe local — NOT a security boundary"
+        probe = "none"
+    else:
+        ok, reason = False, f"unknown mode {mode}"
+        probe = "none"
+    return {
+        "backend": mode.value,
+        "available": ok,
+        "reason": reason,
+        "probe": probe,
+        "hard_isolated": ok and mode in (SandboxMode.BUBBLEWRAP, SandboxMode.DOCKER),
+        "host": host_fingerprint(),
+    }
 
 
 # --------------------------------------------------------------------------- #

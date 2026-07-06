@@ -713,6 +713,56 @@ class SandboxViolationRecord:
 
 
 @dataclass
+class SandboxAttestationRecord:
+    """Hash-chained proof of the isolation a host could actually provide (M0).
+
+    Written at runtime construction from a *functional* probe (a real sandboxed
+    execution), not a version/info check — so the trace records the true
+    isolation posture a run executed under, closing the "probe says OK, runtime
+    fails" gap.
+    """
+    id: str
+    run_id: str
+    backend: str            # sandbox mode value
+    available: bool
+    hard_isolated: bool
+    reason: str
+    probe: str
+    host: dict[str, Any] = field(default_factory=dict)
+    created_at: float = field(default_factory=now)
+    prev_entry_hash: str = ""
+    entry_hash: str = ""
+
+    @staticmethod
+    def make(run_id: str, attestation: dict[str, Any]) -> "SandboxAttestationRecord":
+        return SandboxAttestationRecord(
+            id=new_id("sbxattest"),
+            run_id=run_id,
+            backend=str(attestation.get("backend", "")),
+            available=bool(attestation.get("available", False)),
+            hard_isolated=bool(attestation.get("hard_isolated", False)),
+            reason=str(attestation.get("reason", ""))[:500],
+            probe=str(attestation.get("probe", "")),
+            host=dict(attestation.get("host", {})),
+        )
+
+    def payload_hash(self) -> str:
+        return sha(canonical_json({
+            "kind": "sandbox_attestation",
+            "run_id": self.run_id,
+            "backend": self.backend,
+            "available": self.available,
+            "hard_isolated": self.hard_isolated,
+            "reason": self.reason,
+            "probe": self.probe,
+            "host": self.host,
+        }))
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
 class ToolContractViolationRecord:
     """Hash-chained trace of a tool contract (input/output) violation (P0.10)."""
     id: str

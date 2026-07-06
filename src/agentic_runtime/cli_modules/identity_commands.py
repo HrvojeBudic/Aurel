@@ -2336,7 +2336,7 @@ def cmd_identity_authority_delta_compare(args: argparse.Namespace) -> int:
                 print(f"    [{delta.severity.value}] {delta.delta_type.value}: {delta.field_path} "
                       f"({delta.old_value!r} -> {delta.new_value!r})")
                 if delta.requires_operator_consent:
-                    print(f"      OPERATOR CONSENT REQUIRED")
+                    print("      OPERATOR CONSENT REQUIRED")
     return 0
 
 
@@ -2786,11 +2786,11 @@ def cmd_identity_consent_validate(args: argparse.Namespace) -> int:
             for mid in validation.missing_delta_ids:
                 print(f"    - {mid}")
         if validation.blockers:
-            print(f"  blockers:")
+            print("  blockers:")
             for b in validation.blockers:
                 print(f"    - {b}")
         if validation.warnings:
-            print(f"  warnings:")
+            print("  warnings:")
             for w in validation.warnings:
                 print(f"    - {w}")
         print(f"  reason: {validation.reason}")
