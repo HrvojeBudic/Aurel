@@ -23,6 +23,7 @@ class TokenUsage:
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0
+    reasoning_tokens: int = 0   # extended-thinking / reasoning tokens, when the provider reports them
 
 
 @dataclass
@@ -60,6 +61,7 @@ class ModelRequest:
     max_tokens: int = 2048
     timeout_seconds: float = 30.0
     metadata: dict[str, Any] = field(default_factory=dict)
+    reasoning_effort: str = "auto"   # request-only hint; providers MAY ignore. No execution/dispatch semantics.
 
 
 @dataclass

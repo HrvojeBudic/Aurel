@@ -100,9 +100,10 @@ class AgenticEntity:
         context = self.runtime.memory.assemble_context(intent.text, k=5)
         user = (f"GOAL: {intent.text}\nCONSTRAINTS: {intent.constraints}\n"
                 f"MEMORY CONTEXT:\n{context}\n")
-        self.runtime.budget.charge_llm()
-        raw, model_name = self.router.complete(self.card.model_profile,
-                                               _PLANNER_SYSTEM, user)
+        self.runtime.budget.precheck_llm()
+        raw, model_name, usage = self.router.complete_with_usage(
+            self.card.model_profile, _PLANNER_SYSTEM, user)
+        self.runtime.budget.charge_llm(usage=usage)
         result = self.plan_validator.parse_and_validate(raw)
         if result.valid:
             self._remember(MemoryRecord.make(
