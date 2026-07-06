@@ -39,6 +39,7 @@ from .nc_bindings import (
     validate_coverage,
 )
 from .kernel import DualKernelRuntime, RouteRecord
+from .ledger import DualKernelEvent, DualKernelLedger
 from .praxis import Praxis, SpeculativeOutcome
 from .routing import AdmitDecision, Route, autonomy_index, route_for
 from .sigma import GovernanceStateVector, SigmaGovernor
@@ -66,6 +67,8 @@ __all__ = [
     "SpeculativeOutcome",
     "DualKernelRuntime",
     "RouteRecord",
+    "DualKernelLedger",
+    "DualKernelEvent",
     "NCBinding",
     "load_bindings",
     "binding_for",

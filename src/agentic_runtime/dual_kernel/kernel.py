@@ -27,6 +27,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional
 
 from ..core_types import AgentCard, CommandEnvelope, ObservationEnvelope, VerifierResult
+from .ledger import DualKernelLedger
 from .merge_gate import DeploymentReadinessDecision, MergeContext, MergeGate
 from .routing import AdmitDecision, Route
 from .sigma import GovernanceStateVector, SigmaGovernor, _writes_of
@@ -60,6 +61,7 @@ class DualKernelRuntime:
         sigma_gov: Optional[SigmaGovernor] = None,
         gate: Optional[MergeGate] = None,
         spec_approver: Optional[Any] = None,
+        ledger: Optional[DualKernelLedger] = None,
     ) -> None:
         self.kernel = kernel
         self.runtime = kernel.runtime
@@ -67,6 +69,7 @@ class DualKernelRuntime:
         self.sigma_gov = sigma_gov or SigmaGovernor()
         self.gate = gate or MergeGate()
         self._spec_approver = spec_approver
+        self.ledger = ledger or DualKernelLedger()
         self._sigmas: dict[str, GovernanceStateVector] = {}
         self.route_log: list[RouteRecord] = []
 
@@ -80,6 +83,7 @@ class DualKernelRuntime:
         admit: AdmitDecision = self.sigma_gov.admit_step(sigma, cmd, decision, card)
         rec = RouteRecord(cmd.id, admit.route, admit.autonomy_index,
                           reasons=admit.reasons)
+        verdict: Optional[DeploymentReadinessDecision] = None
 
         if admit.route in (Route.FAST, Route.HARD_GATED):
             result = self.runtime.submit(cmd, card)
@@ -94,10 +98,33 @@ class DualKernelRuntime:
             else:
                 result = self._blocked_result(cmd, verdict)
 
+        self._record(cmd, rec, verdict, executed=rec.executed)
         self._sigmas[self._key(cmd)] = sigma.update(
             cmd, decision, approved=result.ok)
         self.route_log.append(rec)
         return result
+
+    def _record(
+        self,
+        cmd: CommandEnvelope,
+        rec: RouteRecord,
+        verdict: Optional[DeploymentReadinessDecision],
+        *,
+        executed: bool,
+    ) -> None:
+        self.ledger.append(
+            command_id=cmd.id,
+            task_id=self._key(cmd),
+            route=rec.route.value,
+            autonomy_index=rec.autonomy_index,
+            verdict=rec.verdict or "",
+            final_status=(verdict.final_status.value if verdict else rec.verdict or ""),
+            blockers=(verdict.blockers if verdict else []),
+            nc_laws=([b.nc_law for b in verdict.bindings] if verdict else []),
+            simulation_live_status=(verdict.simulation_live_status if verdict else ""),
+            authority_status=(verdict.authority_status if verdict else ""),
+            executed=executed,
+        )
 
     # ---- speculative preflight (real execution, ephemeral workspace) --- #
     def _preflight(
