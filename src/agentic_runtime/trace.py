@@ -10,7 +10,10 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Any, Iterator, Optional, Protocol, Union
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Protocol, Union
+
+if TYPE_CHECKING:
+    from .worldline import ForkRef
 
 from .core_types import (
     ApprovalReceiptRecord,
@@ -295,6 +298,7 @@ class PersistentTraceLedger:
         base_dir: str = ".traces",
         run_id: Optional[str] = None,
         checkpoint_every: int = 5,
+        parent_ref: "ForkRef | None" = None,
     ) -> None:
         self.base_dir = Path(base_dir)
         self.run_id = run_id or new_id("run")
@@ -312,6 +316,12 @@ class PersistentTraceLedger:
         # None the metadata carries no initial_state_hash key (byte-identical to
         # today); when set it makes fork-from-genesis verifiable.
         self._initial_state_hash: Optional[str] = None
+        # M3 — forked genesis. A forked run chains its event ledger from the
+        # parent's ``child_genesis_hash`` instead of GENESIS; the checkpoint
+        # chain stays on GENESIS. parent_ref=None is byte-for-byte today
+        # (self._genesis == GENESIS everywhere it is used below).
+        self._parent_ref = parent_ref
+        self._genesis = parent_ref.child_genesis_hash if parent_ref is not None else GENESIS
 
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.events_path.touch(exist_ok=True)
@@ -323,7 +333,7 @@ class PersistentTraceLedger:
 
     @property
     def head(self) -> str:
-        return self._events[-1]["entry_hash"] if self._events else GENESIS
+        return self._events[-1]["entry_hash"] if self._events else self._genesis
 
     def append(self, rec: StateTransitionRecord) -> StateTransitionRecord:
         rec.prev_entry_hash = self.head
@@ -434,7 +444,7 @@ class PersistentTraceLedger:
 
     def verify_persisted(self) -> dict[str, Any]:
         events = _load_jsonl(self.events_path)
-        ok, broken, reason, final_hash = _verify_events(events, self.run_id)
+        ok, broken, reason, final_hash = _verify_events(events, self.run_id, genesis=self._genesis)
         if not ok:
             return {
                 "ok": False,
@@ -642,6 +652,9 @@ class PersistentTraceLedger:
         md = json.loads(self.metadata_path.read_text(encoding="utf-8"))
         self._started_at = md.get("started_at", now())
         self._initial_state_hash = md.get("initial_state_hash")
+        # M3 — recover the (possibly forked) genesis from persisted metadata so a
+        # reloaded child run verifies from its own genesis without a parent_ref.
+        self._genesis = md.get("genesis_hash", GENESIS)
         events = _load_jsonl(self.events_path)
         for ev in events:
             self._events.append(ev)
@@ -658,7 +671,7 @@ class PersistentTraceLedger:
             "started_at": self._started_at,
             "updated_at": now(),
             "checkpoint_every": self.checkpoint_every,
-            "genesis_hash": GENESIS,
+            "genesis_hash": self._genesis,
         }
         if self._initial_state_hash is not None:
             md["initial_state_hash"] = self._initial_state_hash
@@ -1113,8 +1126,10 @@ def _load_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def _verify_events(events: list[dict[str, Any]], run_id: str) -> tuple[bool, Optional[int], str, str]:
-    prev = GENESIS
+def _verify_events(
+    events: list[dict[str, Any]], run_id: str, genesis: str = GENESIS
+) -> tuple[bool, Optional[int], str, str]:
+    prev = genesis
     for i, event in enumerate(events):
         seq = i + 1
         if event.get("run_id") != run_id:

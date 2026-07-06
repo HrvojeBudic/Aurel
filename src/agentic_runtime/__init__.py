@@ -171,7 +171,13 @@ from .sandbox import (
     create_sandbox,
 )
 from .state_store import StateStore
-from .worldline import CheckoutError, WorldLineForest
+from .worldline import (
+    CheckoutError,
+    ForkError,
+    ForkRef,
+    ForkResult,
+    WorldLineForest,
+)
 from .sandbox_policy import (
     ProfiledSandbox,
     SandboxDiagnostics,
@@ -302,7 +308,7 @@ __all__ = [
     "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
-    "WorldLineForest", "CheckoutError",
+    "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult",
     "SandboxMode", "SandboxUnavailableError", "create_sandbox", "ExecResult",
     "SandboxProfile", "SandboxProfileName", "SandboxPolicy", "SandboxDiagnostics",
     "SandboxViolation", "SandboxDecision", "SandboxExecutionContext",
