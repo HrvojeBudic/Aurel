@@ -76,19 +76,36 @@ def test_attestation_record_persists_and_reloads(tmp_path):
 
 
 def test_attestation_tamper_breaks_chain(tmp_path):
+    # Record a *known-weak* attestation deterministically — independent of whether
+    # THIS host can actually hard-isolate. If we instead recorded the live bwrap
+    # probe (as an earlier version did) and then "forged" available/hard_isolated
+    # to True, the forge would be a no-op on any host where the probe already
+    # returns True (e.g. a working bwrap), mutating nothing and proving nothing.
+    # A deterministic weak baseline makes "forge a stronger claim" a genuine
+    # mutation of the persisted payload on every host, so this test really
+    # exercises tamper detection rather than passing by host accident.
+    weak = {
+        "backend": SandboxMode.BUBBLEWRAP.value,
+        "available": False,
+        "hard_isolated": False,
+        "reason": "probe reported no functional hard isolation",
+        "probe": "bwrap /bin/true through production invocation",
+        "host": host_fingerprint(),
+    }
     led = PersistentTraceLedger(base_dir=str(tmp_path), run_id="att-tamper", checkpoint_every=5)
-    att = probe_backend(SandboxMode.BUBBLEWRAP)
-    led.append_sandbox_attestation(SandboxAttestationRecord.make("att-tamper", att))
+    led.append_sandbox_attestation(SandboxAttestationRecord.make("att-tamper", weak))
     led.seal_run("completed")
     lines = led.events_path.read_text().strip().split("\n")
     ev = json.loads(lines[0])
+    assert ev["payload"]["available"] is False  # the recorded baseline really is weak
     ev["payload"]["available"] = True
-    ev["payload"]["hard_isolated"] = True  # forge a stronger claim
+    ev["payload"]["hard_isolated"] = True  # forge a stronger isolation claim
     lines[0] = json.dumps(ev)
     led.events_path.write_text("\n".join(lines) + "\n")
     led2 = PersistentTraceLedger(base_dir=str(tmp_path), run_id="att-tamper", checkpoint_every=5)
     rep = led2.verify_persisted()
-    assert not rep["ok"]  # forging the attestation is detected
+    assert not rep["ok"]  # forging the recorded attestation is detected
+    assert "hash" in rep["reason"]  # detected specifically as a chain/hash break
 
 
 def test_doctor_report_is_honest():

@@ -1,6 +1,22 @@
 # Repository State
 
-_Last updated: 2026-07-06 (AUREL-REPAIR-01 — Spine safety / default sandbox / plan-driven truth repair; roadmap continuation remains at P6)_
+_Last updated: 2026-07-06 (AUREL-REPAIR-02 — M0 sandbox attestation tamper-detection test integrity; roadmap continuation remains at P6)_
+
+> **AUREL-REPAIR-02 (2026-07-06) — M0 attestation tamper-detection (test integrity, no source change).**
+> RCA of the REPAIR-01-flagged `test_attestation_tamper_breaks_chain` failure found
+> **no verification hole**: `PersistentTraceLedger.verify_persisted → _verify_events`
+> hashes the **full event body including the raw attestation payload**, so every
+> genuine tamper is detected (proven: flipping `available`/`hard_isolated`/`reason`
+> each → `ok=False, entry hash mismatch`). The test was **host-dependent** — it
+> forged `available/hard_isolated → True` on the live bwrap probe, which is a no-op
+> on a host where bwrap already isolates (this machine), so it tested nothing there.
+> **Fix (test-only):** record a deterministic weak baseline attestation then forge it
+> stronger — a genuine payload mutation on every host — plus baseline + reason
+> assertions. Verification code untouched; no security check weakened.
+> Report: `agent/reports/AUREL_REPAIR_02_M0_ATTESTATION_TAMPER_DETECTION.md`.
+> Focused validation green (target 1, file 8, aurel_trace+sandbox+m0 324, trace/merkle/integrity 24, spine 61; ruff+mypy clean). Full pytest seal still UNVERIFIED (suite >10min here).
+
+_Prior update: 2026-07-06 (AUREL-REPAIR-01 — Spine safety / default sandbox / plan-driven truth repair; roadmap continuation remains at P6)_
 
 > **AUREL-REPAIR-01 (2026-07-06) — Spine truth repair (hardening, not a roadmap feature).**
 > Repaired the Spine slice so it cannot overclaim: (1) removed the silent

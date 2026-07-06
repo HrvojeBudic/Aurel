@@ -1,4 +1,19 @@
-# Active Task: AUREL-REPAIR-01 complete (Spine truth repair); roadmap continuation remains at P6
+# Active Task: AUREL-REPAIR-02 complete (M0 attestation tamper-detection); roadmap continuation remains at P6
+
+**AUREL-REPAIR-02 (2026-07-06) — DONE (test integrity, no source change).** RCA'd the REPAIR-01-flagged
+`test_attestation_tamper_breaks_chain` failure: **not** a verification hole — `verify_persisted →
+_verify_events` hashes the full event body incl. the raw attestation payload, so every genuine tamper
+is detected (flipping `available`/`hard_isolated`/`reason` → `ok=False, entry hash mismatch`). The test
+was host-dependent: it forged `available/hard_isolated → True` on the live bwrap probe, a no-op where
+bwrap already isolates (this host), so it proved nothing. Fixed test-only by recording a deterministic
+weak baseline then forging it stronger (genuine mutation on every host) + baseline/reason assertions.
+Verification code untouched; no security check weakened. Focused validation green (target 1, file 8,
+aurel_trace+sandbox+m0 324, trace/merkle/integrity 24, spine 61; ruff+mypy clean). Full pytest seal
+UNVERIFIED (suite >10min). Report:
+`agent/reports/AUREL_REPAIR_02_M0_ATTESTATION_TAMPER_DETECTION.md`. **Next: seal the full pytest suite
+on a longer-running host; then resume P6.**
+
+---
 
 **AUREL-REPAIR-01 (2026-07-06) — DONE (hardening patch, not a roadmap feature).** Repaired the Spine
 slice's safety/truth gaps found in the latest audit: no silent `UnsafeLocalSandbox` fallback on
