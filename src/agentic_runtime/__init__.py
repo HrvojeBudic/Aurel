@@ -116,12 +116,43 @@ from .hitl import (
     PreviewOnlyApprover,
     make_approval_gate,
 )
-from .memory import MemoryFabric
+from .memory import HashingEmbedder, MemoryFabric
 from .memory_governance import (
+    MemoryLinkDecision,
+    MemoryLinkRequest,
+    MemoryRevisionDecision,
+    MemoryRevisionRequest,
     MemoryWriteDecision,
     MemoryWritePolicy,
     MemoryWriteRequest,
 )
+# Track A memory stack (A0–A8) — public surface. All additive and, where it
+# persists or promotes, gated on AUREL_DURABLE_MEMORY (byte-identical when OFF).
+from .core_types import DurableMemoryGovernanceRecord
+from .memory_bitemporal import BiTemporalStamp
+from .memory_asof import AsOfView
+from .memory_tools import MEMORY_TOOL_NAMES, MemoryToolSession
+from .memory_graph import (
+    MemoryEdge,
+    MemoryGraphIndex,
+    MemoryRelation,
+    detect_supersession_chain,
+)
+from .memory_persistence import (
+    ExternalMemoryBackend,
+    FileMemoryBackend,
+    MemoryBackend,
+    MemoryBackendUnavailable,
+)
+from .durable_memory import DurableMemoryFabric
+from .memory_revision import apply_update as memory_apply_update
+from .memory_revision import forget as memory_forget
+from .memory_revision import retract as memory_retract
+from .memory_consolidation import consolidate as memory_consolidate
+from .memory_retrieval import hybrid_retrieve
+from .memory_projection import MemoryProjection
+from .memory_embedder import NeuralEmbedderSeam
+from .evaluation.memory_promotion_bridge import MemoryCandidateBridge
 from .model_providers import (
     ModelProvider,
     ModelProviderConfig,
@@ -343,6 +374,17 @@ __all__ = [
     "BudgetLedger", "BudgetPolicy",
     "MemoryFabric", "MemoryTruthState", "MemoryWriteRequest",
     "MemoryWriteDecision", "MemoryWritePolicy", "MemoryGovernanceRecord",
+    # Track A memory stack (A0–A8) public surface.
+    "HashingEmbedder", "BiTemporalStamp", "AsOfView",
+    "MemoryToolSession", "MEMORY_TOOL_NAMES",
+    "MemoryLinkRequest", "MemoryLinkDecision",
+    "MemoryRevisionRequest", "MemoryRevisionDecision",
+    "MemoryEdge", "MemoryGraphIndex", "MemoryRelation", "detect_supersession_chain",
+    "MemoryBackend", "MemoryBackendUnavailable", "FileMemoryBackend", "ExternalMemoryBackend",
+    "DurableMemoryFabric", "DurableMemoryGovernanceRecord",
+    "memory_apply_update", "memory_retract", "memory_forget",
+    "memory_consolidate", "hybrid_retrieve", "MemoryProjection",
+    "NeuralEmbedderSeam", "MemoryCandidateBridge",
     "ToolContract", "ToolContractRegistry", "ToolInputValidator",
     "ToolOutputValidator", "ArgSpec", "OutputContract", "SideEffect",
     "ContractValidationResult", "default_contract_registry",
