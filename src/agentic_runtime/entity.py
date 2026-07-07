@@ -19,10 +19,12 @@ from .core_types import (
     MemoryRecord,
     MemoryTier,
     PlanningFailureRecord,
+    PraxisEventRecord,
     RiskLevel,
     canonical_json,
     sha,
 )
+from .reasoning import reasoning_scheduler
 from .model_router import ModelRouter
 from .plan_validator import PlanValidationResult, PlanValidator, PlanStatus
 from .runtime import AgenticRuntime, CommandResult
@@ -100,9 +102,12 @@ class AgenticEntity:
         context = self.runtime.memory.assemble_context(intent.text, k=5)
         user = (f"GOAL: {intent.text}\nCONSTRAINTS: {intent.constraints}\n"
                 f"MEMORY CONTEXT:\n{context}\n")
+        profile = self.card.model_profile
+        if reasoning_scheduler.enabled():
+            profile = self._allocate_reasoning(intent, context)
         self.runtime.budget.precheck_llm()
         raw, model_name, usage = self.router.complete_with_usage(
-            self.card.model_profile, _PLANNER_SYSTEM, user)
+            profile, _PLANNER_SYSTEM, user)
         self.runtime.budget.charge_llm(usage=usage)
         result = self.plan_validator.parse_and_validate(raw)
         if result.valid:
@@ -111,6 +116,30 @@ class AgenticEntity:
                 f"planned {len(result.steps)} steps for goal via {model_name}",
                 source=self.card.id))
         return result
+
+    def _allocate_reasoning(self, intent: Intent, context: str) -> str:
+        """B3/B4 — adaptive effort allocation: charge one reasoning pass, record a
+        hash-chained reasoning_allocation trace event (safe summaries, no raw CoT),
+        and return the chosen model profile. Proposal-only; allocation ≠ authority."""
+        alloc = reasoning_scheduler.allocate(
+            intent=intent, card=self.card, memory_context=context, router=self.router)
+        self.runtime.budget.charge_reasoning(passes=1)
+        self.runtime.trace.append_praxis_event(PraxisEventRecord.make(
+            run_id=self.runtime.trace.run_id,
+            agent_id=self.card.id,
+            event_type="reasoning_allocation",
+            subject_id=intent.id,
+            summary=(f"difficulty={alloc.difficulty.value} effort={alloc.effort.value} "
+                     f"profile={alloc.chosen_profile} passes={alloc.passes}"),
+            details={
+                "difficulty": alloc.difficulty.value,
+                "requested_effort": alloc.requested_effort.value,
+                "effort": alloc.effort.value,
+                "profile": alloc.chosen_profile,
+                "passes": alloc.passes,
+                "reasons": list(alloc.reasons),
+            }))
+        return alloc.chosen_profile
 
     def run(self, intent: Intent) -> dict:
         self.runtime.budget.begin_run(

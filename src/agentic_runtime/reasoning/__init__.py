@@ -10,6 +10,7 @@ add the thinking budget, difficulty estimator and reasoning scheduler.
 from __future__ import annotations
 
 from .difficulty_estimator import DifficultyBand, estimate
+from .reasoning_scheduler import ReasoningAllocation, allocate
 from .thinking_budget import EffortLevel, ThinkingBudget, for_card
 from .token_accounting import TokenAccountingView
 
@@ -20,4 +21,6 @@ __all__ = [
     "for_card",
     "DifficultyBand",
     "estimate",
+    "ReasoningAllocation",
+    "allocate",
 ]
