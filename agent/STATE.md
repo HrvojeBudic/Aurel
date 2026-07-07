@@ -1,6 +1,20 @@
 # Repository State
 
-_Last updated: 2026-07-06 (AUREL-SEAL-01 — full pytest suite sealed clean; roadmap continuation remains at P6)_
+_Last updated: 2026-07-07 (Track A / A0 — bi-temporal stamps + as-of read model, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A0 (2026-07-07, branch `feat/track-a-memory`, unmerged) — bi-temporal stamps + as-of read model.**
+> Additive memory metadata + read model, no behavior change. `MemoryRecord` gains
+> 6 optional `None`-default fields (valid/transaction ranges + `superseded_by`/
+> `revises`); new pure `memory_bitemporal.py` (`BiTemporalStamp`) + `memory_asof.py`
+> (`AsOfView`: `as_of`/`current`/`belief_history`, deterministic, fail-closed).
+> Flag `AUREL_DURABLE_MEMORY` **defined-not-gating** (default OFF) — A0's byte-identity
+> is structural (new fields never enter a hashed trace payload), not flag-gated;
+> the flag goes load-bearing at A3/A6. Seal 10 passed; memory regression 82 unchanged;
+> ruff+mypy clean; **full suite 8545 passed / 11 skipped / 0 failed (25:26)** —
+> baseline 8535/11 + A0's 10 tests, zero regressions. Report:
+> `agent/reports/AUREL_TRACK_A_A0_BITEMPORAL_STAMPS.md`. Next: A1a memory-as-tools.
+
+_Prior update: 2026-07-06 (AUREL-SEAL-01 — full pytest suite sealed clean; roadmap continuation remains at P6)_
 
 > **AUREL-SEAL-01 (2026-07-06) — Full pytest suite sealed (validation only, no source change).**
 > Ran the canonical full suite (`.venv/bin/python -m pytest -q --tb=short -p no:cacheprovider`)

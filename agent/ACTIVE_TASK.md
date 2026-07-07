@@ -1,4 +1,18 @@
-# Active Task: AUREL-SEAL-01 complete (full pytest suite sealed clean); roadmap continuation remains at P6
+# Active Task: Track A / A0 complete (bi-temporal stamps + as-of read model) on branch feat/track-a-memory; next A1a
+
+**Track A / A0 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
+Added 6 optional `None`-default bi-temporal fields to `MemoryRecord`, new pure `memory_bitemporal.py`
+(`BiTemporalStamp`) + `memory_asof.py` (`AsOfView`: `as_of`/`current`/`belief_history`, deterministic,
+fail-closed). Flag `AUREL_DURABLE_MEMORY` defined-not-gating (default OFF); byte-identity is structural
+(new fields never enter a hashed trace payload). Seal 10 passed; memory regression 82 unchanged; ruff+mypy
+clean; full suite 8545 passed / 11 skipped / 0 failed (25:26), baseline 8535/11 + A0's 10 tests, zero
+regressions. Report: `agent/reports/AUREL_TRACK_A_A0_BITEMPORAL_STAMPS.md`. **Next: A1a — memory ops as
+governed tools (`memory_tools.py`; route through `request_write`/`promote`/`retrieve`; one
+`charge_memory_write`, zero sandbox-exec; not via `runtime.submit`). Seal `test_p6a1_memory_tools_governed.py`.**
+
+---
+
+**AUREL-SEAL-01 complete (full pytest suite sealed clean); roadmap continuation remains at P6**
 
 **AUREL-SEAL-01 (2026-07-06) — DONE (validation seal, no source change).** Ran the canonical full suite
 to genuine completion at HEAD `f3734e4` on a clean tree: **8434 passed, 3 skipped, 0 failed (exit 0) in

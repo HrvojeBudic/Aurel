@@ -880,6 +880,20 @@ class MemoryRecord:
     truth_state: MemoryTruthState = MemoryTruthState.RAW
     promotion_state: str = "none"
     expiry_policy: dict[str, Any] = field(default_factory=lambda: {"kind": "none"})
+    # ---- A0 bi-temporal stamps (additive, default-open) ---------------- #
+    # Valid time = when the fact is true in the world; transaction time = when
+    # the system believed it. ``None`` on any endpoint means an OPEN interval:
+    # a ``valid_to``/``transaction_to`` of None ⇒ still-current. These fields
+    # are descriptive metadata only — they are NOT written by A0 (no writer
+    # exists yet; supersession/revision arrive in A2/A4) and they never enter a
+    # hashed trace payload (the memory-governance funnel serializes a fixed
+    # scalar set, not the record dict), so default records stay byte-identical.
+    superseded_by: Optional[str] = None   # id of the version that replaced this
+    revises: Optional[str] = None         # id of the version this one revises
+    valid_from: Optional[float] = None    # None ⇒ open (since inception)
+    valid_to: Optional[float] = None      # None ⇒ open (still valid in-world)
+    transaction_from: Optional[float] = None  # None ⇒ open (since first belief)
+    transaction_to: Optional[float] = None    # None ⇒ open (current belief)
 
     @staticmethod
     def make(tier: MemoryTier, content: str, source: str, **kw) -> "MemoryRecord":
