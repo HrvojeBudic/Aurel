@@ -26,7 +26,13 @@ import tempfile
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional
 
-from ..core_types import AgentCard, CommandEnvelope, ObservationEnvelope, VerifierResult
+from ..core_types import (
+    AgentCard,
+    CommandEnvelope,
+    ObservationEnvelope,
+    PraxisEventRecord,
+    VerifierResult,
+)
 from .ledger import DualKernelLedger
 from .merge_gate import DeploymentReadinessDecision, MergeContext, MergeGate
 from .routing import AdmitDecision, Route
@@ -110,11 +116,41 @@ class DualKernelRuntime:
             else:
                 result = self._blocked_result(cmd, verdict)
 
+        if verdict is not None:
+            self._trace_simulation_decision(cmd, verdict, rec.executed)
         self._record(cmd, rec, verdict, executed=rec.executed)
         self._sigmas[self._key(cmd)] = sigma.update(
             cmd, decision, approved=result.ok)
         self.route_log.append(rec)
         return result
+
+    def _trace_simulation_decision(
+        self,
+        cmd: CommandEnvelope,
+        verdict: DeploymentReadinessDecision,
+        executed: bool,
+    ) -> None:
+        """Emit the speculative verdict as NON-CANONICAL evidence into the main
+        trace (master-plan C5). Distinctly labeled is_speculative — it is a
+        PraxisEventRecord, never a StateTransitionRecord, and never authority."""
+        self.runtime.trace.append_praxis_event(PraxisEventRecord.make(
+            run_id=self.runtime.trace.run_id,
+            agent_id=cmd.issuer_card_id,
+            event_type="simulation_decision",
+            subject_id=cmd.id,
+            summary=(f"final={verdict.final_status.value} "
+                     f"sim={verdict.simulation_live_status} executed={executed}"),
+            details={
+                "is_speculative": True,
+                "advisory": True,
+                "final_status": verdict.final_status.value,
+                "verdict": verdict.verdict.value,
+                "blockers": list(verdict.blockers),
+                "nc_laws": [b.nc_law for b in verdict.bindings],
+                "simulation_live_status": verdict.simulation_live_status,
+                "authority_status": verdict.authority_status,
+                "executed": executed,
+            }))
 
     def _record(
         self,
