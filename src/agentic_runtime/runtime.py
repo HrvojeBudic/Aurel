@@ -66,6 +66,7 @@ from .core_types import (AgentCard, ApprovalReceiptRecord, CommandEnvelope,
                          VerifierResult, new_id)
 from .hitl import ApprovalGate
 from .memory import MemoryFabric
+from .memory_bitemporal import _flag_enabled
 from .memory_governance import MemoryWriteRequest
 from .policy import PolicyEngine, PolicyDecision
 from .policy_cards.context_binding import build_policy_resolution_context
@@ -173,6 +174,11 @@ class AgenticRuntime:
         self._retain_states = retain_states
         self._state_store = state_store
         self._initial_state_committed = False
+        # A8b — live promotion driver, gated on the Track-A durable flag. Snapshot
+        # the flag once so the flag-OFF path is byte-identical (the bridge is never
+        # constructed or called). The bridge itself is created lazily on first use.
+        self._durable_memory_enabled = _flag_enabled()
+        self._memory_promotion_bridge: Any = None
 
     def _maybe_commit_initial_state(self, state_hash: str) -> None:
         """Once per run, persist the genesis workspace state to the CAS.
@@ -753,6 +759,37 @@ class AgenticRuntime:
             truth_status=TruthStatus.VERIFIED if vres.passed else TruthStatus.CONTRADICTED,
             links=[rec.id],
         ))
+        # A8b — live promotion. Additive and flag-gated: when the durable-memory
+        # flag is OFF this branch never runs and the path above is byte-identical.
+        # The bridge routes through the SAME governed funnel (request_write/promote):
+        # a verified success submits/advances a governed procedure candidate; a
+        # failed run promotes nothing (P0.9). Never raises into the command path.
+        if self._durable_memory_enabled:
+            try:
+                self._observe_promotion(cmd, vres, rec)
+            except Exception:  # noqa: BLE001 - promotion is advisory, never blocks a command
+                pass
+
+    def _observe_promotion(
+        self,
+        cmd: CommandEnvelope,
+        vres: VerifierResult,
+        rec: StateTransitionRecord,
+    ) -> None:
+        from .evaluation.memory_promotion_bridge import (MemoryCandidateBridge,
+                                                         command_signature)
+        if self._memory_promotion_bridge is None:
+            self._memory_promotion_bridge = MemoryCandidateBridge()
+        self._memory_promotion_bridge.observe(
+            fabric=self.memory,
+            budget=self.budget,
+            signature=command_signature(cmd.tool, cmd.args),
+            content=f"procedure candidate: {cmd.tool} (verified successes)",
+            run_id=self.trace.run_id,
+            trace_id=rec.id,
+            run_succeeded=bool(vres.passed),
+            created_by=cmd.issuer_card_id,
+        )
 
     def _post_trace_budget_blocked(
         self,

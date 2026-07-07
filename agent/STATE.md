@@ -1,6 +1,22 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A7 — memory explorer projection + CLI, D2 seam closed, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A COMPLETE — A8 live promotion + durable fail-closed, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A8 (2026-07-07, branch `feat/track-a-memory`, unmerged) — live promotion wiring + durable fail-closed. FINAL Track A phase; wires into build_runtime/runtime (additive, flag-gated, byte-identical OFF).**
+> **A8a:** `build_runtime` gains a `memory_backend` kwarg + `_build_memory_fabric` helper — flag ON ⇒ `DurableMemoryFabric`
+> over `FileMemoryBackend`; **fail-closed to in-RAM `MemoryFabric`** when the backend is unavailable (no fake durability);
+> flag OFF ⇒ the pre-A8 fabric exactly. **A8b:** `runtime.__init__` snapshots `_durable_memory_enabled = _flag_enabled()`;
+> `_record_command_memory` (flag ON) calls new `evaluation/memory_promotion_bridge.py` `MemoryCandidateBridge` — submits a
+> governed procedure CANDIDATE and drives `candidate→verified`→`verified→procedural` (≥2 distinct successes) via
+> `request_write`/`promote`: one charge + one write row for the candidate, promotions traced, failed run promotes nothing
+> (P0.9), runtime-authored (agents can't drive it), wrapped so it never blocks a command. **Drift (D1):** spec's
+> `evaluation/memory_candidate_bridge.py` already exists (P1.5.18 contract-derivation) so the A8b driver is in
+> `memory_promotion_bridge.py`. No new flag (rides `AUREL_DURABLE_MEMORY`). Seal `test_p6a8_live_promotion.py` **5 passed**;
+> regression **219 passed / 0 failed** (incl. build_runtime users); ruff+mypy+compileall clean on 3 files; **full suite
+> (Track A pre-merge seal): **8594 passed, 11 skipped, 0 failed in 33:58 (2038.67s)** — baseline 8545/11, so +49 new Track A seal tests with **zero regressions****. Report: `agent/reports/AUREL_TRACK_A_A8_LIVE_PROMOTION.md`.
+> **TRACK A FEATURE-COMPLETE (A0→A8)** — all additive/governed/flag-gated. Next: merge Track A → master, then Track C.
+
+_Prior update: 2026-07-07 (Track A / A7 — memory explorer projection + CLI, D2 seam closed, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A7 (2026-07-07, branch `feat/track-a-memory`, unmerged) — memory explorer projection + CLI; D2 seam closed.**
 > New `memory_projection.py` `MemoryProjection.from_trace(trace, backend=None)` — read-only, rebuilds current
