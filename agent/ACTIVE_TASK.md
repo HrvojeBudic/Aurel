@@ -1,4 +1,23 @@
-# Active Task: Track A / A1a complete (memory ops as governed tools) on branch feat/track-a-memory; next A2
+# Active Task: Track A / A2 complete (memory-graph typed edges) on branch feat/track-a-memory; next A3
+
+**Track A / A2 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
+New `memory_graph.py` (`MemoryRelation`, frozen bi-temporal `MemoryEdge`, insertion-ordered append-only
+`MemoryGraphIndex`, `detect_supersession_chain`). `memory_governance.py` gains `MemoryLinkRequest`/
+`MemoryLinkDecision` + `MemoryWritePolicy.evaluate_link` (closed-world relation → mandatory trace ref →
+endpoints exist & distinct → `SUPERSEDES`/`CONTRADICTS` evidence-gated). `memory.py` `MemoryFabric.link()`
+routes through governance → one `MemoryGovernanceRecord(action="link")` → `graph.add` on allow (existing
+write/promote rows still `details={}` ⇒ byte-identical). `mem_link` flipped from UNAVAILABLE to a live
+governed op in `memory_tools.py` (one `charge_memory_write` per attempt, zero sandbox); `mem_update`/
+`mem_delete` stay unavailable, reason narrowed to `requires_a4`. Edges carry no truth_state ⇒ cannot elevate
+trust. **Drift decision (D4):** supersession is edge-only in A2 — A0's `belief_history`/record fields stay
+inert until A4; `detect_supersession_chain` is the A2 read model. No new flag (`AUREL_DURABLE_MEMORY` stays
+defined-not-gating); no build_runtime/entity wiring (A8). Seals `test_p6a2_memory_graph.py` (7) + updated
+`test_p6a1` (7) = **14 passed**; directly-affected regression **173 passed / 0 failed**; ruff+mypy+compileall
+clean on 5 files. Full ~25min suite intentionally skipped. Report:
+`agent/reports/AUREL_TRACK_A_A2_MEMORY_GRAPH.md`. **Next: A3 — DurableMemoryFabric (persistence as a
+projection over the trace; `AUREL_DURABLE_MEMORY` goes load-bearing).**
+
+---
 
 **Track A / A1a (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
 New `memory_tools.py` `MemoryToolSession`: `mem_add` routes through `MemoryFabric.request_write` (one

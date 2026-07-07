@@ -33,8 +33,9 @@ MEMORY_TOOL_NAMES = frozenset(
 )
 MEMORY_WRITE_TOOLS = frozenset({"mem_add", "mem_update", "mem_delete", "mem_link"})
 MEMORY_READ_TOOLS = frozenset({"mem_search"})
-# Declared in A1a but not yet backed by a fabric primitive (graph=A2, revision=A4).
-_UNAVAILABLE_TOOLS = frozenset({"mem_update", "mem_delete", "mem_link"})
+# Still not backed by a fabric primitive: belief revision (mem_update/mem_delete)
+# arrives in A4. ``mem_link`` went live in A2 (typed relation graph).
+_UNAVAILABLE_TOOLS = frozenset({"mem_update", "mem_delete"})
 
 # Mirrors ``memory_governance.AGENT_WRITER`` — the least-privilege writer kind.
 # Defined locally to keep import time trivial (no eager governance import).
@@ -111,6 +112,8 @@ class MemoryToolSession:
             return self._mem_add(args)
         if tool_name == "mem_search":
             return self._mem_search(args)
+        if tool_name == "mem_link":
+            return self._mem_link(args)
         # Unreachable (all names covered above); fail closed rather than guess.
         return {"ok": False, "tool": tool_name, "reason_code": "unhandled",
                 "message": f"no handler for {tool_name}"}
@@ -121,9 +124,9 @@ class MemoryToolSession:
             "ok": False,
             "tool": tool_name,
             "unavailable": True,
-            "reason_code": "requires_a2_a4",
-            "message": (f"{tool_name} is declared but not yet implemented — memory "
-                        "graph (A2) / belief-revision (A4) primitives are required"),
+            "reason_code": "requires_a4",
+            "message": (f"{tool_name} is declared but not yet implemented — the "
+                        "belief-revision (A4) primitive is required"),
         }
 
     def _mem_add(self, args: dict) -> dict:
@@ -171,6 +174,34 @@ class MemoryToolSession:
                  "confidence": r.confidence}
                 for r in records
             ],
+        }
+
+    def _mem_link(self, args: dict) -> dict:
+        from .memory_governance import MemoryLinkRequest
+
+        req = MemoryLinkRequest(
+            from_id=args["from_id"],
+            to_id=args["to_id"],
+            relation=args["relation"],
+            writer_kind=self._writer_kind(),
+            created_by=self.created_by,
+            source_run_id=self._run_id(),
+            source_trace_ids=list(args.get("source_trace_ids", [])),
+            evidence_refs=list(args.get("evidence_refs", [])),
+            confidence=float(args.get("confidence", 0.5)),
+        )
+        # One charge per governed edge ATTEMPT (allow or deny), before the single
+        # fabric.link — which anchors one MemoryGovernanceRecord. Mirrors _mem_add.
+        self.budget.charge_memory_write()
+        decision = self.fabric.link(req)
+        return {
+            "ok": bool(decision.allowed),
+            "tool": "mem_link",
+            "verdict": "allow" if decision.allowed else "deny",
+            "reason_code": decision.reason_code,
+            "message": decision.message,
+            "relation": decision.relation,
+            "edge_id": decision.edge.edge_id if decision.edge else "",
         }
 
 

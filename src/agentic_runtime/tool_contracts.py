@@ -521,6 +521,11 @@ def default_contract_registry() -> ToolContractRegistry:
 _MEMORY_TRUTH_STATES = [
     "raw", "episodic", "candidate", "verified", "procedural", "canon",
 ]
+# Mirrors ``memory_graph.MemoryRelation`` values (hardcoded here to keep this
+# registry decoupled from the graph module, matching the truth-states pattern).
+_MEMORY_RELATIONS = [
+    "supersedes", "contradicts", "supports", "relates_to", "derived_from",
+]
 
 
 def memory_contract_registry() -> ToolContractRegistry:
@@ -567,11 +572,15 @@ def memory_contract_registry() -> ToolContractRegistry:
     ))
     reg.register(ToolContract(
         name="mem_link",
-        description="Add a typed memory edge (governed) — UNAVAILABLE until A2.",
+        description="Add a governed typed memory edge (A2 relation graph).",
         input_schema={
             "from_id": ArgSpec("str"),
             "to_id": ArgSpec("str"),
-            "relation": ArgSpec("str"),
+            "relation": ArgSpec("str", enum=_MEMORY_RELATIONS),
+            # SUPERSEDES/CONTRADICTS are evidence-gated at governance.
+            "evidence_refs": ArgSpec("list[str]", required=False),
+            "confidence": ArgSpec("float", required=False),
+            "source_trace_ids": ArgSpec("list[str]", required=False),
         },
         side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
     ))

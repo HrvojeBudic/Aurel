@@ -111,6 +111,42 @@ class MemoryWriteRequest:
 
 
 @dataclass
+class MemoryLinkRequest:
+    """A2 — a proposed typed edge between two existing memory records. The
+    ``writer_kind`` is set by whoever constructs the request (the runtime), never
+    by a tool arg, so an agent cannot self-elevate. ``relation`` is a
+    ``MemoryRelation`` *value* (validated closed-world at governance)."""
+
+    from_id: str
+    to_id: str
+    relation: str
+    writer_kind: str = "system"          # agent | runtime | verifier | operator | system
+    created_by: str = ""
+    source_run_id: str = ""
+    source_trace_ids: list[str] = field(default_factory=list)
+    evidence_refs: list[str] = field(default_factory=list)
+    confidence: float = 0.5
+
+
+@dataclass
+class MemoryLinkDecision:
+    allowed: bool
+    relation: str
+    reason_code: str
+    message: str
+    edge: Optional[Any] = None           # a MemoryEdge when allowed, else None
+
+    def to_dict(self) -> dict:
+        return {
+            "allowed": self.allowed,
+            "relation": self.relation,
+            "reason_code": self.reason_code,
+            "message": self.message,
+            "edge_id": getattr(self.edge, "edge_id", "") if self.edge else "",
+        }
+
+
+@dataclass
 class MemoryWriteDecision:
     allowed: bool
     effective_truth_state: MemoryTruthState
@@ -223,10 +259,79 @@ class MemoryWritePolicy:
         return False, "illegal_promotion", \
             f"illegal promotion {current.value} -> {target.value}"
 
+    # ---- links (A2) --------------------------------------------------- #
+    def evaluate_link(
+        self,
+        req: MemoryLinkRequest,
+        known_ids: set[str],
+        trace: Any = None,
+    ) -> MemoryLinkDecision:
+        """Pure decision for a typed edge write. Performs no I/O; ``known_ids`` is
+        the fabric's current record-id set so endpoint existence is decided here
+        (fail-closed) rather than by the caller."""
+        from .memory_graph import (EVIDENCE_GATED_RELATIONS, MemoryEdge,
+                                    MemoryRelation)
+
+        # 1. Relation must be a known, closed-world type.
+        try:
+            relation = MemoryRelation(req.relation)
+        except ValueError:
+            return self._link_deny(req.relation, "illegal_relation",
+                                   f"unknown memory relation: {req.relation!r}")
+
+        # 2. Trace reference is mandatory (same discipline as evaluate_write).
+        if not req.source_run_id:
+            return self._link_deny(relation.value, "missing_trace_reference",
+                                   "memory edge requires a source_run_id")
+        if trace is not None:
+            run_id = getattr(trace, "run_id", None)
+            if run_id is not None and req.source_run_id != run_id:
+                return self._link_deny(relation.value, "invalid_trace_reference",
+                                       "source_run_id does not match the active run")
+            if req.source_trace_ids:
+                known = {getattr(e, "id", None) for e in trace}
+                missing = [t for t in req.source_trace_ids if t not in known]
+                if missing:
+                    return self._link_deny(relation.value, "invalid_trace_reference",
+                                           f"unknown source_trace_ids: {missing}")
+
+        # 3. Both endpoints must exist (fail-closed) and be distinct.
+        for endpoint in (req.from_id, req.to_id):
+            if endpoint not in known_ids:
+                return self._link_deny(relation.value, "unknown_endpoint",
+                                       f"unknown memory endpoint: {endpoint!r}")
+        if req.from_id == req.to_id:
+            return self._link_deny(relation.value, "self_link_forbidden",
+                                   "an edge may not connect a memory to itself")
+
+        # 4. Belief-changing relations must carry evidence — an agent cannot
+        #    retire or refute a memory (or thereby launder trust) by fiat.
+        if relation in EVIDENCE_GATED_RELATIONS and not req.evidence_refs:
+            return self._link_deny(relation.value, "link_requires_evidence",
+                                   f"{relation.value} edges require evidence_refs")
+
+        edge = MemoryEdge.make(
+            from_id=req.from_id,
+            to_id=req.to_id,
+            relation=relation,
+            writer_kind=req.writer_kind,
+            created_by=req.created_by or req.writer_kind,
+            source_run_id=req.source_run_id,
+            source_trace_ids=list(req.source_trace_ids),
+            evidence_refs=list(req.evidence_refs),
+            confidence=req.confidence,
+        )
+        return MemoryLinkDecision(True, relation.value, "allowed",
+                                  "memory edge allowed", edge=edge)
+
     # ---- helpers ------------------------------------------------------ #
     def _deny(self, proposed: MemoryTruthState, reason_code: str,
               message: str) -> MemoryWriteDecision:
         return MemoryWriteDecision(False, proposed, reason_code, message, record=None)
+
+    def _link_deny(self, relation: str, reason_code: str,
+                   message: str) -> MemoryLinkDecision:
+        return MemoryLinkDecision(False, relation, reason_code, message, edge=None)
 
     def _build_record(self, req: MemoryWriteRequest,
                       state: MemoryTruthState) -> MemoryRecord:

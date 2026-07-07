@@ -149,22 +149,43 @@ def test_mem_add_via_toolbus_refused(tmp_path):
     assert len(_state_rows(trace)) == 0
 
 
-# 7 ─ update/delete/link are honestly unavailable: no write, no charge.
-def test_update_delete_link_unavailable_no_write_no_charge():
+# 7 ─ update/delete stay honestly unavailable (belief revision is A4): no
+#     write, no charge. (mem_link went LIVE in A2 — see test_p6a2_memory_graph.)
+def test_update_delete_unavailable_no_write_no_charge():
     fabric, trace, budget = _harness()
     session = MemoryToolSession(fabric, budget, writer_kind="operator")
 
     calls = {
         "mem_update": {"memory_id": "m1", "content": "revised"},
         "mem_delete": {"memory_id": "m1"},
-        "mem_link": {"from_id": "m1", "to_id": "m2", "relation": "supports"},
     }
     for tool, args in calls.items():
         result = session.invoke(tool, args)
         assert result["ok"] is False, tool
         assert result["unavailable"] is True, tool
-        assert result["reason_code"] == "requires_a2_a4", tool
+        assert result["reason_code"] == "requires_a4", tool
 
     assert budget.memory_writes == 0
     assert budget.sandbox_executions == 0
     assert len(_gov_rows(trace)) == 0
+
+
+# 7b ─ mem_link is now a LIVE governed op (no longer unavailable): a valid
+#      operator edge between two real records is allowed and charged once.
+def test_mem_link_is_live_after_a2():
+    fabric, trace, budget = _harness()
+    a = fabric.request_write(MemoryWriteRequest(
+        content="fact a", writer_kind="operator", source_run_id=RUN)).record.memory_id
+    b = fabric.request_write(MemoryWriteRequest(
+        content="fact b", writer_kind="operator", source_run_id=RUN)).record.memory_id
+    session = MemoryToolSession(fabric, budget, writer_kind="operator")
+
+    result = session.invoke("mem_link", {"from_id": a, "to_id": b,
+                                         "relation": "relates_to"})
+
+    assert result.get("unavailable") is None      # not the fail-closed stub
+    assert result["ok"] is True
+    assert result["verdict"] == "allow"
+    assert len(fabric.graph) == 1
+    assert budget.memory_writes == 1
+    assert budget.sandbox_executions == 0
