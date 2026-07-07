@@ -402,6 +402,23 @@ class Kernel:
         return AgenticEntity(card, self.runtime, self.router, self.skills, validator)
 
 
+# P0-S.3 — entity classes for which content-addressed state retention defaults
+# ON (writers that produce forkable/rollbackable state). Every other class stays
+# byte-identical to the pre-P0-S.3 default (retention OFF, no state store).
+RETAIN_STATES_GATED_CLASSES: frozenset = frozenset({
+    AgentClass.CORE, AgentClass.EXECUTION,
+})
+
+
+def _resolve_retain_states(retain_states: Optional[bool],
+                           entity_class: Optional[AgentClass]) -> bool:
+    """Explicit ``retain_states`` always wins; otherwise gate on the entity
+    class. Unset + ungated (or no class) ⇒ False (byte-identical to today)."""
+    if retain_states is not None:
+        return retain_states
+    return entity_class in RETAIN_STATES_GATED_CLASSES
+
+
 def build_runtime(
     sandbox: SandboxBackend | ProfiledSandbox | None = None,
     sandbox_mode: Optional[SandboxMode] = None,
@@ -421,9 +438,11 @@ def build_runtime(
     enable_policy_shadow_projection: bool = False,
     governance_enforcement_config: GovernanceEnforcementConfig | None = None,
     identity_context_loader: IdentitySubmitContextLoader | None = None,
-    retain_states: bool = False,
+    retain_states: Optional[bool] = None,
     state_store: StateStore | None = None,
+    entity_class: Optional[AgentClass] = None,
 ) -> Kernel:
+    retain_states = _resolve_retain_states(retain_states, entity_class)
     sandbox_policy: Optional[SandboxPolicy] = None
     if sandbox is None:
         if sandbox_profile:
