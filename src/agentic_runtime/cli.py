@@ -498,6 +498,12 @@ from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_status,
     cmd_dual_kernel_verify_ledger,
 )
+from .cli_modules.memory_commands import (
+    cmd_memory_explore,
+    cmd_memory_graph,
+    cmd_memory_history,
+    cmd_memory_rejected,
+)
 from .cli_modules.reasoning_commands import (
     cmd_reasoning_status,
     cmd_reasoning_workload,
@@ -845,6 +851,38 @@ def main(argv: list[str] | None = None) -> int:
     p_rz_work.add_argument("--trace-dir", default=".traces", help="trace base dir")
     p_rz_work.add_argument("--json", action="store_true", help="emit JSON")
     p_rz_work.set_defaults(func=cmd_reasoning_workload)
+
+    # A7: read-only Memory Explorer — projections over a run's persisted trace.
+    p_mem = sub.add_parser("memory", help="memory explorer surface (read-only)")
+    mem_sub = p_mem.add_subparsers(dest="memory_command", required=True)
+
+    def _mem_common(p: "argparse.ArgumentParser") -> None:
+        p.add_argument("run_id", help="run id under the trace dir")
+        p.add_argument("--trace-dir", default=".traces", help="trace base dir")
+        p.add_argument("--durable", default=None,
+                       help="optional A3 durable JSONL path (adds record content)")
+        p.add_argument("--json", action="store_true", help="emit JSON")
+
+    p_mem_explore = mem_sub.add_parser(
+        "explore", help="current records + graph/rejected counts from the trace")
+    _mem_common(p_mem_explore)
+    p_mem_explore.set_defaults(func=cmd_memory_explore)
+
+    p_mem_history = mem_sub.add_parser(
+        "history", help="belief history (supersession chain) for a memory id")
+    p_mem_history.add_argument("memory_id", help="the memory id to trace")
+    _mem_common(p_mem_history)
+    p_mem_history.set_defaults(func=cmd_memory_history)
+
+    p_mem_graph = mem_sub.add_parser(
+        "graph", help="typed memory edges reconstructed from the trace")
+    _mem_common(p_mem_graph)
+    p_mem_graph.set_defaults(func=cmd_memory_graph)
+
+    p_mem_rejected = mem_sub.add_parser(
+        "rejected", help="governance deny rows kept for audit")
+    _mem_common(p_mem_rejected)
+    p_mem_rejected.set_defaults(func=cmd_memory_rejected)
 
     p_verify = sub.add_parser("verify", help="run the pytest suite")
     p_verify.add_argument("-v", "--verbose", action="store_true")

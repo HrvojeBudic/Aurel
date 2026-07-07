@@ -1,4 +1,27 @@
-# Active Task: Track A / A6 complete (deterministic hybrid retrieval) on branch feat/track-a-memory; next A7
+# Active Task: Track A / A7 complete (memory explorer projection + CLI, D2 seam closed) on branch feat/track-a-memory; next A8a/b
+
+**Track A / A7 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive; closes the D2 replay seam).**
+New `memory_projection.py` `MemoryProjection.from_trace(trace, backend=None)` — a **read-only** projection that
+rebuilds current records / belief-history / graph / rejected **from the trace alone** (durable store optional,
+for record content). New `cli_modules/memory_commands.py` + `cli.py` wiring: read-only `memory
+explore/history/graph/rejected <run_id> [--trace-dir] [--durable] [--json]`, mirroring the `reasoning` pattern,
+fail-closed on a missing run. **D2 SEAM CLOSED:** `trace.py` `replay()` (both ledgers) now adds
+`"details": dict(rec.details)` to the `memory_governance` dict (purely additive — all prior keys intact; the
+persisted event already carried details), so link edge fields (`from_id/to_id/relation/edge_id`) and update
+revision fields (`target_id/new_memory_id`) survive replay and the graph/belief-history reconstruct from the
+trace. Projection synthesizes the A4 SUPERSEDES reconciliation edge from update rows to match the live graph.
+**No replay consumer/test needed updating** (no test asserted the exact replay dict; all read via
+indexing/`.get()`; full replay-consumer regression green). Deterministic (stable-key sorts); fail-closed
+(empty trace ⇒ empty; unknown id ⇒ []; content None without durable — no fabrication). No new flag; no
+build_runtime/entity wiring beyond CLI read. Seal `test_p6a7_memory_projection.py` **6 passed** (trace-only ==
+fabric; D2 details survive replay; fail-closed; durable content; CLI honest+deterministic+fail-closed;
+no-collapse additive replay); regression **229 passed** (incl. trace_persistence + all replay consumers +
+p6a0–p6a7) + CLI read-only **9 passed**; ruff+mypy+compileall clean on 4 files. Full ~25min suite intentionally
+skipped. Report: `agent/reports/AUREL_TRACK_A_A7_MEMORY_EXPLORER.md`. **Next: A8a/A8b — live promotion
+(`build_runtime` durable factory + fail-closed to in-RAM; `runtime._record_command_memory` submits Praxis/eval
+candidates; promotion monotonicity — two successes ⇒ procedural, failed run ⇒ no promotion).**
+
+---
 
 **Track A / A6 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive; retrieve/assemble_context byte-identical).**
 New `memory_retrieval.py` `hybrid_retrieve` — fuses vector cosine + stdlib BM25-lite (`_BM25Lite`) + graph

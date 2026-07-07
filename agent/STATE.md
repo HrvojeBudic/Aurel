@@ -1,6 +1,23 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A6 — deterministic hybrid retrieval, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A7 — memory explorer projection + CLI, D2 seam closed, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A7 (2026-07-07, branch `feat/track-a-memory`, unmerged) — memory explorer projection + CLI; D2 seam closed.**
+> New `memory_projection.py` `MemoryProjection.from_trace(trace, backend=None)` — read-only, rebuilds current
+> records / belief-history / graph / rejected **from the trace alone** (durable store optional, for content).
+> New `cli_modules/memory_commands.py` + `cli.py`: read-only `memory explore/history/graph/rejected` mirroring
+> the `reasoning` pattern, fail-closed on a missing run. **D2 SEAM CLOSED:** `trace.py` `replay()` (both ledgers)
+> now adds `"details": dict(rec.details)` to the `memory_governance` dict — purely additive (all prior keys
+> intact; persisted event already carried details), so link edge fields + update revision fields survive replay
+> and the graph/belief-history reconstruct from the trace. Projection synthesizes the A4 SUPERSEDES edge from
+> update rows to match the live graph. No replay consumer/test needed updating (none asserted the exact dict).
+> Deterministic; fail-closed (empty ⇒ empty, unknown id ⇒ [], content None without durable). No new flag; no
+> build_runtime/entity wiring beyond CLI read. Seal `test_p6a7_memory_projection.py` **6 passed**; regression
+> **229 passed** (incl. trace_persistence + all replay consumers + p6a0–p6a7) + CLI read-only **9 passed**;
+> ruff+mypy+compileall clean on 4 files. Full ~25min suite intentionally skipped. Report:
+> `agent/reports/AUREL_TRACK_A_A7_MEMORY_EXPLORER.md`. Next: A8a/A8b live promotion.
+
+_Prior update: 2026-07-07 (Track A / A6 — deterministic hybrid retrieval, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A6 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic hybrid retrieval.**
 > New `memory_retrieval.py` `hybrid_retrieve` — fuses vector cosine + stdlib BM25-lite (`_BM25Lite`) + graph
