@@ -19,10 +19,12 @@ from .core_types import (
     MemoryRecord,
     MemoryTier,
     PlanningFailureRecord,
+    PraxisEventRecord,
     RiskLevel,
     canonical_json,
     sha,
 )
+from .reasoning import reasoning_scheduler
 from .model_router import ModelRouter
 from .plan_validator import PlanValidationResult, PlanValidator, PlanStatus
 from .runtime import AgenticRuntime, CommandResult
@@ -57,6 +59,10 @@ _PLANNER_SYSTEM = (
     "Optional: step_id, expected_effect, risk_level. "
     "Tools: list_dir, read_file, edit_file, write_file, run_tests. "
     "Prefer the smallest safe change. Output ONLY JSON: {\"plan\": [ ... ]}")
+
+_REPLAN_HINT = (
+    "\n\nREVISE: the previous plan scored poorly (unclear, risky, or redundant "
+    "steps). Produce a safer, clearer, non-redundant plan. Output ONLY JSON.")
 
 MAX_ATTEMPTS_PER_STEP = 3
 
@@ -100,15 +106,83 @@ class AgenticEntity:
         context = self.runtime.memory.assemble_context(intent.text, k=5)
         user = (f"GOAL: {intent.text}\nCONSTRAINTS: {intent.constraints}\n"
                 f"MEMORY CONTEXT:\n{context}\n")
-        self.runtime.budget.charge_llm()
-        raw, model_name = self.router.complete(self.card.model_profile,
-                                               _PLANNER_SYSTEM, user)
+        profile = self.card.model_profile
+        alloc = None
+        if reasoning_scheduler.enabled():
+            alloc = self._allocate_reasoning(intent, context)
+            profile = alloc.chosen_profile
+        self.runtime.budget.precheck_llm()
+        raw, model_name, usage = self.router.complete_with_usage(
+            profile, _PLANNER_SYSTEM, user)
+        self.runtime.budget.charge_llm(usage=usage)
         result = self.plan_validator.parse_and_validate(raw)
+        if alloc is not None and result.valid:
+            result = self._maybe_replan(intent, user, profile, alloc, result)
         if result.valid:
             self._remember(MemoryRecord.make(
                 MemoryTier.EPISODIC,
                 f"planned {len(result.steps)} steps for goal via {model_name}",
                 source=self.card.id))
+        return result
+
+    def _allocate_reasoning(self, intent: Intent, context: str):
+        """B3/B4 — adaptive effort allocation: charge one reasoning pass, record a
+        hash-chained reasoning_allocation trace event (safe summaries, no raw CoT),
+        and return the ReasoningAllocation. Proposal-only; allocation ≠ authority."""
+        alloc = reasoning_scheduler.allocate(
+            intent=intent, card=self.card, memory_context=context, router=self.router)
+        self.runtime.budget.charge_reasoning(passes=1)
+        self.runtime.trace.append_praxis_event(PraxisEventRecord.make(
+            run_id=self.runtime.trace.run_id,
+            agent_id=self.card.id,
+            event_type="reasoning_allocation",
+            subject_id=intent.id,
+            summary=(f"difficulty={alloc.difficulty.value} effort={alloc.effort.value} "
+                     f"profile={alloc.chosen_profile} passes={alloc.passes}"),
+            details={
+                "difficulty": alloc.difficulty.value,
+                "requested_effort": alloc.requested_effort.value,
+                "effort": alloc.effort.value,
+                "profile": alloc.chosen_profile,
+                "passes": alloc.passes,
+                "reasons": list(alloc.reasons),
+            }))
+        return alloc
+
+    def _maybe_replan(self, intent: Intent, user: str, profile: str,
+                      alloc, result: PlanValidationResult) -> PlanValidationResult:
+        """B5 — PRM-driven bounded replan. Score the plan's steps deterministically;
+        while the (advisory) score says escalate and passes remain, request a
+        revised plan (each replan charged, capped by max_reasoning_passes_per_run,
+        re-run through PlanValidator, kept only if it scores better). The PRM
+        verdict is advisory and never recorded as verified truth."""
+        from .reasoning.step_verifier import score_steps
+
+        score = score_steps(result.steps)
+        attempts = 0
+        while score.should_escalate and attempts < max(0, alloc.passes - 1):
+            attempts += 1
+            try:
+                self.runtime.budget.charge_reasoning(passes=1)
+                self.runtime.budget.precheck_llm()
+                raw2, _model, usage2 = self.router.complete_with_usage(
+                    profile, _PLANNER_SYSTEM, user + _REPLAN_HINT)
+                self.runtime.budget.charge_llm(usage=usage2)
+            except BudgetExceeded:
+                break  # reasoning/LLM cap reached → keep the best plan (fail-closed)
+            candidate = self.plan_validator.parse_and_validate(raw2)
+            if candidate.valid:
+                cand_score = score_steps(candidate.steps)
+                if cand_score.mean_score > score.mean_score:
+                    result, score = candidate, cand_score
+        self.runtime.trace.append_praxis_event(PraxisEventRecord.make(
+            run_id=self.runtime.trace.run_id,
+            agent_id=self.card.id,
+            event_type="reasoning_step_score",
+            subject_id=intent.id,
+            summary=(f"prm min={score.min_score:.2f} mean={score.mean_score:.2f} "
+                     f"escalate={score.should_escalate} attempts={attempts}"),
+            details={**score.to_summary(), "attempts": attempts}))
         return result
 
     def run(self, intent: Intent) -> dict:

@@ -148,6 +148,33 @@ class ModelRouter:
             self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
         ), "router"
 
+    def complete_with_usage(self, profile: str, system: str, user: str):
+        """Like :meth:`complete`, but returns ``(raw, provider_name, usage)`` so
+        callers can charge real token usage. ``usage`` is ``None`` on refusal /
+        router-level block / providers that do not report it."""
+        self.configure_default()
+        block = self._check_profile_allowed(profile)
+        if block:
+            return refusal_json(block), "router", None
+        clients = self._clients_for(profile)
+        if not clients:
+            return refusal_json(f"no model registered for profile '{profile}'"), "router", None
+        last_err = ""
+        for client in clients:  # ranked; failover down the list
+            try:
+                if hasattr(client, "complete_with_usage"):
+                    raw, usage = client.complete_with_usage(system, user)
+                else:
+                    # clients that don't surface usage → estimate_only downstream
+                    raw, usage = client.complete(system, user), None
+                return _normalize_or_refuse(raw), client.name, usage
+            except Exception as e:  # provider down -> try next (commodity!)
+                last_err = self._redactor.redact(f"{type(e).__name__}: {e}")
+                continue
+        return refusal_json(
+            self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
+        ), "router", None
+
     def complete_with_evidence(
         self, profile: str, system: str, user: str
     ):
@@ -407,6 +434,24 @@ class ProviderModelClient:
         if resp.refusal_reason:
             return refusal_json(self._redactor.redact(resp.refusal_reason))
         return resp.raw_text
+
+    def complete_with_usage(self, system: str, user: str):
+        """Like :meth:`complete`, but also surfaces the provider's real
+        ``TokenUsage`` (or ``None`` when unreported). Returns ``(raw, usage)``."""
+        req = ModelRequest(
+            system_prompt=system,
+            user_prompt=user,
+            output_schema=STRUCTURED_PLAN_SCHEMA,
+            temperature=float(os.environ.get("AUREL_MODEL_TEMPERATURE", "0")),
+            max_tokens=int(os.environ.get("AUREL_MODEL_MAX_TOKENS", "2048")),
+            timeout_seconds=float(os.environ.get("AUREL_MODEL_TIMEOUT", "30")),
+        )
+        resp = self.provider.generate_structured_plan(req)
+        if resp.error:
+            return refusal_json(self._redactor.redact(resp.error)), None
+        if resp.refusal_reason:
+            return refusal_json(self._redactor.redact(resp.refusal_reason)), None
+        return resp.raw_text, resp.usage
 
     def complete_structured(
         self,

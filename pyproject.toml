@@ -40,6 +40,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "agentic_runtime.tool_manifest" = ["manifests/*.json"]
+"agentic_runtime.dual_kernel" = ["*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

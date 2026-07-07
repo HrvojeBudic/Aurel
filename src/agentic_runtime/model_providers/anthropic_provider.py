@@ -8,9 +8,20 @@ import json
 import os
 
 from .base import (ModelProviderConfig, ModelRequest, ModelResponse,
-                   ProviderHealth, ProviderStatus)
+                   ProviderHealth, ProviderStatus, TokenUsage)
 from .http_utils import post_json
 from .schemas import STRUCTURED_PLAN_SCHEMA
+
+
+def _usage_from(data: dict | None) -> TokenUsage | None:
+    """Extract real token usage from an Anthropic response, or None if absent."""
+    usage = (data or {}).get("usage")
+    if not isinstance(usage, dict):
+        return None
+    prompt = int(usage.get("input_tokens", 0) or 0)
+    completion = int(usage.get("output_tokens", 0) or 0)
+    return TokenUsage(prompt_tokens=prompt, completion_tokens=completion,
+                      total_tokens=prompt + completion, reasoning_tokens=0)
 
 
 class AnthropicProvider:
@@ -67,6 +78,7 @@ class AnthropicProvider:
                 self.config.model_name,
                 raw_text=raw,
                 parsed_json=parsed,
+                usage=_usage_from(data),
                 latency_ms=latency,
                 finish_reason=(data or {}).get("stop_reason"),
             )

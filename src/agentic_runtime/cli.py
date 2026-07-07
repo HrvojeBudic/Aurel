@@ -492,6 +492,16 @@ from .cli_modules.shell_commands import (
 from .cli_modules.spine_commands import cmd_spine_replay, cmd_spine_run, cmd_spine_serve
 from .cli_modules.doctor import cmd_doctor
 from .cli_modules.governance_commands import cmd_governance_audit, cmd_governance_levels
+from .cli_modules.dual_kernel_commands import (
+    cmd_dual_kernel_bindings,
+    cmd_dual_kernel_show,
+    cmd_dual_kernel_status,
+    cmd_dual_kernel_verify_ledger,
+)
+from .cli_modules.reasoning_commands import (
+    cmd_reasoning_status,
+    cmd_reasoning_workload,
+)
 from .cli_modules.shell_permission_commands import (
     cmd_shell_permissions_actions,
     cmd_shell_permissions_clients,
@@ -804,6 +814,37 @@ def main(argv: list[str] | None = None) -> int:
     p_gov_audit.add_argument("--trace-dir", default=".traces", help="trace base dir")
     p_gov_audit.add_argument("--checkpoint-every", type=int, default=5)
     p_gov_audit.set_defaults(func=cmd_governance_audit)
+
+    p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
+    dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
+    p_dk_status = dk_sub.add_parser("status", help="flag state + canon coverage")
+    p_dk_status.add_argument("--json", action="store_true", help="emit JSON")
+    p_dk_status.set_defaults(func=cmd_dual_kernel_status)
+    p_dk_bind = dk_sub.add_parser(
+        "bindings", help="canon firewall: gate → no-collapse law")
+    p_dk_bind.add_argument("--json", action="store_true", help="emit JSON")
+    p_dk_bind.set_defaults(func=cmd_dual_kernel_bindings)
+    p_dk_verify = dk_sub.add_parser(
+        "verify-ledger", help="verify a decision ledger hash-chain")
+    p_dk_verify.add_argument("path", help="path to a dual-kernel events JSONL")
+    p_dk_verify.set_defaults(func=cmd_dual_kernel_verify_ledger)
+    p_dk_show = dk_sub.add_parser(
+        "show", help="print the 01I projection of a decision ledger")
+    p_dk_show.add_argument("path", help="path to a dual-kernel events JSONL")
+    p_dk_show.add_argument("--json", action="store_true", help="emit JSON")
+    p_dk_show.set_defaults(func=cmd_dual_kernel_show)
+
+    p_rz = sub.add_parser("reasoning", help="reasoning scheduler surface (read-only)")
+    rz_sub = p_rz.add_subparsers(dest="reasoning_command", required=True)
+    p_rz_status = rz_sub.add_parser("status", help="scheduler flag + vocabularies")
+    p_rz_status.add_argument("--json", action="store_true", help="emit JSON")
+    p_rz_status.set_defaults(func=cmd_reasoning_status)
+    p_rz_work = rz_sub.add_parser(
+        "workload", help="project a run's reasoning workload from its trace")
+    p_rz_work.add_argument("run_id", help="run id under the trace dir")
+    p_rz_work.add_argument("--trace-dir", default=".traces", help="trace base dir")
+    p_rz_work.add_argument("--json", action="store_true", help="emit JSON")
+    p_rz_work.set_defaults(func=cmd_reasoning_workload)
 
     p_verify = sub.add_parser("verify", help="run the pytest suite")
     p_verify.add_argument("-v", "--verbose", action="store_true")

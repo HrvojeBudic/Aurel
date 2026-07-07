@@ -9,9 +9,23 @@ import json
 import os
 
 from .base import (ModelProviderConfig, ModelRequest, ModelResponse,
-                   ProviderHealth, ProviderStatus)
+                   ProviderHealth, ProviderStatus, TokenUsage)
 from .http_utils import post_json
 from .schemas import STRUCTURED_PLAN_SCHEMA
+
+
+def _usage_from(data: dict | None) -> TokenUsage | None:
+    """Extract real token usage from an OpenAI response, or None if absent."""
+    usage = (data or {}).get("usage")
+    if not isinstance(usage, dict):
+        return None
+    prompt = int(usage.get("prompt_tokens", 0) or 0)
+    completion = int(usage.get("completion_tokens", 0) or 0)
+    total = int(usage.get("total_tokens", 0) or 0) or (prompt + completion)
+    details = usage.get("completion_tokens_details")
+    reasoning = int(details.get("reasoning_tokens", 0) or 0) if isinstance(details, dict) else 0
+    return TokenUsage(prompt_tokens=prompt, completion_tokens=completion,
+                      total_tokens=total, reasoning_tokens=reasoning)
 
 
 class OpenAIProvider:
@@ -69,6 +83,7 @@ class OpenAIProvider:
                 self.config.model_name,
                 raw_text=raw,
                 parsed_json=parsed,
+                usage=_usage_from(data),
                 latency_ms=latency,
                 finish_reason=choice.get("finish_reason"),
                 refusal_reason=msg.get("refusal"),

@@ -7,9 +7,12 @@ stdout/stderr volume, write churn, memory writes, and estimated token/cost.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from .core_types import BudgetDecisionRecord, ObservationEnvelope, now
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .model_providers.base import TokenUsage
 
 
 @dataclass
@@ -27,6 +30,11 @@ class BudgetPolicy:
     max_estimated_tokens: int = 200_000
     max_estimated_cost_cents: int = 500
     max_llm_calls: int = 40
+    # P0-S.2 — reasoning / simulation compute caps
+    max_thinking_tokens: int = 200_000
+    max_thinking_calls: int = 40
+    max_reasoning_passes_per_run: int = 12
+    max_simulation_execs: int = 120
 
 
 class BudgetExceeded(Exception):
@@ -56,6 +64,10 @@ class BudgetLedger:
     changed_files: int = 0
     memory_writes: int = 0
     estimated_tokens: int = 0
+    thinking_tokens: int = 0        # reasoning / extended-thinking tokens, distinct from output
+    thinking_calls: int = 0         # reasoning-model invocations
+    reasoning_passes: int = 0       # replan / step-verify passes
+    simulation_execs: int = 0       # disposable-twin simulation runs
     estimated_cost_cents: float = 0.0
     # scoped usage
     per_run: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -87,7 +99,13 @@ class BudgetLedger:
             "memory_writes": 0,
             "retries": {},
             "estimated_tokens": 0,
+            "thinking_tokens": 0,
+            "thinking_calls": 0,
+            "reasoning_passes": 0,
+            "simulation_execs": 0,
             "estimated_cost_cents": 0.0,
+            "substantiated_charges": 0,
+            "estimate_only_charges": 0,
             "started_at": now(),
         }
         self.run_started_at = self.per_run[run_id]["started_at"]
@@ -98,14 +116,50 @@ class BudgetLedger:
         if not self.current_run_id:
             self.begin_run(run_id, agent_id, intent_id)
 
-    def charge_llm(self, usd: float = 0.01, estimated_tokens: int = 1200) -> None:
+    # Legacy estimate used only when a call reports no real usage.
+    _LLM_ESTIMATE_TOKENS = 1200
+    _LLM_ESTIMATE_USD = 0.01
+
+    def precheck_llm(self) -> None:
+        """Pre-flight cap gate BEFORE an LLM call: deny (traced) if the estimate
+        would breach a cap, without mutating any counter. The real charge is
+        recorded once, after the call, by :meth:`charge_llm`."""
+        run = self._run_usage()
+        self._precheck("max_llm_calls", self.llm_calls + 1, self.policy.max_llm_calls)
+        self._precheck("max_estimated_tokens",
+                       run["estimated_tokens"] + self._LLM_ESTIMATE_TOKENS,
+                       self.policy.max_estimated_tokens)
+        self._precheck("max_estimated_cost_cents",
+                       run["estimated_cost_cents"] + self._LLM_ESTIMATE_USD * 100.0,
+                       self.policy.max_estimated_cost_cents)
+
+    def charge_llm(self, usage: "TokenUsage | None" = None,
+                   usd: float | None = None) -> None:
+        """Record one LLM charge. With real ``usage`` the ledger reflects true
+        tokens and the run is marked substantiated; with ``usage=None`` it keeps
+        the legacy estimate but stamps the run ``estimate_only``. Never
+        synthesizes a token count out of thin air."""
         run = self._run_usage()
         self.llm_calls += 1
-        self.usd += usd
-        self.estimated_tokens += estimated_tokens
-        cents = usd * 100.0
+        if usage is not None:
+            prompt = int(getattr(usage, "prompt_tokens", 0) or 0)
+            completion = int(getattr(usage, "completion_tokens", 0) or 0)
+            reasoning = int(getattr(usage, "reasoning_tokens", 0) or 0)
+            total = int(getattr(usage, "total_tokens", 0) or 0) or (prompt + completion)
+            run["substantiated_charges"] = run.get("substantiated_charges", 0) + 1
+        else:
+            total = self._LLM_ESTIMATE_TOKENS
+            reasoning = 0
+            run["estimate_only_charges"] = run.get("estimate_only_charges", 0) + 1
+        charge_usd = self._LLM_ESTIMATE_USD if usd is None else usd
+        cents = charge_usd * 100.0
+
+        self.usd += charge_usd
+        self.estimated_tokens += total
+        self.thinking_tokens += reasoning
         self.estimated_cost_cents += cents
-        run["estimated_tokens"] += estimated_tokens
+        run["estimated_tokens"] += total
+        run["thinking_tokens"] = run.get("thinking_tokens", 0) + reasoning
         run["estimated_cost_cents"] += cents
 
         self._check("max_llm_calls", self.llm_calls, self.policy.max_llm_calls)
@@ -115,6 +169,39 @@ class BudgetLedger:
             run["estimated_cost_cents"],
             self.policy.max_estimated_cost_cents,
         )
+        if reasoning > 0:
+            self._check("max_thinking_tokens", run["thinking_tokens"],
+                        self.policy.max_thinking_tokens)
+
+    def charge_reasoning(self, tokens: int = 0, passes: int = 1) -> None:
+        """Charge a reasoning pass (System-2 / step-verify / replan). Counts the
+        call and pass, optionally reserves ``tokens`` of thinking budget, and
+        enforces the thinking caps through ``_check`` (overspend → BudgetExceeded
+        + traced deny). Proposal-side seam; allocation ≠ authority."""
+        run = self._run_usage()
+        self.thinking_calls += passes
+        self.reasoning_passes += passes
+        run["thinking_calls"] = run.get("thinking_calls", 0) + passes
+        run["reasoning_passes"] = run.get("reasoning_passes", 0) + passes
+        if tokens:
+            self.thinking_tokens += tokens
+            run["thinking_tokens"] = run.get("thinking_tokens", 0) + tokens
+        self._check("max_thinking_calls", run["thinking_calls"],
+                    self.policy.max_thinking_calls)
+        self._check("max_reasoning_passes_per_run", run["reasoning_passes"],
+                    self.policy.max_reasoning_passes_per_run)
+        self._check("max_thinking_tokens", run["thinking_tokens"],
+                    self.policy.max_thinking_tokens)
+
+    def charge_simulation(self, execs: int = 1) -> None:
+        """Charge a disposable-twin simulation run (Track C sim-gate / dual-kernel
+        speculative fork). Enforced through ``_check`` (overspend → BudgetExceeded
+        + traced deny). Simulation is evidence, never authority."""
+        run = self._run_usage()
+        self.simulation_execs += execs
+        run["simulation_execs"] = run.get("simulation_execs", 0) + execs
+        self._check("max_simulation_execs", run["simulation_execs"],
+                    self.policy.max_simulation_execs)
 
     def precheck_command(self, command_id: str, tool: str, agent_id: str) -> None:
         run = self._run_usage()
@@ -215,7 +302,16 @@ class BudgetLedger:
             "changed_files": run.get("changed_files", 0),
             "memory_writes": run.get("memory_writes", 0),
             "estimated_tokens": run.get("estimated_tokens", 0),
+            "thinking_tokens": run.get("thinking_tokens", 0),
+            "thinking_calls": run.get("thinking_calls", 0),
+            "reasoning_passes": run.get("reasoning_passes", 0),
+            "simulation_execs": run.get("simulation_execs", 0),
             "estimated_cost_cents": round(run.get("estimated_cost_cents", 0.0), 3),
+            "substantiated_charges": run.get("substantiated_charges", 0),
+            "estimate_only_charges": run.get("estimate_only_charges", 0),
+            "estimate_only": run.get("estimate_only_charges", 0) > 0,
+            "substantiated": (run.get("substantiated_charges", 0) > 0
+                              and run.get("estimate_only_charges", 0) == 0),
         }
         return {
             "llm_calls": self.llm_calls,
@@ -237,6 +333,10 @@ class BudgetLedger:
                 "max_memory_writes": self.policy.max_memory_writes,
                 "max_estimated_tokens": self.policy.max_estimated_tokens,
                 "max_estimated_cost_cents": self.policy.max_estimated_cost_cents,
+                "max_thinking_tokens": self.policy.max_thinking_tokens,
+                "max_thinking_calls": self.policy.max_thinking_calls,
+                "max_reasoning_passes_per_run": self.policy.max_reasoning_passes_per_run,
+                "max_simulation_execs": self.policy.max_simulation_execs,
             },
         }
 
@@ -253,6 +353,13 @@ class BudgetLedger:
             self._trace_budget(kind, "deny", used, limit, "limit exceeded")
             raise BudgetExceeded(kind, used, limit)
         self._trace_budget(kind, "allow", used, limit)
+
+    def _precheck(self, kind: str, projected: float, limit: float) -> None:
+        """Non-mutating cap guard: trace + raise on breach only; no allow trace
+        (the allow is recorded by the real charge that follows)."""
+        if projected > limit:
+            self._trace_budget(kind, "deny", projected, limit, "limit exceeded")
+            raise BudgetExceeded(kind, projected, limit)
 
     def _trace_budget(
         self,

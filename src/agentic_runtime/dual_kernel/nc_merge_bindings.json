@@ -1,0 +1,116 @@
+{
+  "schema": "aurel.dual_kernel.nc_merge_bindings/v1",
+  "description": "Machine-readable firewall: each merge-gate check is bound to a DSD no-collapse law. validate_coverage() asserts every gate the MergeGate can emit has a binding, so the merge gate can never drift from canon in CI.",
+  "bindings": [
+    {
+      "gate_id": "C1_interface_compatibility",
+      "check": "child write-paths are a subset of the card's authorised write scope",
+      "nc_law": "NC-01H-016",
+      "statement": "tool_access_not_right_to_act",
+      "canon_source": "DSD 01H — Sovereignty / Authority / Law",
+      "severity": "major",
+      "verdict_on_fail": "fail",
+      "test_hook": "test_c1_out_of_scope_write_fails"
+    },
+    {
+      "gate_id": "C2_assumption_discharge",
+      "check": "handoff invariant discharged: post-state evidence present and no protected test weakened",
+      "nc_law": "NC-01H-075",
+      "statement": "authorized_change_not_lawful_transition_by_itself",
+      "canon_source": "DSD 01H — Sovereignty / Authority / Law",
+      "severity": "major",
+      "verdict_on_fail": "fail",
+      "test_hook": "test_c2_missing_evidence_fails"
+    },
+    {
+      "gate_id": "C3_governance_consistency",
+      "check": "Allowed(child) ∩ Prohibited(parent) = ∅ — no forbidden capability used in the fork",
+      "nc_law": "NC-01H-013",
+      "statement": "authority_not_capability",
+      "canon_source": "DSD 01H — Sovereignty / Authority / Law",
+      "severity": "critical",
+      "verdict_on_fail": "blocking_fail",
+      "test_hook": "test_c3_forbidden_capability_blocks"
+    },
+    {
+      "gate_id": "C4_recovery_independence",
+      "check": "the fork can be independently discarded/rolled back without corrupting live state",
+      "nc_law": "NC-01C-021",
+      "statement": "rollback_restores_state_but_preserves_event_history",
+      "canon_source": "DSD 01C — Foundational Computational Discipline",
+      "severity": "major",
+      "verdict_on_fail": "rollback_required",
+      "test_hook": "test_c4_no_recovery_requires_rollback"
+    },
+    {
+      "gate_id": "state_verification",
+      "check": "StateVerifier passed against REAL forked post-state (not agent claim)",
+      "nc_law": "NC-01H-080",
+      "statement": "runtime_success_not_legitimate_action",
+      "canon_source": "DSD 01H — Sovereignty / Authority / Law; DSD 01D actual_not_verified",
+      "severity": "critical",
+      "verdict_on_fail": "blocking_fail",
+      "test_hook": "test_failed_verification_is_blocking"
+    },
+    {
+      "gate_id": "simulation_live_resolved",
+      "check": "simulation_live_status is RESOLVED — a green fork is simulation-evidence, not a live pass",
+      "nc_law": "NC-01I-068",
+      "statement": "simulation_not_live_reality",
+      "canon_source": "DSD 01I — Projection / Interface / Simulation; DSD 01C simulation_result_does_not_mutate_live_state",
+      "severity": "critical",
+      "verdict_on_fail": "blocking_fail",
+      "test_hook": "test_unresolved_simulation_blocks_merge"
+    },
+    {
+      "gate_id": "authority_resolved",
+      "check": "authority is resolved for the sensitivity reached — displayed/auto approval is not source approval",
+      "nc_law": "NC-01H-159",
+      "statement": "displayed_approval_not_source_approval",
+      "canon_source": "DSD 01H — Sovereignty / Authority / Law",
+      "severity": "authority",
+      "verdict_on_fail": "needs_authority_review",
+      "test_hook": "test_unresolved_authority_routes_to_review"
+    },
+    {
+      "gate_id": "rollback_path_defined",
+      "check": "a rollback/discard path exists before commit — recovery preserves the failure trace",
+      "nc_law": "NC-01C-020",
+      "statement": "recovery_preserves_failure_trace",
+      "canon_source": "DSD 01C — Foundational Computational Discipline",
+      "severity": "major",
+      "verdict_on_fail": "rollback_required",
+      "test_hook": "test_missing_rollback_path_requires_rollback"
+    },
+    {
+      "gate_id": "regression_baseline",
+      "check": "continuity checked against a baseline — a current pass without baseline is not a regression pass",
+      "nc_law": "DSD-BOOK12-QA",
+      "statement": "qa_is_not_one_time_testing",
+      "canon_source": "DSD Book 12 — Evaluation / Verification / QA (Ch 5)",
+      "severity": "continuity",
+      "verdict_on_fail": "needs_more_evidence",
+      "test_hook": "test_missing_baseline_needs_more_evidence"
+    },
+    {
+      "gate_id": "critical_slice",
+      "check": "no critical slice failure hidden behind an aggregate score",
+      "nc_law": "DSD-BOOK12-SLICE",
+      "statement": "aggregate_score_must_not_hide_critical_slice_failure",
+      "canon_source": "DSD Book 12 — Evaluation / Verification / QA (Ch 6, Slice Failure Gate)",
+      "severity": "critical",
+      "verdict_on_fail": "blocking_fail",
+      "test_hook": "test_critical_slice_failure_blocks"
+    },
+    {
+      "gate_id": "memory_pollution",
+      "check": "no uncontrolled memory pollution — a memory candidate is not memory",
+      "nc_law": "NC-00-044",
+      "statement": "memory_candidate_not_memory",
+      "canon_source": "DSD 00 — Genesis",
+      "severity": "minor",
+      "verdict_on_fail": "review_required",
+      "test_hook": "test_memory_pollution_routes_to_review"
+    }
+  ]
+}
