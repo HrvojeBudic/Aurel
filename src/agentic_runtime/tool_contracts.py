@@ -525,6 +525,7 @@ _MEMORY_TRUTH_STATES = [
 # registry decoupled from the graph module, matching the truth-states pattern).
 _MEMORY_RELATIONS = [
     "supersedes", "contradicts", "supports", "relates_to", "derived_from",
+    "summarizes",
 ]
 
 
@@ -589,6 +590,16 @@ def memory_contract_registry() -> ToolContractRegistry:
             "evidence_refs": ArgSpec("list[str]", required=False),
             "confidence": ArgSpec("float", required=False),
             "source_trace_ids": ArgSpec("list[str]", required=False),
+        },
+        side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
+    ))
+    reg.register(ToolContract(
+        name="mem_consolidate",
+        description="Cluster memories into a governed CANDIDATE summary (A5).",
+        input_schema={
+            "memory_ids": ArgSpec("list[str]"),
+            "threshold": ArgSpec("float", required=False),
+            "min_size": ArgSpec("int", required=False),
         },
         side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
     ))

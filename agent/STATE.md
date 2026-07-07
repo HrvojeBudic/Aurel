@@ -1,6 +1,23 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A4 — belief revision, forget, supersession, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A5 — deterministic consolidation to CANDIDATE, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A5 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic consolidation to CANDIDATE.**
+> New `memory_consolidation.py`: `cluster_memories` (deterministic greedy pass, records sorted by `memory_id`,
+> `HashingEmbedder` cosine, no `hash()`/RNG; only clusters ≥ min_size), `summarize_cluster` (content-keyed ⇒
+> byte-identical across fabrics), `consolidate` (per cluster: one governed **CANDIDATE** `request_write` +
+> `SUMMARIZES` edges via `link`; `charge` callback → one charge per sub-write; fail-closed
+> `no_consolidatable_cluster`). `memory_graph.py` adds `MemoryRelation.SUMMARIZES` (not evidence-gated).
+> `mem_consolidate` tool wired in `memory_tools.py` (+ `tool_contracts.py` contract, `"summarizes"` relation);
+> `praxis.py` gains `submit_consolidation_to_governance` (runtime) adapter. Summary is hard-coded CANDIDATE —
+> never elevates trust (agent-triggered stays CANDIDATE); provenance via `evidence_refs`/`links` + `SUMMARIZES`
+> edges, sources unmutated. **Drift (D1):** provenance uses evidence_refs/links + edges, NOT `source_trace_ids`
+> (governance validates those as trace ids). Reuses A2 edges + the governed funnel (no parallel write path). No
+> new flag; no build_runtime/entity wiring (A8). Seal `test_p6a5_consolidation.py` **5 passed**; regression
+> **191 passed** (+ praxis **26 passed**) / 0 failed; ruff+mypy+compileall clean on 5 files. Full ~25min suite
+> intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A5_CONSOLIDATION.md`. Next: A6 hybrid retrieval.
+
+_Prior update: 2026-07-07 (Track A / A4 — belief revision, forget, supersession, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A4 (2026-07-07, branch `feat/track-a-memory`, unmerged) — belief revision (update/retract/forget).**
 > New `memory_revision.py` (`apply_update`/`retract`/`forget` governed primitives — one `MemoryGovernanceRecord`

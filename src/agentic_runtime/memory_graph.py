@@ -39,7 +39,7 @@ class MemoryRelation(str, Enum):
     SUPPORTS = "supports"            # from_id is corroborating evidence for to_id
     RELATES_TO = "relates_to"        # generic association
     DERIVED_FROM = "derived_from"    # from_id was derived/summarized from to_id
-    # NOTE: A5 (consolidation) adds SUMMARIZES; not defined here to keep A2 minimal.
+    SUMMARIZES = "summarizes"        # A5: from_id is a consolidated summary of to_id
 
 
 # Relations that assert a change to the belief landscape must carry evidence, so

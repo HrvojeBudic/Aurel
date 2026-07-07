@@ -31,9 +31,11 @@ from .core_types import MemoryTruthState
 from .tool_contracts import ToolContractRegistry, ToolInputValidator, memory_contract_registry
 
 MEMORY_TOOL_NAMES = frozenset(
-    {"mem_add", "mem_update", "mem_delete", "mem_search", "mem_link"}
+    {"mem_add", "mem_update", "mem_delete", "mem_search", "mem_link", "mem_consolidate"}
 )
-MEMORY_WRITE_TOOLS = frozenset({"mem_add", "mem_update", "mem_delete", "mem_link"})
+MEMORY_WRITE_TOOLS = frozenset(
+    {"mem_add", "mem_update", "mem_delete", "mem_link", "mem_consolidate"}
+)
 MEMORY_READ_TOOLS = frozenset({"mem_search"})
 
 # Mirrors ``memory_governance.AGENT_WRITER`` — the least-privilege writer kind.
@@ -115,6 +117,8 @@ class MemoryToolSession:
             return self._mem_update(args)
         if tool_name == "mem_delete":
             return self._mem_delete(args)
+        if tool_name == "mem_consolidate":
+            return self._mem_consolidate(args)
         # Unreachable (all names covered above); fail closed rather than guess.
         return {"ok": False, "tool": tool_name, "reason_code": "unhandled",
                 "message": f"no handler for {tool_name}"}
@@ -234,6 +238,31 @@ class MemoryToolSession:
         self.budget.charge_memory_write()
         decision = forget(self.fabric, req)
         return self._revision_result("mem_delete", decision)
+
+    def _mem_consolidate(self, args: dict) -> dict:
+        # A5: deterministically cluster the given source memories and write ONE
+        # governed CANDIDATE summary per cluster + SUMMARIZES edges. Never higher
+        # than CANDIDATE; fail-closed on degenerate/empty clusters.
+        from .memory_consolidation import consolidate
+
+        ids = list(args["memory_ids"])
+        records = [self.fabric.by_id[i] for i in ids if i in self.fabric.by_id]
+        result = consolidate(
+            self.fabric, records,
+            writer_kind=self._writer_kind(),
+            created_by=self.created_by,
+            source_run_id=self._run_id(),
+            threshold=float(args.get("threshold", 0.5)),
+            min_size=int(args.get("min_size", 2)),
+            charge=self.budget.charge_memory_write,   # one charge per governed sub-write
+        )
+        return {
+            "ok": result.produced,
+            "tool": "mem_consolidate",
+            "reason_code": result.reason_code,
+            "clusters_found": result.clusters_found,
+            "summaries": [s.to_dict() for s in result.summaries],
+        }
 
     def _revision_result(self, tool: str, decision: Any) -> dict:
         return {
