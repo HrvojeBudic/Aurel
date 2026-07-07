@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from .difficulty_estimator import DifficultyBand, estimate
 from .reasoning_scheduler import ReasoningAllocation, allocate
+from .step_verifier import PlanScore, StepScore, model_judge_available, score_steps
 from .thinking_budget import EffortLevel, ThinkingBudget, for_card
 from .token_accounting import TokenAccountingView
 
@@ -23,4 +24,8 @@ __all__ = [
     "estimate",
     "ReasoningAllocation",
     "allocate",
+    "PlanScore",
+    "StepScore",
+    "score_steps",
+    "model_judge_available",
 ]
