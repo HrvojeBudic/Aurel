@@ -1,6 +1,26 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A0 — bi-temporal stamps + as-of read model, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A1a — memory ops as governed tools, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A1a (2026-07-07, branch `feat/track-a-memory`, unmerged) — memory ops as governed tools.**
+> New `memory_tools.py` `MemoryToolSession`: a governed dispatcher letting an entity
+> **propose** memory ops without storing directly. `mem_add` routes through the existing
+> `MemoryFabric.request_write` funnel (policy → `_trace_memory` → one `MemoryGovernanceRecord`),
+> charging **exactly one** `charge_memory_write` per attempt (allow OR deny) and **zero**
+> `charge_sandbox_execution`; `mem_search` read-only (no charge, store unchanged);
+> `mem_update`/`mem_delete`/`mem_link` honestly `unavailable=True` (`requires_a2_a4`).
+> `writer_kind` is a constructor property derived from the card — agent cannot self-elevate
+> (never a tool arg). Dedicated `memory_contract_registry()` kept **out** of
+> `default_contract_registry()` (byte-identical sandbox surface); fail-closed guard atop
+> `ToolBus.execute` → `memory_tool_wrong_path`, never registered. **Reported import-hang was
+> an invocation artifact (bare `python -c` → stdin REPL), not module-level blocking code —
+> module verified import-safe (instant, exit 0), no cycle; fix = always timeout-wrap import
+> checks.** Seal `test_p6a1_memory_tools_governed.py` **6 passed** (7 assertions); regression
+> **159 passed / 0 failed**; ruff+mypy+compileall clean on 3 files. Full ~25min suite
+> intentionally skipped this phase. No new flag; no runtime wiring (A8). Report:
+> `agent/reports/AUREL_TRACK_A_A1A_MEMORY_TOOLS_GOVERNED.md`. Next: A2 memory-graph primitives.
+
+_Prior update: 2026-07-07 (Track A / A0 — bi-temporal stamps + as-of read model, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A0 (2026-07-07, branch `feat/track-a-memory`, unmerged) — bi-temporal stamps + as-of read model.**
 > Additive memory metadata + read model, no behavior change. `MemoryRecord` gains

@@ -506,3 +506,73 @@ def default_contract_registry() -> ToolContractRegistry:
         output_schema=OutputContract(required_artifacts={"path": "str"}),
     ))
     return reg
+
+
+# --------------------------------------------------------------------------- #
+#  Memory tool contracts (A1a) — a SEPARATE registry from the builtin/sandbox
+#  registry. These validate args for the governed ``MemoryToolSession`` path;
+#  they are deliberately NOT added to ``default_contract_registry()`` because
+#  (a) memory tools never execute in the sandbox (they route through
+#  ``MemoryFabric.request_write``/``retrieve``), and (b) ``mem_search`` is
+#  read-only with an EMPTY side-effect profile, which the default registry's
+#  "every contract has a side_effect_profile" invariant forbids. Keeping them
+#  here preserves byte-identity of the sandbox contract surface.
+# --------------------------------------------------------------------------- #
+_MEMORY_TRUTH_STATES = [
+    "raw", "episodic", "candidate", "verified", "procedural", "canon",
+]
+
+
+def memory_contract_registry() -> ToolContractRegistry:
+    """Contracts for the governed memory tools (A1a). Not a sandbox surface."""
+    reg = ToolContractRegistry()
+    reg.register(ToolContract(
+        name="mem_add",
+        description="Propose a governed memory write (policy disposes).",
+        input_schema={
+            "content": ArgSpec("str"),
+            "truth_state": ArgSpec("str", required=False, enum=_MEMORY_TRUTH_STATES),
+            "confidence": ArgSpec("float", required=False),
+            "importance": ArgSpec("float", required=False),
+            "source_trace_ids": ArgSpec("list[str]", required=False),
+            "evidence_refs": ArgSpec("list[str]", required=False),
+        },
+        side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
+    ))
+    reg.register(ToolContract(
+        name="mem_search",
+        description="Read-only memory retrieval (no write, no charge).",
+        input_schema={
+            "query": ArgSpec("str"),
+            "k": ArgSpec("int", required=False),
+        },
+        # Read-only: empty side-effect profile ⇒ risk_floor TRIVIAL.
+        side_effect_profile=frozenset(),
+    ))
+    # Declared-but-UNAVAILABLE in A1a; their fabric primitives arrive in A2/A4.
+    reg.register(ToolContract(
+        name="mem_update",
+        description="Revise a memory belief (governed) — UNAVAILABLE until A4.",
+        input_schema={
+            "memory_id": ArgSpec("str"),
+            "content": ArgSpec("str", required=False),
+        },
+        side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
+    ))
+    reg.register(ToolContract(
+        name="mem_delete",
+        description="Retract/forget a memory (governed) — UNAVAILABLE until A4.",
+        input_schema={"memory_id": ArgSpec("str")},
+        side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
+    ))
+    reg.register(ToolContract(
+        name="mem_link",
+        description="Add a typed memory edge (governed) — UNAVAILABLE until A2.",
+        input_schema={
+            "from_id": ArgSpec("str"),
+            "to_id": ArgSpec("str"),
+            "relation": ArgSpec("str"),
+        },
+        side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
+    ))
+    return reg

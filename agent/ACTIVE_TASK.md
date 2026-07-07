@@ -1,4 +1,20 @@
-# Active Task: Track A / A0 complete (bi-temporal stamps + as-of read model) on branch feat/track-a-memory; next A1a
+# Active Task: Track A / A1a complete (memory ops as governed tools) on branch feat/track-a-memory; next A2
+
+**Track A / A1a (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
+New `memory_tools.py` `MemoryToolSession`: `mem_add` routes through `MemoryFabric.request_write` (one
+`charge_memory_write` per attempt allow/deny, zero sandbox-exec), `mem_search` read-only (no charge),
+`mem_update`/`mem_delete`/`mem_link` honestly `unavailable` (`requires_a2_a4`). Identity (`writer_kind`) is a
+constructor property derived from the card — agent cannot self-elevate. Dedicated `memory_contract_registry()`
+in `tool_contracts.py` (NOT in `default_contract_registry()`); fail-closed guard in `ToolBus.execute` →
+`memory_tool_wrong_path`. **Reported import-hang was an invocation artifact (bare `python -c` → stdin REPL),
+not module-level blocking code — module verified import-safe (instant, exit 0); fix = always timeout-wrap
+import checks.** Seal `test_p6a1_memory_tools_governed.py` **6 passed** (7 assertions); regression 159 passed
+(memory_p09/policy_cards_p167/tool_contract_p10/tool_registry_p133/builtin_tool_manifests_p138/p6a0_bitemporal);
+ruff+mypy+compileall clean on 3 files. Full ~25min suite intentionally skipped this phase. No new flag; no
+runtime wiring (A8). Report: `agent/reports/AUREL_TRACK_A_A1A_MEMORY_TOOLS_GOVERNED.md`. **Next: A2 — memory
+graph primitives (typed edges; backs `mem_link`, unlocks first `requires_a2_a4` gate).**
+
+---
 
 **Track A / A0 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
 Added 6 optional `None`-default bi-temporal fields to `MemoryRecord`, new pure `memory_bitemporal.py`
