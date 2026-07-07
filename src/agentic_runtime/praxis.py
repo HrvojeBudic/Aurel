@@ -712,6 +712,30 @@ def submit_memory_candidate_to_governance(
     return fabric.request_write(req)
 
 
+def submit_consolidation_to_governance(
+    fabric: "MemoryFabric",
+    records: list[Any],
+    *,
+    run_id: str,
+    threshold: float = 0.5,
+    min_size: int = 2,
+) -> Any:
+    """Adapter: deterministically consolidate related memories into governed
+    CANDIDATE summaries (+ SUMMARIZES edges). Mirrors
+    ``submit_memory_candidate_to_governance`` — the runtime proposes, memory
+    governance disposes. Never elevates trust (summary is always CANDIDATE);
+    fail-closed on degenerate clusters; sources are never destroyed or altered."""
+    from .memory_consolidation import consolidate
+
+    return consolidate(
+        fabric, records,
+        writer_kind="runtime",
+        source_run_id=run_id,
+        threshold=threshold,
+        min_size=min_size,
+    )
+
+
 def bridge_skill_candidate_to_library(skill: SkillCandidate) -> dict[str, Any]:
     """
     Conservative bridge to skills.SkillLibrary — returns a proposal dict only.

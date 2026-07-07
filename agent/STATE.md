@@ -1,6 +1,167 @@
 # Repository State
 
-_Last updated: 2026-07-06 (AUREL-SEAL-01 — full pytest suite sealed clean; roadmap continuation remains at P6)_
+_Last updated: 2026-07-07 (Track A COMPLETE — A8 live promotion + durable fail-closed, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A8 (2026-07-07, branch `feat/track-a-memory`, unmerged) — live promotion wiring + durable fail-closed. FINAL Track A phase; wires into build_runtime/runtime (additive, flag-gated, byte-identical OFF).**
+> **A8a:** `build_runtime` gains a `memory_backend` kwarg + `_build_memory_fabric` helper — flag ON ⇒ `DurableMemoryFabric`
+> over `FileMemoryBackend`; **fail-closed to in-RAM `MemoryFabric`** when the backend is unavailable (no fake durability);
+> flag OFF ⇒ the pre-A8 fabric exactly. **A8b:** `runtime.__init__` snapshots `_durable_memory_enabled = _flag_enabled()`;
+> `_record_command_memory` (flag ON) calls new `evaluation/memory_promotion_bridge.py` `MemoryCandidateBridge` — submits a
+> governed procedure CANDIDATE and drives `candidate→verified`→`verified→procedural` (≥2 distinct successes) via
+> `request_write`/`promote`: one charge + one write row for the candidate, promotions traced, failed run promotes nothing
+> (P0.9), runtime-authored (agents can't drive it), wrapped so it never blocks a command. **Drift (D1):** spec's
+> `evaluation/memory_candidate_bridge.py` already exists (P1.5.18 contract-derivation) so the A8b driver is in
+> `memory_promotion_bridge.py`. No new flag (rides `AUREL_DURABLE_MEMORY`). Seal `test_p6a8_live_promotion.py` **5 passed**;
+> regression **219 passed / 0 failed** (incl. build_runtime users); ruff+mypy+compileall clean on 3 files; **full suite
+> (Track A pre-merge seal): **8594 passed, 11 skipped, 0 failed in 33:58 (2038.67s)** — baseline 8545/11, so +49 new Track A seal tests with **zero regressions****. Report: `agent/reports/AUREL_TRACK_A_A8_LIVE_PROMOTION.md`.
+> **TRACK A FEATURE-COMPLETE (A0→A8)** — all additive/governed/flag-gated. Next: merge Track A → master, then Track C.
+
+_Prior update: 2026-07-07 (Track A / A7 — memory explorer projection + CLI, D2 seam closed, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A7 (2026-07-07, branch `feat/track-a-memory`, unmerged) — memory explorer projection + CLI; D2 seam closed.**
+> New `memory_projection.py` `MemoryProjection.from_trace(trace, backend=None)` — read-only, rebuilds current
+> records / belief-history / graph / rejected **from the trace alone** (durable store optional, for content).
+> New `cli_modules/memory_commands.py` + `cli.py`: read-only `memory explore/history/graph/rejected` mirroring
+> the `reasoning` pattern, fail-closed on a missing run. **D2 SEAM CLOSED:** `trace.py` `replay()` (both ledgers)
+> now adds `"details": dict(rec.details)` to the `memory_governance` dict — purely additive (all prior keys
+> intact; persisted event already carried details), so link edge fields + update revision fields survive replay
+> and the graph/belief-history reconstruct from the trace. Projection synthesizes the A4 SUPERSEDES edge from
+> update rows to match the live graph. No replay consumer/test needed updating (none asserted the exact dict).
+> Deterministic; fail-closed (empty ⇒ empty, unknown id ⇒ [], content None without durable). No new flag; no
+> build_runtime/entity wiring beyond CLI read. Seal `test_p6a7_memory_projection.py` **6 passed**; regression
+> **229 passed** (incl. trace_persistence + all replay consumers + p6a0–p6a7) + CLI read-only **9 passed**;
+> ruff+mypy+compileall clean on 4 files. Full ~25min suite intentionally skipped. Report:
+> `agent/reports/AUREL_TRACK_A_A7_MEMORY_EXPLORER.md`. Next: A8a/A8b live promotion.
+
+_Prior update: 2026-07-07 (Track A / A6 — deterministic hybrid retrieval, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A6 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic hybrid retrieval.**
+> New `memory_retrieval.py` `hybrid_retrieve` — fuses vector cosine + stdlib BM25-lite (`_BM25Lite`) + graph
+> expansion (one hop along A2 edges from top vector hits) + A0 as-of filter, via RRF, final sort strictly
+> `(-fused, memory_id)` (no `hash()`/RNG). Pool honors physics: default = current belief (excludes superseded/
+> retracted/forgotten via `is_current()` + DEPRECATED/REJECTED); `as_of=(vt,tt)` uses `AsOfView.as_of` for the
+> historical belief. Read-only, fail-closed (empty query ⇒ `[]`). New `memory_embedder.py` `NeuralEmbedderSeam`
+> (honestly unavailable — `available=False`, `embed()` raises; `HashingEmbedder` stays the only real embedder).
+> `memory.py` gains an **additive** `MemoryFabric.hybrid_retrieve` (lazy-delegates). **`retrieve`/`assemble_context`
+> UNCHANGED / byte-identical → cross-lock not triggered; B2 `difficulty_estimator` untouched, its suite passes.**
+> **Drift (D1):** additive entry point rather than editing `retrieve`. No new flag (opt-in by invocation); no
+> build_runtime/entity wiring (A8). Seal `test_p6a6_hybrid_retrieval.py` **6 passed**; regression **203 passed /
+> 0 failed** (incl. B2 reasoning_difficulty); ruff+mypy+compileall clean on 3 files. Full ~25min suite
+> intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A6_HYBRID_RETRIEVAL.md`. Next: A7 memory explorer + CLI.
+
+_Prior update: 2026-07-07 (Track A / A5 — deterministic consolidation to CANDIDATE, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A5 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic consolidation to CANDIDATE.**
+> New `memory_consolidation.py`: `cluster_memories` (deterministic greedy pass, records sorted by `memory_id`,
+> `HashingEmbedder` cosine, no `hash()`/RNG; only clusters ≥ min_size), `summarize_cluster` (content-keyed ⇒
+> byte-identical across fabrics), `consolidate` (per cluster: one governed **CANDIDATE** `request_write` +
+> `SUMMARIZES` edges via `link`; `charge` callback → one charge per sub-write; fail-closed
+> `no_consolidatable_cluster`). `memory_graph.py` adds `MemoryRelation.SUMMARIZES` (not evidence-gated).
+> `mem_consolidate` tool wired in `memory_tools.py` (+ `tool_contracts.py` contract, `"summarizes"` relation);
+> `praxis.py` gains `submit_consolidation_to_governance` (runtime) adapter. Summary is hard-coded CANDIDATE —
+> never elevates trust (agent-triggered stays CANDIDATE); provenance via `evidence_refs`/`links` + `SUMMARIZES`
+> edges, sources unmutated. **Drift (D1):** provenance uses evidence_refs/links + edges, NOT `source_trace_ids`
+> (governance validates those as trace ids). Reuses A2 edges + the governed funnel (no parallel write path). No
+> new flag; no build_runtime/entity wiring (A8). Seal `test_p6a5_consolidation.py` **5 passed**; regression
+> **191 passed** (+ praxis **26 passed**) / 0 failed; ruff+mypy+compileall clean on 5 files. Full ~25min suite
+> intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A5_CONSOLIDATION.md`. Next: A6 hybrid retrieval.
+
+_Prior update: 2026-07-07 (Track A / A4 — belief revision, forget, supersession, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A4 (2026-07-07, branch `feat/track-a-memory`, unmerged) — belief revision (update/retract/forget).**
+> New `memory_revision.py` (`apply_update`/`retract`/`forget` governed primitives — one `MemoryGovernanceRecord`
+> per op, no `StateTransitionRecord`). `memory_governance.py` adds `MemoryRevisionRequest`/`MemoryRevisionDecision`
+> + `evaluate_revision` (target exists (`unknown_memory`) → trace-ref → protected `{CANON,REJECTED}` fail closed →
+> **update re-scores the new belief via `evaluate_write`** so agents can't elevate trust). `mem_update`→apply_update,
+> `mem_delete`→non-destructive forget flipped **LIVE** in `memory_tools.py` (one `charge_memory_write` per attempt;
+> removed the `_UNAVAILABLE_TOOLS` stub — all 5 tools live); contracts updated. **A0 goes live:** `apply_update`
+> writes `superseded_by`/`revises` + closes `valid_to`/`transaction_to`, so `belief_history`/`is_current` are now
+> meaningful. **A2 reconciliation:** update adds a `new SUPERSEDES old` edge, so `detect_supersession_chain`
+> (edge-view) == `belief_history` (record-view). Non-destructive forget: record kept in `by_id`, `EXPIRED`/inactive,
+> audit preserved; forbidden on canon/rejected. **Drift (D1):** one row per op ⇒ bypass request_write/link (pure
+> `evaluate_write` + base `_store`). **Drift (D2):** A4 does NOT write the A3 durable JSONL (revision ids live in
+> `details` which `replay()` drops); durable-revision projection deferred to A7/A8 — no `memory.py`/`durable_memory.py`
+> edits. No new flag; no build_runtime/entity wiring (A8). Seal `test_p6a4_belief_revision.py` **6 passed** + updated
+> `test_p6a1` **7 passed** = **13 passed**; regression **186 passed / 0 failed**; ruff+mypy+compileall clean on 4
+> files. Full ~25min suite intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A4_BELIEF_REVISION.md`.
+> Next: A5 consolidation.
+
+_Prior update: 2026-07-07 (Track A / A3 — durable memory as trace projection, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A3 (2026-07-07, branch `feat/track-a-memory`, unmerged) — durable memory as a trace projection.**
+> New `memory_persistence.py` (`atomic_write_text` temp→fsync→`os.replace`; `FileMemoryBackend` append-only
+> JSONL with atomic full-file rewrites, deterministic `sort_keys`, lazy; `ExternalMemoryBackend` honestly
+> unavailable — constructible, `available=False`, ops raise) and `durable_memory.py`
+> (`DurableMemoryFabric(MemoryFabric)`: mirrors governed records via `_store` + edges via `link`; `load()`
+> rebuilds by re-verifying each entry against the **bound trace** — `source_trace_ids` ⊆ known entries AND a
+> governed *allow* event for the id — and **quarantines** unanchored/poison entries; returns a
+> `DurableMemoryGovernanceRecord` report + `quarantined()`). `core_types.py` gains hash-chainable
+> `DurableMemoryGovernanceRecord`. **`AUREL_DURABLE_MEMORY` now LOAD-BEARING** (read once at construction):
+> OFF (default) ⇒ no disk touched, `load()` no-op, byte-identical to `MemoryFabric`; ON ⇒ persist + rebuild.
+> Poison defense: an injected JSONL record the trace never attests is quarantined. **Drift (D1):** durable
+> record is a **returned report**, not a ledger append (avoids broad `trace.py` Protocol surgery; A8 wires it).
+> **Drift (D2):** re-verification is within-session vs the bound trace; cross-run durable trace deferred
+> (A8/beyond). No build_runtime/entity wiring (A8); no revision/retract (A4); no retrieval re-rank (A6). Seal
+> `test_p6a3_durable_memory.py` **7 passed**; regression **180 passed** (+ state_store/trace_persistence **19
+> passed**); ruff+mypy+compileall clean on 3 files. Full ~25min suite intentionally skipped. Report:
+> `agent/reports/AUREL_TRACK_A_A3_DURABLE_MEMORY.md`. Next: A4 belief revision.
+
+_Prior update: 2026-07-07 (Track A / A2 — memory-graph typed edges, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A2 (2026-07-07, branch `feat/track-a-memory`, unmerged) — typed relation graph.**
+> New `memory_graph.py` (`MemoryRelation`; frozen bi-temporal append-only `MemoryEdge`;
+> insertion-ordered `MemoryGraphIndex` — reads are copies, never uuid/`hash()`-sorted, fail-closed;
+> `detect_supersession_chain`). `memory_governance.py` adds `MemoryLinkRequest`/`MemoryLinkDecision`
+> + `MemoryWritePolicy.evaluate_link` (closed-world relation → mandatory trace ref → endpoints exist
+> & distinct → `SUPERSEDES`/`CONTRADICTS` evidence-gated). `memory.py` `MemoryFabric.graph` + `link()`
+> funnel → **one** `MemoryGovernanceRecord(action="link")` per attempt (edge shape incl. relation in
+> `details`; existing write/promote rows still `details={}` ⇒ **byte-identical**) → `graph.add` on
+> allow. **`mem_link` flipped from A1a's `requires_a2_a4` stub to a LIVE governed op** in
+> `memory_tools.py` (one `charge_memory_write` per attempt, zero sandbox; identity from the session,
+> never a tool arg); `mem_update`/`mem_delete` stay unavailable, reason narrowed to `requires_a4`.
+> Edges carry no truth_state ⇒ cannot elevate trust. **Drift decision (D4):** supersession is edge-only
+> in A2 (records byte-identical, strictly append-only); record-field supersession + belief revision are
+> A4; `detect_supersession_chain` is the A2 read model. No new flag (`AUREL_DURABLE_MEMORY` stays
+> defined-not-gating); no build_runtime/entity wiring (A8); no retrieval re-rank (A6). Seals
+> `test_p6a2_memory_graph.py` (7) + updated `test_p6a1` (7) = **14 passed**; directly-affected regression
+> **173 passed / 0 failed**; ruff+mypy+compileall clean on 5 files. Full ~25min suite intentionally
+> skipped. Report: `agent/reports/AUREL_TRACK_A_A2_MEMORY_GRAPH.md`. Next: A3 DurableMemoryFabric.
+
+_Prior update: 2026-07-07 (Track A / A1a — memory ops as governed tools, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A1a (2026-07-07, branch `feat/track-a-memory`, unmerged) — memory ops as governed tools.**
+> New `memory_tools.py` `MemoryToolSession`: a governed dispatcher letting an entity
+> **propose** memory ops without storing directly. `mem_add` routes through the existing
+> `MemoryFabric.request_write` funnel (policy → `_trace_memory` → one `MemoryGovernanceRecord`),
+> charging **exactly one** `charge_memory_write` per attempt (allow OR deny) and **zero**
+> `charge_sandbox_execution`; `mem_search` read-only (no charge, store unchanged);
+> `mem_update`/`mem_delete`/`mem_link` honestly `unavailable=True` (`requires_a2_a4`).
+> `writer_kind` is a constructor property derived from the card — agent cannot self-elevate
+> (never a tool arg). Dedicated `memory_contract_registry()` kept **out** of
+> `default_contract_registry()` (byte-identical sandbox surface); fail-closed guard atop
+> `ToolBus.execute` → `memory_tool_wrong_path`, never registered. **Reported import-hang was
+> an invocation artifact (bare `python -c` → stdin REPL), not module-level blocking code —
+> module verified import-safe (instant, exit 0), no cycle; fix = always timeout-wrap import
+> checks.** Seal `test_p6a1_memory_tools_governed.py` **6 passed** (7 assertions); regression
+> **159 passed / 0 failed**; ruff+mypy+compileall clean on 3 files. Full ~25min suite
+> intentionally skipped this phase. No new flag; no runtime wiring (A8). Report:
+> `agent/reports/AUREL_TRACK_A_A1A_MEMORY_TOOLS_GOVERNED.md`. Next: A2 memory-graph primitives.
+
+_Prior update: 2026-07-07 (Track A / A0 — bi-temporal stamps + as-of read model, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A0 (2026-07-07, branch `feat/track-a-memory`, unmerged) — bi-temporal stamps + as-of read model.**
+> Additive memory metadata + read model, no behavior change. `MemoryRecord` gains
+> 6 optional `None`-default fields (valid/transaction ranges + `superseded_by`/
+> `revises`); new pure `memory_bitemporal.py` (`BiTemporalStamp`) + `memory_asof.py`
+> (`AsOfView`: `as_of`/`current`/`belief_history`, deterministic, fail-closed).
+> Flag `AUREL_DURABLE_MEMORY` **defined-not-gating** (default OFF) — A0's byte-identity
+> is structural (new fields never enter a hashed trace payload), not flag-gated;
+> the flag goes load-bearing at A3/A6. Seal 10 passed; memory regression 82 unchanged;
+> ruff+mypy clean; **full suite 8545 passed / 11 skipped / 0 failed (25:26)** —
+> baseline 8535/11 + A0's 10 tests, zero regressions. Report:
+> `agent/reports/AUREL_TRACK_A_A0_BITEMPORAL_STAMPS.md`. Next: A1a memory-as-tools.
+
+_Prior update: 2026-07-06 (AUREL-SEAL-01 — full pytest suite sealed clean; roadmap continuation remains at P6)_
 
 > **AUREL-SEAL-01 (2026-07-06) — Full pytest suite sealed (validation only, no source change).**
 > Ran the canonical full suite (`.venv/bin/python -m pytest -q --tb=short -p no:cacheprovider`)

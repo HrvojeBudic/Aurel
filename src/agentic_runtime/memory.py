@@ -15,8 +15,10 @@ from typing import Any, Optional, Protocol
 
 from .core_types import (MemoryGovernanceRecord, MemoryRecord, MemoryTier,
                          MemoryTruthState, TruthStatus, now)
-from .memory_governance import (MemoryWriteDecision, MemoryWritePolicy,
+from .memory_governance import (MemoryLinkDecision, MemoryLinkRequest,
+                                MemoryWriteDecision, MemoryWritePolicy,
                                 MemoryWriteRequest, state_for_tier)
+from .memory_graph import MemoryGraphIndex
 
 
 class Embedder(Protocol):
@@ -59,6 +61,7 @@ class MemoryFabric:
         self.L5: list[MemoryRecord] = []
         self.rejected: list[MemoryRecord] = []    # denied writes, kept for audit
         self.by_id: dict[str, MemoryRecord] = {}
+        self.graph = MemoryGraphIndex()           # A2: typed relation graph
         self.policy = policy or MemoryWritePolicy()
         self._trace: Any = None
 
@@ -137,6 +140,20 @@ class MemoryFabric:
             rec.promotion_state = target.value
             if evidence_refs:
                 rec.evidence_refs = list({*rec.evidence_refs, *evidence_refs})
+        return decision
+
+    # ---- governed edge path (A2) -------------------------------------- #
+    def link(self, request: MemoryLinkRequest) -> MemoryLinkDecision:
+        """Governed typed-edge write, structurally mirroring ``request_write``:
+        policy disposes → exactly one ``MemoryGovernanceRecord(action="link")``
+        is traced (allow OR deny) → on allow the edge is appended to the graph.
+        Edges never carry a truth state, so this can never elevate a record's
+        trust; supersession here is edge-only (record fields + belief revision
+        are A4)."""
+        decision = self.policy.evaluate_link(request, set(self.by_id), trace=self._trace)
+        self._trace_link(decision=decision, request=request)
+        if decision.allowed and decision.edge is not None:
+            self.graph.add(decision.edge)
         return decision
 
     def remember(self, rec: MemoryRecord, *, writer_kind: str = "system",
@@ -236,6 +253,40 @@ class MemoryFabric:
         )
         self._trace.append_memory_event(rec)
 
+    def _trace_link(self, *, decision: MemoryLinkDecision,
+                    request: MemoryLinkRequest) -> None:
+        """Anchor one memory-governance row for an edge write (allow or deny).
+
+        Reuses ``MemoryGovernanceRecord`` with ``action="link"``: ``memory_id`` is
+        the edge id, ``from_state``/``to_state`` carry the endpoints, and the full
+        edge shape (incl. relation) lives in ``details`` (hash-covered). Existing
+        write/promote rows still pass ``details={}`` ⇒ byte-identical."""
+        if self._trace is None or not hasattr(self._trace, "append_memory_event"):
+            return
+        edge = decision.edge
+        edge_id = getattr(edge, "edge_id", "") if edge else ""
+        rec = MemoryGovernanceRecord.make(
+            run_id=request.source_run_id or "",
+            agent_id=request.created_by or request.writer_kind,
+            action="link",
+            verdict="allow" if decision.allowed else "deny",
+            memory_id=edge_id,
+            from_state=request.from_id,
+            to_state=request.to_id,
+            reason_code=decision.reason_code,
+            message=decision.message,
+            evidence_refs=list(request.evidence_refs),
+            source_trace_ids=list(request.source_trace_ids),
+            confidence=request.confidence,
+            details={
+                "edge_id": edge_id,
+                "from_id": request.from_id,
+                "to_id": request.to_id,
+                "relation": decision.relation,
+            },
+        )
+        self._trace.append_memory_event(rec)
+
     def active_records(self, at: Optional[float] = None) -> list[MemoryRecord]:
         return [r for r in self.by_id.values() if r.is_active(at)]
 
@@ -272,6 +323,16 @@ class MemoryFabric:
         canon = [r for r in self.L5
                  if r.truth_status is not TruthStatus.DEPRECATED and r.is_active(t)]
         return canon + list(self.L1)[-3:] + top
+
+    def hybrid_retrieve(self, query: str, k: int = 5, *,
+                        as_of: Optional[tuple] = None,
+                        expand_graph: bool = True) -> list[MemoryRecord]:
+        """A6: deterministic hybrid ranking (vector + BM25-lite + graph + as-of).
+
+        Additive and read-only — ``retrieve``/``assemble_context`` are unchanged.
+        Delegates to :mod:`memory_retrieval` (lazy import avoids an import cycle)."""
+        from .memory_retrieval import hybrid_retrieve
+        return hybrid_retrieve(self, query, k=k, as_of=as_of, expand_graph=expand_graph)
 
     def assemble_context(self, query: str, k: int = 5) -> str:
         recs = self.retrieve(query, k)

@@ -532,6 +532,61 @@ class MemoryGovernanceRecord:
 
 
 @dataclass
+class DurableMemoryGovernanceRecord:
+    """A3 — one durable-rebuild decision: admit or quarantine a persisted entry.
+
+    Durable memory is a *projection* over the governed trace, so every entry read
+    back from disk is re-verified against the trace and either admitted or
+    quarantined. Each such decision is captured here — hash-chainable (carries
+    ``payload_hash``/``prev_entry_hash``/``entry_hash``) so a later phase (A8) can
+    append it to the ledger, while A3 returns it as a structured, honest report.
+    """
+    id: str
+    run_id: str
+    action: str        # load_record | load_edge
+    verdict: str       # admit | quarantine
+    memory_id: str     # record memory_id or edge_id
+    reason_code: str
+    source_trace_ids: list[str] = field(default_factory=list)
+    created_at: float = field(default_factory=now)
+    prev_entry_hash: str = ""
+    entry_hash: str = ""
+
+    @staticmethod
+    def make(
+        run_id: str,
+        action: str,
+        verdict: str,
+        memory_id: str,
+        reason_code: str,
+        source_trace_ids: Optional[list[str]] = None,
+    ) -> "DurableMemoryGovernanceRecord":
+        return DurableMemoryGovernanceRecord(
+            id=new_id("dur_mem_gov"),
+            run_id=run_id,
+            action=action,
+            verdict=verdict,
+            memory_id=memory_id,
+            reason_code=reason_code,
+            source_trace_ids=source_trace_ids or [],
+        )
+
+    def payload_hash(self) -> str:
+        return sha(canonical_json({
+            "kind": "durable_memory_governance",
+            "run_id": self.run_id,
+            "action": self.action,
+            "verdict": self.verdict,
+            "memory_id": self.memory_id,
+            "reason_code": self.reason_code,
+            "source_trace_ids": self.source_trace_ids,
+        }))
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
 class ApprovalReceiptRecord:
     """Hash-chained trace of an approval decision (P0.15)."""
     id: str
@@ -880,6 +935,20 @@ class MemoryRecord:
     truth_state: MemoryTruthState = MemoryTruthState.RAW
     promotion_state: str = "none"
     expiry_policy: dict[str, Any] = field(default_factory=lambda: {"kind": "none"})
+    # ---- A0 bi-temporal stamps (additive, default-open) ---------------- #
+    # Valid time = when the fact is true in the world; transaction time = when
+    # the system believed it. ``None`` on any endpoint means an OPEN interval:
+    # a ``valid_to``/``transaction_to`` of None ⇒ still-current. These fields
+    # are descriptive metadata only — they are NOT written by A0 (no writer
+    # exists yet; supersession/revision arrive in A2/A4) and they never enter a
+    # hashed trace payload (the memory-governance funnel serializes a fixed
+    # scalar set, not the record dict), so default records stay byte-identical.
+    superseded_by: Optional[str] = None   # id of the version that replaced this
+    revises: Optional[str] = None         # id of the version this one revises
+    valid_from: Optional[float] = None    # None ⇒ open (since inception)
+    valid_to: Optional[float] = None      # None ⇒ open (still valid in-world)
+    transaction_from: Optional[float] = None  # None ⇒ open (since first belief)
+    transaction_to: Optional[float] = None    # None ⇒ open (current belief)
 
     @staticmethod
     def make(tier: MemoryTier, content: str, source: str, **kw) -> "MemoryRecord":

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 __version__ = "0.2.0"
 
-from typing import Optional, cast
+from typing import Any, Optional, cast
 
 from .budget import BudgetLedger, BudgetPolicy
 from .canonical_path import CanonicalPathResolver
@@ -419,6 +419,38 @@ def _resolve_retain_states(retain_states: Optional[bool],
     return entity_class in RETAIN_STATES_GATED_CLASSES
 
 
+def _build_memory_fabric(trace: Any, trace_dir: str, memory_backend: Any) -> MemoryFabric:
+    """A8a — durable memory factory with a fail-closed fallback to in-RAM.
+
+    Flag OFF (default) ⇒ a plain in-RAM ``MemoryFabric`` (byte-identical to today).
+    Flag ON ⇒ a ``DurableMemoryFabric`` over a durable backend; if the backend is
+    unavailable (or anything goes wrong building it) we FAIL CLOSED to the in-RAM
+    fabric — never a silent claim of durability we don't have."""
+    from .memory_bitemporal import _flag_enabled
+
+    if not _flag_enabled():
+        memory: MemoryFabric = MemoryFabric()
+        memory.bind_trace(trace)
+        return memory
+
+    try:
+        import os
+
+        from .durable_memory import DurableMemoryFabric
+        from .memory_persistence import FileMemoryBackend
+        backend = memory_backend
+        if backend is None:
+            path = os.path.join(trace_dir, "memory", f"{trace.run_id}.jsonl")
+            backend = FileMemoryBackend(path)
+        if not getattr(backend, "available", False):
+            raise RuntimeError("durable memory backend unavailable")
+        memory = DurableMemoryFabric(backend)
+    except Exception:  # noqa: BLE001 - fail closed to in-RAM, honestly non-durable
+        memory = MemoryFabric()
+    memory.bind_trace(trace)
+    return memory
+
+
 def build_runtime(
     sandbox: SandboxBackend | ProfiledSandbox | None = None,
     sandbox_mode: Optional[SandboxMode] = None,
@@ -441,6 +473,7 @@ def build_runtime(
     retain_states: Optional[bool] = None,
     state_store: StateStore | None = None,
     entity_class: Optional[AgentClass] = None,
+    memory_backend: Any = None,
 ) -> Kernel:
     retain_states = _resolve_retain_states(retain_states, entity_class)
     sandbox_policy: Optional[SandboxPolicy] = None
@@ -518,8 +551,7 @@ def build_runtime(
         trace.append_sandbox_attestation(
             SandboxAttestationRecord.make(trace.run_id, attestation)
         )
-    memory = MemoryFabric()
-    memory.bind_trace(trace)
+    memory = _build_memory_fabric(trace, trace_dir, memory_backend)
     budget = budget or BudgetLedger()
     budget.bind_trace(trace)
     skills = SkillLibrary()

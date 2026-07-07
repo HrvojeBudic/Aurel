@@ -231,6 +231,11 @@ class InMemoryTraceLedger:
                     "from": rec.from_state,
                     "to": rec.to_state,
                     "reason_code": rec.reason_code,
+                    # A7 (closes the A2/A3/A4 "D2" seam): surface the governance
+                    # details so a pure trace replay can reconstruct the memory
+                    # graph (link: edge_id/from_id/to_id/relation) and belief
+                    # revisions (update: target_id/new_memory_id).
+                    "details": dict(rec.details),
                 }
             elif isinstance(rec, ToolContractViolationRecord):
                 yield {
@@ -607,6 +612,11 @@ class PersistentTraceLedger:
                     "from": rec.from_state,
                     "to": rec.to_state,
                     "reason_code": rec.reason_code,
+                    # A7 (closes the A2/A3/A4 "D2" seam): surface the governance
+                    # details so a pure trace replay can reconstruct the memory
+                    # graph (link: edge_id/from_id/to_id/relation) and belief
+                    # revisions (update: target_id/new_memory_id).
+                    "details": dict(rec.details),
                 }
             elif isinstance(rec, ToolContractViolationRecord):
                 yield {

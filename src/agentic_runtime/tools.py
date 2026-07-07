@@ -19,6 +19,7 @@ from .core_types import CommandEnvelope, ObservationEnvelope, now
 from .model_providers.http_utils import fetch_url_bytes
 from .sandbox import SandboxBackend
 from .sandbox_policy import SandboxExecutionContext, SandboxPolicy
+from .memory_tools import MEMORY_TOOL_NAMES
 from .tool_contracts import (ContractValidationResult, ToolContractRegistry,
                              ToolInputValidator)
 
@@ -168,6 +169,15 @@ class ToolBus(ToolRegistry):
 
     def execute(self, tool_name: str, args: dict, *,
                 command_id: str = "") -> ToolExecutionResult:
+        # A1a: governed memory tools are NEVER executed in the sandbox / through
+        # runtime.submit. They route through MemoryToolSession → the memory
+        # funnel. Fail closed with an explicit reason if one is smuggled here.
+        if tool_name in MEMORY_TOOL_NAMES:
+            return _tool_error(
+                "memory_tool_wrong_path",
+                f"{tool_name} is a governed memory tool; dispatch via "
+                "MemoryToolSession, not the sandbox / runtime.submit",
+            )
         spec = self.get(tool_name)
         if spec is None:
             return _tool_error("unknown_tool", f"no such tool: {tool_name}")
