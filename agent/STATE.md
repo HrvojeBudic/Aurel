@@ -1,6 +1,26 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A3 — durable memory as trace projection, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A4 — belief revision, forget, supersession, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A4 (2026-07-07, branch `feat/track-a-memory`, unmerged) — belief revision (update/retract/forget).**
+> New `memory_revision.py` (`apply_update`/`retract`/`forget` governed primitives — one `MemoryGovernanceRecord`
+> per op, no `StateTransitionRecord`). `memory_governance.py` adds `MemoryRevisionRequest`/`MemoryRevisionDecision`
+> + `evaluate_revision` (target exists (`unknown_memory`) → trace-ref → protected `{CANON,REJECTED}` fail closed →
+> **update re-scores the new belief via `evaluate_write`** so agents can't elevate trust). `mem_update`→apply_update,
+> `mem_delete`→non-destructive forget flipped **LIVE** in `memory_tools.py` (one `charge_memory_write` per attempt;
+> removed the `_UNAVAILABLE_TOOLS` stub — all 5 tools live); contracts updated. **A0 goes live:** `apply_update`
+> writes `superseded_by`/`revises` + closes `valid_to`/`transaction_to`, so `belief_history`/`is_current` are now
+> meaningful. **A2 reconciliation:** update adds a `new SUPERSEDES old` edge, so `detect_supersession_chain`
+> (edge-view) == `belief_history` (record-view). Non-destructive forget: record kept in `by_id`, `EXPIRED`/inactive,
+> audit preserved; forbidden on canon/rejected. **Drift (D1):** one row per op ⇒ bypass request_write/link (pure
+> `evaluate_write` + base `_store`). **Drift (D2):** A4 does NOT write the A3 durable JSONL (revision ids live in
+> `details` which `replay()` drops); durable-revision projection deferred to A7/A8 — no `memory.py`/`durable_memory.py`
+> edits. No new flag; no build_runtime/entity wiring (A8). Seal `test_p6a4_belief_revision.py` **6 passed** + updated
+> `test_p6a1` **7 passed** = **13 passed**; regression **186 passed / 0 failed**; ruff+mypy+compileall clean on 4
+> files. Full ~25min suite intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A4_BELIEF_REVISION.md`.
+> Next: A5 consolidation.
+
+_Prior update: 2026-07-07 (Track A / A3 — durable memory as trace projection, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A3 (2026-07-07, branch `feat/track-a-memory`, unmerged) — durable memory as a trace projection.**
 > New `memory_persistence.py` (`atomic_write_text` temp→fsync→`os.replace`; `FileMemoryBackend` append-only

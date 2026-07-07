@@ -1,4 +1,27 @@
-# Active Task: Track A / A3 complete (durable memory as trace projection) on branch feat/track-a-memory; next A4
+# Active Task: Track A / A4 complete (belief revision, forget, supersession) on branch feat/track-a-memory; next A5
+
+**Track A / A4 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, existing paths unchanged).**
+New `memory_revision.py` (`apply_update`/`retract`/`forget` governed primitives on the fabric). `memory_governance.py`
+gains `MemoryRevisionRequest`/`MemoryRevisionDecision` + `MemoryWritePolicy.evaluate_revision` (op closed-world →
+target exists (`unknown_memory`) → trace-ref → protected `{CANON,REJECTED}` fail closed
+(`revision_forbidden_on_protected`) → **update re-scores the new belief via `evaluate_write`** so agents can't
+elevate trust). `mem_update`→apply_update, `mem_delete`→non-destructive forget flipped **LIVE** in
+`memory_tools.py` (one `charge_memory_write` per attempt; removed the `_UNAVAILABLE_TOOLS` stub — all 5 tools
+live); contracts updated in `tool_contracts.py`. **A0 goes live:** `apply_update` writes `superseded_by`/`revises`
++ closes `valid_to`/`transaction_to`, so `AsOfView.belief_history`/`is_current` are now meaningful. **A2
+reconciliation:** update also adds a `new SUPERSEDES old` edge, so `detect_supersession_chain` (edge-view) ==
+`belief_history` (record-view). **Drift (D1):** one governance row per op forces bypassing request_write/link —
+`apply_update` calls `evaluate_write` purely, emits one `action="update"` row, stores successor via base
+`_store`. **Drift (D2):** A4 does NOT write to the A3 durable backend (revision-row ids live in `details` which
+`replay()` drops); durable-revision projection deferred to A7/A8 — no `memory.py`/`durable_memory.py` edits.
+Non-destructive forget: record kept in `by_id`, `EXPIRED`/inactive, audit preserved; forbidden on canon/rejected.
+No new flag; no build_runtime/entity wiring (A8). Seal `test_p6a4_belief_revision.py` **6 passed** + updated
+`test_p6a1` **7 passed** = **13 passed**; regression **186 passed / 0 failed**; ruff+mypy+compileall clean on 4
+files. Full ~25min suite intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A4_BELIEF_REVISION.md`.
+**Next: A5 — consolidation (`memory_consolidation.py`; deterministic clustering → CANDIDATE + `SUMMARIZES`
+edges; never auto-canonizes).**
+
+---
 
 **Track A / A3 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive; byte-identical flag OFF).**
 New `memory_persistence.py` (`atomic_write_text` temp→fsync→`os.replace`; `FileMemoryBackend` append-only

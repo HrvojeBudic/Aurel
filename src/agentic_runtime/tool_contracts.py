@@ -554,20 +554,28 @@ def memory_contract_registry() -> ToolContractRegistry:
         # Read-only: empty side-effect profile ⇒ risk_floor TRIVIAL.
         side_effect_profile=frozenset(),
     ))
-    # Declared-but-UNAVAILABLE in A1a; their fabric primitives arrive in A2/A4.
+    # A4 belief revision: update supersedes a prior belief; delete == non-destructive
+    # forget. The new belief is re-scored by governance (no trust self-elevation).
     reg.register(ToolContract(
         name="mem_update",
-        description="Revise a memory belief (governed) — UNAVAILABLE until A4.",
+        description="Supersede a memory belief with a new governed version (A4).",
         input_schema={
             "memory_id": ArgSpec("str"),
-            "content": ArgSpec("str", required=False),
+            "content": ArgSpec("str"),
+            "truth_state": ArgSpec("str", required=False, enum=_MEMORY_TRUTH_STATES),
+            "confidence": ArgSpec("float", required=False),
+            "evidence_refs": ArgSpec("list[str]", required=False),
+            "source_trace_ids": ArgSpec("list[str]", required=False),
         },
         side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
     ))
     reg.register(ToolContract(
         name="mem_delete",
-        description="Retract/forget a memory (governed) — UNAVAILABLE until A4.",
-        input_schema={"memory_id": ArgSpec("str")},
+        description="Non-destructive forget of a memory (A4; audit preserved).",
+        input_schema={
+            "memory_id": ArgSpec("str"),
+            "source_trace_ids": ArgSpec("list[str]", required=False),
+        },
         side_effect_profile=frozenset({SideEffect.MEMORY_WRITE}),
     ))
     reg.register(ToolContract(

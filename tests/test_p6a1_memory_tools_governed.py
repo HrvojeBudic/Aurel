@@ -19,8 +19,9 @@ directly):
 6. A memory tool smuggled through the sandbox / ``runtime.submit`` path
    (``ToolBus.execute``) is refused (``memory_tool_wrong_path`` / ``unknown_tool``)
    with no write and no state transition.
-7. ``mem_update`` / ``mem_delete`` / ``mem_link`` are honestly UNAVAILABLE
-   (``unavailable=True``, ``requires_a2_a4``): no write, no charge.
+7. ``mem_update`` / ``mem_delete`` are now LIVE governed revision ops (A4);
+   unknown ids fail closed honestly (``unknown_memory``), not the old stub.
+   (``mem_link`` went live in A2 — see ``test_p6a2_memory_graph``.)
 """
 
 from __future__ import annotations
@@ -149,25 +150,28 @@ def test_mem_add_via_toolbus_refused(tmp_path):
     assert len(_state_rows(trace)) == 0
 
 
-# 7 ─ update/delete stay honestly unavailable (belief revision is A4): no
-#     write, no charge. (mem_link went LIVE in A2 — see test_p6a2_memory_graph.)
-def test_update_delete_unavailable_no_write_no_charge():
+# 7 ─ update/delete are now LIVE governed revision ops (A4), no longer the
+#     fail-closed stub. Unknown ids fail closed honestly (not "unavailable").
+def test_update_delete_live_after_a4():
     fabric, trace, budget = _harness()
     session = MemoryToolSession(fabric, budget, writer_kind="operator")
 
-    calls = {
-        "mem_update": {"memory_id": "m1", "content": "revised"},
-        "mem_delete": {"memory_id": "m1"},
-    }
-    for tool, args in calls.items():
+    for tool, args in {
+        "mem_update": {"memory_id": "m_absent", "content": "revised"},
+        "mem_delete": {"memory_id": "m_absent"},
+    }.items():
         result = session.invoke(tool, args)
+        assert result.get("unavailable") is None, tool      # not the stub anymore
         assert result["ok"] is False, tool
-        assert result["unavailable"] is True, tool
-        assert result["reason_code"] == "requires_a4", tool
+        assert result["reason_code"] == "unknown_memory", tool  # fail-closed, honest
 
-    assert budget.memory_writes == 0
+    # A real operator forget is allowed and charged once (A4 live end-to-end).
+    rec = fabric.request_write(MemoryWriteRequest(
+        content="forget me", writer_kind="operator", source_run_id=RUN)).record
+    ok = session.invoke("mem_delete", {"memory_id": rec.memory_id})
+    assert ok["ok"] is True and ok["op"] == "forget"
+    assert budget.memory_writes == 3                          # 2 unknown attempts + 1 forget
     assert budget.sandbox_executions == 0
-    assert len(_gov_rows(trace)) == 0
 
 
 # 7b ─ mem_link is now a LIVE governed op (no longer unavailable): a valid

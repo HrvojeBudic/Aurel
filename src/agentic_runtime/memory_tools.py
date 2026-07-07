@@ -16,9 +16,11 @@ Boundary (cross-cutting invariants):
   ``charge_sandbox_execution`` — exactly one ``charge_memory_write`` per governed
   write attempt (allow OR deny), mirroring ``runtime._record_command_memory`` and
   ``entity._remember``. ``mem_search`` is read-only and charges nothing.
-* **Fail-closed / no-overclaim.** ``mem_update`` / ``mem_delete`` / ``mem_link``
-  are declared but honestly UNAVAILABLE in A1a (their fabric primitives arrive in
-  A2/A4); they perform no write and incur no charge.
+* **Fail-closed / no-overclaim.** All five memory tools are live: ``mem_add``
+  (A1a), ``mem_search`` (A1a, read-only), ``mem_link`` (A2), and ``mem_update`` /
+  ``mem_delete`` (A4 belief revision — supersede / non-destructive forget). Every
+  write op charges exactly one ``charge_memory_write`` and routes through the
+  governed fabric funnel; unknown ids and protected targets fail closed.
 """
 
 from __future__ import annotations
@@ -33,9 +35,6 @@ MEMORY_TOOL_NAMES = frozenset(
 )
 MEMORY_WRITE_TOOLS = frozenset({"mem_add", "mem_update", "mem_delete", "mem_link"})
 MEMORY_READ_TOOLS = frozenset({"mem_search"})
-# Still not backed by a fabric primitive: belief revision (mem_update/mem_delete)
-# arrives in A4. ``mem_link`` went live in A2 (typed relation graph).
-_UNAVAILABLE_TOOLS = frozenset({"mem_update", "mem_delete"})
 
 # Mirrors ``memory_governance.AGENT_WRITER`` — the least-privilege writer kind.
 # Defined locally to keep import time trivial (no eager governance import).
@@ -106,29 +105,21 @@ class MemoryToolSession:
         if not check.ok:
             return {"ok": False, "tool": tool_name, "reason_code": check.code,
                     "message": check.message}
-        if tool_name in _UNAVAILABLE_TOOLS:
-            return self._unavailable(tool_name)
         if tool_name == "mem_add":
             return self._mem_add(args)
         if tool_name == "mem_search":
             return self._mem_search(args)
         if tool_name == "mem_link":
             return self._mem_link(args)
+        if tool_name == "mem_update":
+            return self._mem_update(args)
+        if tool_name == "mem_delete":
+            return self._mem_delete(args)
         # Unreachable (all names covered above); fail closed rather than guess.
         return {"ok": False, "tool": tool_name, "reason_code": "unhandled",
                 "message": f"no handler for {tool_name}"}
 
     # -- handlers -------------------------------------------------------- #
-    def _unavailable(self, tool_name: str) -> dict:
-        return {
-            "ok": False,
-            "tool": tool_name,
-            "unavailable": True,
-            "reason_code": "requires_a4",
-            "message": (f"{tool_name} is declared but not yet implemented — the "
-                        "belief-revision (A4) primitive is required"),
-        }
-
     def _mem_add(self, args: dict) -> dict:
         from .memory_governance import MemoryWriteRequest
 
@@ -202,6 +193,58 @@ class MemoryToolSession:
             "message": decision.message,
             "relation": decision.relation,
             "edge_id": decision.edge.edge_id if decision.edge else "",
+        }
+
+    def _mem_update(self, args: dict) -> dict:
+        # A4 update: supersede a prior belief with a new governed version.
+        from .memory_governance import MemoryRevisionRequest
+        from .memory_revision import apply_update
+
+        truth = (MemoryTruthState(args["truth_state"])
+                 if args.get("truth_state") else None)
+        req = MemoryRevisionRequest(
+            op="update",
+            memory_id=args["memory_id"],
+            content=args["content"],
+            proposed_truth_state=truth,
+            writer_kind=self._writer_kind(),
+            created_by=self.created_by,
+            source_run_id=self._run_id(),
+            source_trace_ids=list(args.get("source_trace_ids", [])),
+            evidence_refs=list(args.get("evidence_refs", [])),
+            confidence=float(args.get("confidence", 0.5)),
+        )
+        self.budget.charge_memory_write()
+        decision = apply_update(self.fabric, req)
+        return self._revision_result("mem_update", decision)
+
+    def _mem_delete(self, args: dict) -> dict:
+        # A4 delete == non-destructive forget (retention only; audit preserved).
+        from .memory_governance import MemoryRevisionRequest
+        from .memory_revision import forget
+
+        req = MemoryRevisionRequest(
+            op="forget",
+            memory_id=args["memory_id"],
+            writer_kind=self._writer_kind(),
+            created_by=self.created_by,
+            source_run_id=self._run_id(),
+            source_trace_ids=list(args.get("source_trace_ids", [])),
+        )
+        self.budget.charge_memory_write()
+        decision = forget(self.fabric, req)
+        return self._revision_result("mem_delete", decision)
+
+    def _revision_result(self, tool: str, decision: Any) -> dict:
+        return {
+            "ok": bool(decision.allowed),
+            "tool": tool,
+            "op": decision.op,
+            "verdict": "allow" if decision.allowed else "deny",
+            "reason_code": decision.reason_code,
+            "message": decision.message,
+            "memory_id": decision.target.memory_id if decision.target else "",
+            "new_memory_id": decision.new_record.memory_id if decision.new_record else "",
         }
 
 
