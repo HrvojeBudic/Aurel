@@ -1,6 +1,26 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A2 — memory-graph typed edges, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A3 — durable memory as trace projection, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A3 (2026-07-07, branch `feat/track-a-memory`, unmerged) — durable memory as a trace projection.**
+> New `memory_persistence.py` (`atomic_write_text` temp→fsync→`os.replace`; `FileMemoryBackend` append-only
+> JSONL with atomic full-file rewrites, deterministic `sort_keys`, lazy; `ExternalMemoryBackend` honestly
+> unavailable — constructible, `available=False`, ops raise) and `durable_memory.py`
+> (`DurableMemoryFabric(MemoryFabric)`: mirrors governed records via `_store` + edges via `link`; `load()`
+> rebuilds by re-verifying each entry against the **bound trace** — `source_trace_ids` ⊆ known entries AND a
+> governed *allow* event for the id — and **quarantines** unanchored/poison entries; returns a
+> `DurableMemoryGovernanceRecord` report + `quarantined()`). `core_types.py` gains hash-chainable
+> `DurableMemoryGovernanceRecord`. **`AUREL_DURABLE_MEMORY` now LOAD-BEARING** (read once at construction):
+> OFF (default) ⇒ no disk touched, `load()` no-op, byte-identical to `MemoryFabric`; ON ⇒ persist + rebuild.
+> Poison defense: an injected JSONL record the trace never attests is quarantined. **Drift (D1):** durable
+> record is a **returned report**, not a ledger append (avoids broad `trace.py` Protocol surgery; A8 wires it).
+> **Drift (D2):** re-verification is within-session vs the bound trace; cross-run durable trace deferred
+> (A8/beyond). No build_runtime/entity wiring (A8); no revision/retract (A4); no retrieval re-rank (A6). Seal
+> `test_p6a3_durable_memory.py` **7 passed**; regression **180 passed** (+ state_store/trace_persistence **19
+> passed**); ruff+mypy+compileall clean on 3 files. Full ~25min suite intentionally skipped. Report:
+> `agent/reports/AUREL_TRACK_A_A3_DURABLE_MEMORY.md`. Next: A4 belief revision.
+
+_Prior update: 2026-07-07 (Track A / A2 — memory-graph typed edges, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A2 (2026-07-07, branch `feat/track-a-memory`, unmerged) — typed relation graph.**
 > New `memory_graph.py` (`MemoryRelation`; frozen bi-temporal append-only `MemoryEdge`;

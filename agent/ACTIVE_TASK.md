@@ -1,4 +1,26 @@
-# Active Task: Track A / A2 complete (memory-graph typed edges) on branch feat/track-a-memory; next A3
+# Active Task: Track A / A3 complete (durable memory as trace projection) on branch feat/track-a-memory; next A4
+
+**Track A / A3 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive; byte-identical flag OFF).**
+New `memory_persistence.py` (`atomic_write_text` temp→fsync→`os.replace`; `FileMemoryBackend` append-only
+JSONL with atomic full-file rewrites, deterministic `sort_keys`; `ExternalMemoryBackend` honestly
+unavailable — constructible, `available=False`, ops raise `MemoryBackendUnavailable`) and `durable_memory.py`
+(`DurableMemoryFabric(MemoryFabric)`: mirrors governed records via `_store` + edges via `link`; `load()`
+rebuilds by re-verifying each entry against the **bound trace** — `source_trace_ids` ⊆ known entries AND a
+governed *allow* event for the id — and **quarantines** unanchored/poison entries; returns
+`DurableMemoryGovernanceRecord` report). `core_types.py` gains `DurableMemoryGovernanceRecord` (hash-chainable
+admit/quarantine atom). **`AUREL_DURABLE_MEMORY` now LOAD-BEARING** (read once at construction): OFF ⇒ no disk,
+`load()` no-op, byte-identical to `MemoryFabric`; ON ⇒ persist + rebuild. **Drift (D1):** the durable record is
+a **returned report**, not a ledger append (avoids broad `trace.py` Protocol surgery; A8 can append it).
+**Drift (D2):** re-verification is within-session vs the bound trace; cross-run durable trace is deferred
+(A8/beyond). No build_runtime/entity wiring (A8); no revision/retract (A4); no retrieval re-rank (A6). Seal
+`test_p6a3_durable_memory.py` **7 passed** (flag-OFF byte-identity; persist+deterministic rebuild; quarantine
+unanchored + unverified-source-trace; atomic write; external unavailable; no-collapse); regression **180
+passed** (+ state_store/trace_persistence **19 passed**); ruff+mypy+compileall clean on 3 files. Full ~25min
+suite intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A3_DURABLE_MEMORY.md`. **Next: A4 — belief
+revision (`memory_revision.py`; mem_update/mem_delete flip from `requires_a4` to live; wire record-field
+supersession to reconcile with A2's edge-only supersession).**
+
+---
 
 **Track A / A2 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, no behavior change).**
 New `memory_graph.py` (`MemoryRelation`, frozen bi-temporal `MemoryEdge`, insertion-ordered append-only
