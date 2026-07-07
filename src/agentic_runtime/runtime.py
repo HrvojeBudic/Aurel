@@ -68,6 +68,7 @@ from .hitl import ApprovalGate
 from .memory import MemoryFabric
 from .memory_bitemporal import _flag_enabled
 from .memory_governance import MemoryWriteRequest
+from .memory_tools import MEMORY_READ_TOOLS, MEMORY_TOOL_NAMES
 from .policy import PolicyEngine, PolicyDecision
 from .policy_cards.context_binding import build_policy_resolution_context
 from .policy_cards.registry import PolicyCardRegistry
@@ -204,6 +205,15 @@ class AgenticRuntime:
 
         if cmd.issuer_card_id != card.id:
             return self._issuer_mismatch_blocked(pre_policy_hash, cmd, card)
+
+        # ---- Governed memory tools (Track A) ---------------------------- #
+        # When durable memory is enabled, mem_* commands are dispatched through the
+        # MemoryToolSession → the governed memory funnel (its own MemoryWritePolicy
+        # governance): no sandbox snapshot, no StateTransitionRecord (per A1a).
+        # Flag OFF ⇒ this is skipped and mem_* falls through to the normal path
+        # (rejected at the sandbox contract gate exactly as before — byte-identical).
+        if self._durable_memory_enabled and cmd.tool in MEMORY_TOOL_NAMES:
+            return self._dispatch_memory_command(cmd, card)
 
         # ---- 0. TOOL CONTRACT — INPUT (before policy/budget/execution) -- #
         contract, gate = self.contracts.resolve_for_execution(
@@ -724,6 +734,56 @@ class AgenticRuntime:
                 arg=check.arg,
                 details=check.details,
             ))
+
+    def _dispatch_memory_command(
+        self, cmd: CommandEnvelope, card: AgentCard
+    ) -> CommandResult:
+        """Route a mem_* command through the governed MemoryToolSession.
+
+        The session derives the writer identity from the card (an agent cannot
+        self-elevate — it is never a tool arg) and routes through the memory funnel
+        (contract validation → MemoryWritePolicy → one governance row, one charge
+        for a write, none for a read). Produces NO StateTransitionRecord: the
+        returned ``CommandResult`` carries ``transition=None`` (consumers already
+        guard on it)."""
+        from .memory_tools import MemoryToolSession
+
+        session = MemoryToolSession(self.memory, self.budget, card=card)
+        try:
+            result = session.invoke(cmd.tool, dict(cmd.args))
+        except BudgetExceeded as exc:
+            result = {"ok": False, "tool": cmd.tool,
+                      "reason_code": "budget_exceeded", "message": str(exc)}
+        except Exception as exc:  # noqa: BLE001 - surface honestly, never crash submit
+            result = {"ok": False, "tool": cmd.tool,
+                      "reason_code": "memory_dispatch_error", "message": str(exc)}
+
+        ok = bool(result.get("ok"))
+        reason = str(result.get("reason_code") or ("ok" if ok else "denied"))
+        message = str(result.get("message") or "")
+        artifacts = {
+            "tool": cmd.tool,
+            "ok": ok,
+            "verdict": str(result.get("verdict") or ("allow" if ok else "deny")),
+            "reason_code": reason,
+            "memory_id": str(result.get("memory_id") or ""),
+        }
+        for extra in ("new_memory_id", "edge_id", "relation", "count", "unavailable"):
+            if extra in result:
+                artifacts[extra] = result[extra]
+        obs = ObservationEnvelope.make(
+            cmd.id, success=ok,
+            stdout=message if ok else "",
+            stderr="" if ok else f"{reason}: {message}",
+            artifacts=artifacts)
+        vres = VerifierResult(
+            ok, "memory", reason=reason,
+            code="OK" if ok else (reason.upper() or "MEMORY_DENIED"))
+        decision = PolicyDecision(
+            PolicyVerdict.ALLOW if ok else PolicyVerdict.DENY,
+            RiskLevel.TRIVIAL if cmd.tool in MEMORY_READ_TOOLS else RiskLevel.LOW,
+            [message or reason])
+        return CommandResult(obs, vres, decision, transition=None)
 
     def _record_command_memory(
         self,

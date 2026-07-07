@@ -1,6 +1,22 @@
-# Active Task: Track A COMPLETE (A8 live promotion + durable fail-closed) on branch feat/track-a-memory; next merge Track A → master, then Track C
+# Active Task: Track A MERGED to master + CONNECTED (public API + agent mem_* dispatch); next push master (when ready), then Track C
 
-**Track A / A8 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE. FINAL Track A phase; wires into build_runtime/runtime (additive, flag-gated, byte-identical OFF).**
+**Track A merge + connect (2026-07-08, `master`, not pushed) — DONE.** `feat/track-a-memory` (A0–A8) merged into
+`master` via `--no-ff` merge commit `4592253` (clean, no divergence; full suite green at merge 8594/11). Then
+**connected**: (1) public API — Track A memory symbols exported from `agentic_runtime.__init__` (`MemoryToolSession`,
+`DurableMemoryFabric`, `hybrid_retrieve`, `MemoryProjection`, graph/revision/consolidation/embedder/backends/bridge,
+etc.) as first-class package exports (`d158cc3`). (2) **Agent `mem_*` dispatch** — `runtime.submit` now intercepts
+`mem_*` commands (flag ON) and routes them through a governed `MemoryToolSession` built from the entity's `AgentCard`
+(`_dispatch_memory_command`): memory funnel governance (one row / one charge per write, read-only search), writer_kind
+from card ⇒ least-privilege `agent` (no self-elevation — `mem_add(canon)` denied), no sandbox / no
+`StateTransitionRecord` (`transition=None`), fail-closed (never crashes submit), **byte-identical when flag OFF**.
+Seal `test_p6a9_memory_dispatch.py` **7 passed**; regression **212 passed**; ruff+mypy+compileall clean on
+`__init__.py`+`runtime.py`; **full suite (post-connect seal): **8601 passed, 11 skipped, 0 failed in 31:10 (1870.98s)** — +7 vs merge baseline 8594/11 (the new dispatch seal), zero regressions**. Report:
+`agent/reports/AUREL_TRACK_A_CONNECT.md`. **Next: push `master` when ready; then Track C remainder (C6 shadow-wire
+sim-gate into `runtime.submit` → C7 → C8 → C9).**
+
+---
+
+**Track A / A8 (2026-07-07, branch `feat/track-a-memory`, merged to master) — DONE. FINAL Track A phase; wires into build_runtime/runtime (additive, flag-gated, byte-identical OFF).**
 **A8a:** `build_runtime` gains a `memory_backend` kwarg + `_build_memory_fabric` helper — flag ON ⇒ `DurableMemoryFabric`
 over a `FileMemoryBackend`; **fail-closed to in-RAM `MemoryFabric`** when the backend is unavailable (never fake
 durability); flag OFF ⇒ exactly the pre-A8 `MemoryFabric`. **A8b:** `runtime.__init__` snapshots
