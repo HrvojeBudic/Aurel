@@ -498,6 +498,10 @@ from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_status,
     cmd_dual_kernel_verify_ledger,
 )
+from .cli_modules.reasoning_commands import (
+    cmd_reasoning_status,
+    cmd_reasoning_workload,
+)
 from .cli_modules.shell_permission_commands import (
     cmd_shell_permissions_actions,
     cmd_shell_permissions_clients,
@@ -829,6 +833,18 @@ def main(argv: list[str] | None = None) -> int:
     p_dk_show.add_argument("path", help="path to a dual-kernel events JSONL")
     p_dk_show.add_argument("--json", action="store_true", help="emit JSON")
     p_dk_show.set_defaults(func=cmd_dual_kernel_show)
+
+    p_rz = sub.add_parser("reasoning", help="reasoning scheduler surface (read-only)")
+    rz_sub = p_rz.add_subparsers(dest="reasoning_command", required=True)
+    p_rz_status = rz_sub.add_parser("status", help="scheduler flag + vocabularies")
+    p_rz_status.add_argument("--json", action="store_true", help="emit JSON")
+    p_rz_status.set_defaults(func=cmd_reasoning_status)
+    p_rz_work = rz_sub.add_parser(
+        "workload", help="project a run's reasoning workload from its trace")
+    p_rz_work.add_argument("run_id", help="run id under the trace dir")
+    p_rz_work.add_argument("--trace-dir", default=".traces", help="trace base dir")
+    p_rz_work.add_argument("--json", action="store_true", help="emit JSON")
+    p_rz_work.set_defaults(func=cmd_reasoning_workload)
 
     p_verify = sub.add_parser("verify", help="run the pytest suite")
     p_verify.add_argument("-v", "--verbose", action="store_true")

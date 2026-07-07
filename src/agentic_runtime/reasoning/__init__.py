@@ -14,9 +14,11 @@ from .reasoning_scheduler import ReasoningAllocation, allocate
 from .step_verifier import PlanScore, StepScore, model_judge_available, score_steps
 from .thinking_budget import EffortLevel, ThinkingBudget, for_card
 from .token_accounting import TokenAccountingView
+from .workload_projection import WorkloadView
 
 __all__ = [
     "TokenAccountingView",
+    "WorkloadView",
     "EffortLevel",
     "ThinkingBudget",
     "for_card",
