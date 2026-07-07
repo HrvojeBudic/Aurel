@@ -1,6 +1,22 @@
 # Repository State
 
-_Last updated: 2026-07-07 (Track A / A5 — deterministic consolidation to CANDIDATE, on branch `feat/track-a-memory`; unmerged)_
+_Last updated: 2026-07-07 (Track A / A6 — deterministic hybrid retrieval, on branch `feat/track-a-memory`; unmerged)_
+
+> **Track A / A6 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic hybrid retrieval.**
+> New `memory_retrieval.py` `hybrid_retrieve` — fuses vector cosine + stdlib BM25-lite (`_BM25Lite`) + graph
+> expansion (one hop along A2 edges from top vector hits) + A0 as-of filter, via RRF, final sort strictly
+> `(-fused, memory_id)` (no `hash()`/RNG). Pool honors physics: default = current belief (excludes superseded/
+> retracted/forgotten via `is_current()` + DEPRECATED/REJECTED); `as_of=(vt,tt)` uses `AsOfView.as_of` for the
+> historical belief. Read-only, fail-closed (empty query ⇒ `[]`). New `memory_embedder.py` `NeuralEmbedderSeam`
+> (honestly unavailable — `available=False`, `embed()` raises; `HashingEmbedder` stays the only real embedder).
+> `memory.py` gains an **additive** `MemoryFabric.hybrid_retrieve` (lazy-delegates). **`retrieve`/`assemble_context`
+> UNCHANGED / byte-identical → cross-lock not triggered; B2 `difficulty_estimator` untouched, its suite passes.**
+> **Drift (D1):** additive entry point rather than editing `retrieve`. No new flag (opt-in by invocation); no
+> build_runtime/entity wiring (A8). Seal `test_p6a6_hybrid_retrieval.py` **6 passed**; regression **203 passed /
+> 0 failed** (incl. B2 reasoning_difficulty); ruff+mypy+compileall clean on 3 files. Full ~25min suite
+> intentionally skipped. Report: `agent/reports/AUREL_TRACK_A_A6_HYBRID_RETRIEVAL.md`. Next: A7 memory explorer + CLI.
+
+_Prior update: 2026-07-07 (Track A / A5 — deterministic consolidation to CANDIDATE, on branch `feat/track-a-memory`; unmerged)_
 
 > **Track A / A5 (2026-07-07, branch `feat/track-a-memory`, unmerged) — deterministic consolidation to CANDIDATE.**
 > New `memory_consolidation.py`: `cluster_memories` (deterministic greedy pass, records sorted by `memory_id`,

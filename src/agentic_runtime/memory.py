@@ -324,6 +324,16 @@ class MemoryFabric:
                  if r.truth_status is not TruthStatus.DEPRECATED and r.is_active(t)]
         return canon + list(self.L1)[-3:] + top
 
+    def hybrid_retrieve(self, query: str, k: int = 5, *,
+                        as_of: Optional[tuple] = None,
+                        expand_graph: bool = True) -> list[MemoryRecord]:
+        """A6: deterministic hybrid ranking (vector + BM25-lite + graph + as-of).
+
+        Additive and read-only — ``retrieve``/``assemble_context`` are unchanged.
+        Delegates to :mod:`memory_retrieval` (lazy import avoids an import cycle)."""
+        from .memory_retrieval import hybrid_retrieve
+        return hybrid_retrieve(self, query, k=k, as_of=as_of, expand_graph=expand_graph)
+
     def assemble_context(self, query: str, k: int = 5) -> str:
         recs = self.retrieve(query, k)
         lines = []

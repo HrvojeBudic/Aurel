@@ -1,4 +1,26 @@
-# Active Task: Track A / A5 complete (deterministic consolidation to CANDIDATE) on branch feat/track-a-memory; next A6
+# Active Task: Track A / A6 complete (deterministic hybrid retrieval) on branch feat/track-a-memory; next A7
+
+**Track A / A6 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive; retrieve/assemble_context byte-identical).**
+New `memory_retrieval.py` `hybrid_retrieve` — fuses vector cosine + stdlib BM25-lite (`_BM25Lite`) + graph
+expansion (one hop along A2 edges from top vector hits) + A0 as-of filter, via RRF, final sort strictly
+`(-fused, memory_id)` (no `hash()`/RNG). Pool honors physics: default = current belief (`is_active` ∧ not
+DEPRECATED/REJECTED ∧ `is_current()` — excludes superseded/retracted/forgotten A4 records); `as_of=(vt,tt)`
+uses `AsOfView.as_of` (surfaces historical belief). Read-only, fail-closed (empty/whitespace query ⇒ `[]`).
+New `memory_embedder.py` `NeuralEmbedderSeam` (honestly unavailable — `available=False`, `embed()` raises;
+`HashingEmbedder` stays the only real embedder). `memory.py` gains an **additive** `MemoryFabric.hybrid_retrieve`
+(lazy-delegates; **`retrieve`/`assemble_context` UNCHANGED, byte-identical**). **Cross-lock: `assemble_context`
+did NOT change** → B2 `difficulty_estimator` untouched (it takes `memory_context` as a str param, never calls
+retrieve); its suite `test_reasoning_difficulty` passes. **Drift (D1):** additive `hybrid_retrieve` entry point
+rather than editing `retrieve` (honors the cross-lock). No new flag (opt-in by invocation); no build_runtime/
+entity wiring (A8). Seal `test_p6a6_hybrid_retrieval.py` **6 passed** (deterministic across runs+fresh fabric;
+vector/BM25/graph each contribute; as-of + supersession; RRF+tiebreak+fail-closed; NeuralEmbedderSeam
+unavailable; no-collapse read-only); regression **203 passed / 0 failed** (incl. B2 reasoning_difficulty);
+ruff+mypy+compileall clean on 3 files. Full ~25min suite intentionally skipped. Report:
+`agent/reports/AUREL_TRACK_A_A6_HYBRID_RETRIEVAL.md`. **Next: A7 — Memory Explorer projection + CLI
+(`memory_projection.py` rebuilt from trace memory-governance events + durable store; `cli.py`
+`memory explore/history/graph/rejected`, read-only; can close the A2/A3 D2 replay-details seam).**
+
+---
 
 **Track A / A5 (2026-07-07, branch `feat/track-a-memory`, unmerged) — DONE (additive, existing paths unchanged).**
 New `memory_consolidation.py`: `cluster_memories` (deterministic greedy pass, records sorted by `memory_id`,
