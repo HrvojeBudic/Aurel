@@ -91,16 +91,28 @@ class SecretRedactor:
     def redact(self, text: str) -> str:
         if not text:
             return text
+        # Exact-match known values first, then heuristic patterns.
+        out = self.redact_known(text)
+        out = _ENV_KEY_PATTERN.sub(r"\1=[REDACTED]", out)
+        out = _SK_PATTERN.sub("[REDACTED]", out)
+        out = _BEARER_PATTERN.sub("Bearer [REDACTED]", out)
+        out = _redact_high_entropy(out)
+        return out
+
+    def redact_known(self, text: str) -> str:
+        """Exact-match redaction of REGISTERED secret values only — no heuristic
+        patterns. F2: use this where the heuristics would corrupt legitimate
+        content (e.g. a model cassette's recorded completion may contain long
+        token-like strings that are not secrets). It still guarantees that no
+        actually-resolved secret value survives in the output."""
+        if not text:
+            return text
         out = text
         # Instance-supplied values first, then the process-wide registry (F2) —
         # exact-match redaction of every secret the process has ever resolved.
         for value in (*self._known_values, *_KNOWN_SECRET_VALUES):
             if value and value in out:
                 out = out.replace(value, "[REDACTED]")
-        out = _ENV_KEY_PATTERN.sub(r"\1=[REDACTED]", out)
-        out = _SK_PATTERN.sub("[REDACTED]", out)
-        out = _BEARER_PATTERN.sub("Bearer [REDACTED]", out)
-        out = _redact_high_entropy(out)
         return out
 
     def redact_mapping(self, data: dict) -> dict:
