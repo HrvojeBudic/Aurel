@@ -1,4 +1,14 @@
-# Active Task: Track A MERGED to master + CONNECTED (public API + agent mem_* dispatch); next push master (when ready), then Track C
+# Active Task: F2 COMPLETE on branch `feat/f2-continue` (providers/secrets/redaction/drill); next merge F2 → master when ready
+
+**F2 (2026-07-08, branch `feat/f2-continue` cut from `79e95c1`, unmerged) — COMPLETE (a→g).** Finished (e)–(g) on a
+fresh branch after a prior session WEDGED on the (e) CLI seal (a `getpass`/stdin hang; fixed by mocking `getpass` in
+every `secrets set` test + timeout-bounding all pytest). (e) `aurel secrets set/status` `5eeec21`; (f) central secret
+redaction + per-provider sentinel seal (cassette exact-match redaction via `SecretRedactor.redact_known()`) `ab26db2`;
+(g) `aurel drill model-swap` deterministic behavioral diff `329708b`. Seals: (e) 4 / (f) 5 / (g) 6 passed; focused
+regression 76 passed, 2 skipped; compileall+ruff+mypy clean. **F2 is on its branch only, NOT master; not pushed.**
+Report: `agent/reports/AUREL_F2_PROVIDERS_SECRETS_REDACTION_DRILL.md`. **Next: merge `feat/f2-continue` → master when ready.**
+
+---
 
 **Track A merge + connect (2026-07-08, `master`, not pushed) — DONE.** `feat/track-a-memory` (A0–A8) merged into
 `master` via `--no-ff` merge commit `4592253` (clean, no divergence; full suite green at merge 8594/11). Then
