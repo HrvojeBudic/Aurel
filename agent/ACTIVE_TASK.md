@@ -1,4 +1,29 @@
-# Active Task: F3.1 DONE on branch `feat/f3-external-executors` (aurel gate check preflight); next F3.2 external-executor identity + budget + track record
+# Active Task: F3.2 DONE on branch `feat/f3-external-executors` (external-executor identity + budget + track record); next F3.3 mcp_gateway (Aurel as MCP server)
+
+**F3.2 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New pure-value module
+`src/agentic_runtime/external_executor.py`. External executor = three bounded things, never a trusted peer:
+(1) **least-privilege identity** — `ExternalExecutorGrant` (operator ceiling; tightest defaults) →
+`derive_external_card` yields an `AgentCard` **exactly the grant, never wider** (protected mutation always off);
+no self-elevation (no widening method — more capability only via a NEW grant). (2) **hard budget** —
+`budget_envelope` clamps a `BudgetPolicy` DOWN to the grant (`min` of platform default and grant); over-generous
+grant clamps to base. (3) **governed track record** — `TrackRecordLedger` append-only + immutable (`frozen`)
+entries, `record()` the only writer (runtime-called from real gate/verifier results; executor can't write its own
+success); `TrustLevel` (UNTRUSTED/PROBATION/TRUSTED) **derived not set**, a recent failure drops to UNTRUSTED;
+`effective_max_risk = min(card ceiling, trust ceiling)` — trust only **restricts**, never widens beyond the card.
+`ExternalExecutorProfile` bundles them; `make_external_executor` factory. Seal
+`tests/test_p6f3_2_external_executor.py` **12 passed**; ruff+mypy(1)+compileall clean. Report:
+`agent/reports/AUREL_F3_2_EXTERNAL_EXECUTOR.md`. **Next: F3.3 — `mcp_gateway/` (Aurel as MCP server): expose
+governed tools over stdlib JSON-RPC 2.0, each bound to a ToolContract + lease from `spine/tool_exec.py`; inbound
+calls tainted MCP_CLIENT, run through full `submit` under the executor's F3.2 profile, outcomes → track record.
+This is where ALLOW becomes real execution (budget/sandbox/approval apply). Seal `test_p6f3_3_mcp_gateway.py`.**
+
+> NOTE (concurrency): a parallel process on this repo authored `agent/reports/AUREL_PLAN_03_UNIFIED_BACKBONE.md`
+> and keeps editing it; my F3.1 `git add -A` swept it into commit `a904e49`. Switched to targeted `git add` — F3.2+
+> commits touch ONLY my own files; that plan doc is left as the other process's uncommitted working change.
+
+---
+
+# Prior Active Task: F3.1 DONE on branch `feat/f3-external-executors` (aurel gate check preflight); next F3.2 external-executor identity + budget + track record
 
 **F3.1 (2026-07-09) — DONE (additive; only `cli.py` touched, +16 lines subparser+import).**
 `aurel gate check` — governance preflight for external executors. New `src/agentic_runtime/gate/`
