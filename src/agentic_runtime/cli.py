@@ -515,6 +515,7 @@ from .cli_modules.governance_commands import (cmd_governance_audit, cmd_governan
                                               cmd_profile_audit, cmd_profile_show)
 from .cli_modules.drill_commands import cmd_drill_model_swap
 from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
+from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
     cmd_dual_kernel_show,
@@ -889,6 +890,21 @@ def main(argv: list[str] | None = None) -> int:
                               help="bound the number of replayed entries")
     p_drill_swap.add_argument("--json", action="store_true", help="emit JSON")
     p_drill_swap.set_defaults(func=cmd_drill_model_swap)
+
+    # F3.1: governance preflight for external executors (read-only; no execution).
+    p_gate = sub.add_parser("gate", help="external-executor governance gate (F3)")
+    gate_sub = p_gate.add_subparsers(dest="gate_command", required=True)
+    p_gate_check = gate_sub.add_parser(
+        "check", help="preflight a proposed (tool, args) through contract + policy")
+    p_gate_check.add_argument("--proposal", help='inline proposal JSON, e.g. '
+                              '\'{"tool": "read_file", "args": {"path": "a.py"}}\'')
+    p_gate_check.add_argument("--proposal-file", help="path to a proposal JSON file")
+    p_gate_check.add_argument("--card", help="inline external-executor AgentCard JSON")
+    p_gate_check.add_argument("--card-file", help="path to an AgentCard JSON file")
+    p_gate_check.add_argument("--executor", default="external-executor",
+                              help="external executor id (provenance origin_ref)")
+    p_gate_check.add_argument("--json", action="store_true", help="emit JSON")
+    p_gate_check.set_defaults(func=cmd_gate_check)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

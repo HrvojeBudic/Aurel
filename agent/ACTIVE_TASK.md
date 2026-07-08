@@ -1,4 +1,24 @@
-# Active Task: F3.0 DONE on branch `feat/f3-external-executors` (external ingress taint & injection defense); next F3.1 gate-check foundation
+# Active Task: F3.1 DONE on branch `feat/f3-external-executors` (aurel gate check preflight); next F3.2 external-executor identity + budget + track record
+
+**F3.1 (2026-07-09) — DONE (additive; only `cli.py` touched, +16 lines subparser+import).**
+`aurel gate check` — governance preflight for external executors. New `src/agentic_runtime/gate/`
+(`gate_check.py`, `__init__.py`) + `cli_modules/gate_commands.py`. `GateChecker.from_runtime(kernel|runtime)`
+runs a proposed `(tool, args)` through the **same chain `runtime.submit` runs** (contract registry → contract
+input → policy), same order, **same evaluator objects** (fidelity by reuse) — but **read-only**: no execute, no
+budget, no sandbox, no trace. `GateCheckDecision` carries `phase` (contract_registry/contract_input/policy/
+admitted), re-scored `risk`, contract `code`, and a **distinct `REQUIRE_APPROVAL`** verdict (not flattened to
+DENY); `preflight_only=True` (ALLOW ≠ final authorization — budget/sandbox/approval still apply at execution,
+deferred to F3.3 gateway). Proposal enters as F3.0 `make_tainted(..., EXTERNAL_EXECUTOR)` (instruction-ineligible;
+injection scan advisory, never gates). CLI exit codes 0/3/2/1 (ALLOW/APPROVAL/DENY/error). `GATE_ARG_KEYS`
+no-drift vs `runtime._GOVERNANCE_SUBMIT_ARG_KEYS` (seal-asserted). Seal `tests/test_p6f3_1_gate_check.py`
+**10 passed**; CLI smoke ALLOW/DENY/REQUIRE_APPROVAL verified; ruff+mypy(3)+compileall clean; representative CLI
+regressions green. Report: `agent/reports/AUREL_F3_1_GATE_CHECK.md`. **Next: F3.2 — external-executor identity
+(AgentCard derivation) + hard budget envelope + governed track-record ledger (success/fail feeds trust, never
+self-reported). Seal `test_p6f3_2_external_executor.py`.**
+
+---
+
+# Prior Active Task: F3.0 DONE on branch `feat/f3-external-executors` (external ingress taint & injection defense); next F3.1 gate-check foundation
 
 **F2 MERGED to master (2026-07-09).** `feat/f2-providers-secrets` (superset of `feat/f2-continue`) merged via
 `--no-ff` commit `800d88a`; all prior branches now merged; master not pushed (no `origin/master` on remote yet).
