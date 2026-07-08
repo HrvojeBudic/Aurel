@@ -15,8 +15,19 @@ import json
 import agentic_runtime.cli_modules.secrets_commands as sc
 
 
+def _fail_if_prompted(prompt: str = "") -> str:
+    raise AssertionError(
+        "getpass was invoked without a test mock — a real stdin prompt would "
+        "block the test process forever")
+
+
 def _isolate(tmp_path, monkeypatch):
-    """Route the store at a temp dir with no keyring and a clean env."""
+    """Route the store at a temp dir with no keyring and a clean env.
+
+    Also arms a getpass FAILSAFE: any code path that reaches an unmocked stdin
+    prompt fails instantly instead of blocking. Tests that legitimately exercise
+    ``secrets set`` override the mock with a fixed value.
+    """
     monkeypatch.setenv("AUREL_SECRETS_DIR", str(tmp_path / "secrets"))
     from agentic_runtime.secrets_store import DEFAULT_PROVIDER_KEY_ENVS
     for env_var in DEFAULT_PROVIDER_KEY_ENVS.values():
@@ -25,6 +36,8 @@ def _isolate(tmp_path, monkeypatch):
     from agentic_runtime import secrets_store
     monkeypatch.setattr(secrets_store._KeyringCli, "__init__",
                         lambda self: setattr(self, "_tool", None))
+    # Never block on stdin: unmocked prompts fail fast.
+    monkeypatch.setattr("getpass.getpass", _fail_if_prompted)
 
 
 def test_secrets_set_no_echo_and_masked_output(tmp_path, monkeypatch, capsys):
