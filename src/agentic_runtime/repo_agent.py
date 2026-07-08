@@ -594,6 +594,25 @@ class CodeTaskPlanner:
             RepoTaskStep("test", "test", " ".join(request.test_command), "run requested tests", "run_tests", "test command passes", "medium"),
         ]
         valid = bool(context.repo_root and request.objective.strip())
+        if valid and not patch_plans:
+            # A plan whose patch step has no patch content cannot achieve any
+            # objective; refusing here is honest, silently "succeeding" is not.
+            # Refusal plans must carry no executable steps (validator contract).
+            return RepoTaskPlan(
+                objective_summary=request.objective[:240],
+                files_to_inspect=target_files,
+                files_to_modify=[],
+                proposed_steps=[],
+                risk_level="low",
+                expected_tests=[],
+                requires_approval=request.require_approval_before_write,
+                patch_plans=[],
+                valid=False,
+                refusal_reason=(
+                    "heuristic planner has no patch strategy for this objective; "
+                    "use --planner llm or hybrid"
+                ),
+            )
         return RepoTaskPlan(
             objective_summary=request.objective[:240],
             files_to_inspect=target_files,
@@ -879,6 +898,8 @@ def _create_plan_for_request(
     context: RepoContext,
 ) -> tuple[RepoTaskPlan, str, list[str], str]:
     mode = (request.planner_mode or "deterministic").lower()
+    if mode == "demo-heuristic":
+        mode = "deterministic"
     if mode not in {"deterministic", "llm", "hybrid", "dry_run"}:
         return _planning_failure(request, f"unknown planner_mode: {request.planner_mode}", ""), mode, [f"unknown planner_mode: {request.planner_mode}"], ""
     if mode in {"deterministic", "dry_run"}:

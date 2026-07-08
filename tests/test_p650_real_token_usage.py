@@ -10,7 +10,9 @@ from __future__ import annotations
 import pytest
 
 from agentic_runtime.budget import BudgetExceeded, BudgetLedger, BudgetPolicy
-from agentic_runtime.model_providers import anthropic_provider
+from agentic_runtime.model_providers import (anthropic_provider,
+                                             deepseek_provider,
+                                             ollama_provider)
 from agentic_runtime.model_providers.base import ModelRequest, TokenUsage
 from agentic_runtime.reasoning import TokenAccountingView
 
@@ -42,6 +44,74 @@ def test_anthropic_usage_populates_ledger_not_flat_estimate(monkeypatch):
     assert snap["substantiated"] is True
     assert snap["estimate_only"] is False
     assert TokenAccountingView.from_snapshot(led.snapshot()).substantiated is True
+
+
+def _fake_deepseek_post_json(*_args, **_kwargs):
+    data = {
+        "choices": [{"message": {"content": '{"steps": []}'},
+                     "finish_reason": "stop"}],
+        "usage": {"prompt_tokens": 80, "completion_tokens": 40,
+                  "total_tokens": 120,
+                  "completion_tokens_details": {"reasoning_tokens": 7}},
+    }
+    return data, None, 5.0
+
+
+def test_deepseek_usage_populates_ledger_not_flat_estimate(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+    monkeypatch.setattr(deepseek_provider, "post_json", _fake_deepseek_post_json)
+    provider = deepseek_provider.DeepSeekProvider()
+    resp = provider.generate_structured_plan(
+        ModelRequest(system_prompt="s", user_prompt="u"))
+
+    assert resp.usage is not None
+    assert resp.usage.total_tokens == 120
+    assert resp.usage.reasoning_tokens == 7
+
+    led = BudgetLedger()
+    led.charge_llm(usage=resp.usage)
+    snap = led.snapshot()["usage"]
+    assert snap["estimated_tokens"] == 120
+    assert snap["substantiated"] is True
+    assert snap["estimate_only"] is False
+
+
+def _fake_ollama_post_json(*_args, **_kwargs):
+    data = {
+        "message": {"content": '{"steps": []}'},
+        "done_reason": "stop",
+        "prompt_eval_count": 60,
+        "eval_count": 30,
+    }
+    return data, None, 5.0
+
+
+def test_ollama_usage_populates_ledger_not_flat_estimate(monkeypatch):
+    monkeypatch.setattr(ollama_provider, "post_json", _fake_ollama_post_json)
+    provider = ollama_provider.OllamaProvider()
+    resp = provider.generate_structured_plan(
+        ModelRequest(system_prompt="s", user_prompt="u"))
+
+    assert resp.usage is not None
+    assert resp.usage.total_tokens == 90
+
+    led = BudgetLedger()
+    led.charge_llm(usage=resp.usage)
+    snap = led.snapshot()["usage"]
+    assert snap["estimated_tokens"] == 90
+    assert snap["substantiated"] is True
+    assert snap["estimate_only"] is False
+
+
+def test_ollama_missing_counts_yields_no_usage(monkeypatch):
+    monkeypatch.setattr(
+        ollama_provider, "post_json",
+        lambda *a, **k: ({"message": {"content": '{"steps": []}'}}, None, 5.0))
+    provider = ollama_provider.OllamaProvider()
+    resp = provider.generate_structured_plan(
+        ModelRequest(system_prompt="s", user_prompt="u"))
+    # No counts reported -> honest None, never a synthesized number.
+    assert resp.usage is None
 
 
 def test_missing_usage_marks_estimate_only_and_substantiated_false():

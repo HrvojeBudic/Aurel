@@ -914,9 +914,11 @@ def main(argv: list[str] | None = None) -> int:
                         choices=_SANDBOX_CHOICES,
                         help="sandbox profile; default auto (hard isolation) for --apply")
     p_repo.add_argument("--planner", default="deterministic",
-                        choices=["deterministic", "llm", "hybrid", "dry_run"])
+                        choices=["deterministic", "demo-heuristic", "llm", "hybrid", "dry_run"],
+                        help="'deterministic' is a demo heuristic (alias: demo-heuristic); "
+                             "it refuses objectives it has no patch strategy for")
     p_repo.add_argument("--provider", default="",
-                        choices=["", "mock", "openai", "anthropic", "ollama"])
+                        choices=["", "mock", "openai", "anthropic", "ollama", "deepseek"])
     p_repo.set_defaults(func=cmd_repo_task)
 
     p_sandbox = sub.add_parser("sandbox-status", help="show active sandbox profile diagnostics")
