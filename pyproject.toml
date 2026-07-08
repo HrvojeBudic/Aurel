@@ -34,6 +34,8 @@ dev = [
 [project.scripts]
 agentic-runtime-demo = "agentic_runtime.demo:main"
 agentic-runtime = "agentic_runtime.cli:main"
+# F2: the operator-facing alias — `aurel secrets set qwen`, `aurel profile show`…
+aurel = "agentic_runtime.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

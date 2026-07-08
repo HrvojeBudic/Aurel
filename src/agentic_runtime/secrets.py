@@ -34,6 +34,19 @@ class SecretResolutionResult:
         return self.present and self.value is not None and not self.error
 
 
+# F2 — process-wide registry of ACTUAL secret values (fed by SecretStore /
+# EnvSecretProvider resolutions). Every SecretRedactor instance redacts these by
+# exact match, so a resolved key can never appear un-redacted in logs, traces,
+# cassettes, or provider errors — regardless of where the redactor was built.
+_KNOWN_SECRET_VALUES: list[str] = []
+
+
+def register_secret_value(value: str) -> None:
+    """Register a real secret value for process-wide exact-match redaction."""
+    if value and value not in _KNOWN_SECRET_VALUES:
+        _KNOWN_SECRET_VALUES.append(value)
+
+
 _ENV_KEY_PATTERN = re.compile(
     r"(?i)\b((?:OPENAI|ANTHROPIC|AUREL|AWS|AZURE|GITHUB|GITLAB|HUGGINGFACE|HF)_?"
     r"(?:API_KEY|SECRET|TOKEN|PASSWORD)|[A-Z0-9_]*(?:API_KEY|SECRET|TOKEN))\s*[=:]\s*"
@@ -55,6 +68,8 @@ class EnvSecretProvider:
                 present=False,
                 error=f"{ref.env_var} not configured",
             )
+        # F2: every resolved secret becomes exact-match redactable process-wide.
+        register_secret_value(value)
         return SecretResolutionResult(
             env_var=ref.env_var,
             present=True,
@@ -76,14 +91,28 @@ class SecretRedactor:
     def redact(self, text: str) -> str:
         if not text:
             return text
-        out = text
-        for value in self._known_values:
-            if value and value in out:
-                out = out.replace(value, "[REDACTED]")
+        # Exact-match known values first, then heuristic patterns.
+        out = self.redact_known(text)
         out = _ENV_KEY_PATTERN.sub(r"\1=[REDACTED]", out)
         out = _SK_PATTERN.sub("[REDACTED]", out)
         out = _BEARER_PATTERN.sub("Bearer [REDACTED]", out)
         out = _redact_high_entropy(out)
+        return out
+
+    def redact_known(self, text: str) -> str:
+        """Exact-match redaction of REGISTERED secret values only — no heuristic
+        patterns. F2: use this where the heuristics would corrupt legitimate
+        content (e.g. a model cassette's recorded completion may contain long
+        token-like strings that are not secrets). It still guarantees that no
+        actually-resolved secret value survives in the output."""
+        if not text:
+            return text
+        out = text
+        # Instance-supplied values first, then the process-wide registry (F2) —
+        # exact-match redaction of every secret the process has ever resolved.
+        for value in (*self._known_values, *_KNOWN_SECRET_VALUES):
+            if value and value in out:
+                out = out.replace(value, "[REDACTED]")
         return out
 
     def redact_mapping(self, data: dict) -> dict:

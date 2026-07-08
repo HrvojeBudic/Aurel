@@ -39,6 +39,7 @@ profiles:
     sandbox: hard
     durable_memory: true
     dual_kernel: true
+    allow_mock_fallback: false
     banner: ""
 
   # hardened — tightest usable envelope. G1 fail-closed: auto-approves only R1;
@@ -49,4 +50,5 @@ profiles:
     sandbox: hard
     durable_memory: true
     dual_kernel: true
+    allow_mock_fallback: false
     banner: ""

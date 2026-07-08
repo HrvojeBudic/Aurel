@@ -1,12 +1,31 @@
-# LIVE provider registry — opt-in remote profile for operator testing.
-# Secrets referenced by env var name only. This dir is a deliberate live
-# override; the canonical safe defaults remain in agent/config/.
+# LIVE provider registry — opt-in remote profile for operator testing (F2).
+# Secrets referenced by env var name only (never values). This dir is a
+# deliberate live override; the canonical safe defaults remain in agent/config/.
 providers:
   mock:
     type: mock
     description: Deterministic offline mock provider
     residency: local
     default_model: mock-deterministic
+
+  ollama:
+    type: ollama
+    description: Local Ollama daemon (no key required)
+    residency: local
+    base_url_env: AUREL_OLLAMA_BASE_URL
+    default_base_url: http://localhost:11434
+    default_model_env: AUREL_OLLAMA_MODEL
+    default_model: llama3.1
+
+  anthropic:
+    type: anthropic
+    description: Anthropic Claude (planning-grade; requires ANTHROPIC_API_KEY)
+    residency: remote
+    api_key_env: ANTHROPIC_API_KEY
+    base_url_env: AUREL_ANTHROPIC_BASE_URL
+    default_base_url: https://api.anthropic.com
+    default_model_env: AUREL_ANTHROPIC_MODEL
+    default_model: claude-3-5-haiku-latest
 
   deepseek:
     type: deepseek
@@ -17,3 +36,23 @@ providers:
     default_model_env: AUREL_DEEPSEEK_MODEL
     default_base_url: https://api.deepseek.com
     default_model: deepseek-v4-pro
+
+  qwen:
+    type: qwen
+    description: Alibaba Qwen via DashScope compatible-mode (requires DASHSCOPE_API_KEY)
+    residency: remote
+    api_key_env: DASHSCOPE_API_KEY
+    base_url_env: AUREL_QWEN_BASE_URL
+    default_model_env: AUREL_QWEN_MODEL
+    default_base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    default_model: qwen-max
+
+  kimi:
+    type: kimi
+    description: Moonshot Kimi (cheap challenger/review; requires MOONSHOT_API_KEY)
+    residency: remote
+    api_key_env: MOONSHOT_API_KEY
+    base_url_env: AUREL_KIMI_BASE_URL
+    default_model_env: AUREL_KIMI_MODEL
+    default_base_url: https://api.moonshot.ai/v1
+    default_model: kimi-k2

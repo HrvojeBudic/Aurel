@@ -26,6 +26,7 @@ from .profile import GovernanceLevel, governed_approver, profile_for
 PROFILE_ENV = "AUREL_PROFILE"
 DURABLE_MEMORY_ENV = "AUREL_DURABLE_MEMORY"
 DUAL_KERNEL_ENV = "AUREL_DUAL_KERNEL"
+ALLOW_MOCK_FALLBACK_ENV = "AUREL_ALLOW_MOCK_FALLBACK"
 
 _SANDBOX_HARD = "hard"
 _SANDBOX_UNSAFE_OK = "unsafe_ok"
@@ -51,6 +52,9 @@ class ProfileSpec:
     durable_memory: bool
     dual_kernel: bool
     banner: str
+    # F2: whether an implicitly-defaulted mock provider may silently answer.
+    # dev keeps today's behavior; standard/hardened fail honestly without a key.
+    allow_mock_fallback: bool = True
 
     def to_dict(self) -> dict:
         return {
@@ -61,6 +65,7 @@ class ProfileSpec:
             "durable_memory": self.durable_memory,
             "dual_kernel": self.dual_kernel,
             "banner": self.banner,
+            "allow_mock_fallback": self.allow_mock_fallback,
         }
 
 
@@ -82,6 +87,7 @@ def _spec_from_entry(name: str, entry: dict) -> ProfileSpec:
         durable_memory=bool(entry.get("durable_memory", False)),
         dual_kernel=bool(entry.get("dual_kernel", False)),
         banner=str(entry.get("banner", "")),
+        allow_mock_fallback=bool(entry.get("allow_mock_fallback", True)),
     )
 
 
@@ -191,4 +197,7 @@ def profile_process_env(
     if spec.dual_kernel and DUAL_KERNEL_ENV not in target:
         target[DUAL_KERNEL_ENV] = "1"
         applied[DUAL_KERNEL_ENV] = "1"
+    if not spec.allow_mock_fallback and ALLOW_MOCK_FALLBACK_ENV not in target:
+        target[ALLOW_MOCK_FALLBACK_ENV] = "0"
+        applied[ALLOW_MOCK_FALLBACK_ENV] = "0"
     return applied

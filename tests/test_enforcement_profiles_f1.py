@@ -133,7 +133,9 @@ def test_profile_process_env_setdefault_semantics():
     applied = profile_process_env(profile_spec("standard"), env)
     assert applied.get("AUREL_DURABLE_MEMORY") == "1"
     assert applied.get("AUREL_DUAL_KERNEL") == "1"
-    assert env == {"AUREL_DURABLE_MEMORY": "1", "AUREL_DUAL_KERNEL": "1"}
+    # F2: standard also forbids the silent mock fallback (honest fail without a key).
+    assert env == {"AUREL_DURABLE_MEMORY": "1", "AUREL_DUAL_KERNEL": "1",
+                   "AUREL_ALLOW_MOCK_FALLBACK": "0"}
 
 
 def test_profile_process_env_respects_explicit_env():

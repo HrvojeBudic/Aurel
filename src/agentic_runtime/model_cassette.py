@@ -62,6 +62,12 @@ class ModelCassette:
         key = cassette_key(model_id, system, user)
         if key in self._index:
             return key
+        # F2: a cassette persists the raw completion verbatim, so an API key that
+        # ever leaked into model output (or an echoed prompt) would be written to
+        # disk. Redact EXACT registered secret values only (not the heuristic
+        # patterns, which would corrupt legitimate long token-like completions).
+        from .secrets import SecretRedactor
+        raw_response = SecretRedactor().redact_known(raw_response)
         rec = {
             "schema": CASSETTE_SCHEMA_VERSION,
             "key": key,

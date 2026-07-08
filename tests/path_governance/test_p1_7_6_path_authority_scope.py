@@ -586,11 +586,14 @@ def test_p1_7_0_to_p1_7_5_regression_still_pass() -> None:
             "tests/path_governance/test_p1_7_3_source_trust_taxonomy.py",
             "tests/path_governance/test_p1_7_4_trusted_roots.py",
             "tests/path_governance/test_p1_7_5_path_normalization_escape_contract.py",
+            "-k",
+            "not regression_still_pass",
             "-q",
         ],
         cwd=str(__import__("pathlib").Path(__file__).resolve().parents[2]),
         capture_output=True,
         text=True,
         check=False,
+        timeout=300,
     )
     assert result.returncode == 0, result.stdout + result.stderr

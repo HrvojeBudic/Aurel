@@ -446,9 +446,18 @@ def test_no_filesystem_or_network_access() -> None:
 
 def test_p1_7_0_to_p1_7_14_regression_still_pass() -> None:
     completed = subprocess.run(
-        [sys.executable, "-m", "pytest", *_P1_7_REGRESSION_FILES, "-q"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            *_P1_7_REGRESSION_FILES,
+            "-k",
+            "not regression_still_pass",
+            "-q",
+        ],
         capture_output=True,
         text=True,
         check=False,
+        timeout=300,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr

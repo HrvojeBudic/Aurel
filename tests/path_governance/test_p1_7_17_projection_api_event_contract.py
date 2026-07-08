@@ -674,10 +674,19 @@ def test_no_filesystem_or_network_access() -> None:
 
 def test_p1_7_0_to_p1_7_16_regression_still_pass() -> None:
     result = subprocess.run(
-        [sys.executable, "-m", "pytest", *_P1_7_REGRESSION_FILES, "-q"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            *_P1_7_REGRESSION_FILES,
+            "-k",
+            "not regression_still_pass",
+            "-q",
+        ],
         cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,
         check=False,
+        timeout=300,
     )
     assert result.returncode == 0, result.stdout + result.stderr
