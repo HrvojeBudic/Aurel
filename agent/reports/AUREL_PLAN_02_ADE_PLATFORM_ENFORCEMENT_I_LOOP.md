@@ -82,9 +82,23 @@ Zaključak koji plan slijedi: **backend je zreo, sučelje ne postoji.** Zato faz
 
 `enforcement_profiles.yaml` (dev=G4 / **standard=G2 default** / hardened=G0–G1); `build_runtime(profile=...)` stvarno primjenjuje; `aurel governance audit --fail-on-drift` kao CI bloker; demo pod standardom. Ovime prestaje codex-ov prigovor "SEALED uz nesigurne defaulte".
 
-### F2 — Suverenitet: provideri + ključevi (≈1 tjedan) — *nepromijenjeno iz v2*
+### F2 — Suverenitet: provideri + ključevi (≈1 tjedan)
 
-Živi profili (planning=Claude→v4-pro failover; coding=v4-pro; review/challenger=v4-flash; summarization=v4-flash→ollama); SecretStore (env→os-keyring→tauri-keychain→file-0600, bez lažne kriptografije); centralna redakcija (trace/cassette/logovi) + sentinel seal; Model Swap Drill.
+**Provider roster (proširen — više ne samo DeepSeek/Anthropic).** Operator može upisati ključ i birati bilo koji od sljedećih; svi OpenAI-kompatibilni dijele *isti* adapter obrazac kao postojeći `deepseek_provider.py` (JSON mode, shema validirana u routeru), pa je dodavanje svakog novog samo tanki adapter + registracija:
+
+| Provider | Modeli (2026) | Env ključ | Endpoint | Adapter |
+|---|---|---|---|---|
+| **Anthropic** | Claude (planning) | `ANTHROPIC_API_KEY` | api.anthropic.com | postoji |
+| **DeepSeek** | `deepseek-v4-pro`, `deepseek-v4-flash` | `DEEPSEEK_API_KEY` | api.deepseek.com | postoji |
+| **Qwen** (Alibaba/DashScope) | `qwen-max`, `qwen-plus`, `qwen3-coder`… | `DASHSCOPE_API_KEY` | dashscope…/compatible-mode/v1 | novi (OpenAI-compat, kloniraj DeepSeek) |
+| **Kimi** (Moonshot) | `kimi-k2`, `moonshot-v1-128k`… | `MOONSHOT_API_KEY` | api.moonshot.ai/v1 | novi (OpenAI-compat, kloniraj DeepSeek) |
+| **Ollama** (lokalno) | llama3.1, qwen local… | — | localhost:11434 | postoji |
+
+**Živi model profili** (`models.live.yaml`) — mapiranje namjena na providere, s failoverom, operator-konfigurabilno: planning=Claude→`deepseek-v4-pro`/`qwen-max` failover; coding=`deepseek-v4-pro`/`qwen3-coder`; review/challenger=`deepseek-v4-flash`/`kimi-k2` (jeftin, čest); summarization/local_fast=`v4-flash`→`ollama`. U `standard` profilu mock **nije** tihi fallback — bez ključa se pošteno padne. Provider po namjeni je zamjenjiv jednim retkom u yamlu.
+
+**SecretStore** (`secrets_store.py`, stdlib-only) — sigurno lokalno spremanje ključa **za svaki provider** (`anthropic`, `deepseek`, `qwen`, `kimi`, plus proširivo): backend lanac `env` → OS keyring (`secret-tool`/`security`/CredMan) → Tauri keychain (F5) → pošteni `file-0600` (bez lažne kriptografije). CLI: `aurel secrets set qwen` / `aurel secrets set kimi` (unos bez echa), `aurel secrets status` (maskirani otisak po provideru, nikad vrijednost).
+
+**Centralna redakcija** (trace/cassette/logovi/provider errori) + sentinel seal — sentinel ključ za *svaki* provider ne smije nigdje procuriti. **Model Swap Drill** (`aurel drill model-swap`) — replaya korpus kaseta protiv kandidata (npr. zamijeni DeepSeek Qwenom) i ispiše behavioral diff; time je i Qwen/Kimi zamjena izmjeriva, ne skok vjere.
 
 ### F3 — Adapter: vanjski izvođači (≈1–2 tjedna) — *nepromijenjeno iz v2*
 
@@ -194,7 +208,7 @@ Tauri (F5) = prvi Rust (keychain, tray, notifikacije). Kasnije po okidačima: sa
 |---|---|---|
 | 1–2 | F0 | poštenje: planner, usage, webui fallback, spine+mock |
 | 2–4 | F1 | `standard` enforced default, CI drift bloker |
-| 4–5 | F2 | živi provideri, SecretStore, redakcija, drill |
+| 4–5 | F2 | živi provideri (Anthropic/DeepSeek/Qwen/Kimi/Ollama), SecretStore, redakcija, drill |
 | 5–7 | F3 | Claude Code kroz gate/MCP |
 | 7–10 | F4 | interaktivni loop + ContextLoom |
 | 10–18 | F5 | **Front v1: Signal + WorkOPS + HQ.Command/Library/Board** |
