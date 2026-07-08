@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Optional, Protocol
 
 from .model_config import (
+    SUPPORTED_PROVIDER_TYPES,
     ModelConfigBundle,
     ModelConfigError,
     ModelProfile,
@@ -365,7 +366,7 @@ class ModelRouter:
 
     def _provider_enabled(self, provider: ProviderProfile) -> bool:
         runtime = self._config.runtime
-        if provider.type not in {"mock", "ollama", "openai", "anthropic", "deepseek"}:
+        if provider.type not in SUPPORTED_PROVIDER_TYPES:
             return runtime.allow_unconfigured_providers
         if runtime.local_only and provider.is_remote:
             return False
@@ -494,6 +495,9 @@ def create_provider(name: str | None) -> ModelProvider:
     if provider == "deepseek":
         from .model_providers.deepseek_provider import DeepSeekProvider
         return DeepSeekProvider()
+    if provider == "qwen":
+        from .model_providers.qwen_provider import QwenProvider
+        return QwenProvider()
     return MockProvider(
         ModelProviderConfig(provider_name="mock", model_name="mock-deterministic"),
         failure_mode="refusal",
@@ -539,6 +543,9 @@ def create_provider_from_profile(
     if profile.type == "deepseek":
         from .model_providers.deepseek_provider import DeepSeekProvider
         return DeepSeekProvider(config)
+    if profile.type == "qwen":
+        from .model_providers.qwen_provider import QwenProvider
+        return QwenProvider(config)
     return MockProvider(config, failure_mode="refusal")
 
 
