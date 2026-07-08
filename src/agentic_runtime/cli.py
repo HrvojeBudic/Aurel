@@ -513,6 +513,7 @@ from .cli_modules.spine_commands import cmd_spine_replay, cmd_spine_run, cmd_spi
 from .cli_modules.doctor import cmd_doctor
 from .cli_modules.governance_commands import (cmd_governance_audit, cmd_governance_levels,
                                               cmd_profile_audit, cmd_profile_show)
+from .cli_modules.drill_commands import cmd_drill_model_swap
 from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
@@ -872,6 +873,22 @@ def main(argv: list[str] | None = None) -> int:
         "status", help="per-provider presence + backend + masked fingerprint")
     p_secrets_status.add_argument("--json", action="store_true", help="emit JSON")
     p_secrets_status.set_defaults(func=cmd_secrets_status)
+
+    # F2: model-swap drill — behavioral diff of a candidate provider over a corpus.
+    p_drill = sub.add_parser("drill", help="operational drills (F2)")
+    drill_sub = p_drill.add_subparsers(dest="drill_command", required=True)
+    p_drill_swap = drill_sub.add_parser(
+        "model-swap", help="replay a drill corpus against a candidate model profile")
+    p_drill_swap.add_argument("--corpus", required=True,
+                              help="path to a DrillCorpus JSONL file")
+    p_drill_swap.add_argument("--candidate", required=True,
+                              help="candidate model profile (e.g. coding, challenger)")
+    p_drill_swap.add_argument("--config-dir", default="config/live",
+                              help="model/provider config dir (default config/live)")
+    p_drill_swap.add_argument("--limit", type=int, default=None,
+                              help="bound the number of replayed entries")
+    p_drill_swap.add_argument("--json", action="store_true", help="emit JSON")
+    p_drill_swap.set_defaults(func=cmd_drill_model_swap)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
