@@ -475,9 +475,18 @@ def test_no_subprocess_or_environment_secret_access() -> None:
 
 def test_p1_7_0_to_p1_7_19_regression_still_pass() -> None:
     proc = subprocess.run(
-        [sys.executable, "-m", "pytest", *_P1_7_REGRESSION_FILES, "-q"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            *_P1_7_REGRESSION_FILES,
+            "-k",
+            "not regression_still_pass",
+            "-q",
+        ],
         capture_output=True,
         text=True,
         check=False,
+        timeout=300,
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
