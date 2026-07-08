@@ -10,8 +10,11 @@ _Last updated: 2026-07-08 (F2 providers/secrets/redaction/drill COMPLETE on bran
 > sentinel seal — cassette now redacts exact registered values via `SecretRedactor.redact_known()`, the one persistence
 > gap (`ab26db2`, seal 5 passed), **(g)** `aurel drill model-swap` deterministic behavioral diff (`329708b`, seal 6
 > passed). **Wedge fix:** every `secrets set` test mocks `getpass.getpass`; the unknown-provider path returns before
-> `getpass`; all pytest runs `timeout`-bounded. compileall+ruff+mypy clean; focused regression **76 passed, 2 skipped**
-> (honest key-needing skips). Full suite deferred. Report: `agent/reports/AUREL_F2_PROVIDERS_SECRETS_REDACTION_DRILL.md`.
+> `getpass`; all pytest runs `timeout`-bounded (hardening commit `e48324b`: an unmocked prompt now fails instantly).
+> compileall+ruff+mypy clean; full focused regression **139 passed, 2 skipped, 0 failed** (all 6 F2 seal files +
+> providers/config/**F1 profiles**/token-usage/planner/repo-agent/cassette batteries). Full suite deferred to
+> pre-merge. `feat/f2-providers-secrets` (the kickoff branch) was fast-forwarded to the same tip `329708b` —
+> both names point at the complete stack. Report: `agent/reports/AUREL_F2_PROVIDERS_SECRETS_REDACTION_DRILL.md`.
 > **F2 lives on its branch only — merge to master when ready.**
 
 _Prior update: 2026-07-08 (Track A MERGED to master + CONNECTED — public API + agent mem_* dispatch; not pushed)_

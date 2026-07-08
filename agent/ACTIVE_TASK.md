@@ -1,12 +1,16 @@
-# Active Task: F2 COMPLETE on branch `feat/f2-continue` (providers/secrets/redaction/drill); next merge F2 → master when ready
+# Active Task: F2 COMPLETE on branch `feat/f2-providers-secrets` @ 329708b (providers/secrets/redaction/drill); next merge F2 → master when ready
 
-**F2 (2026-07-08, branch `feat/f2-continue` cut from `79e95c1`, unmerged) — COMPLETE (a→g).** Finished (e)–(g) on a
-fresh branch after a prior session WEDGED on the (e) CLI seal (a `getpass`/stdin hang; fixed by mocking `getpass` in
-every `secrets set` test + timeout-bounding all pytest). (e) `aurel secrets set/status` `5eeec21`; (f) central secret
-redaction + per-provider sentinel seal (cassette exact-match redaction via `SecretRedactor.redact_known()`) `ab26db2`;
-(g) `aurel drill model-swap` deterministic behavioral diff `329708b`. Seals: (e) 4 / (f) 5 / (g) 6 passed; focused
-regression 76 passed, 2 skipped; compileall+ruff+mypy clean. **F2 is on its branch only, NOT master; not pushed.**
-Report: `agent/reports/AUREL_F2_PROVIDERS_SECRETS_REDACTION_DRILL.md`. **Next: merge `feat/f2-continue` → master when ready.**
+**F2 (2026-07-08, branch `feat/f2-providers-secrets` @ `329708b`, cut from master `b003eb6`, unmerged) — COMPLETE (a→g).**
+All seven deliverables sealed: (a) Qwen `8cb613e` / (b) Kimi `e588058` adapters; (c) live profiles + honest-fail
+failover `613fa64`; (d) SecretStore `79e95c1`; (e) `aurel secrets set/status` `5eeec21`+`658fec0` (a mid-phase session
+WEDGED on the (e) CLI seal — a `getpass`/stdin hang; fixed by mocking `getpass` in every `secrets set` test,
+timeout-bounding all pytest, and a failsafe `e48324b` that makes any unmocked prompt fail instantly); (f) central
+secret redaction + per-provider sentinel seal (cassette exact-match redaction via `SecretRedactor.redact_known()`)
+`ab26db2`; (g) `aurel drill model-swap` deterministic behavioral diff `329708b`. Seals: (a+b) 9 / (c) 8 / (d) 7 /
+(e) 4 / (f) 5 / (g) 6 passed; full focused regression **139 passed, 2 skipped, 0 failed** (all F2 seals +
+providers/config/F1/token-usage/planner/repo-agent/cassette); compileall+ruff+mypy clean. `feat/f2-continue` is a
+session-recovery alias at the same tip. **F2 is on its branch only, NOT master; not pushed.**
+Report: `agent/reports/AUREL_F2_PROVIDERS_SECRETS_REDACTION_DRILL.md`. **Next: merge F2 → master when ready.**
 
 ---
 
