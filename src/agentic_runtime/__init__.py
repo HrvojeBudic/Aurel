@@ -516,7 +516,37 @@ def build_runtime(
     state_store: StateStore | None = None,
     entity_class: Optional[AgentClass] = None,
     memory_backend: Any = None,
+    profile: Optional[str] = None,
 ) -> Kernel:
+    # F1 — enforcement profiles. Opt-in: profile=None keeps today's behavior
+    # byte-identical (embedding + the test suite are unaffected). When set, the
+    # profile supplies coherent defaults for the submit-path enforcement bundle;
+    # any argument the caller passed explicitly always wins over the profile.
+    if profile is not None:
+        from .governance.enforcement_profiles import profile_build_kwargs, profile_spec
+
+        spec = profile_spec(profile)
+        no_sandbox_hint = (
+            sandbox is None and sandbox_mode is None and sandbox_profile is None
+        )
+        p_kwargs, _p_limits = profile_build_kwargs(
+            spec, workspace_root=workspace_root or ".")
+        if approval_gate is None:
+            approval_gate = p_kwargs["approval_gate"]
+        if governance_enforcement_config is None:
+            governance_enforcement_config = p_kwargs["governance_enforcement_config"]
+        if identity_context_loader is None:
+            identity_context_loader = p_kwargs["identity_context_loader"]
+        if policy_card_registry is None:
+            policy_card_registry = p_kwargs["policy_card_registry"]
+        if workspace_root is None:
+            workspace_root = p_kwargs["workspace_root"]
+        if no_sandbox_hint:
+            if "sandbox_profile" in p_kwargs:
+                sandbox_profile = p_kwargs["sandbox_profile"]
+            if p_kwargs.get("allow_unsafe"):
+                allow_unsafe = True
+
     retain_states = _resolve_retain_states(retain_states, entity_class)
     sandbox_policy: Optional[SandboxPolicy] = None
     if sandbox is None:
@@ -536,8 +566,8 @@ def build_runtime(
                 if sandbox_mode is SandboxMode.UNSAFE_LOCAL
                 else sandbox_mode.value
             )
-            profile = get_sandbox_profile(prof_name, sandbox.root)
-            sandbox_policy = SandboxPolicy(profile)
+            sbx_profile = get_sandbox_profile(prof_name, sandbox.root)
+            sandbox_policy = SandboxPolicy(sbx_profile)
             if not isinstance(sandbox, ProfiledSandbox):
                 sandbox = ProfiledSandbox(sandbox, sandbox_policy)
         else:
@@ -554,14 +584,14 @@ def build_runtime(
         if isinstance(sandbox, ProfiledSandbox):
             sandbox_policy = sandbox.policy
         elif sandbox_profile:
-            profile = get_sandbox_profile(
+            sbx_profile = get_sandbox_profile(
                 sandbox_profile, workspace_root or sandbox.root)
-            sandbox_policy = SandboxPolicy(profile)
+            sandbox_policy = SandboxPolicy(sbx_profile)
             sandbox = ProfiledSandbox(sandbox, sandbox_policy)
         else:
-            profile = get_sandbox_profile(
+            sbx_profile = get_sandbox_profile(
                 SandboxProfileName.UNSAFE_LOCAL_DEMO.value, sandbox.root)
-            sandbox_policy = SandboxPolicy(profile)
+            sandbox_policy = SandboxPolicy(sbx_profile)
     assert sandbox is not None  # all resolution branches above assign a backend
     sandbox_backend = cast(SandboxBackend, sandbox)
     tools = ToolRuntime(sandbox_backend, sandbox_policy=sandbox_policy)
@@ -600,8 +630,8 @@ def build_runtime(
 
     router = ModelRouter()
     if model_clients:
-        for profile, clients in model_clients.items():
-            router.register(profile, clients)
+        for client_profile, clients in model_clients.items():
+            router.register(client_profile, clients)
     else:
         router.configure_default()
 

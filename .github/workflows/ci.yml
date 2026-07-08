@@ -42,11 +42,15 @@ jobs:
       - name: Host capability report (informative)
         run: python -m agentic_runtime.cli doctor --json || true
 
-      - name: Governance posture + reverse-deps audit (informative; F1 makes this blocking)
+      - name: Reverse-deps audit (informative)
+        run: python scripts/reverse_deps.py || true
+
+      - name: Enforcement profile drift gate (F1 — config/wiring must match the profile)
         run: |
-          python -m agentic_runtime.cli governance levels || true
-          python -m agentic_runtime.cli dual-kernel status || true
-          python scripts/reverse_deps.py || true
+          python -m agentic_runtime.cli profile show
+          python -m agentic_runtime.cli profile audit --profile dev --fail-on-drift
+          python -m agentic_runtime.cli profile audit --profile standard --fail-on-drift
+          python -m agentic_runtime.cli profile audit --profile hardened --fail-on-drift
 
       - name: Run tests with coverage
         run: pytest -q --cov=agentic_runtime --cov-report=term-missing --cov-fail-under=75

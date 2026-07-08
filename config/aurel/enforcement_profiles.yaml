@@ -1,0 +1,52 @@
+# Enforcement profiles (F1) — named bundles over the G0–G5 governance scale.
+#
+# A profile is a *coherent bundle*, not a single switch. build_runtime(profile=…)
+# resolves it into knobs that already exist: the governance level (which sets the
+# GovernanceEnforcementConfig mode + AutoApprover envelope), the sandbox strategy,
+# the default identity + policy submit context, and the Track-A / dual-kernel
+# feature flags. Explicit build_runtime kwargs always override profile-derived
+# defaults.
+#
+# Why the bundle matters: G2 (standard) runs ENFORCE_FAIL_CLOSED, which *requires*
+# an identity context, a policy-card registry, and a restricted-or-safe sandbox
+# backend. Flip the level without wiring those and every submit blocks. A profile
+# guarantees the whole set is present, so "standard" is actually runnable.
+#
+# default: the operator-facing default (CLI + app). The library entry point
+# build_runtime(profile=None) keeps today's permissive behavior unchanged, so
+# embedding and the test suite are unaffected; only profile-aware callers opt in.
+
+schema_version: "1.0"
+default: standard
+
+profiles:
+  # dev — today's behavior made explicit. Governance is advisory (nothing fails
+  # closed), the unsafe_local sandbox is allowed with a loud banner. For local
+  # iteration and demos only; never a security boundary.
+  dev:
+    level: G4
+    sandbox: unsafe_ok
+    durable_memory: false
+    dual_kernel: false
+    banner: "dev profile — governance is ADVISORY; sandbox is NOT a security boundary"
+
+  # standard — the real default. G2 ENFORCE_FAIL_CLOSED: identity + policy context
+  # required, restricted-or-safe sandbox required (bubblewrap → docker; honest
+  # failure if neither is available — never a silent downgrade). Auto-approves up
+  # to R2; R3+ goes to a human. Durable memory + dual-kernel on.
+  standard:
+    level: G2
+    sandbox: hard
+    durable_memory: true
+    dual_kernel: true
+    banner: ""
+
+  # hardened — tightest usable envelope. G1 fail-closed: auto-approves only R1;
+  # R2+ requires a human gate. Same hard-sandbox + context requirements as
+  # standard. For unattended work over sensitive targets.
+  hardened:
+    level: G1
+    sandbox: hard
+    durable_memory: true
+    dual_kernel: true
+    banner: ""

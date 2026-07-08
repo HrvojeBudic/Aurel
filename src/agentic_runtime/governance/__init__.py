@@ -13,6 +13,15 @@ audited), and ``audit_governance`` drift detection.
 from __future__ import annotations
 
 from .audit import audit_governance, infer_effective_level
+from .enforcement_profiles import (
+    EnforcementProfileError,
+    ProfileSpec,
+    load_profiles,
+    profile_build_kwargs,
+    profile_process_env,
+    profile_spec,
+    resolve_profile_name,
+)
 from .profile import (
     GovernanceFloorViolation,
     GovernanceLevel,
@@ -39,4 +48,11 @@ __all__ = [
     "runtime_kwargs_for",
     "audit_governance",
     "infer_effective_level",
+    "EnforcementProfileError",
+    "ProfileSpec",
+    "load_profiles",
+    "profile_spec",
+    "resolve_profile_name",
+    "profile_build_kwargs",
+    "profile_process_env",
 ]
