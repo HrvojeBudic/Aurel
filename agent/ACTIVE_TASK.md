@@ -1,4 +1,32 @@
-# Active Task: F2 COMPLETE on branch `feat/f2-providers-secrets` @ 329708b (providers/secrets/redaction/drill); next merge F2 → master when ready
+# Active Task: F3.0 DONE on branch `feat/f3-external-executors` (external ingress taint & injection defense); next F3.1 gate-check foundation
+
+**F2 MERGED to master (2026-07-09).** `feat/f2-providers-secrets` (superset of `feat/f2-continue`) merged via
+`--no-ff` commit `800d88a`; all prior branches now merged; master not pushed (no `origin/master` on remote yet).
+
+**F3 STARTED (2026-07-09, branch `feat/f3-external-executors` from post-F2 `master`).** Plan doc
+`agent/reports/AUREL_PLAN_03_F3_EXTERNAL_EXECUTORS.md` decomposes F3 (external executors = gate + MCP gateway,
+security-first) into slices F3.0→F3.5. F3 = Aurel **as MCP server / gate** (`aurel gate check` → `mcp_gateway/`,
+governed tools, lease from `spine/tool_exec.py`; external agents = AgentCard + budget + track record) — backend of
+the Front WorkOPS.Code screen.
+
+**F3.0 (2026-07-09) — DONE (additive, greenfield; no existing file touched ⇒ byte-identical OFF structural).**
+New pure-library package `src/agentic_runtime/external_ingress/` (`taint.py`, `injection_detector.py`,
+`sanitization.py`, `__init__.py`), stdlib-only, deterministic. **Doctrine sealed: instruction-eligibility is
+forbidden by PROVENANCE, not scanning.** `TaintedContent.instruction_eligible` is a *computed* property (external
+origin ⇒ always False; QUARANTINED ⇒ False); `make_tainted` takes **no label arg** (derived from `source_kind`
+alone) so TRUSTED cannot be forged onto external content; `EXTERNAL_ORIGIN_KINDS` includes UNKNOWN (unclassified
+fails closed to external). `scan_for_injection` is **advisory only** — proven both directions (dirty scan can't
+downgrade operator content; clean scan can't upgrade external content), deterministic `(start, signature)` sort,
+never raises. `SanitizationCrossing` admits external content **as data only** (`crosses_as_instruction` hard-False;
+QUARANTINED ⇒ `data_view()` None, fail closed). Flag `AUREL_EXTERNAL_INGRESS` defined-not-gating (A0-style).
+Seal `tests/test_p6f3_0_external_ingress_taint.py` **18 passed**; ruff clean; mypy clean (4 files); compileall OK.
+Report: `agent/reports/AUREL_F3_0_EXTERNAL_INGRESS_TAINT.md`. **Next: F3.1 — `aurel gate check` foundation
+(read-only governance dry-run of a proposed (tool,args) from an external executor → allow/deny + reason, no
+execute; external payload enters via `make_tainted(..., EXTERNAL_EXECUTOR)`). Seal `test_p6f3_1_gate_check.py`.**
+
+---
+
+# Prior Active Task: F2 COMPLETE on branch `feat/f2-providers-secrets` @ 329708b (providers/secrets/redaction/drill); next merge F2 → master when ready
 
 **F2 (2026-07-08, branch `feat/f2-providers-secrets` @ `329708b`, cut from master `b003eb6`, unmerged) — COMPLETE (a→g).**
 All seven deliverables sealed: (a) Qwen `8cb613e` / (b) Kimi `e588058` adapters; (c) live profiles + honest-fail
