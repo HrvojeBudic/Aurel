@@ -22,13 +22,33 @@ def _repo_root() -> Path:
 
 def cmd_status(args: argparse.Namespace) -> int:
     from . import build_runtime
+    from .governance.enforcement_profiles import profile_spec
+    from .governance.profile import profile_for
     from .status import format_status, runtime_status
+
+    try:
+        spec = profile_spec()
+        gprofile = profile_for(spec.level)
+        active_profile = {
+            "name": spec.name,
+            "level": spec.level.value,
+            "enforcement_mode": gprofile.enforcement_mode.value,
+        }
+    except Exception as exc:  # never let a config issue hide the rest of status
+        active_profile = {"name": "unavailable", "error": str(exc)}
 
     kernel = build_runtime()
     status = runtime_status(kernel)
+    status["active_profile"] = active_profile
     if args.json:
         print(json.dumps(status, indent=2))
     else:
+        ap = active_profile
+        if "error" in ap:
+            print(f"active profile: unavailable ({ap['error']})")
+        else:
+            print(f"active profile: {ap['name']}  level={ap['level']}  "
+                  f"enforcement={ap['enforcement_mode']}")
         print(format_status(status))
     return 0
 
@@ -491,7 +511,8 @@ from .cli_modules.shell_commands import (
 )
 from .cli_modules.spine_commands import cmd_spine_replay, cmd_spine_run, cmd_spine_serve
 from .cli_modules.doctor import cmd_doctor
-from .cli_modules.governance_commands import cmd_governance_audit, cmd_governance_levels
+from .cli_modules.governance_commands import (cmd_governance_audit, cmd_governance_levels,
+                                              cmd_profile_audit, cmd_profile_show)
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
     cmd_dual_kernel_show,
@@ -821,6 +842,23 @@ def main(argv: list[str] | None = None) -> int:
     p_gov_audit.add_argument("--checkpoint-every", type=int, default=5)
     p_gov_audit.set_defaults(func=cmd_governance_audit)
 
+    p_profile = sub.add_parser("profile", help="enforcement profiles (F1): dev/standard/hardened")
+    profile_sub = p_profile.add_subparsers(dest="profile_command", required=True)
+    p_profile_show = profile_sub.add_parser("show", help="list profiles; mark the active one")
+    p_profile_show.add_argument("--profile", default=None,
+                                help="profile to treat as active (else AUREL_PROFILE / default)")
+    p_profile_show.add_argument("--json", action="store_true", help="emit JSON")
+    p_profile_show.set_defaults(func=cmd_profile_show)
+    p_profile_audit = profile_sub.add_parser(
+        "audit", help="audit the active profile for shadow drift (declared vs actually wired)")
+    p_profile_audit.add_argument("--profile", default=None,
+                                 help="profile to audit (else AUREL_PROFILE / default)")
+    p_profile_audit.add_argument("--fail-on-drift", action="store_true",
+                                 help="exit non-zero on config/wiring drift (a code regression)")
+    p_profile_audit.add_argument("--strict", action="store_true",
+                                 help="also fail on host capability gaps (e.g. no hard sandbox)")
+    p_profile_audit.set_defaults(func=cmd_profile_audit)
+
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
     p_dk_status = dk_sub.add_parser("status", help="flag state + canon coverage")
@@ -914,9 +952,11 @@ def main(argv: list[str] | None = None) -> int:
                         choices=_SANDBOX_CHOICES,
                         help="sandbox profile; default auto (hard isolation) for --apply")
     p_repo.add_argument("--planner", default="deterministic",
-                        choices=["deterministic", "llm", "hybrid", "dry_run"])
+                        choices=["deterministic", "demo-heuristic", "llm", "hybrid", "dry_run"],
+                        help="'deterministic' is a demo heuristic (alias: demo-heuristic); "
+                             "it refuses objectives it has no patch strategy for")
     p_repo.add_argument("--provider", default="",
-                        choices=["", "mock", "openai", "anthropic", "ollama"])
+                        choices=["", "mock", "openai", "anthropic", "ollama", "deepseek"])
     p_repo.set_defaults(func=cmd_repo_task)
 
     p_sandbox = sub.add_parser("sandbox-status", help="show active sandbox profile diagnostics")

@@ -328,9 +328,13 @@ class DualKernelRuntime:
 #  small helpers kept module-level to stay import-light
 # --------------------------------------------------------------------------- #
 def _permissive_approver() -> Any:
-    from ..hitl import AutoApprover
-    return AutoApprover(lambda r: True, allow_r2=True, allow_r3=True,
-                        allow_r4=True, allow_r5=True)
+    # Speculative-fork approver: the fork must observe the command's full
+    # would-be outcome (the merge gate + live re-execution are the real
+    # authority), so it runs at the G5 envelope — built via the governance
+    # resolver, which keeps the constitutional floor intact.
+    from ..governance.profile import (GovernanceLevel, governed_approver,
+                                      profile_for)
+    return governed_approver(profile_for(GovernanceLevel.G5))
 
 
 def _null_decision() -> Any:

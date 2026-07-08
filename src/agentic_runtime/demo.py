@@ -76,8 +76,27 @@ def build(scripted=True):
     )
 
 
+def _print_active_profile() -> None:
+    """Show the operator-facing default profile so the demo is honest about what
+    'default' means. This scripted narrative deliberately runs as an explicit
+    dev/trusted workload (unsafe sandbox) to show the mechanics — tamper
+    detection, rollback, authority denial — which a fail-closed profile would
+    gate before they could be demonstrated."""
+    try:
+        from .governance.enforcement_profiles import profile_spec
+        from .governance.profile import profile_for
+
+        spec = profile_spec()
+        mode = profile_for(spec.level).enforcement_mode.value
+        print(f"  operator default profile: {spec.name} (level={spec.level.value}, "
+              f"enforcement={mode}) — this demo runs as an explicit dev/trusted narrative")
+    except Exception:
+        pass
+
+
 def main() -> None:
     banner("1. GOVERNED RUN — entity proposes, runtime disposes")
+    _print_active_profile()
     print(f"  sandbox: {UnsafeLocalSandbox.UNSAFE_WARNING}")
     print(f"  mode: {SandboxMode.UNSAFE_LOCAL.value}")
     kernel = build()

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess  # nosec B404 - fixed local linters
 import sys
 from pathlib import Path
@@ -29,10 +30,28 @@ MYPY_CODES = ["arg-type", "return-value", "assignment", "union-attr", "call-arg"
 RUFF_TRACKED = ["E501"]  # line-too-long: bounded, cosmetic; ratchet, don't fix en masse
 
 
+def _ruff_argv() -> list[str] | None:
+    """Prefer ``python -m ruff`` (CI installs it via pip); fall back to a ruff
+    binary on PATH (e.g. a snap/standalone install). Returns None if ruff is
+    unreachable — the caller MUST treat that as "unknown", never as zero, so a
+    missing linter can't silently ratchet the baseline down to 0."""
+    probe = subprocess.run([sys.executable, "-m", "ruff", "--version"],  # nosec B603
+                           cwd=REPO, capture_output=True, text=True)
+    if probe.returncode == 0:
+        return [sys.executable, "-m", "ruff"]
+    binary = shutil.which("ruff")
+    return [binary] if binary else None
+
+
 def _ruff_counts() -> dict[str, int]:
+    argv = _ruff_argv()
+    if argv is None:
+        raise RuntimeError(
+            "ruff is not reachable (neither 'python -m ruff' nor a 'ruff' binary "
+            "on PATH); refusing to compute E501 as 0 and corrupt the baseline")
     out = subprocess.run(  # nosec B603
-        [sys.executable, "-m", "ruff", "check", "src", "tests",
-         "--select", ",".join(RUFF_TRACKED), "--output-format", "json"],
+        argv + ["check", "src", "tests",
+                "--select", ",".join(RUFF_TRACKED), "--output-format", "json"],
         cwd=REPO, capture_output=True, text=True,
     )
     counts: dict[str, int] = {c: 0 for c in RUFF_TRACKED}

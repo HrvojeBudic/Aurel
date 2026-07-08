@@ -5,9 +5,25 @@ import json
 import os
 
 from .base import (ModelProviderConfig, ModelRequest, ModelResponse,
-                   ProviderHealth, ProviderStatus)
+                   ProviderHealth, ProviderStatus, TokenUsage)
 from .http_utils import post_json
 from .schemas import STRUCTURED_PLAN_SCHEMA
+
+
+def _usage_from(data: dict | None) -> TokenUsage | None:
+    """Extract real token usage from an Ollama /api/chat response, or None.
+
+    Ollama reports ``prompt_eval_count`` (input) and ``eval_count`` (output)
+    on the final non-streamed message.
+    """
+    if not isinstance(data, dict):
+        return None
+    prompt = int(data.get("prompt_eval_count", 0) or 0)
+    completion = int(data.get("eval_count", 0) or 0)
+    if not prompt and not completion:
+        return None
+    return TokenUsage(prompt_tokens=prompt, completion_tokens=completion,
+                      total_tokens=prompt + completion)
 
 
 class OllamaProvider:
@@ -62,6 +78,7 @@ class OllamaProvider:
                 parsed_json=parsed,
                 latency_ms=latency,
                 finish_reason=(data or {}).get("done_reason"),
+                usage=_usage_from(data),
             )
         except (TypeError, json.JSONDecodeError) as e:
             return ModelResponse(self.name, self.config.model_name,

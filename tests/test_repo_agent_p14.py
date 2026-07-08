@@ -269,7 +269,16 @@ def test_repository_loop_end_to_end_tiny_fixture(tmp_path):
 
 def test_repository_loop_failure_report_clean(tmp_path):
     _fixture_repo(tmp_path)
-    req = _request(tmp_path, objective="inspect only", test_command=["python3", "-c", "import sys; sys.exit(1)"])
+    req = _request(tmp_path, test_command=["python3", "-c", "import sys; sys.exit(1)"])
     report = RepositoryAgentLoop().run(req, apply=True)
     assert report.final_status == "failed"
     assert report.test_result.exit_code != 0
+
+
+def test_repository_loop_refuses_objective_without_patch_strategy(tmp_path):
+    _fixture_repo(tmp_path)
+    req = _request(tmp_path, objective="inspect only")
+    report = RepositoryAgentLoop().run(req, apply=True)
+    assert report.final_status == "planning_failed"
+    assert report.files_changed == []
+    assert any("no patch strategy" in e for e in report.planning_errors)

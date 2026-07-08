@@ -11,8 +11,24 @@ import json
 from dataclasses import dataclass
 from functools import lru_cache
 from importlib import resources
+from pathlib import Path
 
 _RESOURCE = "nc_merge_bindings.json"
+
+
+def _read_bindings_text() -> str:
+    """Read the packaged bindings JSON, robustly.
+
+    Prefer ``importlib.resources`` (works for wheel + editable installs), but
+    fall back to a path next to this module. The resource finder can be
+    transiently disrupted by unrelated test-suite state (meta-path / import
+    cache churn); the file always sits beside nc_bindings.py, so a __file__
+    read is a correct, disruption-proof fallback rather than a hard failure.
+    """
+    try:
+        return resources.files(__package__).joinpath(_RESOURCE).read_text("utf-8")
+    except (FileNotFoundError, ModuleNotFoundError, TypeError):
+        return (Path(__file__).resolve().parent / _RESOURCE).read_text("utf-8")
 
 
 @dataclass(frozen=True)
@@ -30,7 +46,7 @@ class NCBinding:
 @lru_cache(maxsize=1)
 def load_bindings() -> dict[str, NCBinding]:
     """Return ``{gate_id: NCBinding}`` from the packaged JSON."""
-    raw = resources.files(__package__).joinpath(_RESOURCE).read_text("utf-8")
+    raw = _read_bindings_text()
     doc = json.loads(raw)
     out: dict[str, NCBinding] = {}
     for entry in doc["bindings"]:

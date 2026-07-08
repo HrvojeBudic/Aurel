@@ -15,7 +15,7 @@ import json
 import os
 
 from .base import (ModelProviderConfig, ModelRequest, ModelResponse,
-                   ProviderHealth, ProviderStatus)
+                   ProviderHealth, ProviderStatus, TokenUsage)
 from .http_utils import post_json
 
 DEEPSEEK_DEFAULT_MODEL = "deepseek-v4-pro"
@@ -24,6 +24,20 @@ DEEPSEEK_DEFAULT_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_API_KEY_ENV = "DEEPSEEK_API_KEY"
 
 _JSON_NUDGE = "\n\nRespond with a single valid JSON object only."
+
+
+def _usage_from(data: dict | None) -> TokenUsage | None:
+    """Extract real token usage from a DeepSeek (OpenAI-compatible) response."""
+    usage = (data or {}).get("usage")
+    if not isinstance(usage, dict):
+        return None
+    prompt = int(usage.get("prompt_tokens", 0) or 0)
+    completion = int(usage.get("completion_tokens", 0) or 0)
+    total = int(usage.get("total_tokens", 0) or 0) or (prompt + completion)
+    details = usage.get("completion_tokens_details")
+    reasoning = int(details.get("reasoning_tokens", 0) or 0) if isinstance(details, dict) else 0
+    return TokenUsage(prompt_tokens=prompt, completion_tokens=completion,
+                      total_tokens=total, reasoning_tokens=reasoning)
 
 
 class DeepSeekProvider:
@@ -79,6 +93,7 @@ class DeepSeekProvider:
                 latency_ms=latency,
                 finish_reason=choice.get("finish_reason"),
                 refusal_reason=msg.get("refusal"),
+                usage=_usage_from(data),
             )
         except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
             return ModelResponse(self.name, self.config.model_name,

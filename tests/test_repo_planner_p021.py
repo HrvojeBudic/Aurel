@@ -287,3 +287,19 @@ def test_repo_plan_schema_exposes_required_fields():
     assert "objective_summary" in required
     assert "files_to_modify" in required
     assert "refusal_reason" in required
+
+
+def test_deterministic_planner_refuses_objective_without_patch_strategy(tmp_path):
+    repo = _validation_repo(tmp_path)
+    req = _request(repo, objective="fix the add function bug in calculator.py so tests pass")
+    report = RepositoryAgentLoop(kernel=_kernel(repo)).run(req, apply=False)
+    assert report.final_status == "planning_failed"
+    assert any("no patch strategy" in e for e in report.planning_errors)
+
+
+def test_demo_heuristic_alias_maps_to_deterministic(tmp_path):
+    repo = _validation_repo(tmp_path)
+    req = _request(repo, planner_mode="demo-heuristic")
+    report = RepositoryAgentLoop(kernel=_kernel(repo)).run(req, apply=False)
+    assert report.planner_mode == "deterministic"
+    assert report.final_status == "planned"
