@@ -71,6 +71,12 @@ class ModelRouter:
         secret_provider: EnvSecretProvider | None = None,
     ) -> None:
         self._profiles: dict[str, list[ModelClient]] = {}
+        # F2: distinguish an OPERATOR-CHOSEN provider (arg or env) from the
+        # implicit "mock" default, so profiles that forbid a silent mock fallback
+        # (standard/hardened set AUREL_ALLOW_MOCK_FALLBACK=0) can fail honestly.
+        self._provider_defaulted = (
+            default_provider is None and "AUREL_MODEL_PROVIDER" not in os.environ
+        )
         self.default_provider = default_provider or os.environ.get(
             "AUREL_MODEL_PROVIDER", "mock")
         self._config = config
@@ -126,6 +132,23 @@ class ModelRouter:
                 if planning is not None:
                     self._register_config_profile(planning)
                     return
+            # F2 honest-fail: in profiles that forbid the silent mock fallback
+            # (AUREL_ALLOW_MOCK_FALLBACK=0), an implicitly-defaulted "mock" with
+            # no model config is refused honestly instead of silently answering.
+            # An operator who EXPLICITLY chose mock (arg/env) still gets mock.
+            mock_fallback_forbidden = (
+                os.environ.get("AUREL_ALLOW_MOCK_FALLBACK", "1").strip() == "0"
+            )
+            if (mock_fallback_forbidden and self._provider_defaulted
+                    and self.default_provider == "mock"):
+                self.register("balanced", [_BlockedModelClient(
+                    "balanced",
+                    "no model provider configured (silent mock fallback is "
+                    "disabled in this profile; set a provider key or "
+                    "AUREL_MODEL_PROVIDER)",
+                    redactor=self._redactor,
+                )])
+                return
             self.register("balanced", [ProviderModelClient(
                 create_provider(self.default_provider))])
 
@@ -138,13 +161,23 @@ class ModelRouter:
         if not clients:
             return refusal_json(f"no model registered for profile '{profile}'"), "router"
         last_err = ""
-        for client in clients:  # ranked; failover down the list
+        last_refusal: tuple[str, str] | None = None
+        for i, client in enumerate(clients):  # ranked; failover down the list
             try:
                 raw = client.complete(system, user)
-                return _normalize_or_refuse(raw), client.name
             except Exception as e:  # provider down -> try next (commodity!)
                 last_err = self._redactor.redact(f"{type(e).__name__}: {e}")
                 continue
+            normalized = _normalize_or_refuse(raw)
+            # F2: a refusal envelope (missing key, HTTP failure, provider error)
+            # fails over to the next ranked link; the LAST link's refusal is
+            # returned honestly. Single-client profiles behave exactly as before.
+            if _is_provider_refusal(normalized) and i < len(clients) - 1:
+                last_refusal = (normalized, client.name)
+                continue
+            return normalized, client.name
+        if last_refusal is not None:
+            return last_refusal
         return refusal_json(
             self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
         ), "router"
@@ -161,17 +194,24 @@ class ModelRouter:
         if not clients:
             return refusal_json(f"no model registered for profile '{profile}'"), "router", None
         last_err = ""
-        for client in clients:  # ranked; failover down the list
+        last_refusal: tuple[str, str] | None = None
+        for i, client in enumerate(clients):  # ranked; failover down the list
             try:
                 if hasattr(client, "complete_with_usage"):
                     raw, usage = client.complete_with_usage(system, user)
                 else:
                     # clients that don't surface usage → estimate_only downstream
                     raw, usage = client.complete(system, user), None
-                return _normalize_or_refuse(raw), client.name, usage
             except Exception as e:  # provider down -> try next (commodity!)
                 last_err = self._redactor.redact(f"{type(e).__name__}: {e}")
                 continue
+            normalized = _normalize_or_refuse(raw)
+            if _is_provider_refusal(normalized) and i < len(clients) - 1:
+                last_refusal = (normalized, client.name)
+                continue
+            return normalized, client.name, usage
+        if last_refusal is not None:
+            return last_refusal[0], last_refusal[1], None
         return refusal_json(
             self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
         ), "router", None
@@ -225,21 +265,29 @@ class ModelRouter:
         if not clients:
             return refusal_json(f"no model registered for profile '{profile}'"), "router"
         last_err = ""
-        for client in clients:
+        last_refusal: tuple[str, str] | None = None
+        for i, client in enumerate(clients):
             try:
                 complete = getattr(client, "complete_structured", None)
                 if complete is not None:
-                    return complete(
+                    raw = complete(
                         system,
                         user,
                         output_schema,
                         temperature=temperature,
                         max_tokens=max_tokens,
-                    ), client.name
-                return client.complete(system, user), client.name
+                    )
+                else:
+                    raw = client.complete(system, user)
             except Exception as e:
                 last_err = self._redactor.redact(f"{type(e).__name__}: {e}")
                 continue
+            if _is_provider_refusal(raw) and i < len(clients) - 1:
+                last_refusal = (raw, client.name)
+                continue
+            return raw, client.name
+        if last_refusal is not None:
+            return last_refusal
         return refusal_json(
             self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
         ), "router"
@@ -328,15 +376,31 @@ class ModelRouter:
         return self._profiles.get(profile) or self._profiles.get("balanced") or []
 
     def _register_config_profile(self, profile: ModelProfile) -> None:
-        provider = self._config.get_provider(profile.provider)
-        block = self._check_provider_allowed(provider, profile.name)
-        if block:
+        # F2: a profile is a ranked chain (primary + failover links). Each link is
+        # policy-checked independently; usable links become ranked clients so the
+        # complete* loops fail over down the list. If NO link is usable the
+        # profile registers a single honest blocked client (never silent mock).
+        clients: list[ModelClient] = []
+        blocks: list[str] = []
+        for link in profile.chain():
+            try:
+                provider = self._config.get_provider(link.provider)
+            except ModelConfigError as e:
+                blocks.append(str(e))
+                continue
+            block = self._check_provider_allowed(provider, profile.name)
+            if block:
+                blocks.append(block)
+                continue
+            inst = create_provider_from_profile(provider, link.model, self._secrets)
+            clients.append(ProviderModelClient(inst))
+        if not clients:
+            reason = "; ".join(blocks) or f"no usable provider for '{profile.name}'"
             self.register(profile.name, [
-                _BlockedModelClient(profile.name, block, redactor=self._redactor),
+                _BlockedModelClient(profile.name, reason, redactor=self._redactor),
             ])
             return
-        inst = create_provider_from_profile(provider, profile.model, self._secrets)
-        self.register(profile.name, [ProviderModelClient(inst)])
+        self.register(profile.name, clients)
 
     def _check_profile_allowed(self, profile: str) -> str:
         if self._config is None:
@@ -347,10 +411,19 @@ class ModelRouter:
             if profile == "balanced":
                 return ""
             return ""
-        provider = self._config.providers.get(mp.provider)
-        if provider is None:
-            return ""
-        return self._check_provider_allowed(provider, profile)
+        # F2: a profile is allowed if ANY link in its chain is usable — a blocked
+        # or keyless primary must not veto a healthy failover link. Only when
+        # every link is blocked does the profile refuse (honest, combined reason).
+        blocks: list[str] = []
+        for link in mp.chain():
+            provider = self._config.providers.get(link.provider)
+            if provider is None:
+                return ""
+            block = self._check_provider_allowed(provider, profile)
+            if not block:
+                return ""
+            blocks.append(block)
+        return "; ".join(blocks)
 
     def _check_provider_allowed(self, provider: ProviderProfile, label: str) -> str:
         runtime = self._config.runtime
@@ -576,6 +649,23 @@ class _MissingSecretProvider:
             model_name=self.config.model_name,
             message=self._error,
         )
+
+
+def _is_provider_refusal(raw: str) -> bool:
+    """True iff ``raw`` is the router/provider refusal envelope (F2 failover).
+
+    Detection is deliberately narrow — exactly the ``refusal_payload`` signature
+    (refusal_reason set, empty plan, intent_summary == "refused") — so a genuine
+    model plan can never be mistaken for a provider failure."""
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return False
+    if not isinstance(data, dict):
+        return False
+    return (bool(data.get("refusal_reason"))
+            and not data.get("plan")
+            and data.get("intent_summary") == "refused")
 
 
 def _normalize_or_refuse(raw: str) -> str:

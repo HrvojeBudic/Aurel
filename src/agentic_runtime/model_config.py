@@ -47,6 +47,13 @@ class ProviderProfile:
         return not self.is_remote
 
 
+@dataclass(frozen=True)
+class FailoverTarget:
+    """One ranked fallback (provider, model) link in a profile's chain (F2)."""
+    provider: str
+    model: str
+
+
 @dataclass
 class ModelProfile:
     name: str
@@ -54,10 +61,17 @@ class ModelProfile:
     model: str
     purpose: str
     allowed_tasks: list[str] = field(default_factory=list)
+    # F2: ranked failover chain after the primary. Absent ⇒ single-provider
+    # profile, byte-identical to pre-F2 behavior.
+    failover: list[FailoverTarget] = field(default_factory=list)
 
     @property
     def residency_label(self) -> str:
         return "local" if self.provider in ("mock", "ollama") else "remote"
+
+    def chain(self) -> list[FailoverTarget]:
+        """The full ranked chain: primary first, then failovers."""
+        return [FailoverTarget(self.provider, self.model), *self.failover]
 
 
 @dataclass
@@ -175,12 +189,23 @@ class ProviderConfigLoader:
                 raise ModelConfigError(f"profile '{name}': provider is required")
             if not model:
                 raise ModelConfigError(f"profile '{name}': model is required")
+            raw_failover = spec.get("failover") or []
+            if not isinstance(raw_failover, list):
+                raise ModelConfigError(f"profile '{name}': failover must be a list")
+            failover: list[FailoverTarget] = []
+            for idx, link in enumerate(raw_failover):
+                if not isinstance(link, dict) or not link.get("provider") or not link.get("model"):
+                    raise ModelConfigError(
+                        f"profile '{name}': failover[{idx}] needs 'provider' and 'model'")
+                failover.append(FailoverTarget(
+                    provider=str(link["provider"]), model=str(link["model"])))
             profiles[name] = ModelProfile(
                 name=name,
                 provider=provider,
                 model=model,
                 purpose=purpose,
                 allowed_tasks=[str(t) for t in allowed],
+                failover=failover,
             )
 
         runtime = RuntimeModelConfig(
@@ -203,27 +228,29 @@ class ProviderConfigLoader:
 
     def _validate(self, bundle: ModelConfigBundle) -> None:
         for pname, profile in bundle.profiles.items():
-            if profile.provider not in bundle.providers:
-                if not bundle.runtime.allow_unconfigured_providers:
+            # F2: every link in the chain (primary + failover) obeys the same rules.
+            for link in profile.chain():
+                if link.provider not in bundle.providers:
+                    if not bundle.runtime.allow_unconfigured_providers:
+                        raise ModelConfigError(
+                            f"profile '{pname}' references unknown provider '{link.provider}'"
+                        )
+                    continue
+                provider = bundle.providers[link.provider]
+                if provider.type not in SUPPORTED_PROVIDER_TYPES:
                     raise ModelConfigError(
-                        f"profile '{pname}' references unknown provider '{profile.provider}'"
+                        f"provider '{link.provider}' has unsupported type '{provider.type}'"
                     )
-                continue
-            provider = bundle.providers[profile.provider]
-            if provider.type not in SUPPORTED_PROVIDER_TYPES:
-                raise ModelConfigError(
-                    f"provider '{profile.provider}' has unsupported type '{provider.type}'"
-                )
-            if provider.is_remote and not bundle.runtime.allow_remote_models:
-                raise ModelConfigError(
-                    f"profile '{pname}' uses remote provider '{profile.provider}' "
-                    "but allow_remote_models is false"
-                )
-            if bundle.runtime.local_only and provider.is_remote:
-                raise ModelConfigError(
-                    f"profile '{pname}' uses remote provider '{profile.provider}' "
-                    "but local_only is true"
-                )
+                if provider.is_remote and not bundle.runtime.allow_remote_models:
+                    raise ModelConfigError(
+                        f"profile '{pname}' uses remote provider '{link.provider}' "
+                        "but allow_remote_models is false"
+                    )
+                if bundle.runtime.local_only and provider.is_remote:
+                    raise ModelConfigError(
+                        f"profile '{pname}' uses remote provider '{link.provider}' "
+                        "but local_only is true"
+                    )
 
         for name, provider in bundle.providers.items():
             if provider.type not in SUPPORTED_PROVIDER_TYPES:

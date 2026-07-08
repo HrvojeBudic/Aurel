@@ -1,31 +1,59 @@
-# LIVE model profiles — DeepSeek v4 pro/flash plus the local mock.
+# LIVE model profiles (F2) — intent → provider mapping with ranked failover
+# chains. Operator-configurable: swapping a provider for an intent is a one-line
+# edit to its failover list. In the standard profile there is NO silent mock
+# fallback — a chain whose every link lacks a key fails honestly.
 profiles:
+  planning:
+    provider: anthropic
+    model: claude-3-5-haiku-latest
+    purpose: planning
+    allowed_tasks:
+      - planning
+      - balanced
+    failover:
+      - provider: deepseek
+        model: deepseek-v4-pro
+      - provider: qwen
+        model: qwen-max
+
+  coding:
+    provider: deepseek
+    model: deepseek-v4-pro
+    purpose: coding
+    allowed_tasks:
+      - coding
+      - patch_planning
+      - repo_planning
+    failover:
+      - provider: qwen
+        model: qwen3-coder
+
+  challenger:
+    provider: deepseek
+    model: deepseek-v4-flash
+    purpose: review
+    allowed_tasks:
+      - review
+      - challenger
+    failover:
+      - provider: kimi
+        model: kimi-k2
+
+  summarization:
+    provider: deepseek
+    model: deepseek-v4-flash
+    purpose: summarization
+    allowed_tasks:
+      - summarization
+      - fast
+      - general
+    failover:
+      - provider: ollama
+        model: llama3.1
+
   local_fast:
     provider: mock
     model: mock-deterministic
     purpose: local_fast
     allowed_tasks:
-      - fast
-      - general
       - local_fast
-
-  deepseek_pro:
-    provider: deepseek
-    model: deepseek-v4-pro
-    purpose: planning
-    allowed_tasks:
-      - planning
-      - coding
-      - balanced
-      - patch_planning
-      - repo_planning
-
-  deepseek_flash:
-    provider: deepseek
-    model: deepseek-v4-flash
-    purpose: summarization
-    allowed_tasks:
-      - fast
-      - general
-      - summarization
-      - review
