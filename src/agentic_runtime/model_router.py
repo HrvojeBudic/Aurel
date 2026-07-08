@@ -498,6 +498,9 @@ def create_provider(name: str | None) -> ModelProvider:
     if provider == "qwen":
         from .model_providers.qwen_provider import QwenProvider
         return QwenProvider()
+    if provider == "kimi":
+        from .model_providers.kimi_provider import KimiProvider
+        return KimiProvider()
     return MockProvider(
         ModelProviderConfig(provider_name="mock", model_name="mock-deterministic"),
         failure_mode="refusal",
@@ -546,6 +549,9 @@ def create_provider_from_profile(
     if profile.type == "qwen":
         from .model_providers.qwen_provider import QwenProvider
         return QwenProvider(config)
+    if profile.type == "kimi":
+        from .model_providers.kimi_provider import KimiProvider
+        return KimiProvider(config)
     return MockProvider(config, failure_mode="refusal")
 
 

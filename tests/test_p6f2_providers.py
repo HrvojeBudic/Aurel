@@ -110,3 +110,50 @@ def test_qwen_registered_in_router_and_config():
     assert inst.name in ("qwen",)
     assert inst.healthcheck().status in (ProviderStatus.UNCONFIGURED,
                                          ProviderStatus.AVAILABLE)
+
+
+# ---------------------------------------------------------------- Kimi ----- #
+
+def test_kimi_no_key_is_honest_error(monkeypatch):
+    from agentic_runtime.model_providers.kimi_provider import KimiProvider
+    monkeypatch.delenv("MOONSHOT_API_KEY", raising=False)
+    resp = KimiProvider().generate_structured_plan(_req())
+    assert resp.error == "MOONSHOT_API_KEY not configured"
+    assert resp.raw_text == ""                        # never fabricates
+
+
+def test_kimi_round_trip_and_usage(monkeypatch):
+    import agentic_runtime.model_providers.kimi_provider as kp
+    monkeypatch.setenv("MOONSHOT_API_KEY", "sk-test-kimi")
+    captured: dict = {}
+    _stub_post_json(kp, monkeypatch, captured)
+
+    resp = kp.KimiProvider().generate_structured_plan(_req())
+
+    assert not resp.error
+    assert resp.parsed_json["intent_summary"] == "test"
+    assert captured["url"] == "https://api.moonshot.ai/v1/chat/completions"
+    assert captured["payload"]["response_format"] == {"type": "json_object"}
+    assert captured["payload"]["model"] == "kimi-k2"
+    assert captured["headers"]["Authorization"] == "Bearer sk-test-kimi"
+    assert resp.usage is not None
+    assert (resp.usage.prompt_tokens, resp.usage.completion_tokens,
+            resp.usage.total_tokens) == (11, 7, 18)
+
+
+def test_kimi_healthcheck_and_env_overrides(monkeypatch):
+    from agentic_runtime.model_providers.kimi_provider import KimiProvider
+    monkeypatch.delenv("MOONSHOT_API_KEY", raising=False)
+    assert KimiProvider().healthcheck().status is ProviderStatus.UNCONFIGURED
+    monkeypatch.setenv("MOONSHOT_API_KEY", "sk-x")
+    monkeypatch.setenv("AUREL_KIMI_MODEL", "moonshot-v1-128k")
+    hc = KimiProvider().healthcheck()
+    assert hc.status is ProviderStatus.AVAILABLE
+    assert hc.model_name == "moonshot-v1-128k"
+
+
+def test_kimi_registered_in_router_and_config():
+    from agentic_runtime.model_router import create_provider
+    assert "kimi" in SUPPORTED_PROVIDER_TYPES
+    assert "kimi" in REMOTE_PROVIDER_TYPES
+    assert create_provider("kimi").name == "kimi"
