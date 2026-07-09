@@ -1,0 +1,23 @@
+# F4B — external MCP servers Aurel may call OUT to (direction B).
+#
+# Every server is DISABLED by default: nothing connects until the operator flips
+# `enabled: true` (and sets AUREL_MCP_CLIENT). Secrets never go here — pass an env
+# var name via `env_passthrough` (stdio) instead of a literal value.
+#
+# transport: stdio  -> command + args (+ optional env_passthrough)
+# transport: http   -> url (http/https; no redirects; SSRF hardening is opt-in)
+
+servers:
+  - name: filesystem
+    transport: stdio
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    env_passthrough: []
+    enabled: false
+    allowed_tools: ["read_file", "list_directory"]
+
+  - name: example-http
+    transport: http
+    url: "http://127.0.0.1:9000/mcp"
+    enabled: false
+    allowed_tools: []

@@ -1,4 +1,132 @@
-# Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); next merge F3+F4 → master OR F5 (Front) / direction-B MCP client bridge
+# Active Task: F4B PHASE COMPLETE on branch `feat/f4b-mcp-client-bridge` (B0→B6 sealed); next merge F4B → master
+
+**B6 (2026-07-09) — DONE (additive; only `cli.py` touched, +18 subparser+import).** Closes F4B. `loom_sink.py`
+(`sink_tool_result` → DATA-fenced `ContextItem(MCP_TOOL)`, the ONE path external output enters context).
+`fake_server.py` (in-process deterministic fake MCP server transport with a hostile injection in description+output).
+`f4b_seal.py` (derived F4B exit seal B0→B6 + UNAVAILABLE: live_server_connection, sse_streaming, security_hardening,
+mcp_plan_steps_d2, a2a; overclaim guards hard-False). `cli_modules/mcp_client_commands.py` + `cli.py`:
+`aurel mcp-client list-servers/seal/demo`. Seal `tests/test_p6f4b_6_f4b_exit_seal.py` **5 passed** (derived
+SEALED/BLOCKED; honesty; **end-to-end demo — hostile injection in tool description AND output stays
+instruction-ineligible + DATA-fenced**; real-repo SEALED). `aurel mcp-client seal` → SEALED. Full F4B suite (B0-B6)
+**60 passed**; ruff+mypy(11)+compileall clean. Report: `agent/reports/AUREL_F4B_6_EXIT_SEAL.md`.
+
+**F4B PHASE COMPLETE.** Aurel can call OUT to an external MCP server and use the result under governance:
+B0 JSON-RPC client → B1 transports (stdio+HTTP, real, capped, scrubbed env, no-redirect) → B2 content (tainted text,
+bytes-free binary) → B3 protocol client (lifecycle, capabilities, fail-closed) → B4 bridge (HIGH floor, contract +
+submit, leak-safe, pin) → B5 registry/config (disabled by default) → B6 ContextLoom sink + CLI + exit seal.
+**Security inherited, not rebuilt:** output TaintedContent (never instruction), bridged tool → ToolContract →
+`runtime.submit` (HIGH floor → approval), outbound F2-redacted. **Deferred (UNAVAILABLE):** live-server connection
+(operator opt-in via mcp_servers.yaml + AUREL_MCP_CLIENT), SSE streaming, parked hardening (SSRF/egress, pin
+enforcement, per-server grant, unicode de-smuggling, fence-nonce, fuzz drill), D2, A2A. Branch
+`feat/f4b-mcp-client-bridge` (7 commits from master) — not merged/pushed. **Next: merge F4B → master (`--no-ff`);
+then operator can enable a real server, or F5 (Front) / parked hardening.**
+
+---
+
+# Prior Active Task: F4B/B5 DONE on branch `feat/f4b-mcp-client-bridge` (registry + config + manager); next B6 sink + CLI + exit seal
+
+**B5 (2026-07-09) — DONE (additive).** `config/live/mcp_servers.yaml` (external servers Aurel may call; **all
+disabled by default**; secrets via `env_passthrough`, never literal). `mcp_client/registry.py`: `McpServerSpec`
+(stdio: command/args/env_passthrough; http: url) + `parse_server_spec` (fail-closed: transport∈{stdio,http},
+stdio→command, http→url). `McpServerRegistry.load` (reuses stdlib `yaml_minimal` + F2 `assert_no_raw_secrets_in_yaml`,
+rejects dups). `McpConnectionManager`: `connect` (enabled-only; **injectable transport factory**; builds+initializes
+`McpClient`; idempotent), `disconnect`, `active`, `health`; fail-closed on unknown/disabled. Seal
+`tests/test_p6f4b_5_registry.py` **6 passed** (real config all-disabled; tmp toggle; spec validation fail-closed;
+missing config; manager connect/refuse-disabled/refuse-unknown/idempotent/disconnect). ruff+mypy(7)+compileall clean.
+Report: `agent/reports/AUREL_F4B_5_REGISTRY.md`. **Next: B6 — sink + CLI + F4B exit seal (`loom_sink.py` [tool
+result → DATA-fenced ContextItem, the one path external content enters context]; `f4b_seal.py` [derived exit seal
+B0-B6 + UNAVAILABLE registry]; `cli_modules/mcp_client_commands.py` [`aurel mcp-client list-servers/seal/demo`]).
+Seal `test_p6f4b_6_f4b_exit_seal.py`. This closes F4B.**
+
+---
+
+# Prior Active Task: F4B/B4 DONE on branch `feat/f4b-mcp-client-bridge` (bridge to governance); next B5 registry + config
+
+**B4 (2026-07-09) — DONE (additive).** `mcp_client/bridge.py` — discovered MCP tool → governable Aurel tool only
+by explicit bridging (allowlist). `json_schema_to_contract`: inputSchema → ToolContract (ArgSpec types+required)
+with **unconditional HIGH floor** (EXTERNAL_API_CALL+NETWORK_REQUEST; server can't lower — escalation-only).
+`McpBridge(client, runtime, sink=)`.`bridge_tool`: registers contract + namespaced ToolSpec (`mcp__<server>__<tool>`)
+whose handler calls client.call_tool → **leak-safe evidence** (to_dict, never raw external text; raw → sink only) +
+syncs policy.registered_tools. Descriptor pinned (`verify_pin`, rug-pull T7). Seal `tests/test_p6f4b_4_bridge.py`
+**8 passed**: schema→contract+HIGH-floor-unconditional; register; leak-safe handler; **end-to-end through
+`runtime.submit`** (auto-approver → executes; default deny-all approver auto-denies HIGH external call = defence in
+depth; low card → REQUIRE_APPROVAL; un-bridged doesn't exist; pin detects rug-pull). ruff+mypy(6)+compileall clean.
+Report: `agent/reports/AUREL_F4B_4_BRIDGE.md`. **Next: B5 — registry + config + connection manager
+(`mcp_client/registry.py` + `config/live/mcp_servers.yaml`: declare stdio/http servers, lifecycle connect/health/
+disconnect, disabled-server gating). Seal `test_p6f4b_5_registry.py`.**
+
+---
+
+# Prior Active Task: F4B/B3 DONE on branch `feat/f4b-mcp-client-bridge` (protocol client); next B4 bridge to governance
+
+**B3 (2026-07-09) — DONE (additive).** `mcp_client/client.py` — `McpClient`, real MCP lifecycle over injectable
+transport. `initialize` (protocolVersion 2025-06-18 + capabilities + clientInfo → reply → notifications/initialized;
+fail-closed on no protocolVersion); `list_tools` (pagination cursor→nextCursor; **descriptions tainted MCP_TOOL** +
+`descriptor_hash` for B4 pinning); `call_tool` (outbound args **scrubbed of registered secrets** via redact_known
+exact-match, result parsed by B2); `list_resources`/`read_resource`/`list_prompts` **capability-gated**; fail-closed
+everywhere (JSON-RPC error/off-spec/transport → `McpCallError`; notifications+stray responses skipped in correlation).
+Seal `tests/test_p6f4b_3_client.py` **7 passed** (handshake+initialized; paginated tainted tools+pinnable hash;
+result parsed; outbound secret scrubbed/legit-arg untouched; capability gate; call-before-init; JSON-RPC error).
+ruff+mypy(5)+compileall clean. Report: `agent/reports/AUREL_F4B_3_CLIENT.md`. **Next: B4 — bridge
+(`mcp_client/bridge.py`: `json_schema_to_contract` inputSchema→ToolContract with HIGH external floor, allowlist
+[empty default], namespaced `ToolSpec` `mcp__<server>__<tool>` executor→call_tool→tainted evidence, through
+`runtime.submit`). Seal `test_p6f4b_4_bridge.py`.**
+
+---
+
+# Prior Active Task: F4B/B2 DONE on branch `feat/f4b-mcp-client-bridge` (content model); next B3 protocol client
+
+**B2 (2026-07-09) — DONE (additive).** `mcp_client/content.py` — MCP tools/call content blocks → typed provenance-
+labelled values. `ContentBlock`/`ContentKind` (text/image/audio/resource/resource_link/unknown). **Text** →
+`TaintedContent(MCP_TOOL)` instruction-ineligible (only thing reaching context); **binary** (image/audio/blob) →
+bytes-free descriptor (mime + encoded_len + `data_ref` hash; raw base64 dropped at boundary, never rendered);
+**unknown/hostile** block fails open to UNKNOWN (never raises). `ToolCallResult` (content+isError+structured),
+`text()` context-safe render, `parse_tool_result` fail-closes malformed → isError. Seal
+`tests/test_p6f4b_2_content.py` **9 passed** (raw base64 never in render/to_dict; unknown fail-open; deterministic).
+ruff+mypy(4)+compileall clean. Report: `agent/reports/AUREL_F4B_2_CONTENT.md`. **Next: B3 — protocol client
+(`mcp_client/client.py`: `McpClient` initialize handshake [version+capabilities negotiation, notifications/initialized],
+list_tools [pagination], call_tool → ToolCallResult, capability-gated resources/prompts, outbound arg redaction).
+Seal `test_p6f4b_3_client.py` (in-process fake transport).**
+
+---
+
+# Prior Active Task: F4B/B1 DONE on branch `feat/f4b-mcp-client-bridge` (transports stdio+HTTP); next B2 content model
+
+**B1 (2026-07-09) — DONE (additive).** `mcp_client/transport.py` — `Transport` protocol (send/receive/close,
+injectable) + two real fail-closed hard-capped transports. `StdioTransport`: subprocess (`argv` list, never shell)
+with **default-deny scrubbed env** (`scrub_env` — secrets never reach child unless named), newline-JSON stdout via
+bounded reader thread, stderr drained (not protocol), byte cap + timeout. `HttpTransport`: stdlib urllib POST,
+`Mcp-Session-Id` persisted, HTTP 202 honored, **redirects refused** (`_NoRedirect`), byte-capped, http(s)-only.
+Seal `tests/test_p6f4b_1_transport.py` **11 passed** against **real** subprocess + real localhost `http.server`
+(deterministic, no external net): round-trip, env scrub/passthrough, oversize+timeout fail-closed, session-id,
+202, redirect refusal, non-http reject. ruff+mypy(3)+compileall clean. Report: `agent/reports/AUREL_F4B_1_TRANSPORT.md`.
+**Next: B2 — content model (`mcp_client/content.py`: MCP content blocks text/image/audio/resource → typed tainted;
+`ToolCallResult` [content+isError+structured]; `result_to_text` for sink). Seal `test_p6f4b_2_content.py`.**
+
+---
+
+# Prior Active Task: F4B/B0 DONE on branch `feat/f4b-mcp-client-bridge` (JSON-RPC client codec); next B1 transports
+
+**F3+F4 MERGED to master (2026-07-09).** `--no-ff` merges `619fbd7` (F3) + `df2d4a4` (F4); all branches merged;
+not pushed (no origin/master). Parallel-process WIP on `AUREL_PLAN_03_*` preserved via targeted stash/pop.
+
+**F4B STARTED (2026-07-09, branch `feat/f4b-mcp-client-bridge` from master).** Direction B — Aurel as an MCP
+*client* (calls OUT to external MCP servers; output tainted DATA → ContextLoom sink). Plan v4 (real, protocol-
+compliant): `agent/reports/AUREL_PLAN_05_F4B_MCP_CLIENT_BRIDGE.md`. Security inherited, not rebuilt (taint F3.0 +
+ToolContract/submit gate + F2 redaction + HIGH floor). Slices B0→B6. Fortress-hardening parked in §6 (opt-in).
+
+**B0 (2026-07-09) — DONE (additive, greenfield).** New package `src/agentic_runtime/mcp_client/` (flag
+`AUREL_MCP_CLIENT` default OFF). `jsonrpc_client.py`: `JsonRpcClientCodec` — build_request (monotonic ids, no RNG),
+build_notification (no id), correlate (`Response` with exactly one of result/error), expect (id correlation).
+Fail-closed on off-spec envelope (`JsonRpcClientError`); reuses gateway `JSONRPC_VERSION`/`JsonRpcError` (no drift).
+Seal `tests/test_p6f4b_0_jsonrpc_client.py` **14 passed**; ruff+mypy(2)+compileall clean. Report:
+`agent/reports/AUREL_F4B_0_JSONRPC_CLIENT.md`. **Next: B1 — transports (`Transport` protocol + StdioTransport
+[subprocess, newline-JSON, caps] + HttpTransport [urllib POST, Mcp-Session-Id, caps] + injectable in-process fake).
+Seal `test_p6f4b_1_transport.py`.**
+
+---
+
+# Prior Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); merged to master
 
 **F4.4 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the cognition phase.
 New `f4_seal.py` (**derived** F4 exit seal — SEALED only when every slice F4.0→F4.4 has an importable module AND a
