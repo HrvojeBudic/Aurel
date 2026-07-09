@@ -1,4 +1,21 @@
-# Active Task: F4B/B3 DONE on branch `feat/f4b-mcp-client-bridge` (protocol client); next B4 bridge to governance
+# Active Task: F4B/B4 DONE on branch `feat/f4b-mcp-client-bridge` (bridge to governance); next B5 registry + config
+
+**B4 (2026-07-09) — DONE (additive).** `mcp_client/bridge.py` — discovered MCP tool → governable Aurel tool only
+by explicit bridging (allowlist). `json_schema_to_contract`: inputSchema → ToolContract (ArgSpec types+required)
+with **unconditional HIGH floor** (EXTERNAL_API_CALL+NETWORK_REQUEST; server can't lower — escalation-only).
+`McpBridge(client, runtime, sink=)`.`bridge_tool`: registers contract + namespaced ToolSpec (`mcp__<server>__<tool>`)
+whose handler calls client.call_tool → **leak-safe evidence** (to_dict, never raw external text; raw → sink only) +
+syncs policy.registered_tools. Descriptor pinned (`verify_pin`, rug-pull T7). Seal `tests/test_p6f4b_4_bridge.py`
+**8 passed**: schema→contract+HIGH-floor-unconditional; register; leak-safe handler; **end-to-end through
+`runtime.submit`** (auto-approver → executes; default deny-all approver auto-denies HIGH external call = defence in
+depth; low card → REQUIRE_APPROVAL; un-bridged doesn't exist; pin detects rug-pull). ruff+mypy(6)+compileall clean.
+Report: `agent/reports/AUREL_F4B_4_BRIDGE.md`. **Next: B5 — registry + config + connection manager
+(`mcp_client/registry.py` + `config/live/mcp_servers.yaml`: declare stdio/http servers, lifecycle connect/health/
+disconnect, disabled-server gating). Seal `test_p6f4b_5_registry.py`.**
+
+---
+
+# Prior Active Task: F4B/B3 DONE on branch `feat/f4b-mcp-client-bridge` (protocol client); next B4 bridge to governance
 
 **B3 (2026-07-09) — DONE (additive).** `mcp_client/client.py` — `McpClient`, real MCP lifecycle over injectable
 transport. `initialize` (protocolVersion 2025-06-18 + capabilities + clientInfo → reply → notifications/initialized;

@@ -23,6 +23,12 @@ from .client import (
     McpClient,
     McpToolDescriptor,
 )
+from .bridge import (
+    McpBridge,
+    bridged_name,
+    json_schema_to_argspecs,
+    json_schema_to_contract,
+)
 from .content import (
     ContentBlock,
     ContentKind,
@@ -73,5 +79,9 @@ __all__ = [
     "McpCallError",
     "McpToolDescriptor",
     "InitializeResult",
+    "McpBridge",
+    "bridged_name",
+    "json_schema_to_contract",
+    "json_schema_to_argspecs",
     "flag_enabled",
 ]
