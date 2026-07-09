@@ -1,4 +1,21 @@
-# Active Task: F5.0a→F5.3 DONE + RE-APPLIED after filesystem loss (branch `feat/f5-front-v1`); next finish F5.2 seal
+# Active Task: F5.2 DONE on branch `feat/f5-front-v1` (approval inbox + two-phase act); next F5.7 WorkOPS chat
+
+**F5.2 (2026-07-09) — DONE.** Persistent approval inbox + two-phase `act` submit. `approval_gates.py`
+(`DeferredApprovalGate` Phase A → DEFERRED → BLOCKED+traced, nothing executes; `PreDecidedApprovalGate` Phase B →
+replays operator APPROVED/DENIED). `approval_inbox.py` `ApprovalInbox`: swaps runtime approval gate around each
+submit + **restores it** (default untouched); `submit_act` (pending/executed/blocked), `decide` (re-submit exact
+cmd). Honest split: **trace=immutable audit** (`audit_from_trace`), **inbox=in-process pending** (holds cmd for
+re-submit; receipt doesn't carry args). `proposal_dispatcher.py`: `act`→inbox.submit_act, new `decide` kind→
+inbox.decide. One door, 3 governed semantics (converse/act/decide). Seal `tests/test_p6f5_2_proposal_approval.py`
+**5 passed** (defer→pending+DEFERRED-traced+nothing-executed+default-gate-restored; approve→**executes** via
+governed MCP-bridged tool + audit "approved"; deny→not-executed; unknown fail-closed; dispatcher act/decide route).
+ruff+mypy(9)+compileall clean; F5.0a-3 regression green. Report: `agent/reports/AUREL_F5_2_APPROVAL_INBOX.md`.
+**Next: F5.7 — WorkOPS chat on same ConversationEngine (workops:* room) = ▶ milestone 2. Then F5.1/4/5 projections,
+F5.8 React UI, F5.9 exit seal. ⚠️ still no off-machine backup — push to remote when SSH/token set up.**
+
+---
+
+# Prior Active Task: F5.0a→F5.3 DONE + RE-APPLIED after filesystem loss (branch `feat/f5-front-v1`); next finish F5.2 seal
 
 **INCIDENT (2026-07-09): working dir `/home/hrvojeb/Desktop/Aurel` self-wiped mid-session** (only `web/shell/`
 left; `.git`+`.venv` gone). NOT operator-intended. Recovered by extracting `Desktop/Auv1.zip` (full repo snapshot

@@ -22,6 +22,7 @@ from .conversation import (
 from .proposal_dispatcher import (
     KIND_ACT,
     KIND_CONVERSE,
+    KIND_DECIDE,
     ProposalDispatcher,
     ProposalRejected,
 )
@@ -51,6 +52,7 @@ __all__ = [
     "ProposalRejected",
     "KIND_CONVERSE",
     "KIND_ACT",
+    "KIND_DECIDE",
     "FrontServer",
     "FrontApp",
     "FrontServerDisabled",
