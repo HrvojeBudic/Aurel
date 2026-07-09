@@ -1,16 +1,22 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { WebShellReadModelDTO } from "./types";
 import { SurfaceSelector } from "./components/GlobalTopbar";
 import { SurfacePanel } from "./components/SurfacePanel";
 import { ClientStatusPanel } from "./components/ClientStatusPanel";
 import { EvidenceRefsPanel } from "./components/EvidenceRefsPanel";
 import { NoOverclaimPanel } from "./components/NoOverclaimPanel";
+import { FrontSurface } from "./components/front/FrontSurface";
+import { frontClient, type FrontMode } from "./frontClient";
 
 interface Props {
   model: WebShellReadModelDTO;
 }
 
 export function AppShell({ model }: Props) {
+  const [frontMode, setFrontMode] = useState<FrontMode>("fixture");
+  useEffect(() => {
+    void frontClient.connect().then(setFrontMode);
+  }, []);
   const defaultSurface =
     model.surfaces.find((s) => s.in_surface_selector)?.surface_id ??
     model.surfaces[0]?.surface_id ??
@@ -35,6 +41,12 @@ export function AppShell({ model }: Props) {
         <p className="pack-id">
           {model.pack_id} — contract-bound read model (not Shell LIVE)
         </p>
+        <p className={`front-mode front-mode-${frontMode}`}>
+          Front server:{" "}
+          {frontMode === "live"
+            ? "LIVE (one door)"
+            : "read-only fixture mode — proposals disabled"}
+        </p>
       </header>
 
       <SurfaceSelector
@@ -50,6 +62,11 @@ export function AppShell({ model }: Props) {
 
         <div className="shell-center">
           <SurfacePanel surface={activeSurface} />
+          <FrontSurface
+            surfaceId={activeSurface.surface_id}
+            client={frontClient}
+            mode={frontMode}
+          />
           <ClientStatusPanel status={model.client_status} />
         </div>
 

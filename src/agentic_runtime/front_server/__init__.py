@@ -18,6 +18,7 @@ from .conversation import (
     HistoryEntry,
     ReplyMode,
     RoomHistoryProjection,
+    rooms_from_trace,
 )
 from .proposal_dispatcher import (
     KIND_ACT,
@@ -26,6 +27,10 @@ from .proposal_dispatcher import (
     ProposalDispatcher,
     ProposalRejected,
 )
+from .board import BoardDecision, BoardJournal, BoardJournalEntry
+from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
+from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
+from .read_models import LiveReadModels, ReadModelError
 from .routes import ROUTES, Route, match_route, mutation_routes
 from .server import (
     FrontApp,
@@ -35,6 +40,15 @@ from .server import (
     flag_enabled,
 )
 from .signal import SignalMessage
+from .workops import (
+    CLAIMS_WORKOPS_AI_EDITOR,
+    CLAIMS_WORKOPS_CODE_LIVE,
+    CLAIMS_WORKOPS_TERMINAL_LIVE,
+    WorkOpsChatReadModel,
+    WorkOpsMessage,
+    WorkOpsTask,
+    workops_room,
+)
 from .websocket import (
     WebSocketConnection,
     WebSocketError,
@@ -50,6 +64,15 @@ __all__ = [
     "mutation_routes",
     "ProposalDispatcher",
     "ProposalRejected",
+    "LiveReadModels",
+    "ReadModelError",
+    "LibraryReadModel",
+    "CLAIMS_LIBRARY_TIME_TRAVEL",
+    "HQCommandReadModel",
+    "CLAIMS_WATCHTOWER_LIVE",
+    "BoardDecision",
+    "BoardJournal",
+    "BoardJournalEntry",
     "KIND_CONVERSE",
     "KIND_ACT",
     "KIND_DECIDE",
@@ -69,7 +92,15 @@ __all__ = [
     "ReplyMode",
     "RoomHistoryProjection",
     "HistoryEntry",
+    "rooms_from_trace",
     "SignalMessage",
+    "WorkOpsMessage",
+    "WorkOpsChatReadModel",
+    "WorkOpsTask",
+    "workops_room",
+    "CLAIMS_WORKOPS_CODE_LIVE",
+    "CLAIMS_WORKOPS_TERMINAL_LIVE",
+    "CLAIMS_WORKOPS_AI_EDITOR",
     "ApprovalInbox",
     "PendingApproval",
     "DeferredApprovalGate",

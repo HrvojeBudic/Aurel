@@ -181,3 +181,41 @@ body {
   margin: 0.35rem 0;
   font-size: 0.875rem;
 }
+
+/* F5.8 — Front v1 live surfaces */
+.front-mode {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+.front-mode-live { background: #0f5132; color: #d1e7dd; }
+.front-mode-fixture { background: #664d03; color: #fff3cd; }
+
+.front-panel {
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+  background: #fff;
+}
+.front-panel h3 { margin: 0 0 0.5rem; }
+.front-panel .room-id, .front-panel .seam { font-size: 0.8rem; color: #57606a; }
+
+.chat-log { list-style: none; padding: 0; margin: 0.5rem 0; max-height: 320px; overflow-y: auto; }
+.chat-log .msg { display: flex; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #f0f0f0; }
+.chat-log .msg-role { font-weight: 600; min-width: 5.5rem; color: #57606a; }
+.chat-log .msg-operator .msg-role { color: #0969da; }
+.chat-log .ctx-ref { font-size: 0.72rem; color: #8250df; margin-left: auto; }
+.chat-log .empty { color: #8c959f; }
+
+.composer { display: flex; gap: 0.5rem; }
+.composer input { flex: 1; padding: 0.4rem 0.6rem; border: 1px solid #d0d7de; border-radius: 6px; }
+.composer button, .hq-panel button { padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #d0d7de; cursor: pointer; }
+.composer button:disabled, .hq-panel button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.workops { display: flex; gap: 1rem; align-items: flex-start; }
+.workops .task-list { min-width: 10rem; }
+.workops .task-list ul { list-style: none; padding: 0; }
+.workops .chat-panel { flex: 1; }

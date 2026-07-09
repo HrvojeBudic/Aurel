@@ -162,6 +162,31 @@ class RoomHistoryProjection:
         return out
 
 
+def rooms_from_trace(trace: Any, prefix: str = "") -> list[str]:
+    """Distinct conversation room_ids in the trace, sorted; optionally filtered by
+    `prefix` (e.g. ``"workops:"``). Pure projection — the foundation for enumerating
+    surfaces/tasks without any own store (reused by F5.7 WorkOPS and the N6 handoff)."""
+    rooms: set[str] = set()
+    for ev in trace.replay():
+        if ev.get("kind") != "praxis_event":
+            continue
+        if ev.get("event_type") not in (
+            CONVERSATION_MESSAGE_EVENT, CONVERSATION_REPLY_EVENT
+        ):
+            continue
+        summary = str(ev.get("summary", ""))
+        if not summary.startswith(_MARK + "|"):
+            continue
+        parts = summary.split("|", 5)
+        if len(parts) < 6:
+            continue
+        room = parts[1]
+        if prefix and not room.startswith(prefix):
+            continue
+        rooms.add(room)
+    return sorted(rooms)
+
+
 class ConversationEngine:
     """Governed LLM turn: assemble context → model → traced reply."""
 

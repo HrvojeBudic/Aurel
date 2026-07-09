@@ -17,6 +17,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Optional
 
 from .proposal_dispatcher import ProposalDispatcher, ProposalRejected
+from .read_models import LiveReadModels
 from .routes import match_route
 from .websocket import WebSocketConnection, compute_accept_key
 
@@ -39,15 +40,14 @@ class FrontApp:
     def __init__(self, runtime: Any, *, conversation_engine: Any = None) -> None:
         self._dispatcher = ProposalDispatcher(
             runtime, conversation_engine=conversation_engine)
+        self._reads = LiveReadModels(runtime)
 
     def handle_health(self, method: str, path: str, body: Any) -> tuple[int, dict]:
         return 200, {"status": "ok", "server": "aurel_front.v1"}
 
     def handle_read(self, method: str, path: str, body: Any) -> tuple[int, dict]:
-        model = path.split("?", 1)[0][len("/read/"):]
-        # Live projections land in F5.1; F5.0a returns an honest placeholder.
-        return 200, {"model": model, "live": False,
-                     "note": "live projections wired in F5.1"}
+        # Pure live projections over the trace (F5.1) — no write, no subsystem call.
+        return self._reads.read(path)
 
     def handle_proposals(self, method: str, path: str, body: Any) -> tuple[int, dict]:
         try:

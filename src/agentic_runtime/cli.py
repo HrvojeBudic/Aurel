@@ -518,7 +518,7 @@ from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
-from .cli_modules.f5_commands import cmd_front_serve
+from .cli_modules.f5_commands import cmd_front_demo, cmd_front_seal, cmd_front_serve
 from .cli_modules.mcp_client_commands import (cmd_mcp_client_demo,
                                               cmd_mcp_client_list_servers,
                                               cmd_mcp_client_seal)
@@ -964,6 +964,12 @@ def main(argv: list[str] | None = None) -> int:
     p_front_serve.add_argument("--host", default="127.0.0.1")
     p_front_serve.add_argument("--port", type=int, default=8765)
     p_front_serve.set_defaults(func=cmd_front_serve)
+    p_front_seal = front_sub.add_parser("seal", help="derived F5 exit seal (read-only)")
+    p_front_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_front_seal.set_defaults(func=cmd_front_seal)
+    p_front_demo = front_sub.add_parser(
+        "demo", help="project the north-star run from the trace (read-only)")
+    p_front_demo.set_defaults(func=cmd_front_demo)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

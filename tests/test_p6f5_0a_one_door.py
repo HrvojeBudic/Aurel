@@ -13,6 +13,7 @@ import urllib.request
 
 import pytest
 
+from agentic_runtime import build_runtime
 from agentic_runtime.front_server import (
     ROUTES,
     FrontServerDisabled,
@@ -65,7 +66,7 @@ def _post(url, payload):
 @pytest.fixture
 def server(monkeypatch):
     monkeypatch.setenv("AUREL_FRONT_SERVER", "1")
-    srv = create_front_server(object(), port=0)
+    srv = create_front_server(build_runtime(), port=0)
     srv.serve_forever_background()
     try:
         yield f"http://{srv.host}:{srv.port}"
@@ -78,10 +79,15 @@ def test_health(server):
     assert status == 200 and body["status"] == "ok"
 
 
-def test_read_placeholder(server):
-    status, body = _get(server + "/read/surfaces")
+def test_read_is_live_projection(server):
+    # F5.1: reads are live trace projections; an empty trace projects an empty room set.
+    status, body = _get(server + "/read/rooms")
     assert status == 200
-    assert body["model"] == "surfaces" and body["live"] is False
+    assert body["model"] == "rooms" and body["live"] is True
+    assert body["rooms"] == []
+    # An unregistered model fails closed (no silent placeholder).
+    status, body = _get(server + "/read/surfaces")
+    assert status == 404
 
 
 def test_proposals_routes_to_dispatcher(server):
