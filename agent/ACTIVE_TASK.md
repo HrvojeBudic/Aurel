@@ -1,4 +1,34 @@
-# Active Task: F3.3 DONE on branch `feat/f3-external-executors` (mcp_gateway — Aurel as governed MCP server); next F3.4 (MCP client bridge, optional) or F3.5 (projection+CLI+exit seal)
+# Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
+
+**F3.5 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the external-executor
+phase. New `f3_seal.py` (**derived** F3 exit seal — SEALED only when every slice F3.0→F3.3+F3.5 has an importable
+module AND a present report; missing ⇒ BLOCKED; deferred surfaces explicit in an UNAVAILABLE registry:
+mcp_transport, content_passthrough, mcp_client_bridge→F4, a2a_messaging; overclaim guards hard-False). New
+`f3_projection.py` (read-only WorkOPS.Code read-models: `project_executor_standing` + `project_gateway_surface`;
+`classify_reachability` mirrors the gateway floor gate — reachable/needs_approval/denied). `cli_modules/f3_commands.py`
++ `cli.py`: `aurel f3 seal [--json]` (exit 2 if not SEALED, CI-gateable) and `aurel f3 surface [--trusted]`. Seal
+`tests/test_p6f3_5_f3_exit_seal.py` **9 passed** incl. **no-drift cross-check** (projection reachability ==
+real gateway verdict, 3 ways) + real-repo SEALED. ruff+mypy(3)+compileall clean. CLI smoke: `f3 seal` → SEALED
+(exit 0). Full F3 seal suite (F3.0-3.3+3.5) **58 passed**. Report: `agent/reports/AUREL_F3_5_EXIT_SEAL.md`.
+
+**F3 PHASE COMPLETE.** Aurel admits an external executor (Claude Code, other agent) into one inbound governed
+channel, security-first: F3.0 taint (instruction-ineligible by provenance) → F3.1 `aurel gate check` (read-only
+contract+policy preflight, fidelity by reuse) → F3.2 identity+hard budget+governed track record (least-privilege,
+no self-elevation, trust derived+only-restrictive) → F3.3 `mcp_gateway/` (Aurel as governed MCP server; every
+tools/call tainted+allowlisted+floor-checked+preflighted+lease-scoped real submit+recorded) → F3.5 derived exit
+seal + projections + CLI. **Deferred (UNAVAILABLE, not overclaimed):** MCP transport loop, F2-redacted content
+passthrough, direction-B MCP client bridge (→ F4 ContextLoom — operator decided F3.4 rides into F4 where tainted
+external output has a governed consumer), A2A. Branch `feat/f3-external-executors` not merged/pushed. **Next: merge
+F3 → master when ready; then F4 — interaktivni loop + ContextLoom (governed context assembly: provenance + taint +
+budget-aware compression + hash in trace), the home for direction B.**
+
+> NOTE (concurrency): the parallel process keeps editing plan docs on this branch (`AUREL_PLAN_03_UNIFIED_BACKBONE.md`,
+> `AUREL_PLAN_03_STEP2_PHYSICS_AS_CODE.md`). All F3 commits used targeted `git add` — ONLY my own files; those docs
+> are left as the other process's uncommitted working changes.
+
+---
+
+# Prior Active Task: F3.3 DONE on branch `feat/f3-external-executors` (mcp_gateway — Aurel as governed MCP server); next F3.4 (MCP client bridge, optional) or F3.5 (projection+CLI+exit seal)
 
 **F3.3 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New package
 `src/agentic_runtime/mcp_gateway/` — Aurel as a governed MCP server; the single door external MCP clients (Claude

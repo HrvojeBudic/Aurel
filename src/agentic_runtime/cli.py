@@ -516,6 +516,7 @@ from .cli_modules.governance_commands import (cmd_governance_audit, cmd_governan
 from .cli_modules.drill_commands import cmd_drill_model_swap
 from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
+from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
     cmd_dual_kernel_show,
@@ -905,6 +906,22 @@ def main(argv: list[str] | None = None) -> int:
                               help="external executor id (provenance origin_ref)")
     p_gate_check.add_argument("--json", action="store_true", help="emit JSON")
     p_gate_check.set_defaults(func=cmd_gate_check)
+
+    # F3.5: read-only F3 exit seal + external-executor surface projection.
+    p_f3 = sub.add_parser("f3", help="external-executor phase (F3) inspection")
+    f3_sub = p_f3.add_subparsers(dest="f3_command", required=True)
+    p_f3_seal = f3_sub.add_parser("seal", help="print the derived F3 exit seal")
+    p_f3_seal.add_argument("--reports-dir", default="agent/reports",
+                           help="reports dir the seal reads (default agent/reports)")
+    p_f3_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_f3_seal.set_defaults(func=cmd_f3_seal)
+    p_f3_surface = f3_sub.add_parser(
+        "surface", help="project a demo external executor's reachable tool surface")
+    p_f3_surface.add_argument("--executor", default="demo-executor",
+                              help="executor id for the projection")
+    p_f3_surface.add_argument("--trusted", action="store_true",
+                              help="seed a trusted track record for the demo")
+    p_f3_surface.set_defaults(func=cmd_f3_surface)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
