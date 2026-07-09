@@ -1,4 +1,21 @@
-# Active Task: F4.2 DONE on branch `feat/f4-cognition-contextloom` (context trace binding); next F4.3 interactive ReAct loop
+# Active Task: F4.3 DONE on branch `feat/f4-cognition-contextloom` (interactive ReAct loop); next F4.4 projection + CLI + F4 exit seal
+
+**F4.3 (2026-07-09) — DONE (additive, greenfield; `entity.py` untouched ⇒ byte-identical single-shot path).** New
+`src/agentic_runtime/entity_loom_loop.py` — observe→think→act loop through `runtime.submit`, context assembled each
+turn via ContextLoom (F4.0-4.2: provenance + taint + budget + trace-bound `context_ref`). `EntityLoomLoop`: observe
+(operator intent + memory recall + prior tool observations → governed ContextBundle, budget-fit+compress, context_ref
+bound to trace) → think (injectable `Planner` → `PlanTurn` steps/done) → act (submit each step; observation folds back
+as INTERNAL trusted item). Bounded termination (done/no_steps/no_progress/budget_exceeded/max_turns). `RouterPlanner`
+= prod adapter (router cassette-by-default + PlanValidator, fed ContextLoom prompt with external fenced as data;
+charges budget if given). Flag `AUREL_ENTITY_LOOP` defined-not-gating. Seal `tests/test_p6f4_3_entity_loop.py`
+**7 passed** (assemble+bind, refs match replay, observation folds forward, bounded termination 3 ways, RouterPlanner
+validates/done, flag OFF); ruff+mypy(1)+compileall clean. Report: `agent/reports/AUREL_F4_3_ENTITY_LOOP.md`.
+**Next: F4.4 — projection + CLI + derived F4 exit seal (over F4.0-4.4; UNAVAILABLE: live-model loop, direction-B
+MCP client bridge). Seal `test_p6f4_4_f4_exit_seal.py`.**
+
+---
+
+# Prior Active Task: F4.2 DONE on branch `feat/f4-cognition-contextloom` (context trace binding); next F4.3 interactive ReAct loop
 
 **F4.2 (2026-07-09) — DONE (additive; new context_trace.py + my own __init__.py; NO trace.py change).** New
 `context_loom/context_trace.py` binds every `ContextBundle` into the hash-chained trace. `bind_context_to_trace(...)`
