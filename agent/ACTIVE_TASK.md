@@ -1,4 +1,30 @@
-# Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
+# Active Task: F4.0 DONE on branch `feat/f4-cognition-contextloom` (ContextLoom foundation); next F4.1 budget-aware compression
+
+**F4 STARTED (2026-07-09, branch `feat/f4-cognition-contextloom` from the F3 tip; F3 still unmerged).** Plan doc
+`agent/reports/AUREL_PLAN_04_F4_COGNITION_CONTEXTLOOM.md`. F4 = interactive ReAct loop + **ContextLoom** (governed
+context assembly: provenance + taint [reuse F3.0] + budget-aware compression + hash in trace). Slices F4.0→F4.4.
+F4 is also the home for direction-B MCP client bridge (deferred from F3).
+
+**F4.0 (2026-07-09) — DONE (additive, greenfield; `assemble_context` byte-identical).** New package
+`src/agentic_runtime/context_loom/` — governed upgrade of plain context concat. `context_item.py`: `ContextItem`
+carries provenance (F3.0 SourceKind + derived TaintLabel) ⇒ `instruction_eligible` (external ⇒ always False);
+`make_context_item` derives label from provenance (no forging), default priority per origin (operator/internal
+high, external low), sha256 content hash, honest char/4 token estimate. `loom.py`: `assemble` → deterministic
+content-addressed `ContextBundle` — dedup by hash, order `(-priority, content_hash)` (no RNG/hash()),
+**budget-aware with NO silent loss** (max_tokens drops lowest-priority + records each `DroppedItem`), `context_ref`
+(sha256 over ordered item hashes = Front Signal ref / trace-replay key). `to_prompt` fences external items as
+untrusted data (model reads, never obeys). Flag `AUREL_CONTEXTLOOM` defined-not-gating. Seal
+`tests/test_p6f4_0_context_loom.py` **12 passed**; ruff+mypy(3)+compileall clean. Report:
+`agent/reports/AUREL_F4_0_CONTEXTLOOM.md`. **Next: F4.1 — budget-aware compression (deterministic
+truncation/summary of oversized items, provenance preserved + compression recorded, so a large item is fit not
+wholly dropped). Seal `test_p6f4_1_context_compression.py`.**
+
+> NOTE (concurrency): parallel process keeps editing `AUREL_PLAN_03_*` docs; all my commits use targeted `git add`
+> (only my own files). F3 branch `feat/f3-external-executors` (6 commits, F3.0-3.3+3.5) still unmerged/unpushed.
+
+---
+
+# Prior Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
 
 **F3.5 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the external-executor
 phase. New `f3_seal.py` (**derived** F3 exit seal — SEALED only when every slice F3.0→F3.3+F3.5 has an importable
