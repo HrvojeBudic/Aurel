@@ -17,6 +17,13 @@ from __future__ import annotations
 
 import os
 
+from .content import (
+    ContentBlock,
+    ContentKind,
+    ToolCallResult,
+    parse_content_block,
+    parse_tool_result,
+)
 from .jsonrpc_client import (
     JsonRpcClientCodec,
     JsonRpcClientError,
@@ -51,5 +58,10 @@ __all__ = [
     "scrub_env",
     "DEFAULT_TIMEOUT_S",
     "DEFAULT_MAX_BYTES",
+    "ContentBlock",
+    "ContentKind",
+    "ToolCallResult",
+    "parse_content_block",
+    "parse_tool_result",
     "flag_enabled",
 ]

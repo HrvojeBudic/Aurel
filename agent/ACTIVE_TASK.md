@@ -1,4 +1,20 @@
-# Active Task: F4B/B1 DONE on branch `feat/f4b-mcp-client-bridge` (transports stdio+HTTP); next B2 content model
+# Active Task: F4B/B2 DONE on branch `feat/f4b-mcp-client-bridge` (content model); next B3 protocol client
+
+**B2 (2026-07-09) — DONE (additive).** `mcp_client/content.py` — MCP tools/call content blocks → typed provenance-
+labelled values. `ContentBlock`/`ContentKind` (text/image/audio/resource/resource_link/unknown). **Text** →
+`TaintedContent(MCP_TOOL)` instruction-ineligible (only thing reaching context); **binary** (image/audio/blob) →
+bytes-free descriptor (mime + encoded_len + `data_ref` hash; raw base64 dropped at boundary, never rendered);
+**unknown/hostile** block fails open to UNKNOWN (never raises). `ToolCallResult` (content+isError+structured),
+`text()` context-safe render, `parse_tool_result` fail-closes malformed → isError. Seal
+`tests/test_p6f4b_2_content.py` **9 passed** (raw base64 never in render/to_dict; unknown fail-open; deterministic).
+ruff+mypy(4)+compileall clean. Report: `agent/reports/AUREL_F4B_2_CONTENT.md`. **Next: B3 — protocol client
+(`mcp_client/client.py`: `McpClient` initialize handshake [version+capabilities negotiation, notifications/initialized],
+list_tools [pagination], call_tool → ToolCallResult, capability-gated resources/prompts, outbound arg redaction).
+Seal `test_p6f4b_3_client.py` (in-process fake transport).**
+
+---
+
+# Prior Active Task: F4B/B1 DONE on branch `feat/f4b-mcp-client-bridge` (transports stdio+HTTP); next B2 content model
 
 **B1 (2026-07-09) — DONE (additive).** `mcp_client/transport.py` — `Transport` protocol (send/receive/close,
 injectable) + two real fail-closed hard-capped transports. `StdioTransport`: subprocess (`argv` list, never shell)
