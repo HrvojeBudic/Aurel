@@ -23,6 +23,11 @@ from .compression import (
     compress_item,
 )
 from .context_item import ContextItem, estimate_tokens, make_context_item
+from .context_trace import (
+    CONTEXT_ASSEMBLY_EVENT,
+    bind_context_to_trace,
+    context_refs_from_replay,
+)
 from .loom import ContextBundle, DroppedItem, assemble
 
 _FLAG = "AUREL_CONTEXTLOOM"
@@ -44,5 +49,8 @@ __all__ = [
     "CompressionRecord",
     "compress_item",
     "MIN_COMPRESS_TOKENS",
+    "bind_context_to_trace",
+    "context_refs_from_replay",
+    "CONTEXT_ASSEMBLY_EVENT",
     "flag_enabled",
 ]

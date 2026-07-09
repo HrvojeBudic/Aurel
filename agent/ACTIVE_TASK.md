@@ -1,4 +1,22 @@
-# Active Task: F4.1 DONE on branch `feat/f4-cognition-contextloom` (budget-aware context compression); next F4.2 trace binding
+# Active Task: F4.2 DONE on branch `feat/f4-cognition-contextloom` (context trace binding); next F4.3 interactive ReAct loop
+
+**F4.2 (2026-07-09) — DONE (additive; new context_trace.py + my own __init__.py; NO trace.py change).** New
+`context_loom/context_trace.py` binds every `ContextBundle` into the hash-chained trace. `bind_context_to_trace(...)`
+appends a `context_assembly` `PraxisEventRecord` (existing event vehicle). **Replay-safe:** a pure replay carries
+praxis summaries not details, so the `context_ref` is placed in the **summary** → `context_refs_from_replay(trace.replay())`
+reconstructs the Front Signal `context_refs` from the trace alone (avoids A7-style replay-details surgery on trace.py).
+**Leak-safe:** event carries context_ref + provenance (item hashes, source kinds, taint labels, drops, compressions)
+via `ContextBundle.to_dict` which excludes raw content — trace holds references, never the tainted data. Seal
+`tests/test_p6f4_2_context_trace.py` **5 passed** (hash-chained append; context_ref survives replay; ordered refs;
+leak-safe [raw scraped content absent from summary+details, its hash present]; deterministic). Full F4 suite
+(4.0+4.1+4.2) **25 passed**; ruff+mypy(5)+compileall clean. Report: `agent/reports/AUREL_F4_2_CONTEXT_TRACE.md`.
+**Next: F4.3 — interactive ReAct loop (`entity_loom_loop`: observe→think→act through `runtime.submit`, context
+assembled each turn via ContextLoom F4.0-4.2, router by intent, cassette by default; byte-identical to `AgenticEntity`
+when flag OFF). Seal `test_p6f4_3_entity_loop.py`.**
+
+---
+
+# Prior Active Task: F4.1 DONE on branch `feat/f4-cognition-contextloom` (budget-aware context compression); next F4.2 trace binding
 
 **F4.1 (2026-07-09) — DONE (additive; edits only my own F4.0 modules loom.py+__init__.py).** Makes ContextLoom
 items compressible-to-fit instead of drop-only. New `context_loom/compression.py`: `compress_item(item, max_tokens)`
