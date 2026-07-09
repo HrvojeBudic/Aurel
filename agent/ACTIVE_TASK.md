@@ -1,4 +1,34 @@
-# Active Task: F4.3 DONE on branch `feat/f4-cognition-contextloom` (interactive ReAct loop); next F4.4 projection + CLI + F4 exit seal
+# Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); next merge F3+F4 → master OR F5 (Front) / direction-B MCP client bridge
+
+**F4.4 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the cognition phase.
+New `f4_seal.py` (**derived** F4 exit seal — SEALED only when every slice F4.0→F4.4 has an importable module AND a
+present report; missing ⇒ BLOCKED; UNAVAILABLE registry: live_model_loop, context_loom_wired_into_default_plan,
+semantic_summarization, mcp_client_bridge→F5; overclaim guards hard-False). New `f4_projection.py` (read-only:
+`project_loop_run` + `project_context_bundle` [provenance mix, budget outcome, external count, render length]).
+`cli_modules/f4_commands.py` + `cli.py`: `aurel f4 seal [--json]` (exit 2 if not SEALED) + `aurel f4 loom
+[--max-tokens]` (demo ContextLoom assembly projection). Seal `tests/test_p6f4_4_f4_exit_seal.py` **7 passed**;
+`aurel f4 seal` → SEALED (exit 0). Full F4 suite (4.0-4.4) **39 passed**; ruff+mypy(3)+compileall clean.
+Report: `agent/reports/AUREL_F4_4_EXIT_SEAL.md`.
+
+**F4 PHASE COMPLETE.** Governed context assembly + a bounded loop over it: F4.0 ContextLoom (provenance + taint
+[reuse F3.0] + deterministic content-addressed `context_ref`) → F4.1 budget-aware compression (extractive
+truncation, no silent loss) → F4.2 trace binding (context_ref in hash-chained trace, replay-safe + leak-safe) →
+F4.3 interactive ReAct loop (observe→think→act through submit, context via Loom each turn, cassette-by-default
+injectable planner; `entity.py` untouched) → F4.4 derived exit seal + projections + CLI. **Deferred (UNAVAILABLE,
+not overclaimed):** live-model loop driving; ContextLoom wired into default `AgenticEntity.plan`; semantic (vs
+extractive) summarization; **direction-B MCP client bridge** (ContextLoom is now its governed sink, but the bridge
+itself is unbuilt). Branch `feat/f4-cognition-contextloom` (5 commits, off F3 tip) — F3+F4 not merged/pushed.
+
+**Two unmerged branches stacked:** `feat/f3-external-executors` (6 commits) → `feat/f4-cognition-contextloom`
+(5 commits, branched off F3 tip). **Next: merge F3 then F4 → master (both `--no-ff`), then F5 (Aurel Front v1 —
+ContextLoom `context_ref`s are Signal's per-message context_refs) OR build direction-B MCP client bridge onto the
+ContextLoom sink.**
+
+> NOTE (concurrency): parallel process keeps editing `AUREL_PLAN_03_*` docs; all my commits use targeted `git add`.
+
+---
+
+# Prior Active Task: F4.3 DONE on branch `feat/f4-cognition-contextloom` (interactive ReAct loop); next F4.4 projection + CLI + F4 exit seal
 
 **F4.3 (2026-07-09) — DONE (additive, greenfield; `entity.py` untouched ⇒ byte-identical single-shot path).** New
 `src/agentic_runtime/entity_loom_loop.py` — observe→think→act loop through `runtime.submit`, context assembled each
