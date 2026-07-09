@@ -1,4 +1,19 @@
-# Active Task: F4B/B0 DONE on branch `feat/f4b-mcp-client-bridge` (JSON-RPC client codec); next B1 transports
+# Active Task: F4B/B1 DONE on branch `feat/f4b-mcp-client-bridge` (transports stdio+HTTP); next B2 content model
+
+**B1 (2026-07-09) — DONE (additive).** `mcp_client/transport.py` — `Transport` protocol (send/receive/close,
+injectable) + two real fail-closed hard-capped transports. `StdioTransport`: subprocess (`argv` list, never shell)
+with **default-deny scrubbed env** (`scrub_env` — secrets never reach child unless named), newline-JSON stdout via
+bounded reader thread, stderr drained (not protocol), byte cap + timeout. `HttpTransport`: stdlib urllib POST,
+`Mcp-Session-Id` persisted, HTTP 202 honored, **redirects refused** (`_NoRedirect`), byte-capped, http(s)-only.
+Seal `tests/test_p6f4b_1_transport.py` **11 passed** against **real** subprocess + real localhost `http.server`
+(deterministic, no external net): round-trip, env scrub/passthrough, oversize+timeout fail-closed, session-id,
+202, redirect refusal, non-http reject. ruff+mypy(3)+compileall clean. Report: `agent/reports/AUREL_F4B_1_TRANSPORT.md`.
+**Next: B2 — content model (`mcp_client/content.py`: MCP content blocks text/image/audio/resource → typed tainted;
+`ToolCallResult` [content+isError+structured]; `result_to_text` for sink). Seal `test_p6f4b_2_content.py`.**
+
+---
+
+# Prior Active Task: F4B/B0 DONE on branch `feat/f4b-mcp-client-bridge` (JSON-RPC client codec); next B1 transports
 
 **F3+F4 MERGED to master (2026-07-09).** `--no-ff` merges `619fbd7` (F3) + `df2d4a4` (F4); all branches merged;
 not pushed (no origin/master). Parallel-process WIP on `AUREL_PLAN_03_*` preserved via targeted stash/pop.

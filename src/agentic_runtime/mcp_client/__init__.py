@@ -22,6 +22,15 @@ from .jsonrpc_client import (
     JsonRpcClientError,
     Response,
 )
+from .transport import (
+    DEFAULT_MAX_BYTES,
+    DEFAULT_TIMEOUT_S,
+    HttpTransport,
+    McpTransportError,
+    StdioTransport,
+    Transport,
+    scrub_env,
+)
 
 _FLAG = "AUREL_MCP_CLIENT"
 
@@ -35,5 +44,12 @@ __all__ = [
     "JsonRpcClientCodec",
     "JsonRpcClientError",
     "Response",
+    "Transport",
+    "StdioTransport",
+    "HttpTransport",
+    "McpTransportError",
+    "scrub_env",
+    "DEFAULT_TIMEOUT_S",
+    "DEFAULT_MAX_BYTES",
     "flag_enabled",
 ]
