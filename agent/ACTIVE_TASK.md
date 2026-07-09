@@ -1,4 +1,25 @@
-# Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); next merge F3+F4 → master OR F5 (Front) / direction-B MCP client bridge
+# Active Task: F4B/B0 DONE on branch `feat/f4b-mcp-client-bridge` (JSON-RPC client codec); next B1 transports
+
+**F3+F4 MERGED to master (2026-07-09).** `--no-ff` merges `619fbd7` (F3) + `df2d4a4` (F4); all branches merged;
+not pushed (no origin/master). Parallel-process WIP on `AUREL_PLAN_03_*` preserved via targeted stash/pop.
+
+**F4B STARTED (2026-07-09, branch `feat/f4b-mcp-client-bridge` from master).** Direction B — Aurel as an MCP
+*client* (calls OUT to external MCP servers; output tainted DATA → ContextLoom sink). Plan v4 (real, protocol-
+compliant): `agent/reports/AUREL_PLAN_05_F4B_MCP_CLIENT_BRIDGE.md`. Security inherited, not rebuilt (taint F3.0 +
+ToolContract/submit gate + F2 redaction + HIGH floor). Slices B0→B6. Fortress-hardening parked in §6 (opt-in).
+
+**B0 (2026-07-09) — DONE (additive, greenfield).** New package `src/agentic_runtime/mcp_client/` (flag
+`AUREL_MCP_CLIENT` default OFF). `jsonrpc_client.py`: `JsonRpcClientCodec` — build_request (monotonic ids, no RNG),
+build_notification (no id), correlate (`Response` with exactly one of result/error), expect (id correlation).
+Fail-closed on off-spec envelope (`JsonRpcClientError`); reuses gateway `JSONRPC_VERSION`/`JsonRpcError` (no drift).
+Seal `tests/test_p6f4b_0_jsonrpc_client.py` **14 passed**; ruff+mypy(2)+compileall clean. Report:
+`agent/reports/AUREL_F4B_0_JSONRPC_CLIENT.md`. **Next: B1 — transports (`Transport` protocol + StdioTransport
+[subprocess, newline-JSON, caps] + HttpTransport [urllib POST, Mcp-Session-Id, caps] + injectable in-process fake).
+Seal `test_p6f4b_1_transport.py`.**
+
+---
+
+# Prior Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); merged to master
 
 **F4.4 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the cognition phase.
 New `f4_seal.py` (**derived** F4 exit seal — SEALED only when every slice F4.0→F4.4 has an importable module AND a
