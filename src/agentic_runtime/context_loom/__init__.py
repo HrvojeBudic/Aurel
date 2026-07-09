@@ -16,6 +16,12 @@ from __future__ import annotations
 
 import os
 
+from .compression import (
+    MIN_COMPRESS_TOKENS,
+    CompressionMethod,
+    CompressionRecord,
+    compress_item,
+)
 from .context_item import ContextItem, estimate_tokens, make_context_item
 from .loom import ContextBundle, DroppedItem, assemble
 
@@ -34,5 +40,9 @@ __all__ = [
     "ContextBundle",
     "DroppedItem",
     "assemble",
+    "CompressionMethod",
+    "CompressionRecord",
+    "compress_item",
+    "MIN_COMPRESS_TOKENS",
     "flag_enabled",
 ]

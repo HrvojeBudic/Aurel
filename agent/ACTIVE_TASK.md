@@ -1,4 +1,22 @@
-# Active Task: F4.0 DONE on branch `feat/f4-cognition-contextloom` (ContextLoom foundation); next F4.1 budget-aware compression
+# Active Task: F4.1 DONE on branch `feat/f4-cognition-contextloom` (budget-aware context compression); next F4.2 trace binding
+
+**F4.1 (2026-07-09) — DONE (additive; edits only my own F4.0 modules loom.py+__init__.py).** Makes ContextLoom
+items compressible-to-fit instead of drop-only. New `context_loom/compression.py`: `compress_item(item, max_tokens)`
+= **deterministic extractive truncation** (head+tail slice + `…[elided]…` marker, `kept_tokens ≤ max_tokens`),
+honestly labelled `TRUNCATE_HEAD_TAIL` — NOT semantic summarization (no model). Provenance preserved (kind/origin/
+priority/label/eligibility unchanged; new content hash, original hash kept in `CompressionRecord`); below
+`MIN_COMPRESS_TOKENS`(8) the caller drops instead. `loom.py` `assemble` gains `compress: bool = False` — first
+overflowing (highest-priority) item compressed into remaining budget instead of dropped; recorded in additive
+`ContextBundle.compressed` field (**no silent loss**). `compress=False` byte-identical to F4.0. Seal
+`tests/test_p6f4_1_context_compression.py` **8 passed**; F4.0 seal still green (12); ruff+mypy(4)+compileall clean.
+Report: `agent/reports/AUREL_F4_1_CONTEXT_COMPRESSION.md`. **Boundary: extractive truncation, not summarization
+(budget mechanism, not comprehension). Next: F4.2 — trace binding (record each bundle's `context_ref` + provenance
++ drops/compressions as a trace event → auditable/replayable = Front Signal `context_refs`). Seal
+`test_p6f4_2_context_trace.py`.**
+
+---
+
+# Prior Active Task: F4.0 DONE on branch `feat/f4-cognition-contextloom` (ContextLoom foundation); next F4.1 budget-aware compression
 
 **F4 STARTED (2026-07-09, branch `feat/f4-cognition-contextloom` from the F3 tip; F3 still unmerged).** Plan doc
 `agent/reports/AUREL_PLAN_04_F4_COGNITION_CONTEXTLOOM.md`. F4 = interactive ReAct loop + **ContextLoom** (governed
