@@ -36,6 +36,8 @@ from .content import (
     parse_content_block,
     parse_tool_result,
 )
+from .f4b_seal import F4BExitSeal, build_f4b_exit_seal
+from .loom_sink import sink_tool_result
 from .jsonrpc_client import (
     JsonRpcClientCodec,
     JsonRpcClientError,
@@ -95,5 +97,8 @@ __all__ = [
     "McpConnectionManager",
     "McpConfigError",
     "parse_server_spec",
+    "sink_tool_result",
+    "build_f4b_exit_seal",
+    "F4BExitSeal",
     "flag_enabled",
 ]

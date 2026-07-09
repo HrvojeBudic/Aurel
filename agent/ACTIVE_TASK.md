@@ -1,4 +1,29 @@
-# Active Task: F4B/B5 DONE on branch `feat/f4b-mcp-client-bridge` (registry + config + manager); next B6 sink + CLI + exit seal
+# Active Task: F4B PHASE COMPLETE on branch `feat/f4b-mcp-client-bridge` (B0→B6 sealed); next merge F4B → master
+
+**B6 (2026-07-09) — DONE (additive; only `cli.py` touched, +18 subparser+import).** Closes F4B. `loom_sink.py`
+(`sink_tool_result` → DATA-fenced `ContextItem(MCP_TOOL)`, the ONE path external output enters context).
+`fake_server.py` (in-process deterministic fake MCP server transport with a hostile injection in description+output).
+`f4b_seal.py` (derived F4B exit seal B0→B6 + UNAVAILABLE: live_server_connection, sse_streaming, security_hardening,
+mcp_plan_steps_d2, a2a; overclaim guards hard-False). `cli_modules/mcp_client_commands.py` + `cli.py`:
+`aurel mcp-client list-servers/seal/demo`. Seal `tests/test_p6f4b_6_f4b_exit_seal.py` **5 passed** (derived
+SEALED/BLOCKED; honesty; **end-to-end demo — hostile injection in tool description AND output stays
+instruction-ineligible + DATA-fenced**; real-repo SEALED). `aurel mcp-client seal` → SEALED. Full F4B suite (B0-B6)
+**60 passed**; ruff+mypy(11)+compileall clean. Report: `agent/reports/AUREL_F4B_6_EXIT_SEAL.md`.
+
+**F4B PHASE COMPLETE.** Aurel can call OUT to an external MCP server and use the result under governance:
+B0 JSON-RPC client → B1 transports (stdio+HTTP, real, capped, scrubbed env, no-redirect) → B2 content (tainted text,
+bytes-free binary) → B3 protocol client (lifecycle, capabilities, fail-closed) → B4 bridge (HIGH floor, contract +
+submit, leak-safe, pin) → B5 registry/config (disabled by default) → B6 ContextLoom sink + CLI + exit seal.
+**Security inherited, not rebuilt:** output TaintedContent (never instruction), bridged tool → ToolContract →
+`runtime.submit` (HIGH floor → approval), outbound F2-redacted. **Deferred (UNAVAILABLE):** live-server connection
+(operator opt-in via mcp_servers.yaml + AUREL_MCP_CLIENT), SSE streaming, parked hardening (SSRF/egress, pin
+enforcement, per-server grant, unicode de-smuggling, fence-nonce, fuzz drill), D2, A2A. Branch
+`feat/f4b-mcp-client-bridge` (7 commits from master) — not merged/pushed. **Next: merge F4B → master (`--no-ff`);
+then operator can enable a real server, or F5 (Front) / parked hardening.**
+
+---
+
+# Prior Active Task: F4B/B5 DONE on branch `feat/f4b-mcp-client-bridge` (registry + config + manager); next B6 sink + CLI + exit seal
 
 **B5 (2026-07-09) — DONE (additive).** `config/live/mcp_servers.yaml` (external servers Aurel may call; **all
 disabled by default**; secrets via `env_passthrough`, never literal). `mcp_client/registry.py`: `McpServerSpec`

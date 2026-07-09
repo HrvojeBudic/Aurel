@@ -518,6 +518,9 @@ from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
+from .cli_modules.mcp_client_commands import (cmd_mcp_client_demo,
+                                              cmd_mcp_client_list_servers,
+                                              cmd_mcp_client_seal)
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
     cmd_dual_kernel_show,
@@ -937,6 +940,21 @@ def main(argv: list[str] | None = None) -> int:
     p_f4_loom.add_argument("--max-tokens", type=int, default=60,
                            help="assembly token budget for the demo")
     p_f4_loom.set_defaults(func=cmd_f4_loom)
+
+    # F4B: MCP client bridge — Aurel calls OUT to external MCP servers (read-only).
+    p_mc = sub.add_parser("mcp-client", help="external MCP servers Aurel calls OUT to (F4B)")
+    mc_sub = p_mc.add_subparsers(dest="mcp_client_command", required=True)
+    p_mc_ls = mc_sub.add_parser("list-servers", help="list configured MCP servers")
+    p_mc_ls.add_argument("--config", default="config/live/mcp_servers.yaml")
+    p_mc_ls.add_argument("--json", action="store_true")
+    p_mc_ls.set_defaults(func=cmd_mcp_client_list_servers)
+    p_mc_seal = mc_sub.add_parser("seal", help="print the derived F4B exit seal")
+    p_mc_seal.add_argument("--reports-dir", default="agent/reports")
+    p_mc_seal.add_argument("--json", action="store_true")
+    p_mc_seal.set_defaults(func=cmd_mcp_client_seal)
+    p_mc_demo = mc_sub.add_parser(
+        "demo", help="connect→list→call→sink against an in-process fake server")
+    p_mc_demo.set_defaults(func=cmd_mcp_client_demo)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
