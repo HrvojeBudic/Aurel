@@ -41,6 +41,13 @@ from .jsonrpc_client import (
     JsonRpcClientError,
     Response,
 )
+from .registry import (
+    McpConfigError,
+    McpConnectionManager,
+    McpServerRegistry,
+    McpServerSpec,
+    parse_server_spec,
+)
 from .transport import (
     DEFAULT_MAX_BYTES,
     DEFAULT_TIMEOUT_S,
@@ -83,5 +90,10 @@ __all__ = [
     "bridged_name",
     "json_schema_to_contract",
     "json_schema_to_argspecs",
+    "McpServerRegistry",
+    "McpServerSpec",
+    "McpConnectionManager",
+    "McpConfigError",
+    "parse_server_spec",
     "flag_enabled",
 ]

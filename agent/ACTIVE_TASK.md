@@ -1,4 +1,21 @@
-# Active Task: F4B/B4 DONE on branch `feat/f4b-mcp-client-bridge` (bridge to governance); next B5 registry + config
+# Active Task: F4B/B5 DONE on branch `feat/f4b-mcp-client-bridge` (registry + config + manager); next B6 sink + CLI + exit seal
+
+**B5 (2026-07-09) — DONE (additive).** `config/live/mcp_servers.yaml` (external servers Aurel may call; **all
+disabled by default**; secrets via `env_passthrough`, never literal). `mcp_client/registry.py`: `McpServerSpec`
+(stdio: command/args/env_passthrough; http: url) + `parse_server_spec` (fail-closed: transport∈{stdio,http},
+stdio→command, http→url). `McpServerRegistry.load` (reuses stdlib `yaml_minimal` + F2 `assert_no_raw_secrets_in_yaml`,
+rejects dups). `McpConnectionManager`: `connect` (enabled-only; **injectable transport factory**; builds+initializes
+`McpClient`; idempotent), `disconnect`, `active`, `health`; fail-closed on unknown/disabled. Seal
+`tests/test_p6f4b_5_registry.py` **6 passed** (real config all-disabled; tmp toggle; spec validation fail-closed;
+missing config; manager connect/refuse-disabled/refuse-unknown/idempotent/disconnect). ruff+mypy(7)+compileall clean.
+Report: `agent/reports/AUREL_F4B_5_REGISTRY.md`. **Next: B6 — sink + CLI + F4B exit seal (`loom_sink.py` [tool
+result → DATA-fenced ContextItem, the one path external content enters context]; `f4b_seal.py` [derived exit seal
+B0-B6 + UNAVAILABLE registry]; `cli_modules/mcp_client_commands.py` [`aurel mcp-client list-servers/seal/demo`]).
+Seal `test_p6f4b_6_f4b_exit_seal.py`. This closes F4B.**
+
+---
+
+# Prior Active Task: F4B/B4 DONE on branch `feat/f4b-mcp-client-bridge` (bridge to governance); next B5 registry + config
 
 **B4 (2026-07-09) — DONE (additive).** `mcp_client/bridge.py` — discovered MCP tool → governable Aurel tool only
 by explicit bridging (allowlist). `json_schema_to_contract`: inputSchema → ToolContract (ArgSpec types+required)
