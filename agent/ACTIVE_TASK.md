@@ -1,4 +1,134 @@
-# Active Task: F2 COMPLETE on branch `feat/f2-providers-secrets` @ 329708b (providers/secrets/redaction/drill); next merge F2 → master when ready
+# Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
+
+**F3.5 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the external-executor
+phase. New `f3_seal.py` (**derived** F3 exit seal — SEALED only when every slice F3.0→F3.3+F3.5 has an importable
+module AND a present report; missing ⇒ BLOCKED; deferred surfaces explicit in an UNAVAILABLE registry:
+mcp_transport, content_passthrough, mcp_client_bridge→F4, a2a_messaging; overclaim guards hard-False). New
+`f3_projection.py` (read-only WorkOPS.Code read-models: `project_executor_standing` + `project_gateway_surface`;
+`classify_reachability` mirrors the gateway floor gate — reachable/needs_approval/denied). `cli_modules/f3_commands.py`
++ `cli.py`: `aurel f3 seal [--json]` (exit 2 if not SEALED, CI-gateable) and `aurel f3 surface [--trusted]`. Seal
+`tests/test_p6f3_5_f3_exit_seal.py` **9 passed** incl. **no-drift cross-check** (projection reachability ==
+real gateway verdict, 3 ways) + real-repo SEALED. ruff+mypy(3)+compileall clean. CLI smoke: `f3 seal` → SEALED
+(exit 0). Full F3 seal suite (F3.0-3.3+3.5) **58 passed**. Report: `agent/reports/AUREL_F3_5_EXIT_SEAL.md`.
+
+**F3 PHASE COMPLETE.** Aurel admits an external executor (Claude Code, other agent) into one inbound governed
+channel, security-first: F3.0 taint (instruction-ineligible by provenance) → F3.1 `aurel gate check` (read-only
+contract+policy preflight, fidelity by reuse) → F3.2 identity+hard budget+governed track record (least-privilege,
+no self-elevation, trust derived+only-restrictive) → F3.3 `mcp_gateway/` (Aurel as governed MCP server; every
+tools/call tainted+allowlisted+floor-checked+preflighted+lease-scoped real submit+recorded) → F3.5 derived exit
+seal + projections + CLI. **Deferred (UNAVAILABLE, not overclaimed):** MCP transport loop, F2-redacted content
+passthrough, direction-B MCP client bridge (→ F4 ContextLoom — operator decided F3.4 rides into F4 where tainted
+external output has a governed consumer), A2A. Branch `feat/f3-external-executors` not merged/pushed. **Next: merge
+F3 → master when ready; then F4 — interaktivni loop + ContextLoom (governed context assembly: provenance + taint +
+budget-aware compression + hash in trace), the home for direction B.**
+
+> NOTE (concurrency): the parallel process keeps editing plan docs on this branch (`AUREL_PLAN_03_UNIFIED_BACKBONE.md`,
+> `AUREL_PLAN_03_STEP2_PHYSICS_AS_CODE.md`). All F3 commits used targeted `git add` — ONLY my own files; those docs
+> are left as the other process's uncommitted working changes.
+
+---
+
+# Prior Active Task: F3.3 DONE on branch `feat/f3-external-executors` (mcp_gateway — Aurel as governed MCP server); next F3.4 (MCP client bridge, optional) or F3.5 (projection+CLI+exit seal)
+
+**F3.3 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New package
+`src/agentic_runtime/mcp_gateway/` — Aurel as a governed MCP server; the single door external MCP clients (Claude
+Code, other agents) use to reach Aurel's tools. `jsonrpc.py` (stdlib JSON-RPC 2.0, fail-closed parse),
+`tool_registry.py` (`GatewayToolRegistry` allowlist — empty by default; exposed tool needs explicit expose + a
+contract; **escalation-only external risk floor** raised to ≥ MEDIUM and ≥ contract intrinsic floor, JSON-Schema
+from contract), `server.py` (`McpGateway.handle(dict)->dict`). Every `tools/call` = six gates in order:
+(1) tainted MCP_CLIENT (F3.0, instruction-ineligible); (2) allowlisted (unexposed ⇒ never runs); (3) floor vs
+authority/trust — above operator card ceiling ⇒ **hard DENY**, within card but above trust-earned ceiling ⇒
+**REQUIRE_APPROVAL** (bootstrap: approved runs build track record → trust rises); (4) F3.1 gate preflight
+(contract+policy under least-privilege card); (5) **lease-scoped real `runtime.submit`** via `SpineToolExecSession`
+(budget/sandbox/approval apply — ALLOW becomes execution); (6) outcome → F3.2 governed track record. JSON-RPC
+result returns governed **evidence** (exec id, before/after hashes, verifier_passed), NOT raw tool output (no leak
+by default; F2-redacted passthrough deferred). Flag `AUREL_MCP_GATEWAY` defined-not-gating. Seal
+`tests/test_p6f3_3_mcp_gateway.py` **9 passed**; ruff+mypy(4)+compileall clean; F3.0–3.2 seals still green (30).
+Report: `agent/reports/AUREL_F3_3_MCP_GATEWAY.md`. **Boundary: transport (stdio/HTTP loop) not wired — handle()
+is the governed core; content passthrough needs F2 redaction first. Next: F3.4 (optional, direction B — MCP client
+bridge: Aurel calls OUT, output tainted + HIGH floor + contract per bridged tool) OR F3.5 (projection + CLI + F3
+exit seal). F3.4 is separable/deferrable — operator decides order.**
+
+> NOTE (concurrency): the parallel process keeps adding/editing plan docs on this branch
+> (`AUREL_PLAN_03_UNIFIED_BACKBONE.md`, `AUREL_PLAN_03_STEP2_PHYSICS_AS_CODE.md`). My commits use targeted `git add`
+> and touch ONLY my own files; those docs are left as the other process's uncommitted working changes.
+
+---
+
+# Prior Active Task: F3.2 DONE on branch `feat/f3-external-executors` (external-executor identity + budget + track record); next F3.3 mcp_gateway (Aurel as MCP server)
+
+**F3.2 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New pure-value module
+`src/agentic_runtime/external_executor.py`. External executor = three bounded things, never a trusted peer:
+(1) **least-privilege identity** — `ExternalExecutorGrant` (operator ceiling; tightest defaults) →
+`derive_external_card` yields an `AgentCard` **exactly the grant, never wider** (protected mutation always off);
+no self-elevation (no widening method — more capability only via a NEW grant). (2) **hard budget** —
+`budget_envelope` clamps a `BudgetPolicy` DOWN to the grant (`min` of platform default and grant); over-generous
+grant clamps to base. (3) **governed track record** — `TrackRecordLedger` append-only + immutable (`frozen`)
+entries, `record()` the only writer (runtime-called from real gate/verifier results; executor can't write its own
+success); `TrustLevel` (UNTRUSTED/PROBATION/TRUSTED) **derived not set**, a recent failure drops to UNTRUSTED;
+`effective_max_risk = min(card ceiling, trust ceiling)` — trust only **restricts**, never widens beyond the card.
+`ExternalExecutorProfile` bundles them; `make_external_executor` factory. Seal
+`tests/test_p6f3_2_external_executor.py` **12 passed**; ruff+mypy(1)+compileall clean. Report:
+`agent/reports/AUREL_F3_2_EXTERNAL_EXECUTOR.md`. **Next: F3.3 — `mcp_gateway/` (Aurel as MCP server): expose
+governed tools over stdlib JSON-RPC 2.0, each bound to a ToolContract + lease from `spine/tool_exec.py`; inbound
+calls tainted MCP_CLIENT, run through full `submit` under the executor's F3.2 profile, outcomes → track record.
+This is where ALLOW becomes real execution (budget/sandbox/approval apply). Seal `test_p6f3_3_mcp_gateway.py`.**
+
+> NOTE (concurrency): a parallel process on this repo authored `agent/reports/AUREL_PLAN_03_UNIFIED_BACKBONE.md`
+> and keeps editing it; my F3.1 `git add -A` swept it into commit `a904e49`. Switched to targeted `git add` — F3.2+
+> commits touch ONLY my own files; that plan doc is left as the other process's uncommitted working change.
+
+---
+
+# Prior Active Task: F3.1 DONE on branch `feat/f3-external-executors` (aurel gate check preflight); next F3.2 external-executor identity + budget + track record
+
+**F3.1 (2026-07-09) — DONE (additive; only `cli.py` touched, +16 lines subparser+import).**
+`aurel gate check` — governance preflight for external executors. New `src/agentic_runtime/gate/`
+(`gate_check.py`, `__init__.py`) + `cli_modules/gate_commands.py`. `GateChecker.from_runtime(kernel|runtime)`
+runs a proposed `(tool, args)` through the **same chain `runtime.submit` runs** (contract registry → contract
+input → policy), same order, **same evaluator objects** (fidelity by reuse) — but **read-only**: no execute, no
+budget, no sandbox, no trace. `GateCheckDecision` carries `phase` (contract_registry/contract_input/policy/
+admitted), re-scored `risk`, contract `code`, and a **distinct `REQUIRE_APPROVAL`** verdict (not flattened to
+DENY); `preflight_only=True` (ALLOW ≠ final authorization — budget/sandbox/approval still apply at execution,
+deferred to F3.3 gateway). Proposal enters as F3.0 `make_tainted(..., EXTERNAL_EXECUTOR)` (instruction-ineligible;
+injection scan advisory, never gates). CLI exit codes 0/3/2/1 (ALLOW/APPROVAL/DENY/error). `GATE_ARG_KEYS`
+no-drift vs `runtime._GOVERNANCE_SUBMIT_ARG_KEYS` (seal-asserted). Seal `tests/test_p6f3_1_gate_check.py`
+**10 passed**; CLI smoke ALLOW/DENY/REQUIRE_APPROVAL verified; ruff+mypy(3)+compileall clean; representative CLI
+regressions green. Report: `agent/reports/AUREL_F3_1_GATE_CHECK.md`. **Next: F3.2 — external-executor identity
+(AgentCard derivation) + hard budget envelope + governed track-record ledger (success/fail feeds trust, never
+self-reported). Seal `test_p6f3_2_external_executor.py`.**
+
+---
+
+# Prior Active Task: F3.0 DONE on branch `feat/f3-external-executors` (external ingress taint & injection defense); next F3.1 gate-check foundation
+
+**F2 MERGED to master (2026-07-09).** `feat/f2-providers-secrets` (superset of `feat/f2-continue`) merged via
+`--no-ff` commit `800d88a`; all prior branches now merged; master not pushed (no `origin/master` on remote yet).
+
+**F3 STARTED (2026-07-09, branch `feat/f3-external-executors` from post-F2 `master`).** Plan doc
+`agent/reports/AUREL_PLAN_03_F3_EXTERNAL_EXECUTORS.md` decomposes F3 (external executors = gate + MCP gateway,
+security-first) into slices F3.0→F3.5. F3 = Aurel **as MCP server / gate** (`aurel gate check` → `mcp_gateway/`,
+governed tools, lease from `spine/tool_exec.py`; external agents = AgentCard + budget + track record) — backend of
+the Front WorkOPS.Code screen.
+
+**F3.0 (2026-07-09) — DONE (additive, greenfield; no existing file touched ⇒ byte-identical OFF structural).**
+New pure-library package `src/agentic_runtime/external_ingress/` (`taint.py`, `injection_detector.py`,
+`sanitization.py`, `__init__.py`), stdlib-only, deterministic. **Doctrine sealed: instruction-eligibility is
+forbidden by PROVENANCE, not scanning.** `TaintedContent.instruction_eligible` is a *computed* property (external
+origin ⇒ always False; QUARANTINED ⇒ False); `make_tainted` takes **no label arg** (derived from `source_kind`
+alone) so TRUSTED cannot be forged onto external content; `EXTERNAL_ORIGIN_KINDS` includes UNKNOWN (unclassified
+fails closed to external). `scan_for_injection` is **advisory only** — proven both directions (dirty scan can't
+downgrade operator content; clean scan can't upgrade external content), deterministic `(start, signature)` sort,
+never raises. `SanitizationCrossing` admits external content **as data only** (`crosses_as_instruction` hard-False;
+QUARANTINED ⇒ `data_view()` None, fail closed). Flag `AUREL_EXTERNAL_INGRESS` defined-not-gating (A0-style).
+Seal `tests/test_p6f3_0_external_ingress_taint.py` **18 passed**; ruff clean; mypy clean (4 files); compileall OK.
+Report: `agent/reports/AUREL_F3_0_EXTERNAL_INGRESS_TAINT.md`. **Next: F3.1 — `aurel gate check` foundation
+(read-only governance dry-run of a proposed (tool,args) from an external executor → allow/deny + reason, no
+execute; external payload enters via `make_tainted(..., EXTERNAL_EXECUTOR)`). Seal `test_p6f3_1_gate_check.py`.**
+
+---
+
+# Prior Active Task: F2 COMPLETE on branch `feat/f2-providers-secrets` @ 329708b (providers/secrets/redaction/drill); next merge F2 → master when ready
 
 **F2 (2026-07-08, branch `feat/f2-providers-secrets` @ `329708b`, cut from master `b003eb6`, unmerged) — COMPLETE (a→g).**
 All seven deliverables sealed: (a) Qwen `8cb613e` / (b) Kimi `e588058` adapters; (c) live profiles + honest-fail
