@@ -1,4 +1,31 @@
-# Active Task: F3.2 DONE on branch `feat/f3-external-executors` (external-executor identity + budget + track record); next F3.3 mcp_gateway (Aurel as MCP server)
+# Active Task: F3.3 DONE on branch `feat/f3-external-executors` (mcp_gateway — Aurel as governed MCP server); next F3.4 (MCP client bridge, optional) or F3.5 (projection+CLI+exit seal)
+
+**F3.3 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New package
+`src/agentic_runtime/mcp_gateway/` — Aurel as a governed MCP server; the single door external MCP clients (Claude
+Code, other agents) use to reach Aurel's tools. `jsonrpc.py` (stdlib JSON-RPC 2.0, fail-closed parse),
+`tool_registry.py` (`GatewayToolRegistry` allowlist — empty by default; exposed tool needs explicit expose + a
+contract; **escalation-only external risk floor** raised to ≥ MEDIUM and ≥ contract intrinsic floor, JSON-Schema
+from contract), `server.py` (`McpGateway.handle(dict)->dict`). Every `tools/call` = six gates in order:
+(1) tainted MCP_CLIENT (F3.0, instruction-ineligible); (2) allowlisted (unexposed ⇒ never runs); (3) floor vs
+authority/trust — above operator card ceiling ⇒ **hard DENY**, within card but above trust-earned ceiling ⇒
+**REQUIRE_APPROVAL** (bootstrap: approved runs build track record → trust rises); (4) F3.1 gate preflight
+(contract+policy under least-privilege card); (5) **lease-scoped real `runtime.submit`** via `SpineToolExecSession`
+(budget/sandbox/approval apply — ALLOW becomes execution); (6) outcome → F3.2 governed track record. JSON-RPC
+result returns governed **evidence** (exec id, before/after hashes, verifier_passed), NOT raw tool output (no leak
+by default; F2-redacted passthrough deferred). Flag `AUREL_MCP_GATEWAY` defined-not-gating. Seal
+`tests/test_p6f3_3_mcp_gateway.py` **9 passed**; ruff+mypy(4)+compileall clean; F3.0–3.2 seals still green (30).
+Report: `agent/reports/AUREL_F3_3_MCP_GATEWAY.md`. **Boundary: transport (stdio/HTTP loop) not wired — handle()
+is the governed core; content passthrough needs F2 redaction first. Next: F3.4 (optional, direction B — MCP client
+bridge: Aurel calls OUT, output tainted + HIGH floor + contract per bridged tool) OR F3.5 (projection + CLI + F3
+exit seal). F3.4 is separable/deferrable — operator decides order.**
+
+> NOTE (concurrency): the parallel process keeps adding/editing plan docs on this branch
+> (`AUREL_PLAN_03_UNIFIED_BACKBONE.md`, `AUREL_PLAN_03_STEP2_PHYSICS_AS_CODE.md`). My commits use targeted `git add`
+> and touch ONLY my own files; those docs are left as the other process's uncommitted working changes.
+
+---
+
+# Prior Active Task: F3.2 DONE on branch `feat/f3-external-executors` (external-executor identity + budget + track record); next F3.3 mcp_gateway (Aurel as MCP server)
 
 **F3.2 (2026-07-09) — DONE (additive, greenfield; no existing file touched).** New pure-value module
 `src/agentic_runtime/external_executor.py`. External executor = three bounded things, never a trusted peer:
