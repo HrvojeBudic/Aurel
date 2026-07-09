@@ -518,6 +518,7 @@ from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
+from .cli_modules.f5_commands import cmd_front_serve
 from .cli_modules.mcp_client_commands import (cmd_mcp_client_demo,
                                               cmd_mcp_client_list_servers,
                                               cmd_mcp_client_seal)
@@ -955,6 +956,14 @@ def main(argv: list[str] | None = None) -> int:
     p_mc_demo = mc_sub.add_parser(
         "demo", help="connect→list→call→sink against an in-process fake server")
     p_mc_demo.set_defaults(func=cmd_mcp_client_demo)
+
+    # F5: Front server — the one door between UI and kernel (flag AUREL_FRONT_SERVER).
+    p_front = sub.add_parser("front", help="Aurel Front v1 server (F5)")
+    front_sub = p_front.add_subparsers(dest="front_command", required=True)
+    p_front_serve = front_sub.add_parser("serve", help="run the Front HTTP server")
+    p_front_serve.add_argument("--host", default="127.0.0.1")
+    p_front_serve.add_argument("--port", type=int, default=8765)
+    p_front_serve.set_defaults(func=cmd_front_serve)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

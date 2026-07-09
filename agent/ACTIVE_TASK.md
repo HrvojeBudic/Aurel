@@ -1,4 +1,31 @@
-# Active Task: F4B PHASE COMPLETE on branch `feat/f4b-mcp-client-bridge` (B0→B6 sealed); next merge F4B → master
+# Active Task: F5.0a→F5.3 DONE + RE-APPLIED after filesystem loss (branch `feat/f5-front-v1`); next finish F5.2 seal
+
+**INCIDENT (2026-07-09): working dir `/home/hrvojeb/Desktop/Aurel` self-wiped mid-session** (only `web/shell/`
+left; `.git`+`.venv` gone). NOT operator-intended. Recovered by extracting `Desktop/Auv1.zip` (full repo snapshot
+@ F4B, master `fda3e3d`, incl. `.venv`). F2→F4B intact. F5 session work (F5.0a-F5.3 commits + F5.0b/C/3 files) was
+NOT in the snapshot; **RE-APPLIED verbatim from the conversation** and re-verified (F5 suite 28 passed, ruff+mypy
+clean). LESSON: commit + snapshot more often; F5 branch not yet merged/pushed.
+
+**F5 STARTED (branch `feat/f5-front-v1` from master).** Aurel Front v1 — 3 governed modes through one door
+(ANSWER/PROPOSE/ACT). Consolidated plan `agent/reports/AUREL_PLAN_06_F5_FRONT_CONVERSATIONAL.md`. Walking skeleton:
+F5.0a→F5.0b→F5.C→F5.3→F5.7.
+
+**F5.0a→F5.3 (re-applied) — DONE.** `src/agentic_runtime/front_server/`: `routes.py` (one-door: exactly one
+mutation route `POST /proposals`), `server.py` (stdlib ThreadingHTTPServer; flag `AUREL_FRONT_SERVER` OFF ⇒
+unconstructible), `websocket.py` (manual RFC 6455 stdlib; localhost no-TLS), `proposal_dispatcher.py` (converse→
+ConversationEngine, act→F5.2), `conversation.py` (F5.C `ConversationEngine`: ContextLoom context → router
+cassette-default budget-charged → ANSWER/PROPOSE/UNAVAILABLE; next-gen-ready contract N1-N8 seams;
+`RoomHistoryProjection.from_trace`), `signal.py` (F5.3 `SignalMessage` un-constructible without provenance →
+converse). `aurel front serve` CLI. Seals `test_p6f5_{0a,0b,c,3}` **28 passed** incl. real WS end-to-end (Signal
+msg → LLM reply). ▶ MILESTONE 1: talk to LLM through Signal.
+
+**F5.2 (in progress).** `approval_gates.py` (Deferred/PreDecided) + `approval_inbox.py` (two-phase submit +
+in-process pending registry + `audit_from_trace`) written; **still need the seal + dispatcher act→inbox wiring**.
+**Live LLM: `aurel secrets set anthropic`; else cassette; else honest UNAVAILABLE.**
+
+---
+
+# Prior Active Task: F4B PHASE COMPLETE on branch `feat/f4b-mcp-client-bridge` (B0→B6 sealed); next merge F4B → master
 
 **B6 (2026-07-09) — DONE (additive; only `cli.py` touched, +18 subparser+import).** Closes F4B. `loom_sink.py`
 (`sink_tool_result` → DATA-fenced `ContextItem(MCP_TOOL)`, the ONE path external output enters context).
