@@ -517,6 +517,7 @@ from .cli_modules.drill_commands import cmd_drill_model_swap
 from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
+from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
 from .cli_modules.dual_kernel_commands import (
     cmd_dual_kernel_bindings,
     cmd_dual_kernel_show,
@@ -922,6 +923,20 @@ def main(argv: list[str] | None = None) -> int:
     p_f3_surface.add_argument("--trusted", action="store_true",
                               help="seed a trusted track record for the demo")
     p_f3_surface.set_defaults(func=cmd_f3_surface)
+
+    # F4.4: read-only F4 exit seal + ContextLoom assembly projection.
+    p_f4 = sub.add_parser("f4", help="cognition / ContextLoom (F4) inspection")
+    f4_sub = p_f4.add_subparsers(dest="f4_command", required=True)
+    p_f4_seal = f4_sub.add_parser("seal", help="print the derived F4 exit seal")
+    p_f4_seal.add_argument("--reports-dir", default="agent/reports",
+                           help="reports dir the seal reads (default agent/reports)")
+    p_f4_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_f4_seal.set_defaults(func=cmd_f4_seal)
+    p_f4_loom = f4_sub.add_parser(
+        "loom", help="project a demo ContextLoom assembly (provenance + budget)")
+    p_f4_loom.add_argument("--max-tokens", type=int, default=60,
+                           help="assembly token budget for the demo")
+    p_f4_loom.set_defaults(func=cmd_f4_loom)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

@@ -1,4 +1,113 @@
-# Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
+# Active Task: F4 PHASE COMPLETE on branch `feat/f4-cognition-contextloom` (F4.0→F4.4 sealed); next merge F3+F4 → master OR F5 (Front) / direction-B MCP client bridge
+
+**F4.4 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the cognition phase.
+New `f4_seal.py` (**derived** F4 exit seal — SEALED only when every slice F4.0→F4.4 has an importable module AND a
+present report; missing ⇒ BLOCKED; UNAVAILABLE registry: live_model_loop, context_loom_wired_into_default_plan,
+semantic_summarization, mcp_client_bridge→F5; overclaim guards hard-False). New `f4_projection.py` (read-only:
+`project_loop_run` + `project_context_bundle` [provenance mix, budget outcome, external count, render length]).
+`cli_modules/f4_commands.py` + `cli.py`: `aurel f4 seal [--json]` (exit 2 if not SEALED) + `aurel f4 loom
+[--max-tokens]` (demo ContextLoom assembly projection). Seal `tests/test_p6f4_4_f4_exit_seal.py` **7 passed**;
+`aurel f4 seal` → SEALED (exit 0). Full F4 suite (4.0-4.4) **39 passed**; ruff+mypy(3)+compileall clean.
+Report: `agent/reports/AUREL_F4_4_EXIT_SEAL.md`.
+
+**F4 PHASE COMPLETE.** Governed context assembly + a bounded loop over it: F4.0 ContextLoom (provenance + taint
+[reuse F3.0] + deterministic content-addressed `context_ref`) → F4.1 budget-aware compression (extractive
+truncation, no silent loss) → F4.2 trace binding (context_ref in hash-chained trace, replay-safe + leak-safe) →
+F4.3 interactive ReAct loop (observe→think→act through submit, context via Loom each turn, cassette-by-default
+injectable planner; `entity.py` untouched) → F4.4 derived exit seal + projections + CLI. **Deferred (UNAVAILABLE,
+not overclaimed):** live-model loop driving; ContextLoom wired into default `AgenticEntity.plan`; semantic (vs
+extractive) summarization; **direction-B MCP client bridge** (ContextLoom is now its governed sink, but the bridge
+itself is unbuilt). Branch `feat/f4-cognition-contextloom` (5 commits, off F3 tip) — F3+F4 not merged/pushed.
+
+**Two unmerged branches stacked:** `feat/f3-external-executors` (6 commits) → `feat/f4-cognition-contextloom`
+(5 commits, branched off F3 tip). **Next: merge F3 then F4 → master (both `--no-ff`), then F5 (Aurel Front v1 —
+ContextLoom `context_ref`s are Signal's per-message context_refs) OR build direction-B MCP client bridge onto the
+ContextLoom sink.**
+
+> NOTE (concurrency): parallel process keeps editing `AUREL_PLAN_03_*` docs; all my commits use targeted `git add`.
+
+---
+
+# Prior Active Task: F4.3 DONE on branch `feat/f4-cognition-contextloom` (interactive ReAct loop); next F4.4 projection + CLI + F4 exit seal
+
+**F4.3 (2026-07-09) — DONE (additive, greenfield; `entity.py` untouched ⇒ byte-identical single-shot path).** New
+`src/agentic_runtime/entity_loom_loop.py` — observe→think→act loop through `runtime.submit`, context assembled each
+turn via ContextLoom (F4.0-4.2: provenance + taint + budget + trace-bound `context_ref`). `EntityLoomLoop`: observe
+(operator intent + memory recall + prior tool observations → governed ContextBundle, budget-fit+compress, context_ref
+bound to trace) → think (injectable `Planner` → `PlanTurn` steps/done) → act (submit each step; observation folds back
+as INTERNAL trusted item). Bounded termination (done/no_steps/no_progress/budget_exceeded/max_turns). `RouterPlanner`
+= prod adapter (router cassette-by-default + PlanValidator, fed ContextLoom prompt with external fenced as data;
+charges budget if given). Flag `AUREL_ENTITY_LOOP` defined-not-gating. Seal `tests/test_p6f4_3_entity_loop.py`
+**7 passed** (assemble+bind, refs match replay, observation folds forward, bounded termination 3 ways, RouterPlanner
+validates/done, flag OFF); ruff+mypy(1)+compileall clean. Report: `agent/reports/AUREL_F4_3_ENTITY_LOOP.md`.
+**Next: F4.4 — projection + CLI + derived F4 exit seal (over F4.0-4.4; UNAVAILABLE: live-model loop, direction-B
+MCP client bridge). Seal `test_p6f4_4_f4_exit_seal.py`.**
+
+---
+
+# Prior Active Task: F4.2 DONE on branch `feat/f4-cognition-contextloom` (context trace binding); next F4.3 interactive ReAct loop
+
+**F4.2 (2026-07-09) — DONE (additive; new context_trace.py + my own __init__.py; NO trace.py change).** New
+`context_loom/context_trace.py` binds every `ContextBundle` into the hash-chained trace. `bind_context_to_trace(...)`
+appends a `context_assembly` `PraxisEventRecord` (existing event vehicle). **Replay-safe:** a pure replay carries
+praxis summaries not details, so the `context_ref` is placed in the **summary** → `context_refs_from_replay(trace.replay())`
+reconstructs the Front Signal `context_refs` from the trace alone (avoids A7-style replay-details surgery on trace.py).
+**Leak-safe:** event carries context_ref + provenance (item hashes, source kinds, taint labels, drops, compressions)
+via `ContextBundle.to_dict` which excludes raw content — trace holds references, never the tainted data. Seal
+`tests/test_p6f4_2_context_trace.py` **5 passed** (hash-chained append; context_ref survives replay; ordered refs;
+leak-safe [raw scraped content absent from summary+details, its hash present]; deterministic). Full F4 suite
+(4.0+4.1+4.2) **25 passed**; ruff+mypy(5)+compileall clean. Report: `agent/reports/AUREL_F4_2_CONTEXT_TRACE.md`.
+**Next: F4.3 — interactive ReAct loop (`entity_loom_loop`: observe→think→act through `runtime.submit`, context
+assembled each turn via ContextLoom F4.0-4.2, router by intent, cassette by default; byte-identical to `AgenticEntity`
+when flag OFF). Seal `test_p6f4_3_entity_loop.py`.**
+
+---
+
+# Prior Active Task: F4.1 DONE on branch `feat/f4-cognition-contextloom` (budget-aware context compression); next F4.2 trace binding
+
+**F4.1 (2026-07-09) — DONE (additive; edits only my own F4.0 modules loom.py+__init__.py).** Makes ContextLoom
+items compressible-to-fit instead of drop-only. New `context_loom/compression.py`: `compress_item(item, max_tokens)`
+= **deterministic extractive truncation** (head+tail slice + `…[elided]…` marker, `kept_tokens ≤ max_tokens`),
+honestly labelled `TRUNCATE_HEAD_TAIL` — NOT semantic summarization (no model). Provenance preserved (kind/origin/
+priority/label/eligibility unchanged; new content hash, original hash kept in `CompressionRecord`); below
+`MIN_COMPRESS_TOKENS`(8) the caller drops instead. `loom.py` `assemble` gains `compress: bool = False` — first
+overflowing (highest-priority) item compressed into remaining budget instead of dropped; recorded in additive
+`ContextBundle.compressed` field (**no silent loss**). `compress=False` byte-identical to F4.0. Seal
+`tests/test_p6f4_1_context_compression.py` **8 passed**; F4.0 seal still green (12); ruff+mypy(4)+compileall clean.
+Report: `agent/reports/AUREL_F4_1_CONTEXT_COMPRESSION.md`. **Boundary: extractive truncation, not summarization
+(budget mechanism, not comprehension). Next: F4.2 — trace binding (record each bundle's `context_ref` + provenance
++ drops/compressions as a trace event → auditable/replayable = Front Signal `context_refs`). Seal
+`test_p6f4_2_context_trace.py`.**
+
+---
+
+# Prior Active Task: F4.0 DONE on branch `feat/f4-cognition-contextloom` (ContextLoom foundation); next F4.1 budget-aware compression
+
+**F4 STARTED (2026-07-09, branch `feat/f4-cognition-contextloom` from the F3 tip; F3 still unmerged).** Plan doc
+`agent/reports/AUREL_PLAN_04_F4_COGNITION_CONTEXTLOOM.md`. F4 = interactive ReAct loop + **ContextLoom** (governed
+context assembly: provenance + taint [reuse F3.0] + budget-aware compression + hash in trace). Slices F4.0→F4.4.
+F4 is also the home for direction-B MCP client bridge (deferred from F3).
+
+**F4.0 (2026-07-09) — DONE (additive, greenfield; `assemble_context` byte-identical).** New package
+`src/agentic_runtime/context_loom/` — governed upgrade of plain context concat. `context_item.py`: `ContextItem`
+carries provenance (F3.0 SourceKind + derived TaintLabel) ⇒ `instruction_eligible` (external ⇒ always False);
+`make_context_item` derives label from provenance (no forging), default priority per origin (operator/internal
+high, external low), sha256 content hash, honest char/4 token estimate. `loom.py`: `assemble` → deterministic
+content-addressed `ContextBundle` — dedup by hash, order `(-priority, content_hash)` (no RNG/hash()),
+**budget-aware with NO silent loss** (max_tokens drops lowest-priority + records each `DroppedItem`), `context_ref`
+(sha256 over ordered item hashes = Front Signal ref / trace-replay key). `to_prompt` fences external items as
+untrusted data (model reads, never obeys). Flag `AUREL_CONTEXTLOOM` defined-not-gating. Seal
+`tests/test_p6f4_0_context_loom.py` **12 passed**; ruff+mypy(3)+compileall clean. Report:
+`agent/reports/AUREL_F4_0_CONTEXTLOOM.md`. **Next: F4.1 — budget-aware compression (deterministic
+truncation/summary of oversized items, provenance preserved + compression recorded, so a large item is fit not
+wholly dropped). Seal `test_p6f4_1_context_compression.py`.**
+
+> NOTE (concurrency): parallel process keeps editing `AUREL_PLAN_03_*` docs; all my commits use targeted `git add`
+> (only my own files). F3 branch `feat/f3-external-executors` (6 commits, F3.0-3.3+3.5) still unmerged/unpushed.
+
+---
+
+# Prior Active Task: F3 PHASE COMPLETE on branch `feat/f3-external-executors` (F3.0→F3.3 + F3.5 sealed; F3.4 deferred to F4); next merge F3 → master OR start F4 (ContextLoom)
 
 **F3.5 (2026-07-09) — DONE (additive; only `cli.py` touched, +17 subparser+import).** Closes the external-executor
 phase. New `f3_seal.py` (**derived** F3 exit seal — SEALED only when every slice F3.0→F3.3+F3.5 has an importable
