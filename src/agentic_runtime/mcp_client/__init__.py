@@ -17,6 +17,12 @@ from __future__ import annotations
 
 import os
 
+from .client import (
+    InitializeResult,
+    McpCallError,
+    McpClient,
+    McpToolDescriptor,
+)
 from .content import (
     ContentBlock,
     ContentKind,
@@ -63,5 +69,9 @@ __all__ = [
     "ToolCallResult",
     "parse_content_block",
     "parse_tool_result",
+    "McpClient",
+    "McpCallError",
+    "McpToolDescriptor",
+    "InitializeResult",
     "flag_enabled",
 ]

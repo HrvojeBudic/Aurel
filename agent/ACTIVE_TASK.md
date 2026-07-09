@@ -1,4 +1,21 @@
-# Active Task: F4B/B2 DONE on branch `feat/f4b-mcp-client-bridge` (content model); next B3 protocol client
+# Active Task: F4B/B3 DONE on branch `feat/f4b-mcp-client-bridge` (protocol client); next B4 bridge to governance
+
+**B3 (2026-07-09) — DONE (additive).** `mcp_client/client.py` — `McpClient`, real MCP lifecycle over injectable
+transport. `initialize` (protocolVersion 2025-06-18 + capabilities + clientInfo → reply → notifications/initialized;
+fail-closed on no protocolVersion); `list_tools` (pagination cursor→nextCursor; **descriptions tainted MCP_TOOL** +
+`descriptor_hash` for B4 pinning); `call_tool` (outbound args **scrubbed of registered secrets** via redact_known
+exact-match, result parsed by B2); `list_resources`/`read_resource`/`list_prompts` **capability-gated**; fail-closed
+everywhere (JSON-RPC error/off-spec/transport → `McpCallError`; notifications+stray responses skipped in correlation).
+Seal `tests/test_p6f4b_3_client.py` **7 passed** (handshake+initialized; paginated tainted tools+pinnable hash;
+result parsed; outbound secret scrubbed/legit-arg untouched; capability gate; call-before-init; JSON-RPC error).
+ruff+mypy(5)+compileall clean. Report: `agent/reports/AUREL_F4B_3_CLIENT.md`. **Next: B4 — bridge
+(`mcp_client/bridge.py`: `json_schema_to_contract` inputSchema→ToolContract with HIGH external floor, allowlist
+[empty default], namespaced `ToolSpec` `mcp__<server>__<tool>` executor→call_tool→tainted evidence, through
+`runtime.submit`). Seal `test_p6f4b_4_bridge.py`.**
+
+---
+
+# Prior Active Task: F4B/B2 DONE on branch `feat/f4b-mcp-client-bridge` (content model); next B3 protocol client
 
 **B2 (2026-07-09) — DONE (additive).** `mcp_client/content.py` — MCP tools/call content blocks → typed provenance-
 labelled values. `ContentBlock`/`ContentKind` (text/image/audio/resource/resource_link/unknown). **Text** →
