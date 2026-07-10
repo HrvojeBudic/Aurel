@@ -18,6 +18,7 @@ from .approval_inbox import ApprovalInbox
 from .aureleu_read_model import AurelEUReadModel
 from .board import BoardJournal
 from .conversation import RoomHistoryProjection, rooms_from_trace
+from .corp_read_model import CorpReadModel
 from .dn import DnStatusReadModel
 from .hq_command import HQCommandReadModel
 from .library import LibraryReadModel
@@ -92,6 +93,15 @@ def _aureleu(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
     return AurelEUReadModel(reads.runtime).to_dict()
 
 
+def _corp_portfolio(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    return CorpReadModel.from_runtime(reads.runtime).portfolio_view()
+
+
+def _corp_runtime(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
+    job = _one(params, "job", "")
+    return CorpReadModel.from_runtime(reads.runtime).runtime_feed(job)
+
+
 # The complete live-read registry. Every entry is read-only.
 _REGISTRY: "dict[str, ReadBuilder]" = {
     "signal/history": _signal_history,
@@ -104,6 +114,8 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "board": _board,
     "aureleu": _aureleu,
     "aureleu/dn": _aureleu_dn,
+    "corp/portfolio": _corp_portfolio,
+    "corp/runtime": _corp_runtime,
 }
 
 
