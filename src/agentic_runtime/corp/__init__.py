@@ -15,6 +15,7 @@ attribution (F7.1), Watchtower (F7.3), Evidence Vault (F7.4), and the CORP surfa
 """
 from __future__ import annotations
 
+from .cost import CostAttributionView
 from .default import (
     CLIENT_ZERO_ID,
     JOB_ZERO_ID,
@@ -44,4 +45,5 @@ __all__ = [
     "default_corp_registry",
     "CLIENT_ZERO_ID",
     "JOB_ZERO_ID",
+    "CostAttributionView",
 ]
