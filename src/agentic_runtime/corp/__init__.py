@@ -30,6 +30,14 @@ from .registry import (
     CorpValidationError,
     JobNotFound,
 )
+from .watchtower import (
+    AlertKind,
+    AlertSeverity,
+    WatchtowerAlert,
+    derive_alerts,
+    live_feed,
+)
+from .watchtower import flag_enabled as watchtower_flag_enabled
 
 __all__ = [
     "ClientRecord",
@@ -46,4 +54,10 @@ __all__ = [
     "CLIENT_ZERO_ID",
     "JOB_ZERO_ID",
     "CostAttributionView",
+    "WatchtowerAlert",
+    "AlertKind",
+    "AlertSeverity",
+    "derive_alerts",
+    "live_feed",
+    "watchtower_flag_enabled",
 ]

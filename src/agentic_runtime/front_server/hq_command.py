@@ -17,25 +17,30 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+from ..corp import derive_alerts, live_feed, watchtower_flag_enabled
 from .approval_inbox import ApprovalInbox
 
-# Watchtower alert feed is F7. Hard-wired False: an empty feed is honest, not "live".
+# The default (flag-off) Watchtower claim. The reported value is derived from the
+# AUREL_WATCHTOWER flag (F7.3): the feed only claims "live" when it is actually on.
 CLAIMS_WATCHTOWER_LIVE = False
 
 
 class HQCommandReadModel:
-    """Live run status + approval inbox + budget burn + Watchtower seam."""
+    """Live run status + approval inbox + budget burn + Watchtower (F7.3 when on)."""
 
-    def __init__(self, trace: Any, *, budget: Any = None, inbox: Any = None) -> None:
+    def __init__(self, trace: Any, *, budget: Any = None, inbox: Any = None,
+                 corp_registry: Any = None) -> None:
         self._trace = trace
         self._budget = budget
         self._inbox = inbox
+        self._corp = corp_registry
 
     @staticmethod
     def from_runtime(runtime: Any, *, inbox: Any = None) -> "HQCommandReadModel":
         inner = getattr(runtime, "runtime", runtime)
         return HQCommandReadModel(
-            inner.trace, budget=getattr(inner, "budget", None), inbox=inbox)
+            inner.trace, budget=getattr(inner, "budget", None), inbox=inbox,
+            corp_registry=getattr(inner, "corp_registry", None))
 
     # -- run status (trace projection) ---------------------------------------- #
     def run_status(self) -> list[dict]:
@@ -69,12 +74,16 @@ class HQCommandReadModel:
             return {"status": "UNAVAILABLE", "reason": "no budget ledger bound"}
         return {"status": "AVAILABLE", **self._budget.snapshot()}
 
-    # -- Watchtower / predictive (declared seams) ----------------------------- #
-    @staticmethod
-    def watchtower() -> dict:
-        return {"status": "UNAVAILABLE", "owner": "F7",
-                "reason": "Watchtower alert feed is F7; not live in F5",
-                "alerts": []}
+    # -- Watchtower (F7.3 live when on) / predictive (declared seam) ----------- #
+    def watchtower(self) -> dict:
+        """Live alert feed when AUREL_WATCHTOWER is on (F7.3); else the byte-identical
+        UNAVAILABLE stub. Read-only monitor — visibility, never authority."""
+        if not watchtower_flag_enabled():
+            return {"status": "UNAVAILABLE", "owner": "F7",
+                    "reason": "Watchtower alert feed is F7; not live in F5",
+                    "alerts": []}
+        alerts = derive_alerts(self._trace, self._budget, self._corp, inbox=self._inbox)
+        return live_feed(alerts)
 
     @staticmethod
     def predictive() -> dict:
@@ -88,5 +97,5 @@ class HQCommandReadModel:
             "budget": self.budget(),
             "watchtower": self.watchtower(),
             "predictive": self.predictive(),
-            "claims_watchtower_live": CLAIMS_WATCHTOWER_LIVE,
+            "claims_watchtower_live": watchtower_flag_enabled(),
         }

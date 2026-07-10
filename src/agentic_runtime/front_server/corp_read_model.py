@@ -20,11 +20,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..corp import CostAttributionView, default_corp_registry
+from ..corp import (
+    CostAttributionView,
+    default_corp_registry,
+    derive_alerts,
+    live_feed,
+    watchtower_flag_enabled,
+)
 from ..corp.cost import _mandate_to_job_map
 
-# Alerts (F7.3) and budget governance (F7.2) are not built yet. Hard-wired False:
-# an empty/declared seam is honest, never "live".
+# Default (off) claims. Alerts are live when AUREL_WATCHTOWER is on (F7.3); budget
+# governance (F7.2) is not built yet — hard-wired False, never over-claimed.
 CLAIMS_ALERTS_LIVE = False
 CLAIMS_BUDGET_GOVERNANCE_LIVE = False
 
@@ -109,9 +115,9 @@ class CorpReadModel:
             "clients": clients,
             "unassigned": unassigned,
             "cost": self._cost_status(cost),
-            "alerts": self._alerts_seam(),
+            "alerts": self._alerts(),
             "budget_governance": self._budget_governance_seam(),
-            "claims_alerts_live": CLAIMS_ALERTS_LIVE,
+            "claims_alerts_live": watchtower_flag_enabled(),
             "claims_budget_governance_live": CLAIMS_BUDGET_GOVERNANCE_LIVE,
         }
 
@@ -144,10 +150,13 @@ class CorpReadModel:
             return {"status": "UNAVAILABLE", "reason": cost.reason}
         return {"status": "AVAILABLE", "unattributed": cost.unattributed}
 
-    @staticmethod
-    def _alerts_seam() -> dict:
-        return {"status": "UNAVAILABLE", "owner": "F7.3",
-                "reason": "Watchtower alerts are F7.3; not built yet", "count": 0}
+    def _alerts(self) -> dict:
+        """Live Watchtower alert count + feed when AUREL_WATCHTOWER is on (F7.3);
+        else the byte-identical UNAVAILABLE seam."""
+        if not watchtower_flag_enabled():
+            return {"status": "UNAVAILABLE", "owner": "F7.3",
+                    "reason": "Watchtower alerts are F7.3; not built yet", "count": 0}
+        return live_feed(derive_alerts(self._trace, self._budget, self._corp))
 
     @staticmethod
     def _budget_governance_seam() -> dict:
