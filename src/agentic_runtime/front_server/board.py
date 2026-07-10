@@ -18,7 +18,9 @@ from ..core_types import PraxisEventRecord, new_id, now
 from .proposal_dispatcher import KIND_ACT
 
 BOARD_DECISION_EVENT = "board_decision"
+BOARD_OPTION_EVENT = "board_option"
 _MARK = "BOARD"
+_OPT_MARK = "BOPT"
 _FLAG = "AUREL_FRONT_BOARD"
 
 
@@ -67,6 +69,34 @@ class BoardDecision:
 
 
 @dataclass(frozen=True)
+class BoardOption:
+    """One persona-framed option in a two-persona plan (F6.8). A generator output,
+    not an execution — like a BoardDecision, it converts to an `act` through the door."""
+
+    option_id: str
+    persona: str                 # the lens/mode that produced it (e.g. SHADOW risk-first)
+    title: str
+    rationale: str
+    proposed_tool: str
+    proposed_args: dict
+    risk: str = "medium"
+
+    def to_proposal(self) -> dict:
+        return {
+            "kind": KIND_ACT,
+            "tool": self.proposed_tool,
+            "args": dict(self.proposed_args),
+            "risk": self.risk,
+            "rationale": self.rationale or self.title,
+            "expected_effect": self.title,
+        }
+
+    def to_dict(self) -> dict:
+        return {"option_id": self.option_id, "persona": self.persona,
+                "title": self.title, "proposed_tool": self.proposed_tool}
+
+
+@dataclass(frozen=True)
 class BoardJournalEntry:
     decision_id: str
     decided_by: str
@@ -100,10 +130,35 @@ class BoardJournal:
         ))
         return decision
 
+    def record_option(self, option: "BoardOption") -> "BoardOption":
+        """Append a governed Board option (two-persona plan). Records, never executes."""
+        self._inner.trace.append_praxis_event(PraxisEventRecord.make(
+            run_id=self._inner.trace.run_id, agent_id=option.persona,
+            event_type=BOARD_OPTION_EVENT, subject_id=option.option_id,
+            summary=f"{_OPT_MARK}|{option.option_id}|{option.persona}|"
+                    f"{option.proposed_tool}|{option.title}"))
+        return option
+
     @staticmethod
-    def convert_to_proposal(decision: BoardDecision) -> dict:
-        """Reduce a decision to an `act` proposal for the one door (F5.0)."""
+    def convert_to_proposal(decision: "BoardDecision | BoardOption") -> dict:
+        """Reduce a decision or option to an `act` proposal for the one door (F5.0)."""
         return decision.to_proposal()
+
+    @staticmethod
+    def options_from_trace(trace: Any) -> list[dict]:
+        """The recorded two-persona options, reconstructed purely from the trace."""
+        out: list[dict] = []
+        for ev in trace.replay():
+            if ev.get("kind") != "praxis_event":
+                continue
+            if ev.get("event_type") != BOARD_OPTION_EVENT:
+                continue
+            parts = str(ev.get("summary", "")).split("|", 4)
+            if len(parts) < 5:
+                continue
+            out.append({"option_id": parts[1], "persona": parts[2],
+                        "proposed_tool": parts[3], "title": parts[4]})
+        return out
 
     @staticmethod
     def from_trace(trace: Any) -> list[BoardJournalEntry]:

@@ -154,4 +154,25 @@ export interface BoardJournalDTO {
   model: string;
   live: boolean;
   decisions: BoardDecisionDTO[];
+  options?: Array<{ option_id: string; persona: string; proposed_tool: string; title: string }>;
+}
+
+export interface DelegationDTO {
+  delegation_id: string;
+  granted_by: string;
+  autonomy_ceiling: string;
+  valid_from: number;
+  valid_until: number;
+  action_categories: string[];
+  consent_ref: string;
+}
+
+export interface AurelEUDTO {
+  model: string;
+  live: boolean;
+  mandates: string[];
+  delegations: DelegationDTO[];
+  persona_switches: Array<{ room_id: string; from: string; to: string; context_hash: string }>;
+  dn: { dual_kernel_enabled: boolean; verifier_veto: string } & Record<string, unknown>;
+  claims_aureleu_dispatcher_live: boolean;
 }

@@ -76,6 +76,13 @@ class DelegationWindow:
     def is_active(self, at: float) -> bool:
         return self.valid_from <= at and (self.valid_until == 0.0 or at < self.valid_until)
 
+    def to_dict(self) -> dict:
+        return {"delegation_id": self.delegation_id, "granted_by": self.granted_by,
+                "autonomy_ceiling": self.autonomy_ceiling.value,
+                "valid_from": self.valid_from, "valid_until": self.valid_until,
+                "action_categories": list(self.action_categories),
+                "consent_ref": self.consent_ref}
+
     def covers(self, level: AutonomyLevel, category: str) -> bool:
         """True iff this window authorizes `level` for `category` (ignoring time)."""
         if is_denied(level):

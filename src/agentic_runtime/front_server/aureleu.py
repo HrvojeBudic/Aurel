@@ -179,6 +179,33 @@ class AurelEUDispatcher:
         return DispatchAuthorization(
             True, mandate_id=mandate_id, cited_delegation_id=decision.cited_delegation_id)
 
+    # -- F6.8: two-persona option generator (for the Board) ------------------ #
+    def generate_options(
+        self, topic: str, *, proposed_tool: str, proposed_args: dict, router: Any,
+        risk: str = "medium",
+    ) -> list:
+        """Generate two persona-diverse options for a decision: a risk-first
+        (SHADOW) and an opportunity-first (DEPLOY) framing over the same action.
+        A *generator* of options, never an execution — each option converts to an
+        `act` through the one door (F5.6/F6.8)."""
+        from ..core_types import new_id
+        from .board import BoardOption
+
+        options: list = []
+        for role, lens in (("challenger", "risk-first"), ("architect", "opportunity-first")):
+            res = self.resolve_persona(role)
+            system = res.system_prompt if res.valid else ""
+            try:
+                rationale, _model, _usage = router.complete_with_usage(
+                    res.mode, system, f"[{lens}] {topic}")
+            except Exception as e:  # honest UNAVAILABLE, never a fabricated rationale
+                rationale = f"[unavailable] {e}"
+            options.append(BoardOption(
+                option_id=new_id("bopt"), persona=res.mode,
+                title=f"{lens}: {topic}", rationale=rationale,
+                proposed_tool=proposed_tool, proposed_args=dict(proposed_args), risk=risk))
+        return options
+
     def _deny_dispatch(self, mandate_id: str, reason: str, operator_identity: str
                        ) -> DispatchAuthorization:
         self._inner.trace.append_praxis_event(PraxisEventRecord.make(
