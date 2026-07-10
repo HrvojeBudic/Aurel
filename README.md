@@ -1,3 +1,6 @@
+# Aurel
+Private OS agent
+
 # Agentic Runtime — Agent 3.0 reference implementation
 
 A production-shaped, runnable reference runtime for **governed agency**: the entity
