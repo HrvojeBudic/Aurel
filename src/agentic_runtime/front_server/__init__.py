@@ -27,6 +27,12 @@ from .proposal_dispatcher import (
     ProposalDispatcher,
     ProposalRejected,
 )
+from .aureleu import (
+    AurelEUDispatcher,
+    DispatchAuthorization,
+    PersonaResolution,
+    resolve_mode,
+)
 from .board import BoardDecision, BoardJournal, BoardJournalEntry
 from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
 from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
@@ -73,6 +79,10 @@ __all__ = [
     "BoardDecision",
     "BoardJournal",
     "BoardJournalEntry",
+    "AurelEUDispatcher",
+    "DispatchAuthorization",
+    "PersonaResolution",
+    "resolve_mode",
     "KIND_CONVERSE",
     "KIND_ACT",
     "KIND_DECIDE",

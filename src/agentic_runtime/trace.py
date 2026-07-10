@@ -204,7 +204,7 @@ class InMemoryTraceLedger:
                     "intent_id": rec.intent_id,
                 }
             elif isinstance(rec, RuntimeStatusTransitionRecord):
-                yield {
+                ev: dict[str, Any] = {
                     "kind": "runtime_status_transition",
                     "issuer": rec.issuer_card_id,
                     "run_id": rec.run_id,
@@ -212,8 +212,11 @@ class InMemoryTraceLedger:
                     "to": rec.to_status,
                     "reason_code": rec.reason_code,
                 }
+                if rec.mandate_id:  # F6: additive, empty ⇒ dict unchanged
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, BudgetDecisionRecord):
-                yield {
+                ev = {
                     "kind": "budget_decision",
                     "issuer": rec.issuer_card_id,
                     "metric": rec.metric,
@@ -221,8 +224,11 @@ class InMemoryTraceLedger:
                     "used": rec.used,
                     "limit": rec.limit,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, MemoryGovernanceRecord):
-                yield {
+                ev = {
                     "kind": "memory_governance",
                     "issuer": rec.agent_id,
                     "action": rec.action,
@@ -237,6 +243,9 @@ class InMemoryTraceLedger:
                     # revisions (update: target_id/new_memory_id).
                     "details": dict(rec.details),
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, ToolContractViolationRecord):
                 yield {
                     "kind": "tool_contract_violation",
@@ -247,7 +256,7 @@ class InMemoryTraceLedger:
                     "reason": rec.reason,
                 }
             elif isinstance(rec, ApprovalReceiptRecord):
-                yield {
+                ev = {
                     "kind": "approval_receipt",
                     "issuer": rec.issuer_card_id,
                     "tool": rec.tool,
@@ -256,14 +265,20 @@ class InMemoryTraceLedger:
                     "reason": rec.reason,
                     "decided_by": rec.decided_by,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, PraxisEventRecord):
-                yield {
+                ev = {
                     "kind": "praxis_event",
                     "issuer": rec.agent_id,
                     "event_type": rec.event_type,
                     "subject_id": rec.subject_id,
                     "summary": rec.summary,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, SandboxViolationRecord):
                 yield {
                     "kind": "sandbox_violation",
@@ -417,6 +432,12 @@ class PersistentTraceLedger:
         with self._write_guard():
             rec.prev_entry_hash = self.head
             event = build_event(self.run_id, len(self._events) + 1, rec)
+            # F6: persist a non-empty mandate_id so it survives reload. Additive —
+            # empty/absent ⇒ payload + entry_hash byte-identical to pre-F6 traces.
+            mandate_id = getattr(rec, "mandate_id", "")
+            if mandate_id and isinstance(event.get("payload"), dict):
+                event["payload"]["mandate_id"] = mandate_id
+                event["entry_hash"] = _entry_hash(event)
             rec.entry_hash = event["entry_hash"]
             self._events.append(event)
             self._entries.append(rec)
@@ -585,7 +606,7 @@ class PersistentTraceLedger:
                     "intent_id": rec.intent_id,
                 }
             elif isinstance(rec, RuntimeStatusTransitionRecord):
-                yield {
+                ev: dict[str, Any] = {
                     "kind": "runtime_status_transition",
                     "issuer": rec.issuer_card_id,
                     "run_id": rec.run_id,
@@ -593,8 +614,11 @@ class PersistentTraceLedger:
                     "to": rec.to_status,
                     "reason_code": rec.reason_code,
                 }
+                if rec.mandate_id:  # F6: additive, empty ⇒ dict unchanged
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, BudgetDecisionRecord):
-                yield {
+                ev = {
                     "kind": "budget_decision",
                     "issuer": rec.issuer_card_id,
                     "metric": rec.metric,
@@ -602,8 +626,11 @@ class PersistentTraceLedger:
                     "used": rec.used,
                     "limit": rec.limit,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, MemoryGovernanceRecord):
-                yield {
+                ev = {
                     "kind": "memory_governance",
                     "issuer": rec.agent_id,
                     "action": rec.action,
@@ -618,6 +645,9 @@ class PersistentTraceLedger:
                     # revisions (update: target_id/new_memory_id).
                     "details": dict(rec.details),
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, ToolContractViolationRecord):
                 yield {
                     "kind": "tool_contract_violation",
@@ -628,7 +658,7 @@ class PersistentTraceLedger:
                     "reason": rec.reason,
                 }
             elif isinstance(rec, ApprovalReceiptRecord):
-                yield {
+                ev = {
                     "kind": "approval_receipt",
                     "issuer": rec.issuer_card_id,
                     "tool": rec.tool,
@@ -637,14 +667,20 @@ class PersistentTraceLedger:
                     "reason": rec.reason,
                     "decided_by": rec.decided_by,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, PraxisEventRecord):
-                yield {
+                ev = {
                     "kind": "praxis_event",
                     "issuer": rec.agent_id,
                     "event_type": rec.event_type,
                     "subject_id": rec.subject_id,
                     "summary": rec.summary,
                 }
+                if rec.mandate_id:
+                    ev["mandate_id"] = rec.mandate_id
+                yield ev
             elif isinstance(rec, SandboxViolationRecord):
                 yield {
                     "kind": "sandbox_violation",
@@ -1113,6 +1149,7 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             command_hash=ev.get("command_hash"),
             observation_hash=ev.get("observation_hash"),
             verifier_hash=ev.get("verifier_hash"),
+            mandate_id=payload.get("mandate_id", ""),
             created_at=ev.get("timestamp", now()),
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),
@@ -1129,6 +1166,7 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             limit=payload.get("limit", 0.0),
             reason=payload.get("reason", ""),
             details=payload.get("details", {}),
+            mandate_id=payload.get("mandate_id", ""),
             created_at=ev.get("timestamp", now()),
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),
@@ -1149,6 +1187,7 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             source_trace_ids=payload.get("source_trace_ids", []),
             confidence=payload.get("confidence", 0.0),
             details=payload.get("details", {}),
+            mandate_id=payload.get("mandate_id", ""),
             created_at=ev.get("timestamp", now()),
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),
@@ -1183,6 +1222,7 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             preview_summary=payload.get("preview_summary", ""),
             approved_scope=payload.get("approved_scope", []),
             trace_id=payload.get("trace_id", ""),
+            mandate_id=payload.get("mandate_id", ""),
             created_at=ev.get("timestamp", now()),
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),
@@ -1196,6 +1236,7 @@ def _record_from_event(ev: TraceEvent) -> TraceEntry:
             subject_id=payload.get("subject_id", ""),
             summary=payload.get("summary", ""),
             details=payload.get("details", {}),
+            mandate_id=payload.get("mandate_id", ""),
             created_at=ev.get("timestamp", now()),
             prev_entry_hash=ev.get("prev_entry_hash", ""),
             entry_hash=ev.get("entry_hash", ""),

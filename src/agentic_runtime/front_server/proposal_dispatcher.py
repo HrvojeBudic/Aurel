@@ -33,12 +33,14 @@ class ProposalDispatcher:
     """Reduces a proposal to a governed path."""
 
     def __init__(self, runtime: Any, *, conversation_engine: Any = None,
-                 approval_inbox: Any = None, card: Any = None) -> None:
+                 approval_inbox: Any = None, card: Any = None,
+                 aureleu: Any = None) -> None:
         # The kernel is the only executor; held for the `act` reduction.
         self._runtime = getattr(runtime, "runtime", runtime)
         self._engine = conversation_engine
         self._inbox = approval_inbox
         self._card = card
+        self._aureleu = aureleu  # F6.4: role-fluid persona resolution (optional)
 
     def dispatch(self, proposal: Any) -> dict:
         """Validate + route a proposal. Fail-closed on shape."""
@@ -69,9 +71,26 @@ class ProposalDispatcher:
             role=proposal["role"], mandate_id=proposal["mandate_id"],
             context_refs=tuple(proposal.get("context_refs", []) or []),
         )
-        reply = self._engine.respond(turn)
-        return {"accepted": True, "kind": KIND_CONVERSE, "wired": True,
-                "turn_id": turn.turn_id, "reply": reply.to_dict()}
+        # F6.4: when AurelEU is bound and enabled, resolve the persona (a traced
+        # switch) and hand the engine the compiled identity prompt; else F5 default.
+        system = None
+        persona_mode = None
+        if self._aureleu is not None:
+            from .aureleu import flag_enabled as _aureleu_on
+            if _aureleu_on():
+                res = self._aureleu.switch_persona(
+                    turn.room_id, turn.role,
+                    persona_ref=str(proposal.get("persona_ref", "") or ""),
+                    operator_identity=turn.operator_identity)
+                if res.valid:
+                    system = res.system_prompt
+                    persona_mode = res.mode
+        reply = self._engine.respond(turn, system=system)
+        out = {"accepted": True, "kind": KIND_CONVERSE, "wired": True,
+               "turn_id": turn.turn_id, "reply": reply.to_dict()}
+        if persona_mode is not None:
+            out["persona_mode"] = persona_mode
+        return out
 
     def _dispatch_act(self, proposal: dict) -> dict:
         if self._inbox is None or self._card is None:
