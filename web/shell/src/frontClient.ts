@@ -13,6 +13,7 @@
  */
 import type {
   ApprovalsDTO,
+  AurelEUDTO,
   BoardJournalDTO,
   HqCommandDTO,
   LibraryDTO,
@@ -86,6 +87,9 @@ export class FrontClient {
   }
   board(): Promise<BoardJournalDTO> {
     return this.read<BoardJournalDTO>("board");
+  }
+  aureleu(): Promise<AurelEUDTO> {
+    return this.read<AurelEUDTO>("aureleu");
   }
 
   // -- the single mutation door ---------------------------------------------- //

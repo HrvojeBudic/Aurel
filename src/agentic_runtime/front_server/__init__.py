@@ -27,7 +27,15 @@ from .proposal_dispatcher import (
     ProposalDispatcher,
     ProposalRejected,
 )
-from .board import BoardDecision, BoardJournal, BoardJournalEntry
+from .aureleu import (
+    AurelEUDispatcher,
+    DispatchAuthorization,
+    PersonaResolution,
+    resolve_mode,
+)
+from .board import BoardDecision, BoardJournal, BoardJournalEntry, BoardOption
+from .aureleu_read_model import AurelEUReadModel
+from .dn import DnStatusReadModel, evaluate_merge, graduated_autonomy
 from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
 from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
 from .read_models import LiveReadModels, ReadModelError
@@ -73,6 +81,15 @@ __all__ = [
     "BoardDecision",
     "BoardJournal",
     "BoardJournalEntry",
+    "BoardOption",
+    "AurelEUDispatcher",
+    "DispatchAuthorization",
+    "PersonaResolution",
+    "resolve_mode",
+    "DnStatusReadModel",
+    "AurelEUReadModel",
+    "graduated_autonomy",
+    "evaluate_merge",
     "KIND_CONVERSE",
     "KIND_ACT",
     "KIND_DECIDE",

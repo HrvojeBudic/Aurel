@@ -15,8 +15,10 @@ from typing import Any, Callable
 from urllib.parse import parse_qs, urlparse
 
 from .approval_inbox import ApprovalInbox
+from .aureleu_read_model import AurelEUReadModel
 from .board import BoardJournal
 from .conversation import RoomHistoryProjection, rooms_from_trace
+from .dn import DnStatusReadModel
 from .hq_command import HQCommandReadModel
 from .library import LibraryReadModel
 from .workops import WorkOpsChatReadModel, workops_room
@@ -78,7 +80,16 @@ def _hq_command(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dic
 
 
 def _board(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
-    return {"decisions": [e.to_dict() for e in BoardJournal.from_trace(reads.trace)]}
+    return {"decisions": [e.to_dict() for e in BoardJournal.from_trace(reads.trace)],
+            "options": BoardJournal.options_from_trace(reads.trace)}
+
+
+def _aureleu_dn(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    return DnStatusReadModel.status()
+
+
+def _aureleu(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    return AurelEUReadModel(reads.runtime).to_dict()
 
 
 # The complete live-read registry. Every entry is read-only.
@@ -91,6 +102,8 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "library": _library,
     "hq/command": _hq_command,
     "board": _board,
+    "aureleu": _aureleu,
+    "aureleu/dn": _aureleu_dn,
 }
 
 

@@ -234,6 +234,9 @@ class ConversationEngine:
             event_type=event_type,
             subject_id=turn.turn_id,
             summary=_summary(turn.room_id, turn.turn_id, role, ref, text),
+            # Trace a *real* mandate only; the "default" sentinel is the absence of a
+            # specific authority, so the F5 default path stays byte-identical (empty).
+            mandate_id=("" if turn.mandate_id in ("", "default") else turn.mandate_id),
         ))
 
     def _classify(self, raw: str) -> tuple[ReplyMode, str, Optional[dict]]:
@@ -251,7 +254,11 @@ class ConversationEngine:
         # 3. Otherwise the raw text is the conversational answer.
         return ReplyMode.ANSWER, raw, None
 
-    def respond(self, turn: ConversationTurn) -> ConversationReply:
+    def respond(self, turn: ConversationTurn, *, system: Optional[str] = None
+                ) -> ConversationReply:
+        # F6.4: AurelEU may supply a per-turn, mandate/role-resolved system prompt
+        # (the compiled identity context); absent ⇒ the static CHAT_SYSTEM.
+        system_prompt = system or self._system
         bundle = self._assemble(turn)
         bind_context_to_trace(
             self._inner.trace, run_id=self._inner.trace.run_id,
@@ -272,7 +279,7 @@ class ConversationEngine:
 
         try:
             raw, _model, usage = self._router.complete_with_usage(
-                profile, self._system, bundle.to_prompt())
+                profile, system_prompt, bundle.to_prompt())
         except Exception as e:  # provider failure ⇒ honest UNAVAILABLE, never fake
             return self._unavailable(turn, ref, profile, f"router: {e}")
         try:

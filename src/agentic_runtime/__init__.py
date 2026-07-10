@@ -517,6 +517,7 @@ def build_runtime(
     entity_class: Optional[AgentClass] = None,
     memory_backend: Any = None,
     profile: Optional[str] = None,
+    mandate_registry: Any = None,
 ) -> Kernel:
     # F1 — enforcement profiles. Opt-in: profile=None keeps today's behavior
     # byte-identical (embedding + the test suite are unaffected). When set, the
@@ -653,6 +654,7 @@ def build_runtime(
         identity_context_loader=identity_context_loader,
         retain_states=retain_states,
         state_store=state_store,
+        mandate_registry=mandate_registry,
     )
     return Kernel(sandbox, tools, policy, verifier, trace, memory, budget,
                   router, skills, runtime, sandbox_policy=sandbox_policy)

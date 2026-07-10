@@ -168,6 +168,7 @@ class AgentCard:
     authority: AuthorityScope
     allowed_tools: list[str] = field(default_factory=list)
     denied_tools: list[str] = field(default_factory=list)
+    mandate_id: str = ""                        # F6: binds the card to a Mandate (F6.2 gate)
     memory_scope: str = "project-local"
     skill_scope: list[str] = field(default_factory=list)
     model_profile: str = "balanced"            # router selects, not hardcoded model
@@ -340,6 +341,7 @@ class RuntimeStatusTransitionRecord:
     command_hash: Optional[str] = None
     observation_hash: Optional[str] = None
     verifier_hash: Optional[str] = None
+    mandate_id: str = ""                    # F6: authority under which the transition occurred
     created_at: float = field(default_factory=now)
     prev_entry_hash: str = ""
     entry_hash: str = ""
@@ -358,6 +360,7 @@ class RuntimeStatusTransitionRecord:
         command_hash: Optional[str] = None,
         observation_hash: Optional[str] = None,
         verifier_hash: Optional[str] = None,
+        mandate_id: str = "",
     ) -> "RuntimeStatusTransitionRecord":
         return RuntimeStatusTransitionRecord(
             id=new_id("run_state"),
@@ -373,10 +376,11 @@ class RuntimeStatusTransitionRecord:
             command_hash=command_hash,
             observation_hash=observation_hash,
             verifier_hash=verifier_hash,
+            mandate_id=mandate_id,
         )
 
     def payload_hash(self) -> str:
-        return sha(canonical_json({
+        payload: dict[str, Any] = {
             "kind": "runtime_status_transition",
             "run_id": self.run_id,
             "intent_id": self.intent_id,
@@ -390,7 +394,10 @@ class RuntimeStatusTransitionRecord:
             "command_hash": self.command_hash,
             "observation_hash": self.observation_hash,
             "verifier_hash": self.verifier_hash,
-        }))
+        }
+        if self.mandate_id:
+            payload["mandate_id"] = self.mandate_id
+        return sha(canonical_json(payload))
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -408,6 +415,7 @@ class BudgetDecisionRecord:
     limit: float
     reason: str = ""
     details: dict[str, Any] = field(default_factory=dict)
+    mandate_id: str = ""                    # F6: authority under which the decision occurred
     created_at: float = field(default_factory=now)
     prev_entry_hash: str = ""
     entry_hash: str = ""
@@ -423,6 +431,7 @@ class BudgetDecisionRecord:
         limit: float,
         reason: str = "",
         details: Optional[dict[str, Any]] = None,
+        mandate_id: str = "",
     ) -> "BudgetDecisionRecord":
         return BudgetDecisionRecord(
             id=new_id("budget"),
@@ -435,10 +444,11 @@ class BudgetDecisionRecord:
             limit=limit,
             reason=reason,
             details=details or {},
+            mandate_id=mandate_id,
         )
 
     def payload_hash(self) -> str:
-        return sha(canonical_json({
+        payload: dict[str, Any] = {
             "kind": "budget_decision",
             "run_id": self.run_id,
             "intent_id": self.intent_id,
@@ -449,7 +459,10 @@ class BudgetDecisionRecord:
             "limit": self.limit,
             "reason": self.reason,
             "details": self.details,
-        }))
+        }
+        if self.mandate_id:
+            payload["mandate_id"] = self.mandate_id
+        return sha(canonical_json(payload))
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -472,6 +485,7 @@ class MemoryGovernanceRecord:
     source_trace_ids: list[str] = field(default_factory=list)
     confidence: float = 0.0
     details: dict[str, Any] = field(default_factory=dict)
+    mandate_id: str = ""                    # F6: authority under which the decision occurred
     created_at: float = field(default_factory=now)
     prev_entry_hash: str = ""
     entry_hash: str = ""
@@ -491,6 +505,7 @@ class MemoryGovernanceRecord:
         source_trace_ids: Optional[list[str]] = None,
         confidence: float = 0.0,
         details: Optional[dict[str, Any]] = None,
+        mandate_id: str = "",
     ) -> "MemoryGovernanceRecord":
         return MemoryGovernanceRecord(
             id=new_id("mem_gov"),
@@ -507,10 +522,11 @@ class MemoryGovernanceRecord:
             source_trace_ids=source_trace_ids or [],
             confidence=confidence,
             details=details or {},
+            mandate_id=mandate_id,
         )
 
     def payload_hash(self) -> str:
-        return sha(canonical_json({
+        payload: dict[str, Any] = {
             "kind": "memory_governance",
             "run_id": self.run_id,
             "agent_id": self.agent_id,
@@ -525,7 +541,10 @@ class MemoryGovernanceRecord:
             "source_trace_ids": self.source_trace_ids,
             "confidence": self.confidence,
             "details": self.details,
-        }))
+        }
+        if self.mandate_id:
+            payload["mandate_id"] = self.mandate_id
+        return sha(canonical_json(payload))
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -602,6 +621,7 @@ class ApprovalReceiptRecord:
     preview_summary: str = ""
     approved_scope: list[str] = field(default_factory=list)
     trace_id: str = ""
+    mandate_id: str = ""                    # F6: authority under which the approval occurred
     created_at: float = field(default_factory=now)
     prev_entry_hash: str = ""
     entry_hash: str = ""
@@ -620,6 +640,7 @@ class ApprovalReceiptRecord:
         preview_summary: str = "",
         approved_scope: Optional[list[str]] = None,
         trace_id: str = "",
+        mandate_id: str = "",
     ) -> "ApprovalReceiptRecord":
         return ApprovalReceiptRecord(
             id=new_id("approval_trace"),
@@ -635,10 +656,11 @@ class ApprovalReceiptRecord:
             preview_summary=preview_summary,
             approved_scope=approved_scope or [],
             trace_id=trace_id,
+            mandate_id=mandate_id,
         )
 
     def payload_hash(self) -> str:
-        return sha(canonical_json({
+        payload: dict[str, Any] = {
             "kind": "approval_receipt",
             "run_id": self.run_id,
             "issuer_card_id": self.issuer_card_id,
@@ -652,7 +674,10 @@ class ApprovalReceiptRecord:
             "preview_summary": self.preview_summary,
             "approved_scope": self.approved_scope,
             "trace_id": self.trace_id,
-        }))
+        }
+        if self.mandate_id:
+            payload["mandate_id"] = self.mandate_id
+        return sha(canonical_json(payload))
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -668,6 +693,7 @@ class PraxisEventRecord:
     subject_id: str
     summary: str
     details: dict[str, Any] = field(default_factory=dict)
+    mandate_id: str = ""                    # F6: authority under which the event occurred
     created_at: float = field(default_factory=now)
     prev_entry_hash: str = ""
     entry_hash: str = ""
@@ -680,6 +706,7 @@ class PraxisEventRecord:
         subject_id: str,
         summary: str,
         details: Optional[dict[str, Any]] = None,
+        mandate_id: str = "",
     ) -> "PraxisEventRecord":
         return PraxisEventRecord(
             id=new_id("praxis"),
@@ -689,10 +716,11 @@ class PraxisEventRecord:
             subject_id=subject_id,
             summary=summary[:500],
             details=details or {},
+            mandate_id=mandate_id,
         )
 
     def payload_hash(self) -> str:
-        return sha(canonical_json({
+        payload: dict[str, Any] = {
             "kind": "praxis_event",
             "run_id": self.run_id,
             "agent_id": self.agent_id,
@@ -700,7 +728,10 @@ class PraxisEventRecord:
             "subject_id": self.subject_id,
             "summary": self.summary,
             "details": self.details,
-        }))
+        }
+        if self.mandate_id:  # additive: empty ⇒ byte-identical to pre-F6 hashes
+            payload["mandate_id"] = self.mandate_id
+        return sha(canonical_json(payload))
 
     def to_dict(self) -> dict:
         return asdict(self)

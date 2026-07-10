@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { FrontClient, FrontMode } from "../../frontClient";
 import type {
+  AurelEUDTO,
   BoardJournalDTO,
   HqCommandDTO,
   LibraryDTO,
@@ -246,10 +247,55 @@ function WorkOpsPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
   );
 }
 
+function AurelEUPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
+  const [au, setAu] = useState<AurelEUDTO | null>(null);
+  useEffect(() => {
+    if (mode === "live") void client.aureleu().then(setAu);
+  }, [client, mode]);
+  if (!au) return null;
+  return (
+    <section className="front-panel aureleu-panel">
+      <h3>AurelEU</h3>
+      <p className="seam">
+        dispatcher live: {String(au.claims_aureleu_dispatcher_live)} · verifier veto:{" "}
+        {au.dn.verifier_veto} · dual-kernel: {String(au.dn.dual_kernel_enabled)}
+      </p>
+      <h4>Mandates</h4>
+      <ul>
+        {au.mandates.map((m) => (
+          <li key={m}>
+            <code>{m}</code>
+          </li>
+        ))}
+        {au.mandates.length === 0 ? <li className="empty">No mandates bound.</li> : null}
+      </ul>
+      <h4>Delegation windows</h4>
+      <ul>
+        {au.delegations.map((d) => (
+          <li key={d.delegation_id}>
+            <code>{d.autonomy_ceiling}</code> by {d.granted_by}
+          </li>
+        ))}
+        {au.delegations.length === 0 ? <li className="empty">No delegations.</li> : null}
+      </ul>
+      {au.persona_switches.length ? (
+        <p className="seam">
+          persona: {au.persona_switches[au.persona_switches.length - 1].to}
+        </p>
+      ) : null}
+    </section>
+  );
+}
+
 export function FrontSurface({ surfaceId, client, mode }: SurfaceProps) {
   switch (surfaceId) {
     case "aurel_cro":
-      return <ChatPanel client={client} mode={mode} room="signal:main" label="Signal" />;
+      return (
+        <>
+          <AurelEUPanel client={client} mode={mode} />
+          <ChatPanel client={client} mode={mode} room="signal:main" label="Signal" />
+        </>
+      );
     case "ide":
       return <WorkOpsPanel client={client} mode={mode} />;
     case "hq":

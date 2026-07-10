@@ -42,6 +42,47 @@ def cmd_front_demo(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_aureleu_seal(args: argparse.Namespace) -> int:
+    """``aurel aureleu seal [--json]`` — the derived F6 exit seal (read-only)."""
+    from ..f6_seal import build_f6_exit_seal
+
+    seal = build_f6_exit_seal()
+    if getattr(args, "json", False):
+        print(json.dumps(seal.to_dict(), indent=2))
+        return 0 if seal.sealed else 1
+    print(f"F6 AurelEU/Constitution/mandate exit seal: {seal.status.value}")
+    for item in seal.items:
+        mark = "OK " if item.status.value == "PASSED" else "XX "
+        print(f"  {mark}{item.slice_id:6} {item.title}")
+    print("  flipped from F5 (now live):")
+    for seam, owner in seal.flipped_from_f5:
+        print(f"    + {seam} [{owner}]")
+    print("  UNAVAILABLE (declared, deferred):")
+    for u in seal.unavailable:
+        print(f"    - {u.surface_id}: {u.reason} [{u.future_owner}]")
+    return 0 if seal.sealed else 1
+
+
+def cmd_aureleu_status(args: argparse.Namespace) -> int:
+    """``aurel aureleu status`` — project the F6 north-star run from the trace."""
+    from .. import build_runtime
+    from ..f6_projection import F6RunProjection
+
+    print(json.dumps(F6RunProjection(build_runtime()).to_dict(), indent=2))
+    return 0
+
+
+def cmd_aureleu_panic(args: argparse.Namespace) -> int:
+    """``aurel aureleu panic`` — record a governed panic (halt → G0). Never silent."""
+    from .. import build_runtime
+    from ..dn import panic
+
+    reason = getattr(args, "reason", "") or "operator panic"
+    result = panic(build_runtime(), reason, invoked_by="operator")
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0
+
+
 def cmd_front_serve(args: argparse.Namespace) -> int:
     from .. import build_runtime
     from ..front_server import FrontServerDisabled, create_front_server

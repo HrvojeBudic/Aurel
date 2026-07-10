@@ -33,6 +33,7 @@ if TYPE_CHECKING:
 from .budget import BudgetExceeded, BudgetLedger
 from .governance_enforcement import (
     GovernanceEnforcementConfig,
+    GovernanceEnforcementMode,
 )
 from .identity_invariant_enforcement import (
     IdentityInvariantEnforcementResult,
@@ -63,7 +64,7 @@ from .core_types import (AgentCard, ApprovalReceiptRecord, CommandEnvelope,
                          MemoryTruthState, ObservationEnvelope, PolicyVerdict,
                          RiskLevel, SandboxViolationRecord, StateTransitionRecord,
                          ToolContractViolationRecord, TruthStatus,
-                         VerifierResult, new_id)
+                         VerifierResult, new_id, now)
 from .hitl import ApprovalGate
 from .memory import MemoryFabric
 from .memory_bitemporal import _flag_enabled
@@ -148,8 +149,12 @@ class AgenticRuntime:
                  governance_enforcement_config: GovernanceEnforcementConfig | None = None,
                  identity_context_loader: IdentitySubmitContextLoader | None = None,
                  retain_states: bool = False,
-                 state_store: "StateStore | None" = None) -> None:
+                 state_store: "StateStore | None" = None,
+                 mandate_registry: Any = None) -> None:
         self.tools = tool_runtime
+        # F6.2 — optional mandate scope enforcement. None ⇒ the gate is never
+        # evaluated (byte-identical). Bound only when AUREL_MANDATE governs a run.
+        self._mandate_registry = mandate_registry
         self.policy = policy
         self.verifier = verifier
         self.trace = trace
@@ -301,6 +306,23 @@ class AgenticRuntime:
                 card,
                 reason=policy_submit_gate.artifact.blocker_reason
                 or "policy resolver submit influence failed closed",
+                identity_submit=identity_submit,
+                policy_submit_gate=policy_submit_gate,
+                sandbox_backend_gate=sandbox_backend_gate,
+            )
+
+        # ---- 1b. MANDATE SCOPE (F6.2) ---------------------------------- #
+        # The mandate only *tightens*: it runs after policy has verified the
+        # card's authority, and can only add a denial. Fail-closed; skipped
+        # (byte-identical) unless a registry is bound, the flag is on, the card
+        # names a non-default mandate, and enforcement is fail-closed.
+        mandate_block = self._evaluate_mandate_scope_check(cmd, card)
+        if mandate_block is not None:
+            return self._governance_enforcement_blocked(
+                pre_policy_hash,
+                cmd,
+                card,
+                reason=mandate_block,
                 identity_submit=identity_submit,
                 policy_submit_gate=policy_submit_gate,
                 sandbox_backend_gate=sandbox_backend_gate,
@@ -1058,6 +1080,31 @@ class AgenticRuntime:
                 sandbox_backend_gate
             )
         obs.artifacts["governance_enforcement"] = artifacts
+
+    def _evaluate_mandate_scope_check(
+        self, cmd: CommandEnvelope, card: AgentCard
+    ) -> "str | None":
+        """F6.2 mandate scope gate. Returns a block reason, or None to pass through.
+
+        Fully fail-closed but conservatively gated so the default path is
+        byte-identical: no registry, flag off, no/default mandate, or non
+        fail-closed enforcement ⇒ the gate does nothing.
+        """
+        if self._mandate_registry is None:
+            return None
+        from .mandate import DEFAULT_MANDATE_ID, flag_enabled
+        if not flag_enabled():
+            return None
+        mandate_id = getattr(card, "mandate_id", "")
+        if not mandate_id or mandate_id == DEFAULT_MANDATE_ID:
+            return None
+        if (self.governance_enforcement_config.mode
+                is not GovernanceEnforcementMode.ENFORCE_FAIL_CLOSED):
+            return None  # enforce only under G0–G3 (fail-closed)
+        from .mandate.enforcement import evaluate_mandate_scope_check
+        mandate = self._mandate_registry.resolve(mandate_id)
+        result = evaluate_mandate_scope_check(cmd, card, mandate, now=now())
+        return result.reason if result.should_block else None
 
     def _governance_enforcement_blocked(
         self,

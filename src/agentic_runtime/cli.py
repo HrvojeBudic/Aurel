@@ -518,7 +518,14 @@ from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
-from .cli_modules.f5_commands import cmd_front_demo, cmd_front_seal, cmd_front_serve
+from .cli_modules.f5_commands import (
+    cmd_aureleu_panic,
+    cmd_aureleu_seal,
+    cmd_aureleu_status,
+    cmd_front_demo,
+    cmd_front_seal,
+    cmd_front_serve,
+)
 from .cli_modules.mcp_client_commands import (cmd_mcp_client_demo,
                                               cmd_mcp_client_list_servers,
                                               cmd_mcp_client_seal)
@@ -970,6 +977,19 @@ def main(argv: list[str] | None = None) -> int:
     p_front_demo = front_sub.add_parser(
         "demo", help="project the north-star run from the trace (read-only)")
     p_front_demo.set_defaults(func=cmd_front_demo)
+
+    # F6: AurelEU governance commands.
+    p_aureleu = sub.add_parser("aureleu", help="AurelEU governance (F6)")
+    aureleu_sub = p_aureleu.add_subparsers(dest="aureleu_command", required=True)
+    p_panic = aureleu_sub.add_parser("panic", help="record a governed panic (halt → G0)")
+    p_panic.add_argument("--reason", default="operator panic")
+    p_panic.set_defaults(func=cmd_aureleu_panic)
+    p_au_seal = aureleu_sub.add_parser("seal", help="derived F6 exit seal (read-only)")
+    p_au_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_au_seal.set_defaults(func=cmd_aureleu_seal)
+    p_au_status = aureleu_sub.add_parser(
+        "status", help="project the F6 north-star run from the trace (read-only)")
+    p_au_status.set_defaults(func=cmd_aureleu_status)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
