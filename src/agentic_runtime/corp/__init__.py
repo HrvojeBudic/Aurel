@@ -26,6 +26,7 @@ from .default import (
 )
 from .domain import ClientRecord, JobRecord, JobStatus, flag_enabled
 from .evidence_vault import EvidenceVaultQuery
+from .kpi import ReflexFlywheelView
 from .registry import (
     ClientNotFound,
     CorpRegistry,
@@ -65,6 +66,7 @@ __all__ = [
     "CostAttributionView",
     "ClientBudgetView",
     "EvidenceVaultQuery",
+    "ReflexFlywheelView",
     "WatchtowerAlert",
     "AlertKind",
     "AlertSeverity",

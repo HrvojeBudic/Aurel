@@ -109,6 +109,14 @@ def _corp_workbench(reads: "LiveReadModels", _params: "dict[str, list[str]]") ->
     return ApprovalWorkbenchReadModel.from_runtime(reads.runtime).to_dict()
 
 
+def _corp_kpi(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    from ..corp import ReflexFlywheelView
+    inner = reads.runtime
+    return ReflexFlywheelView.build(
+        skills=getattr(inner, "skills", None),
+        ledger=getattr(inner, "budget", None)).to_dict()
+
+
 # The complete live-read registry. Every entry is read-only.
 _REGISTRY: "dict[str, ReadBuilder]" = {
     "signal/history": _signal_history,
@@ -124,6 +132,7 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "corp/portfolio": _corp_portfolio,
     "corp/runtime": _corp_runtime,
     "corp/workbench": _corp_workbench,
+    "corp/kpi": _corp_kpi,
 }
 
 

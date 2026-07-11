@@ -176,3 +176,41 @@ export interface AurelEUDTO {
   dn: { dual_kernel_enabled: boolean; verifier_veto: string } & Record<string, unknown>;
   claims_aureleu_dispatcher_live: boolean;
 }
+
+// -- Corp / Business Plane (F7) ---------------------------------------------- //
+
+export interface CorpJobDTO {
+  job_id: string;
+  title: string;
+  status: string;
+  mandate_ids: string[];
+  repos: string[];
+  runs: Array<Record<string, unknown>>;
+  cost: Record<string, number> | null;
+}
+
+export interface CorpClientDTO {
+  client_id: string;
+  name: string;
+  jobs: CorpJobDTO[];
+  cost: Record<string, number> | null;
+}
+
+export interface CorpPortfolioDTO {
+  model: string;
+  live: boolean;
+  clients: CorpClientDTO[];
+  unassigned: Array<Record<string, unknown>>;
+  cost: SeamDTO & Record<string, unknown>;
+  alerts: SeamDTO & { count?: number };
+  budget_governance: SeamDTO & Record<string, unknown>;
+  claims_alerts_live: boolean;
+  claims_budget_governance_live: boolean;
+}
+
+export interface CorpKpiDTO {
+  model: string;
+  live: boolean;
+  reflex: SeamDTO & Record<string, unknown>;
+  cost_per_task: SeamDTO & Record<string, unknown>;
+}
