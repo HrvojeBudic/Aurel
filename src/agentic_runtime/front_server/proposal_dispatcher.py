@@ -93,15 +93,21 @@ class ProposalDispatcher:
         return out
 
     def _dispatch_act(self, proposal: dict) -> dict:
+        # Accept either a direct {tool, args} or a plan's first step.
+        steps = proposal.get("steps")
+        step = steps[0] if isinstance(steps, list) and steps else proposal
+        tool = step.get("tool")
+        # F7-wire: a governed corp record (a risk entry) appends directly to the
+        # trace like the Board journal — it is operator metadata, not a sandbox
+        # tool action, so it never routes through runtime.submit.
+        if str(tool) == "corp_risk_add":
+            return self._dispatch_corp_risk_add(step, proposal)
+
         if self._inbox is None or self._card is None:
             return {"accepted": True, "kind": KIND_ACT,
                     "reduction": "approval inbox two-phase (F5.2)", "wired": False}
         from ..core_types import CommandEnvelope, RiskLevel
 
-        # Accept either a direct {tool, args} or a plan's first step.
-        steps = proposal.get("steps")
-        step = steps[0] if isinstance(steps, list) and steps else proposal
-        tool = step.get("tool")
         if not tool:
             raise ProposalRejected("act proposal requires a 'tool'")
         risk = RiskLevel(_RISK.get(str(step.get("risk", "medium")), "medium"))
@@ -114,6 +120,21 @@ class ProposalDispatcher:
         )
         result = self._inbox.submit_act(cmd, self._card)
         return {"accepted": True, "kind": KIND_ACT, "wired": True, **result}
+
+    def _dispatch_corp_risk_add(self, step: dict, proposal: dict) -> dict:
+        """Append a governed Risk Register entry (F7.7) through the one door."""
+        from ..corp import RiskEntry, record_risk
+
+        args = dict(step.get("args", {}) or {})
+        try:
+            entry = RiskEntry.from_dict(args)
+        except (ValueError, TypeError) as exc:
+            raise ProposalRejected(f"invalid risk entry: {exc}") from exc
+        rec = record_risk(self._runtime.trace, entry,
+                          mandate_id=str(proposal.get("mandate_id", "") or ""))
+        return {"accepted": True, "kind": KIND_ACT, "wired": True,
+                "reduction": "governed corp risk record (F7.7)",
+                "risk_id": entry.risk_id, "record_id": rec.id}
 
     def _dispatch_decide(self, proposal: dict) -> dict:
         if self._inbox is None:
