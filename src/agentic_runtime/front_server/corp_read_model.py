@@ -21,6 +21,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..corp import (
+    ClientBudgetView,
     CostAttributionView,
     default_corp_registry,
     derive_alerts,
@@ -29,10 +30,10 @@ from ..corp import (
 )
 from ..corp.cost import _mandate_to_job_map
 
-# Default (off) claims. Alerts are live when AUREL_WATCHTOWER is on (F7.3); budget
-# governance (F7.2) is not built yet — hard-wired False, never over-claimed.
+# Alerts are live when AUREL_WATCHTOWER is on (F7.3); budget governance is built
+# (F7.2 — a pure allocation-vs-spend projection). Forecasting stays UNAVAILABLE.
 CLAIMS_ALERTS_LIVE = False
-CLAIMS_BUDGET_GOVERNANCE_LIVE = False
+CLAIMS_BUDGET_GOVERNANCE_LIVE = True
 
 _FEED_KINDS = ("runtime_status_transition", "approval_receipt", "budget_decision")
 
@@ -116,7 +117,7 @@ class CorpReadModel:
             "unassigned": unassigned,
             "cost": self._cost_status(cost),
             "alerts": self._alerts(),
-            "budget_governance": self._budget_governance_seam(),
+            "budget_governance": self._budget_governance(),
             "claims_alerts_live": watchtower_flag_enabled(),
             "claims_budget_governance_live": CLAIMS_BUDGET_GOVERNANCE_LIVE,
         }
@@ -158,10 +159,10 @@ class CorpReadModel:
                     "reason": "Watchtower alerts are F7.3; not built yet", "count": 0}
         return live_feed(derive_alerts(self._trace, self._budget, self._corp))
 
-    @staticmethod
-    def _budget_governance_seam() -> dict:
-        return {"status": "UNAVAILABLE", "owner": "F7.2",
-                "reason": "budget governance (allocation vs. spend) is F7.2"}
+    def _budget_governance(self) -> dict:
+        """Live allocation-vs-spend view (F7.2). Report, never enforcement;
+        forecasting stays a declared UNAVAILABLE seam inside the view."""
+        return ClientBudgetView.build(self._budget, self._corp, self._trace).to_dict()
 
 
 def _normalize_feed_event(kind: str, ev: dict) -> dict:

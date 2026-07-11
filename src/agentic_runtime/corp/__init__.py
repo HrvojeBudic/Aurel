@@ -15,6 +15,7 @@ attribution (F7.1), Watchtower (F7.3), Evidence Vault (F7.4), and the CORP surfa
 """
 from __future__ import annotations
 
+from .budget_governance import ClientBudgetView
 from .cost import CostAttributionView
 from .default import (
     CLIENT_ZERO_ID,
@@ -54,6 +55,7 @@ __all__ = [
     "CLIENT_ZERO_ID",
     "JOB_ZERO_ID",
     "CostAttributionView",
+    "ClientBudgetView",
     "WatchtowerAlert",
     "AlertKind",
     "AlertSeverity",

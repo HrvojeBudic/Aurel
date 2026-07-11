@@ -95,15 +95,17 @@ def test_cost_unavailable_without_ledger():
 
 # --- declared seams (F7.2 / F7.3) -------------------------------------------------
 
-def test_alerts_and_budget_governance_are_unavailable_seams():
+def test_alerts_seam_unavailable_and_budget_governance_live():
     rt = build_runtime()
     view = CorpReadModel.from_runtime(rt).portfolio_view()
+    # alerts remain a seam until AUREL_WATCHTOWER (F7.3); off here.
     assert view["alerts"]["status"] == "UNAVAILABLE" and view["alerts"]["owner"] == "F7.3"
-    assert view["budget_governance"]["status"] == "UNAVAILABLE"
-    assert view["budget_governance"]["owner"] == "F7.2"
     assert view["claims_alerts_live"] is False and CLAIMS_ALERTS_LIVE is False
-    assert (view["claims_budget_governance_live"] is False
-            and CLAIMS_BUDGET_GOVERNANCE_LIVE is False)
+    # budget governance is built (F7.2) — a live projection, forecasting still a seam.
+    assert view["budget_governance"]["available"] is True
+    assert view["budget_governance"]["forecasting"]["status"] == "UNAVAILABLE"
+    assert (view["claims_budget_governance_live"] is True
+            and CLAIMS_BUDGET_GOVERNANCE_LIVE is True)
 
 
 # --- task-runtime feed ------------------------------------------------------------
