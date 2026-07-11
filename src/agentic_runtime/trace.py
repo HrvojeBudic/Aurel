@@ -276,6 +276,10 @@ class InMemoryTraceLedger:
                     "subject_id": rec.subject_id,
                     "summary": rec.summary,
                 }
+                # F7 CAS-pointer: payloads too large for the 500-char summary
+                # ride in `details`. Additive — empty ⇒ dict unchanged.
+                if rec.details:
+                    ev["details"] = dict(rec.details)
                 if rec.mandate_id:
                     ev["mandate_id"] = rec.mandate_id
                 yield ev
@@ -678,6 +682,10 @@ class PersistentTraceLedger:
                     "subject_id": rec.subject_id,
                     "summary": rec.summary,
                 }
+                # F7 CAS-pointer: payloads too large for the 500-char summary
+                # ride in `details`. Additive — empty ⇒ dict unchanged.
+                if rec.details:
+                    ev["details"] = dict(rec.details)
                 if rec.mandate_id:
                     ev["mandate_id"] = rec.mandate_id
                 yield ev

@@ -13,6 +13,12 @@ is a **projection over the trace** seeded by klijent nula (the default), so with
 environment events it is byte-identical to `default_corp_registry()`. Mandates
 created here are resolvable (folded into the projected MandateRegistry) so cost /
 budget attribution links; deterministic ids (content-hashed) keep it replayable.
+
+Payloads use a CAS-pointer: the event summary (capped at 500 chars by
+`PraxisEventRecord.make`) carries `ENV|sha256:<hash of the canonical payload>`,
+and the full payload rides in the event's `details["env"]` — hash-chained and
+persisted with the record, so a large environment can never be silently
+truncated. Legacy inline `ENV|{json}` summaries still project (append-only).
 """
 from __future__ import annotations
 
@@ -79,10 +85,14 @@ def record_environment(
         "job": {"job_id": job_id, "client_id": client_id, "mandate_ids": [mandate_id],
                 "repos": list(repos), "status": JobStatus.ACTIVE.value, "title": job_title},
     }
+    # CAS-pointer: the summary is capped at 500 chars by PraxisEventRecord.make,
+    # so it carries only the payload's content address; the full payload rides in
+    # `details` (hash-chained via payload_hash, persisted + reloaded by both ledgers).
     rec = PraxisEventRecord.make(
         run_id=getattr(trace, "run_id", ""), agent_id=agent_id,
         event_type=CORP_ENVIRONMENT_EVENT, subject_id=client_id,
-        summary=f"{_ENV_MARK}|{canonical_json(payload)}", mandate_id=mandate_id)
+        summary=f"{_ENV_MARK}|sha256:{sha(canonical_json(payload))}",
+        details={"env": payload}, mandate_id=mandate_id)
     trace.append_praxis_event(rec)
     return rec, {"client_id": client_id, "job_id": job_id, "mandate_id": mandate_id}
 
@@ -108,9 +118,22 @@ def _env_from_summary(summary: str) -> Optional[dict]:
     if len(parts) != 2 or parts[0] != _ENV_MARK:
         return None
     try:
-        return json.loads(parts[1])
+        env = json.loads(parts[1])
     except (ValueError, TypeError):
         return None
+    return env if isinstance(env, dict) else None
+
+
+def _env_from_event(ev: Mapping[str, Any]) -> Optional[dict]:
+    """Environment payload of a replayed event: `details["env"]` (CAS-pointer
+    format) first, else the legacy inline `ENV|{json}` summary (pre-pointer
+    traces keep reading — the trace is append-only)."""
+    details = ev.get("details")
+    if isinstance(details, Mapping):
+        env = details.get("env")
+        if isinstance(env, dict):
+            return env
+    return _env_from_summary(ev.get("summary", ""))
 
 
 def _rebuild(env: dict) -> tuple[ClientRecord, JobRecord, Mandate]:
@@ -144,7 +167,7 @@ def corp_registry_from_trace(trace: Any) -> CorpRegistry:
                 continue
             if ev.get("event_type") != CORP_ENVIRONMENT_EVENT:
                 continue
-            env = _env_from_summary(ev.get("summary", ""))
+            env = _env_from_event(ev)
             if env is None:
                 continue
             client, job, mandate = _rebuild(env)
