@@ -25,6 +25,7 @@ from .default import (
     default_corp_registry,
 )
 from .domain import ClientRecord, JobRecord, JobStatus, flag_enabled
+from .evidence_vault import EvidenceVaultQuery
 from .registry import (
     ClientNotFound,
     CorpRegistry,
@@ -56,6 +57,7 @@ __all__ = [
     "JOB_ZERO_ID",
     "CostAttributionView",
     "ClientBudgetView",
+    "EvidenceVaultQuery",
     "WatchtowerAlert",
     "AlertKind",
     "AlertSeverity",
