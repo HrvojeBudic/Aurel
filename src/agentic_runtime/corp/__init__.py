@@ -40,6 +40,7 @@ from .watchtower import (
     live_feed,
 )
 from .watchtower import flag_enabled as watchtower_flag_enabled
+from .wizard import EnvironmentTemplate, ImpactReport, SampleAction, what_if
 
 __all__ = [
     "ClientRecord",
@@ -64,4 +65,8 @@ __all__ = [
     "derive_alerts",
     "live_feed",
     "watchtower_flag_enabled",
+    "EnvironmentTemplate",
+    "SampleAction",
+    "ImpactReport",
+    "what_if",
 ]
