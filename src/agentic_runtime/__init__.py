@@ -435,6 +435,10 @@ class Kernel:
         self.router = router
         self.skills = skills
         self.runtime = runtime
+        # F7.9-wire: expose the shared skill library on the inner runtime so read
+        # models (the Reflex Flywheel KPI) can reach it without threading the Kernel.
+        if not hasattr(runtime, "skills"):
+            runtime.skills = skills
 
     def spawn(self, card: AgentCard) -> AgenticEntity:
         validator = PlanValidator(
