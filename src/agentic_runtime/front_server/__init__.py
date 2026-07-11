@@ -40,6 +40,7 @@ from .corp_read_model import (
     CLAIMS_BUDGET_GOVERNANCE_LIVE,
     CorpReadModel,
 )
+from .workbench import CLAIMS_FULL_APPROVAL_WORKBENCH, ApprovalWorkbenchReadModel
 from .dn import DnStatusReadModel, evaluate_merge, graduated_autonomy
 from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
 from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
@@ -86,6 +87,8 @@ __all__ = [
     "CorpReadModel",
     "CLAIMS_ALERTS_LIVE",
     "CLAIMS_BUDGET_GOVERNANCE_LIVE",
+    "ApprovalWorkbenchReadModel",
+    "CLAIMS_FULL_APPROVAL_WORKBENCH",
     "BoardDecision",
     "BoardJournal",
     "BoardJournalEntry",
