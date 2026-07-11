@@ -74,10 +74,12 @@ class BudgetLedger:
     per_command: dict[str, dict[str, Any]] = field(default_factory=dict)
     per_step: dict[str, int] = field(default_factory=dict)
     per_agent: dict[str, dict[str, Any]] = field(default_factory=dict)
+    per_mandate: dict[str, dict[str, Any]] = field(default_factory=dict)  # F7.1 cost attribution
     # runtime context
     current_run_id: str = ""
     current_agent_id: str = ""
     current_intent_id: str = ""
+    current_mandate_id: str = ""       # F7.1 — authority the current charges attribute to
     run_started_at: float = 0.0
     _trace: Any = None
 
@@ -115,6 +117,13 @@ class BudgetLedger:
     def ensure_context(self, run_id: str, agent_id: str, intent_id: str) -> None:
         if not self.current_run_id:
             self.begin_run(run_id, agent_id, intent_id)
+
+    def set_mandate(self, mandate_id: str) -> None:
+        """F7.1 — bind the mandate that subsequent charges attribute to (Corp cost
+        attribution). Empty ⇒ no attribution (byte-identical: the per-mandate
+        bucket is never created). Attribution is a report, never a verdict — this
+        binds no cap and can never block."""
+        self.current_mandate_id = mandate_id or ""
 
     # Legacy estimate used only when a call reports no real usage.
     _LLM_ESTIMATE_TOKENS = 1200
@@ -161,6 +170,11 @@ class BudgetLedger:
         run["estimated_tokens"] += total
         run["thinking_tokens"] = run.get("thinking_tokens", 0) + reasoning
         run["estimated_cost_cents"] += cents
+        self._accrue_mandate(
+            llm_calls=1, estimated_tokens=total, estimated_cost_cents=cents,
+            substantiated_charges=(1 if usage is not None else 0),
+            estimate_only_charges=(0 if usage is not None else 1),
+        )
 
         self._check("max_llm_calls", self.llm_calls, self.policy.max_llm_calls)
         self._check(
@@ -208,6 +222,7 @@ class BudgetLedger:
     def precheck_command(self, command_id: str, tool: str, agent_id: str) -> None:
         run = self._run_usage()
         run["commands"] += 1
+        self._accrue_mandate(commands=1)
         self.per_command.setdefault(command_id, {"tool": tool, "run_id": self.current_run_id})
         self.per_agent.setdefault(agent_id, {"commands": 0, "tool_calls": 0, "runs": set()})
         self.per_agent[agent_id]["commands"] += 1
@@ -219,6 +234,7 @@ class BudgetLedger:
         run = self._run_usage()
         self.tool_calls += 1
         run["tool_calls"] += 1
+        self._accrue_mandate(tool_calls=1)
         self.per_agent.setdefault(agent_id, {"commands": 0, "tool_calls": 0, "runs": set()})
         self.per_agent[agent_id]["tool_calls"] += 1
         self._check("max_tool_calls_per_run", run["tool_calls"], self.policy.max_tool_calls_per_run)
@@ -227,6 +243,7 @@ class BudgetLedger:
         run = self._run_usage()
         self.sandbox_executions += 1
         run["sandbox_executions"] += 1
+        self._accrue_mandate(sandbox_executions=1)
         self._check(
             "max_sandbox_executions",
             run["sandbox_executions"],
@@ -250,6 +267,7 @@ class BudgetLedger:
         run = self._run_usage()
         self.memory_writes += 1
         run["memory_writes"] += 1
+        self._accrue_mandate(memory_writes=1)
         self._check("max_memory_writes", run["memory_writes"], self.policy.max_memory_writes)
 
     def apply_output_caps(self, obs: ObservationEnvelope) -> ObservationEnvelope:
@@ -348,6 +366,32 @@ class BudgetLedger:
             self.begin_run("run_unbound", "agent_unbound", "intent_unbound")
         return self.per_run[self.current_run_id]
 
+    def _mandate_bucket(self, mandate_id: str) -> dict[str, Any]:
+        return self.per_mandate.setdefault(mandate_id, {
+            "commands": 0,
+            "tool_calls": 0,
+            "sandbox_executions": 0,
+            "memory_writes": 0,
+            "llm_calls": 0,
+            "estimated_tokens": 0,
+            "estimated_cost_cents": 0.0,
+            "substantiated_charges": 0,
+            "estimate_only_charges": 0,
+        })
+
+    def _accrue_mandate(self, **deltas: float) -> None:
+        """F7.1 — mirror a charge into the per-mandate attribution bucket.
+
+        No-op when no mandate context is set (the default) ⇒ byte-identical: the
+        bucket is never created and no existing counter is touched. Attribution is
+        a report, never a verdict — this makes no cap check and can never block."""
+        mid = self.current_mandate_id
+        if not mid:
+            return
+        bucket = self._mandate_bucket(mid)
+        for key, delta in deltas.items():
+            bucket[key] = bucket.get(key, 0) + delta
+
     def _check(self, kind: str, used: float, limit: float) -> None:
         if used > 0.8 * limit:
             self.warnings.append(f"{kind} at {used:.1f}/{limit:.1f} (>80%)")
@@ -384,5 +428,6 @@ class BudgetLedger:
             used=float(used),
             limit=float(limit),
             reason=reason,
+            mandate_id=self.current_mandate_id,  # F7.1 — "" ⇒ byte-identical (F6.1 default)
         )
         self._trace.append_budget_decision(rec)

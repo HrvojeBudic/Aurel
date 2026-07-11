@@ -518,6 +518,12 @@ from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
 from .cli_modules.f4_commands import cmd_f4_loom, cmd_f4_seal
+from .cli_modules.f7_commands import (
+    cmd_corp_export,
+    cmd_corp_seal,
+    cmd_corp_status,
+    cmd_corp_vault,
+)
 from .cli_modules.f5_commands import (
     cmd_aureleu_panic,
     cmd_aureleu_seal,
@@ -990,6 +996,29 @@ def main(argv: list[str] | None = None) -> int:
     p_au_status = aureleu_sub.add_parser(
         "status", help="project the F6 north-star run from the trace (read-only)")
     p_au_status.set_defaults(func=cmd_aureleu_status)
+
+    p_corp = sub.add_parser("corp", help="Corp / Business Plane (F7, read-only)")
+    corp_sub = p_corp.add_subparsers(dest="corp_command", required=True)
+    p_vault = corp_sub.add_parser("vault", help="search the Evidence Vault (read-only)")
+    p_vault.add_argument("--mandate", default="", help="filter by mandate_id")
+    p_vault.add_argument("--client", default="", help="filter by client_id (via corp registry)")
+    p_vault.add_argument("--kind", default="", help="filter by record kind")
+    p_vault.add_argument("--run", default="", help="filter by run_id")
+    p_vault.add_argument("--json", action="store_true", help="emit JSON")
+    p_vault.set_defaults(func=cmd_corp_vault)
+    p_export = corp_sub.add_parser(
+        "export", help="export an Output-Passport receipt bundle (read-only)")
+    p_export.add_argument("--job", default="", help="bundle a job's evidence")
+    p_export.add_argument("--run", default="", help="bundle a run's evidence")
+    p_export.add_argument("--mandate", default="", help="bundle a mandate's evidence")
+    p_export.add_argument("--out", default="", help="write the bundle JSON to this path")
+    p_export.set_defaults(func=cmd_corp_export)
+    p_corp_seal = corp_sub.add_parser("seal", help="derived F7 exit seal (read-only)")
+    p_corp_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_corp_seal.set_defaults(func=cmd_corp_seal)
+    p_corp_status = corp_sub.add_parser(
+        "status", help="project the F7 north-star run from the trace (read-only)")
+    p_corp_status.set_defaults(func=cmd_corp_status)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

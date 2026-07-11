@@ -11,6 +11,8 @@ import type { FrontClient, FrontMode } from "../../frontClient";
 import type {
   AurelEUDTO,
   BoardJournalDTO,
+  CorpKpiDTO,
+  CorpPortfolioDTO,
   HqCommandDTO,
   LibraryDTO,
   RoomHistoryDTO,
@@ -287,6 +289,77 @@ function AurelEUPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
   );
 }
 
+/** CORP — the Business Plane: portfolio tree, cost/budget, alerts seam, KPIs. */
+function CorpPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
+  const [pf, setPf] = useState<CorpPortfolioDTO | null>(null);
+  const [kpi, setKpi] = useState<CorpKpiDTO | null>(null);
+  useEffect(() => {
+    if (mode === "live") {
+      void client.corpPortfolio().then(setPf);
+      void client.corpKpi().then(setKpi);
+    }
+  }, [client, mode]);
+
+  if (!pf) return <section className="front-panel">Corp — no live data.</section>;
+  return (
+    <section className="front-panel corp-panel">
+      <h3>Corp — Business Plane</h3>
+      <p className="seam">
+        cost: {String(pf.cost.status)} · budget-gov: {String(pf.budget_governance.status)} ·
+        alerts: {pf.alerts.status}
+        {typeof pf.alerts.count === "number" ? ` (${pf.alerts.count})` : ""}
+      </p>
+      <h4>Portfolio</h4>
+      <ul className="corp-portfolio">
+        {pf.clients.map((c) => (
+          <li key={c.client_id}>
+            <strong>{c.name}</strong> <code>{c.client_id}</code>
+            <ul>
+              {c.jobs.map((j) => (
+                <li key={j.job_id}>
+                  <code>{j.job_id}</code> — {j.title || "(untitled)"} [{j.status}] ·{" "}
+                  {j.runs.length} run(s)
+                </li>
+              ))}
+              {c.jobs.length === 0 ? <li className="empty">No jobs.</li> : null}
+            </ul>
+          </li>
+        ))}
+        {pf.clients.length === 0 ? <li className="empty">No clients.</li> : null}
+      </ul>
+      {pf.unassigned.length ? (
+        <p className="seam">unassigned runs: {pf.unassigned.length}</p>
+      ) : null}
+      <h4>Reflex Flywheel KPIs</h4>
+      {kpi ? (
+        <ul className="corp-kpi">
+          <li>
+            reflex hit rate:{" "}
+            {kpi.reflex.status === "AVAILABLE" ? (
+              <strong>{String((kpi.reflex as { rate?: number }).rate ?? "—")}</strong>
+            ) : (
+              <em>UNAVAILABLE ({String(kpi.reflex.reason ?? "")})</em>
+            )}
+          </li>
+          <li>
+            cost per task:{" "}
+            {kpi.cost_per_task.status === "AVAILABLE" ? (
+              <strong>
+                {String((kpi.cost_per_task as { avg_cost_cents?: number }).avg_cost_cents ?? "—")}¢
+                avg
+              </strong>
+            ) : (
+              <em>UNAVAILABLE ({String(kpi.cost_per_task.reason ?? "")})</em>
+            )}
+          </li>
+        </ul>
+      ) : (
+        <p className="empty">KPIs — no live data.</p>
+      )}
+    </section>
+  );
+}
+
 export function FrontSurface({ surfaceId, client, mode }: SurfaceProps) {
   switch (surfaceId) {
     case "aurel_cro":
@@ -307,6 +380,8 @@ export function FrontSurface({ surfaceId, client, mode }: SurfaceProps) {
       );
     case "hub":
       return <LibraryPanel client={client} mode={mode} />;
+    case "corp":
+      return <CorpPanel client={client} mode={mode} />;
     default:
       return null;
   }

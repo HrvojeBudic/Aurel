@@ -236,6 +236,9 @@ class AgenticRuntime:
             agent_id=cmd.issuer_card_id,
             intent_id=cmd.parent_intent_id or "intent_unbound",
         )
+        # F7.1 — bind the mandate the card carries so budget charges attribute to
+        # it (Corp cost). Empty (no mandate) ⇒ byte-identical: no attribution.
+        self.budget.set_mandate(getattr(card, "mandate_id", ""))
         try:
             self.budget.precheck_command(
                 command_id=cmd.id,

@@ -18,9 +18,11 @@ from .approval_inbox import ApprovalInbox
 from .aureleu_read_model import AurelEUReadModel
 from .board import BoardJournal
 from .conversation import RoomHistoryProjection, rooms_from_trace
+from .corp_read_model import CorpReadModel
 from .dn import DnStatusReadModel
 from .hq_command import HQCommandReadModel
 from .library import LibraryReadModel
+from .workbench import ApprovalWorkbenchReadModel
 from .workops import WorkOpsChatReadModel, workops_room
 
 # A builder maps (reads-context, query-params) → the model-specific body dict.
@@ -92,6 +94,29 @@ def _aureleu(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
     return AurelEUReadModel(reads.runtime).to_dict()
 
 
+def _corp_portfolio(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    return CorpReadModel.from_runtime(reads.runtime).portfolio_view()
+
+
+def _corp_runtime(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
+    job = _one(params, "job", "")
+    return CorpReadModel.from_runtime(reads.runtime).runtime_feed(job)
+
+
+def _corp_workbench(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    # No inbox via the pure read registry ⇒ pending is honestly unavailable; the
+    # trace-derived tool history is still live (F5.5 pending_source discipline).
+    return ApprovalWorkbenchReadModel.from_runtime(reads.runtime).to_dict()
+
+
+def _corp_kpi(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    from ..corp import ReflexFlywheelView
+    inner = reads.runtime
+    return ReflexFlywheelView.build(
+        skills=getattr(inner, "skills", None),
+        ledger=getattr(inner, "budget", None)).to_dict()
+
+
 # The complete live-read registry. Every entry is read-only.
 _REGISTRY: "dict[str, ReadBuilder]" = {
     "signal/history": _signal_history,
@@ -104,6 +129,10 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "board": _board,
     "aureleu": _aureleu,
     "aureleu/dn": _aureleu_dn,
+    "corp/portfolio": _corp_portfolio,
+    "corp/runtime": _corp_runtime,
+    "corp/workbench": _corp_workbench,
+    "corp/kpi": _corp_kpi,
 }
 
 

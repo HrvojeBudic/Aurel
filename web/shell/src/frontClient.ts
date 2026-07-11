@@ -15,6 +15,8 @@ import type {
   ApprovalsDTO,
   AurelEUDTO,
   BoardJournalDTO,
+  CorpKpiDTO,
+  CorpPortfolioDTO,
   HqCommandDTO,
   LibraryDTO,
   ProposalEnvelope,
@@ -90,6 +92,12 @@ export class FrontClient {
   }
   aureleu(): Promise<AurelEUDTO> {
     return this.read<AurelEUDTO>("aureleu");
+  }
+  corpPortfolio(): Promise<CorpPortfolioDTO> {
+    return this.read<CorpPortfolioDTO>("corp/portfolio");
+  }
+  corpKpi(): Promise<CorpKpiDTO> {
+    return this.read<CorpKpiDTO>("corp/kpi");
   }
 
   // -- the single mutation door ---------------------------------------------- //

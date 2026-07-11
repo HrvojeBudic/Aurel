@@ -34,10 +34,12 @@ class PendingApproval:
     risk: str
     summary: str
     issuer: str
+    mandate_id: str = ""            # F7.8 — the authority the command was submitted under
 
     def to_dict(self) -> dict:
         return {"request_id": self.request_id, "tool": self.tool, "risk": self.risk,
-                "summary": self.summary, "issuer": self.issuer}
+                "summary": self.summary, "issuer": self.issuer,
+                "mandate_id": self.mandate_id}
 
 
 class ApprovalInbox:
@@ -63,7 +65,7 @@ class ApprovalInbox:
             pend = PendingApproval(
                 request_id=dec.request_id, tool=cmd.tool,
                 risk=res.decision.risk.value, summary=cmd.expected_effect or cmd.tool,
-                issuer=cmd.issuer_card_id,
+                issuer=cmd.issuer_card_id, mandate_id=getattr(card, "mandate_id", ""),
             )
             self._pending[dec.request_id] = (cmd, card, pend)
             return {"status": "pending", "request_id": dec.request_id, "tool": cmd.tool}
