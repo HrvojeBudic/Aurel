@@ -102,6 +102,8 @@ class ProposalDispatcher:
         # tool action, so it never routes through runtime.submit.
         if str(tool) == "corp_risk_add":
             return self._dispatch_corp_risk_add(step, proposal)
+        if str(tool) == "corp_create_environment":
+            return self._dispatch_corp_create_environment(step, proposal)
 
         if self._inbox is None or self._card is None:
             return {"accepted": True, "kind": KIND_ACT,
@@ -135,6 +137,20 @@ class ProposalDispatcher:
         return {"accepted": True, "kind": KIND_ACT, "wired": True,
                 "reduction": "governed corp risk record (F7.7)",
                 "risk_id": entry.risk_id, "record_id": rec.id}
+
+    def _dispatch_corp_create_environment(self, step: dict, proposal: dict) -> dict:
+        """Create a governed environment (client + job + mandate) through the one door."""
+        from ..corp import record_environment_from_payload
+
+        try:
+            rec, ids = record_environment_from_payload(
+                self._runtime.trace, dict(step.get("args", {}) or {}),
+                mandate_id=str(proposal.get("mandate_id", "") or ""))
+        except (ValueError, TypeError) as exc:
+            raise ProposalRejected(f"invalid environment: {exc}") from exc
+        return {"accepted": True, "kind": KIND_ACT, "wired": True,
+                "reduction": "governed corp environment (F7.6)",
+                "record_id": rec.id, **ids}
 
     def _dispatch_decide(self, proposal: dict) -> dict:
         if self._inbox is None:

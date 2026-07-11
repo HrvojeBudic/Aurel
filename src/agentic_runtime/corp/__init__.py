@@ -25,6 +25,11 @@ from .default import (
     default_corp_registry,
 )
 from .domain import ClientRecord, JobRecord, JobStatus, flag_enabled
+from .environment import (
+    corp_registry_from_trace,
+    record_environment,
+    record_environment_from_payload,
+)
 from .evidence_vault import EvidenceVaultQuery
 from .kpi import ReflexFlywheelView
 from .registry import (
@@ -61,6 +66,9 @@ __all__ = [
     "client_zero",
     "client_zero_job",
     "default_corp_registry",
+    "corp_registry_from_trace",
+    "record_environment",
+    "record_environment_from_payload",
     "CLIENT_ZERO_ID",
     "JOB_ZERO_ID",
     "CostAttributionView",

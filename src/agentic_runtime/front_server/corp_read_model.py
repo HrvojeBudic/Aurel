@@ -23,7 +23,7 @@ from typing import Any
 from ..corp import (
     ClientBudgetView,
     CostAttributionView,
-    default_corp_registry,
+    corp_registry_from_trace,
     derive_alerts,
     live_feed,
     watchtower_flag_enabled,
@@ -51,7 +51,7 @@ class CorpReadModel:
         inner = getattr(runtime, "runtime", runtime)
         reg = (corp_registry
                or getattr(inner, "corp_registry", None)
-               or default_corp_registry())
+               or corp_registry_from_trace(inner.trace))
         return CorpReadModel(inner.trace, reg, budget=getattr(inner, "budget", None))
 
     # -- run status + mandate (trace projection) ------------------------------- #
