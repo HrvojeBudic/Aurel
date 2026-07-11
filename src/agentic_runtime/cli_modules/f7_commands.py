@@ -13,10 +13,10 @@ import json
 def cmd_corp_vault(args: argparse.Namespace) -> int:
     """``aurel corp vault [--mandate|--client|--kind|--run] [--json]`` — search evidence."""
     from .. import build_runtime
-    from ..corp import EvidenceVaultQuery, default_corp_registry
+    from ..corp import EvidenceVaultQuery, corp_registry_from_trace
 
     rt = build_runtime()
-    query = EvidenceVaultQuery(rt.runtime.trace, default_corp_registry())
+    query = EvidenceVaultQuery(rt.runtime.trace, corp_registry_from_trace(rt.runtime.trace))
     result = query.search(
         mandate_id=getattr(args, "mandate", "") or "",
         client_id=getattr(args, "client", "") or "",
@@ -37,10 +37,10 @@ def cmd_corp_vault(args: argparse.Namespace) -> int:
 def cmd_corp_export(args: argparse.Namespace) -> int:
     """``aurel corp export [--job J | --run R | --mandate M] [--out PATH]`` — Output Passport."""
     from .. import build_runtime
-    from ..corp import EvidenceVaultQuery, default_corp_registry
+    from ..corp import EvidenceVaultQuery, corp_registry_from_trace
 
     rt = build_runtime()
-    query = EvidenceVaultQuery(rt.runtime.trace, default_corp_registry())
+    query = EvidenceVaultQuery(rt.runtime.trace, corp_registry_from_trace(rt.runtime.trace))
     bundle = query.export_receipt_bundle(
         job_id=getattr(args, "job", "") or "",
         run_id=getattr(args, "run", "") or "",

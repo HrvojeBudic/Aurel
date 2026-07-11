@@ -19,7 +19,7 @@ from .corp import (
     EvidenceVaultQuery,
     ReflexFlywheelView,
     RiskRegisterProjection,
-    default_corp_registry,
+    corp_registry_from_trace,
     derive_alerts,
     live_feed,
     watchtower_flag_enabled,
@@ -32,7 +32,7 @@ class F7RunProjection:
 
     def __init__(self, runtime: Any, *, corp_registry: Any = None) -> None:
         self._inner = getattr(runtime, "runtime", runtime)
-        self._corp = corp_registry or default_corp_registry()
+        self._corp = corp_registry or corp_registry_from_trace(self._inner.trace)
 
     def _watchtower(self, trace: Any, budget: Any) -> dict:
         if not watchtower_flag_enabled():

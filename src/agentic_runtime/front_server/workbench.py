@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..corp import ClientBudgetView, RiskRegisterProjection, default_corp_registry
+from ..corp import ClientBudgetView, RiskRegisterProjection, corp_registry_from_trace
 from ..corp.cost import _mandate_to_job_map
 from .approval_inbox import ApprovalInbox
 
@@ -51,7 +51,7 @@ class ApprovalWorkbenchReadModel:
         inner = getattr(runtime, "runtime", runtime)
         reg = (corp_registry
                or getattr(inner, "corp_registry", None)
-               or default_corp_registry())
+               or corp_registry_from_trace(inner.trace))
         return ApprovalWorkbenchReadModel(
             inner.trace, reg, budget=getattr(inner, "budget", None), inbox=inbox)
 
