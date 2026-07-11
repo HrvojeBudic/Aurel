@@ -55,3 +55,36 @@ def cmd_corp_export(args: argparse.Namespace) -> int:
         return 0
     print(json.dumps(bundle, indent=2))
     return 0
+
+
+def cmd_corp_seal(args: argparse.Namespace) -> int:
+    """``aurel corp seal [--json]`` — the derived F7 exit seal (read-only)."""
+    from ..f7_seal import build_f7_exit_seal
+
+    seal = build_f7_exit_seal()
+    if getattr(args, "json", False):
+        print(json.dumps(seal.to_dict(), indent=2))
+        return 0 if seal.sealed else 1
+    print(f"F7 Corp / Business Plane exit seal: {seal.status.value}")
+    for item in seal.items:
+        mark = "OK " if item.status.value == "PASSED" else "XX "
+        print(f"  {mark}{item.slice_id:6} {item.title}")
+        if item.status.value != "PASSED":
+            print(f"        module_present={item.module_present} "
+                  f"report_present={item.report_present}")
+    print("  flipped from F6 (now live):")
+    for seam, owner in seal.flipped_from_f6:
+        print(f"    + {seam} [{owner}]")
+    print("  UNAVAILABLE (declared, deferred):")
+    for u in seal.unavailable:
+        print(f"    - {u.surface_id}: {u.reason} [{u.future_owner}]")
+    return 0 if seal.sealed else 1
+
+
+def cmd_corp_status(args: argparse.Namespace) -> int:
+    """``aurel corp status`` — project the F7 north-star run from the trace (read-only)."""
+    from .. import build_runtime
+    from ..f7_projection import F7RunProjection
+
+    print(json.dumps(F7RunProjection(build_runtime()).to_dict(), indent=2))
+    return 0

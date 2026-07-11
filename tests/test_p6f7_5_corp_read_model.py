@@ -118,7 +118,9 @@ def test_runtime_feed_filters_by_job():
     assert feed["available"] is True
     # only events carrying the job's mandate (DEFAULT_MANDATE_ID) appear
     assert all(ev["mandate_id"] == DEFAULT_MANDATE_ID for ev in feed["events"])
-    run_ids = {ev.get("run_id") for ev in feed["events"] if ev["kind"] == "runtime_status_transition"}
+    run_ids = {
+        ev.get("run_id") for ev in feed["events"] if ev["kind"] == "runtime_status_transition"
+    }
     assert run_ids == {"run-a"}
 
 

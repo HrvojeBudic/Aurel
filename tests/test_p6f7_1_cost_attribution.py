@@ -103,7 +103,8 @@ def test_two_mandates_are_separated():
 # --- CostAttributionView pivot --------------------------------------------------
 
 def test_view_pivots_mandate_to_job_to_client():
-    reg = default_corp_registry()                               # klijent nula, job under DEFAULT_MANDATE_ID
+    # klijent nula, job under DEFAULT_MANDATE_ID
+    reg = default_corp_registry()
     led = BudgetLedger()
     _charge_run(led, DEFAULT_MANDATE_ID, usd=0.10)
     view = CostAttributionView.from_ledger(led, reg)

@@ -53,7 +53,8 @@ def test_what_if_predicts_deny_and_allow():
         SampleAction("write_file", RiskLevel.LOW, {"path": "clients/acme/a.py"}),   # in scope
         SampleAction("write_file", RiskLevel.LOW, {"path": "clients/other/b.py"}),  # out of paths
         SampleAction("deploy", RiskLevel.LOW, {}),                                   # tool not allowed
-        SampleAction("write_file", RiskLevel.HIGH, {"path": "clients/acme/c.py"}),   # risk > ceiling
+        # risk > ceiling
+        SampleAction("write_file", RiskLevel.HIGH, {"path": "clients/acme/c.py"}),
     ]
     report = what_if(tmpl, actions)
     verdicts = [r["would_block"] for r in report.results]

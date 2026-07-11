@@ -120,7 +120,9 @@ def parse_content_block(block: Any, origin_ref: str) -> ContentBlock:
         blob = str(res.get("blob", ""))
         return ContentBlock(
             ContentKind.RESOURCE,
-            make_tainted(f"[resource blob {uri or '?'} {len(blob)}b]", SourceKind.MCP_TOOL, origin_ref),
+            make_tainted(
+                f"[resource blob {uri or '?'} {len(blob)}b]", SourceKind.MCP_TOOL, origin_ref
+            ),
             mime_type=mime,
             uri=uri,
             data_ref=_ref(blob),
