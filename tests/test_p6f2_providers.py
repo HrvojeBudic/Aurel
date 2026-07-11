@@ -78,8 +78,8 @@ def test_qwen_round_trip_and_usage(monkeypatch):
 def test_qwen_malformed_response_is_honest(monkeypatch):
     import agentic_runtime.model_providers.qwen_provider as qp
     monkeypatch.setenv("DASHSCOPE_API_KEY", "sk-test-qwen")
-    monkeypatch.setattr(qp, "post_json",
-                        lambda *a, **k: ({"choices": [{"message": {"content": "not json"}}]}, "", 5.0))
+    bad = {"choices": [{"message": {"content": "not json"}}]}
+    monkeypatch.setattr(qp, "post_json", lambda *a, **k: (bad, "", 5.0))
     resp = qp.QwenProvider().generate_structured_plan(_req())
     assert resp.error.startswith("malformed_provider_response:")
 

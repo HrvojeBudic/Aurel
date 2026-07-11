@@ -225,7 +225,8 @@ class HttpTransport:
         data = json.dumps(message).encode("utf-8")
         req = urllib.request.Request(self._url, data=data, headers=headers, method="POST")
         try:
-            with self._opener.open(req, timeout=self._timeout) as resp:  # nosec B310 - scheme validated http(s)
+            # nosec B310 - scheme validated http(s)
+            with self._opener.open(req, timeout=self._timeout) as resp:
                 sid = resp.headers.get("Mcp-Session-Id")
                 if sid:
                     self._session_id = sid

@@ -340,7 +340,10 @@ class AgenticRuntime:
                 approval_requirement=requirement,
             )
 
-        preview = build_preview(cmd, self.tools.sandbox, tool_spec) if requirement.preview_required else None
+        if requirement.preview_required:
+            preview = build_preview(cmd, self.tools.sandbox, tool_spec)
+        else:
+            preview = None
         approval_decision: ApprovalDecision | None = None
         approval_receipt: ApprovalReceipt | None = None
 

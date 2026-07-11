@@ -85,7 +85,9 @@ class SealChecklistItem:
 
     @property
     def status(self) -> ItemStatus:
-        return ItemStatus.PASSED if (self.module_present and self.report_present) else ItemStatus.BLOCKED
+        if self.module_present and self.report_present:
+            return ItemStatus.PASSED
+        return ItemStatus.BLOCKED
 
     def to_dict(self) -> dict:
         return {

@@ -163,7 +163,9 @@ class BudgetLedger:
         run["estimated_cost_cents"] += cents
 
         self._check("max_llm_calls", self.llm_calls, self.policy.max_llm_calls)
-        self._check("max_estimated_tokens", run["estimated_tokens"], self.policy.max_estimated_tokens)
+        self._check(
+            "max_estimated_tokens", run["estimated_tokens"], self.policy.max_estimated_tokens
+        )
         self._check(
             "max_estimated_cost_cents",
             run["estimated_cost_cents"],

@@ -41,7 +41,8 @@ class WebSocketError(RuntimeError):
 
 def compute_accept_key(sec_websocket_key: str) -> str:
     """RFC 6455 §4.2.2: base64(SHA1(key + GUID))."""
-    digest = hashlib.sha1((sec_websocket_key + WS_GUID).encode("ascii")).digest()  # nosec B324 - RFC 6455 mandates SHA1 here
+    raw = (sec_websocket_key + WS_GUID).encode("ascii")
+    digest = hashlib.sha1(raw).digest()  # nosec B324 - RFC 6455 mandates SHA1 here
     return base64.b64encode(digest).decode("ascii")
 
 

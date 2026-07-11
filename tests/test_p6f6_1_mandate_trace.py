@@ -115,6 +115,7 @@ def test_real_conversation_mandate_is_traced():
     rt = build_runtime()
     engine = ConversationEngine(rt, StubRouter())
     d = ProposalDispatcher(rt, conversation_engine=engine)
-    d.dispatch(WorkOpsMessage("task-1", "op", "operator", "mandate_client_x", (), "go").to_proposal())
+    msg = WorkOpsMessage("task-1", "op", "operator", "mandate_client_x", (), "go")
+    d.dispatch(msg.to_proposal())
     praxis = _conv_praxis(rt.runtime.trace)
     assert praxis and all(e["mandate_id"] == "mandate_client_x" for e in praxis)
