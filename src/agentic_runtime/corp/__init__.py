@@ -32,6 +32,12 @@ from .registry import (
     CorpValidationError,
     JobNotFound,
 )
+from .risk_register import (
+    RiskEntry,
+    RiskRegisterProjection,
+    RiskStatus,
+    record_risk,
+)
 from .watchtower import (
     AlertKind,
     AlertSeverity,
@@ -69,4 +75,8 @@ __all__ = [
     "SampleAction",
     "ImpactReport",
     "what_if",
+    "RiskEntry",
+    "RiskStatus",
+    "RiskRegisterProjection",
+    "record_risk",
 ]
