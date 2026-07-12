@@ -513,7 +513,7 @@ from .cli_modules.spine_commands import cmd_spine_replay, cmd_spine_run, cmd_spi
 from .cli_modules.doctor import cmd_doctor
 from .cli_modules.governance_commands import (cmd_governance_audit, cmd_governance_levels,
                                               cmd_profile_audit, cmd_profile_show)
-from .cli_modules.drill_commands import cmd_drill_model_swap
+from .cli_modules.drill_commands import cmd_drill_model_swap, cmd_drill_succession
 from .cli_modules.secrets_commands import cmd_secrets_set, cmd_secrets_status
 from .cli_modules.gate_commands import cmd_gate_check
 from .cli_modules.f3_commands import cmd_f3_seal, cmd_f3_surface
@@ -914,6 +914,19 @@ def main(argv: list[str] | None = None) -> int:
                               help="bound the number of replayed entries")
     p_drill_swap.add_argument("--json", action="store_true", help="emit JSON")
     p_drill_swap.set_defaults(func=cmd_drill_model_swap)
+    p_drill_succession = drill_sub.add_parser(
+        "succession",
+        help="F8.5 export→restore→verify→replay over an isolated trace copy",
+    )
+    p_drill_succession.add_argument(
+        "--sample", type=int, default=3, help="number of runs to restore/replay",
+    )
+    p_drill_succession.add_argument(
+        "--out", default="", help="isolated export directory (temp dir if omitted)",
+    )
+    p_drill_succession.add_argument("--trace-dir", default="", help="source trace dir")
+    p_drill_succession.add_argument("--json", action="store_true", help="emit JSON")
+    p_drill_succession.set_defaults(func=cmd_drill_succession)
 
     # F3.1: governance preflight for external executors (read-only; no execution).
     p_gate = sub.add_parser("gate", help="external-executor governance gate (F3)")

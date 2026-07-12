@@ -1,16 +1,38 @@
-"""``aurel drill model-swap`` — behavioral diff of a candidate provider (F2).
-
-Replays a DrillCorpus (JSONL of system/user/baseline_response triples) against a
-candidate model profile and prints per-entry verdicts + aggregate counts, so a
-provider swap (e.g. DeepSeek → Qwen) is a measurement, not a leap of faith.
-Honest output: a keyless candidate shows up as ``candidate_refused`` rows, never
-a fabricated comparison; a missing/empty corpus fails closed.
-"""
+"""``aurel drill`` — operational drills (F2 model-swap, F8.5 succession)."""
 from __future__ import annotations
 
 import argparse
 import json
+import sys
+import tempfile
 from pathlib import Path
+
+
+def _require_chronos(args: argparse.Namespace) -> bool:
+    from ..chronos import flag_enabled
+
+    if flag_enabled():
+        return True
+    reason = (
+        "succession drill unavailable — set AUREL_CHRONOS=1 to enable "
+        "read-only export/restore/verify/replay"
+    )
+    if getattr(args, "json", False):
+        print(json.dumps({"available": False, "reason": reason}, indent=2))
+    else:
+        print(reason, file=sys.stderr)
+    return False
+
+
+def _default_trace_dir() -> str:
+    from .. import build_runtime
+
+    rt = build_runtime()
+    trace = rt.runtime.trace
+    base = getattr(trace, "base_dir", None)
+    if base is not None:
+        return str(base)
+    return ".traces"
 
 
 def cmd_drill_model_swap(args: argparse.Namespace) -> int:
@@ -48,3 +70,33 @@ def cmd_drill_model_swap(args: argparse.Namespace) -> int:
         print("note: candidate refused every entry — likely no API key; "
               "the drill measured nothing about behavior (honest PARTIAL)")
     return 0
+
+
+def cmd_drill_succession(args: argparse.Namespace) -> int:
+    if not _require_chronos(args):
+        return 1
+    from ..succession_drill import run_succession_drill
+
+    trace_dir = getattr(args, "trace_dir", "") or _default_trace_dir()
+    out_dir = getattr(args, "out", "") or tempfile.mkdtemp(prefix="aurel-succession-")
+    report = run_succession_drill(
+        trace_dir,
+        out_dir=out_dir,
+        sample=int(getattr(args, "sample", 3) or 3),
+    )
+
+    if getattr(args, "json", False):
+        print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
+    else:
+        print(
+            f"succession drill  trace={trace_dir}  copy={report.export_path}  "
+            f"sample={len(report.sample_run_ids)}"
+        )
+        print(
+            f"  exported={report.exported}  restored={report.restored}  "
+            f"verified={report.verified}  replayed={report.replayed}  "
+            f"passed={report.passed}"
+        )
+        for d in report.discrepancies:
+            print(f"  discrepancy [{d.get('stage')}]: {d}")
+    return 0 if report.passed else 1

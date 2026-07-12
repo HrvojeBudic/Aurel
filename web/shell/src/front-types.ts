@@ -214,3 +214,51 @@ export interface CorpKpiDTO {
   reflex: SeamDTO & Record<string, unknown>;
   cost_per_task: SeamDTO & Record<string, unknown>;
 }
+
+// -- System / Time Plane (F8) ----------------------------------------------- //
+
+export interface SystemBaseDTO {
+  model: string;
+  live: boolean;
+  available: boolean;
+  status?: string;
+  truth_label?: string;
+  operator_only?: boolean;
+  reason?: string;
+}
+
+export interface SystemAuditDTO extends SystemBaseDTO {
+  count?: number;
+  total?: number;
+  events: Array<Record<string, unknown>>;
+  truncated?: boolean;
+}
+
+export interface SystemUsageDTO extends SystemBaseDTO {
+  snapshot?: Record<string, unknown>;
+  run_usage?: Record<string, unknown>;
+  policy_remaining?: Record<string, unknown>;
+  by_mandate?: Array<Record<string, unknown>>;
+  by_agent?: Array<Record<string, unknown>>;
+}
+
+export interface SystemModelRoutingDTO extends SystemBaseDTO {
+  profiles?: Record<string, unknown>;
+  providers?: Record<string, unknown>;
+  health?: Record<string, unknown>;
+  promotion_gates?: Record<string, unknown>;
+}
+
+export interface SystemPoliciesDTO extends SystemBaseDTO {
+  registry_bound?: boolean;
+  cards?: Array<Record<string, unknown>>;
+  registry_canonical_hash?: string;
+  grants_authority?: boolean;
+}
+
+export interface SystemArchiveDTO extends SystemBaseDTO {
+  persistence?: Record<string, unknown>;
+  integrity?: SeamDTO & Record<string, unknown>;
+  export_manifest?: SeamDTO & Record<string, unknown>;
+  receipt_backlog?: Record<string, unknown>;
+}

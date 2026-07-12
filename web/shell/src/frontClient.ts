@@ -22,6 +22,11 @@ import type {
   ProposalEnvelope,
   ProposalResult,
   RoomHistoryDTO,
+  SystemArchiveDTO,
+  SystemAuditDTO,
+  SystemModelRoutingDTO,
+  SystemPoliciesDTO,
+  SystemUsageDTO,
   WorkOpsTasksDTO,
 } from "./front-types";
 
@@ -98,6 +103,21 @@ export class FrontClient {
   }
   corpKpi(): Promise<CorpKpiDTO> {
     return this.read<CorpKpiDTO>("corp/kpi");
+  }
+  systemAudit(params?: { limit?: string }): Promise<SystemAuditDTO> {
+    return this.read<SystemAuditDTO>("system/audit", params);
+  }
+  systemUsage(): Promise<SystemUsageDTO> {
+    return this.read<SystemUsageDTO>("system/usage");
+  }
+  systemModelRouting(): Promise<SystemModelRoutingDTO> {
+    return this.read<SystemModelRoutingDTO>("system/model_routing");
+  }
+  systemPolicies(): Promise<SystemPoliciesDTO> {
+    return this.read<SystemPoliciesDTO>("system/policies");
+  }
+  systemArchive(): Promise<SystemArchiveDTO> {
+    return this.read<SystemArchiveDTO>("system/archive");
   }
 
   // -- the single mutation door ---------------------------------------------- //

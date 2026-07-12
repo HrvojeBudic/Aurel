@@ -8,6 +8,7 @@
  */
 import { useCallback, useEffect, useState } from "react";
 import type { FrontClient, FrontMode } from "../../frontClient";
+import { SystemPanel } from "./SystemPanel";
 import type {
   AurelEUDTO,
   BoardJournalDTO,
@@ -382,6 +383,8 @@ export function FrontSurface({ surfaceId, client, mode }: SurfaceProps) {
       return <LibraryPanel client={client} mode={mode} />;
     case "corp":
       return <CorpPanel client={client} mode={mode} />;
+    case "system":
+      return <SystemPanel client={client} mode={mode} />;
     default:
       return null;
   }
