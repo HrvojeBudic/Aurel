@@ -130,6 +130,38 @@ class MemoryProjection:
                         proj._content[rid] = str(data.get("content", ""))
         return proj
 
+    @staticmethod
+    def from_as_of_records(records: list[Any], backend: Any = None) -> "MemoryProjection":
+        """Build a read-only snapshot from an A0 as-of record set (F8.4)."""
+        proj = MemoryProjection()
+        ids: set[str] = set()
+        for rec in records:
+            mid = str(getattr(rec, "memory_id", "") or getattr(rec, "id", "") or "")
+            if mid:
+                ids.add(mid)
+        for rec in records:
+            mid = str(getattr(rec, "memory_id", "") or getattr(rec, "id", "") or "")
+            if not mid:
+                continue
+            proj.current_ids.append(mid)
+            ts = getattr(rec, "truth_state", "")
+            proj.states[mid] = ts.value if hasattr(ts, "value") else str(ts)
+            nxt = getattr(rec, "superseded_by", None)
+            if nxt and str(nxt) in ids:
+                proj._superseded_by[mid] = str(nxt)
+            prev = getattr(rec, "revises", None)
+            if prev and str(prev) in ids:
+                proj._revises[mid] = str(prev)
+        proj.current_ids = sorted(set(proj.current_ids))
+        if backend is not None and getattr(backend, "available", False):
+            for entry in backend.load():
+                if entry.get("kind") == "record":
+                    data = entry.get("data", {})
+                    rid = str(data.get("memory_id", ""))
+                    if rid:
+                        proj._content[rid] = str(data.get("content", ""))
+        return proj
+
     # -- read-only views ------------------------------------------------- #
     def belief_history(self, memory_id: str) -> list[str]:
         """The supersession chain containing ``memory_id``, oldest → newest.

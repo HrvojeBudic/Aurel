@@ -13,8 +13,8 @@ trace-derived ingredients into one read-only view:
 
 Invariants: zero writes (pure projection over the trace + read-only fs existence
 checks); deterministic (sorted); the overall truth label propagates as the **MIN**
-(weakest) of the composed memory tiers; **time-travel / as-of replay is F8**, so it
-is a hard-wired UNAVAILABLE claim here, never faked.
+(weakest) of the composed memory tiers; **time-travel / as-of replay is F8.4**
+(``AUREL_SYSTEM``), derived via ``claims_library_time_travel()``, never faked.
 """
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ from typing import Any, Optional
 
 from ..core_types import MemoryTruthState
 from ..doc_registry import DocId, doc_path, repo_root
+from ..memory_asof import AsOfView
 from ..memory_projection import MemoryProjection
 
 # Tier ordering weakest → strongest for MIN truth-label propagation. REJECTED is
@@ -36,23 +37,49 @@ _TIER_ORDER: tuple[MemoryTruthState, ...] = (
 )
 _TIER_RANK = {t.value: i for i, t in enumerate(_TIER_ORDER)}
 
-# Time-travel / as-of replay is F8. Hard-wired False so its absence is declared,
-# not over-claimed.
-CLAIMS_LIBRARY_TIME_TRAVEL = False
+
+def memory_asof_available() -> bool:
+    """True when Library as-of replay is live (F8.4, ``AUREL_SYSTEM``)."""
+    from .system_read_model import flag_enabled
+    return flag_enabled()
+
+
+def claims_library_time_travel() -> bool:
+    """Derived seam flip (F7-carried): live iff bitemporal as-of is available."""
+    return memory_asof_available()
+
+
+# Backward-compatible alias for imports expecting the old constant name.
+CLAIMS_LIBRARY_TIME_TRAVEL = False  # noqa: deprecated — use claims_library_time_travel()
 
 
 class LibraryReadModel:
     """A read-only composition of memory + docs + (optional) export manifest."""
 
-    def __init__(self, memory: MemoryProjection, *, manifest: Any = None) -> None:
+    def __init__(
+        self,
+        memory: MemoryProjection,
+        *,
+        manifest: Any = None,
+        fabric: Any = None,
+    ) -> None:
         self._memory = memory
         self._manifest = manifest
+        self._fabric = fabric
 
     @staticmethod
-    def from_trace(trace: Any, *, backend: Any = None, manifest: Any = None
-                   ) -> "LibraryReadModel":
+    def from_trace(
+        trace: Any,
+        *,
+        backend: Any = None,
+        manifest: Any = None,
+        fabric: Any = None,
+    ) -> "LibraryReadModel":
         return LibraryReadModel(
-            MemoryProjection.from_trace(trace, backend=backend), manifest=manifest)
+            MemoryProjection.from_trace(trace, backend=backend),
+            manifest=manifest,
+            fabric=fabric,
+        )
 
     # -- assets (docs) --------------------------------------------------------- #
     def assets(self) -> list[dict]:
@@ -113,13 +140,48 @@ class LibraryReadModel:
             }
         return {"status": "AVAILABLE", **self._manifest.to_dict()}
 
+    def as_of(
+        self,
+        valid_time: Optional[float] = None,
+        transaction_time: Optional[float] = None,
+        *,
+        fabric: Any = None,
+    ) -> "LibraryReadModel":
+        """Bitemporal library view at ``T``. Both axes ``None`` ⇒ ``current()``."""
+        if valid_time is None and transaction_time is None:
+            return self
+        if not memory_asof_available():
+            raise ValueError("library as-of UNAVAILABLE (AUREL_SYSTEM off)")
+
+        src = fabric if fabric is not None else self._fabric
+        if src is None:
+            raise ValueError("library as-of requires a memory fabric snapshot")
+
+        records = AsOfView.from_fabric(src).as_of(valid_time, transaction_time)
+        projection = MemoryProjection.from_as_of_records(records)
+        return LibraryReadModel(projection, manifest=self._manifest, fabric=src)
+
+    def current(self) -> "LibraryReadModel":
+        """Current belief on both axes — byte-identical to the default projection."""
+        return self
+
     # -- composition ----------------------------------------------------------- #
-    def to_dict(self) -> dict:
+    def to_dict(
+        self,
+        *,
+        valid_time: Optional[float] = None,
+        transaction_time: Optional[float] = None,
+        fabric: Any = None,
+    ) -> dict:
+        if valid_time is not None or transaction_time is not None:
+            return self.as_of(
+                valid_time, transaction_time, fabric=fabric,
+            ).to_dict()
         return {
             "assets": self.assets(),
             "memory_by_tier": self.memory_by_tier(),
             "rejected": self.rejected(),
             "min_truth_state": self.min_truth_state(),
             "manifest": self.manifest(),
-            "claims_time_travel": CLAIMS_LIBRARY_TIME_TRAVEL,
+            "claims_time_travel": claims_library_time_travel(),
         }

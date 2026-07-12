@@ -21,7 +21,7 @@ from .conversation import RoomHistoryProjection, rooms_from_trace
 from .corp_read_model import CorpReadModel
 from .dn import DnStatusReadModel
 from .hq_command import HQCommandReadModel
-from .library import LibraryReadModel
+from .library import LibraryReadModel, claims_library_time_travel, memory_asof_available
 from .system_read_model import SystemReadModel, flag_enabled as system_flag_enabled
 from .workbench import ApprovalWorkbenchReadModel
 from .workops import WorkOpsChatReadModel, workops_room
@@ -70,11 +70,42 @@ def _rooms(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
 
 
 def _library(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
-    lib = LibraryReadModel.from_trace(reads.trace)
+    as_of = _one(params, "as_of", "")
+    valid_s = _one(params, "valid_time", "")
+    trans_s = _one(params, "transaction_time", "") or as_of
+    valid_time = float(valid_s) if valid_s else None
+    transaction_time = float(trans_s) if trans_s else None
     memory_id = _one(params, "memory_id", "")
+
+    lib = LibraryReadModel.from_trace(
+        reads.trace,
+        fabric=getattr(reads.runtime, "memory", None),
+    )
+    if valid_time is not None or transaction_time is not None:
+        if not memory_asof_available():
+            return {
+                "available": False,
+                "status": "UNAVAILABLE",
+                "reason": "library as-of requires AUREL_SYSTEM=1",
+                "claims_time_travel": claims_library_time_travel(),
+            }
+        try:
+            lib = lib.as_of(
+                valid_time,
+                transaction_time,
+                fabric=getattr(reads.runtime, "memory", None),
+            )
+        except ValueError as exc:
+            raise ReadModelError(str(exc)) from exc
+
     body = lib.to_dict()
-    if memory_id:  # optional drill-down into one record's provenance chain
+    if memory_id:
         body["provenance_chain"] = lib.provenance_chain(memory_id)
+    if transaction_time is not None or valid_time is not None:
+        body["as_of"] = {
+            "valid_time": valid_time,
+            "transaction_time": transaction_time,
+        }
     return body
 
 

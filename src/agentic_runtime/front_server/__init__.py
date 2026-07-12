@@ -43,7 +43,12 @@ from .corp_read_model import (
 from .workbench import CLAIMS_FULL_APPROVAL_WORKBENCH, ApprovalWorkbenchReadModel
 from .dn import DnStatusReadModel, evaluate_merge, graduated_autonomy
 from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
-from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
+from .library import (
+    CLAIMS_LIBRARY_TIME_TRAVEL,
+    LibraryReadModel,
+    claims_library_time_travel,
+    memory_asof_available,
+)
 from .read_models import LiveReadModels, ReadModelError
 from .system_read_model import SystemReadModel, flag_enabled as system_flag_enabled
 from .routes import ROUTES, Route, match_route, mutation_routes
@@ -85,6 +90,8 @@ __all__ = [
     "system_flag_enabled",
     "LibraryReadModel",
     "CLAIMS_LIBRARY_TIME_TRAVEL",
+    "claims_library_time_travel",
+    "memory_asof_available",
     "HQCommandReadModel",
     "CLAIMS_WATCHTOWER_LIVE",
     "CorpReadModel",
