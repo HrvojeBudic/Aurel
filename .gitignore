@@ -28,3 +28,11 @@ reports/git_hygiene/
 
 .claude/settings.local.json
 *.tsbuildinfo
+
+# DSD migration ephemeral / out-of-repo-scope (DSD-PARK-01)
+/archives/
+/migration/quarantine/
+/scratch/
+/implementer/
+/OS/
+/evidence/
