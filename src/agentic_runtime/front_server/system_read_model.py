@@ -203,11 +203,13 @@ class SystemReadModel:
     """Operator-only System surface projections (audit + usage)."""
 
     runtime: Any
+    router: Any = None
 
     @classmethod
-    def from_runtime(cls, runtime: Any) -> "SystemReadModel":
+    def from_runtime(cls, runtime: Any, *, router: Any = None) -> "SystemReadModel":
         inner = getattr(runtime, "runtime", runtime)
-        return cls(inner)
+        rtr = router if router is not None else getattr(runtime, "router", None)
+        return cls(inner, router=rtr)
 
     def audit_log(
         self,
@@ -325,4 +327,187 @@ class SystemReadModel:
             "available": flag_enabled(),
             "audit": self.audit_log(),
             "usage": self.usage(),
+            "model_routing": self.model_routing(),
+            "policies": self.policy_browser(),
+            "archive": self.archive_status(),
         }
+
+    def model_routing(self) -> dict[str, Any]:
+        if not flag_enabled():
+            return unavailable_payload()
+
+        router = self.router
+        if router is None:
+            from ..model_router import ModelRouter
+            router = ModelRouter()
+            router.configure_default()
+
+        profiles = router.list_model_profiles()
+        providers = router.provider_status()
+        health = {}
+        for profile, rows in router.health().items():
+            health[profile] = [
+                {
+                    "provider_name": h.provider_name,
+                    "status": h.status.value if hasattr(h.status, "value") else str(h.status),
+                    "model_name": h.model_name,
+                    "message": h.message,
+                }
+                for h in rows
+            ]
+
+        return {
+            "available": True,
+            "status": _TRUTH_LABEL_LIVE,
+            "truth_label": _TRUTH_LABEL_LIVE,
+            "operator_only": True,
+            "profiles": profiles,
+            "active_profile": getattr(router, "_active_profile", None),
+            "default_provider": router.default_provider,
+            "providers": providers,
+            "health": health,
+            "promotion_gates": _promotion_gates_view(),
+        }
+
+    def policy_browser(self) -> dict[str, Any]:
+        if not flag_enabled():
+            return unavailable_payload()
+
+        registry = getattr(self.runtime, "policy_card_registry", None)
+        if registry is None:
+            return {
+                "available": True,
+                "status": _TRUTH_LABEL_LIVE,
+                "truth_label": _TRUTH_LABEL_LIVE,
+                "operator_only": True,
+                "registry_bound": False,
+                "cards": [],
+                "registry_canonical_hash": "",
+                "reason": "no policy card registry bound",
+            }
+
+        canonical = registry.canonical_dict()
+        cards = [_mask_secrets(dict(card)) for card in canonical["cards"]]
+
+        return {
+            "available": True,
+            "status": _TRUTH_LABEL_LIVE,
+            "truth_label": _TRUTH_LABEL_LIVE,
+            "operator_only": True,
+            "registry_bound": True,
+            "cards": cards,
+            "registry_canonical_hash": registry.canonical_hash(),
+            "grants_authority": False,
+        }
+
+    def archive_status(self) -> dict[str, Any]:
+        if not flag_enabled():
+            return unavailable_payload()
+
+        trace = self.runtime.trace
+        from ..aurel_trace.persistent_integrity import (
+            PersistentTraceBackendKind,
+            assess_persistent_trace_backend,
+            profile_persistent_trace_backend,
+        )
+
+        if not hasattr(trace, "verify_persisted"):
+            return {
+                "available": True,
+                "status": _TRUTH_LABEL_LIVE,
+                "truth_label": _TRUTH_LABEL_LIVE,
+                "operator_only": True,
+                "persistence": {"backend": "in_memory", "verified": False},
+                "integrity": {
+                    "status": _TRUTH_LABEL_UNAVAILABLE,
+                    "reason": "in-memory trace — no persistent integrity profile",
+                },
+                "export_manifest": {
+                    "available": False,
+                    "reason": "no persistent export manifest source",
+                },
+                "receipt_backlog": {"count": 0, "items": []},
+            }
+
+        verify = trace.verify_persisted()
+        receipt_path = getattr(trace, "receipt_path", None)
+        receipt_exists = bool(receipt_path and receipt_path.exists())
+        profile = profile_persistent_trace_backend(
+            backend_kind=PersistentTraceBackendKind.JSONL,
+            append_only_claim=True,
+            hash_chain_supported=True,
+            receipt_supported=receipt_exists,
+            export_manifest_supported=False,
+        )
+        assessment = assess_persistent_trace_backend(profile)
+        backlog = _receipt_backlog(trace, verify)
+
+        export_manifest: dict[str, Any] = {
+            "available": False,
+            "reason": "no export manifest bound to runtime",
+        }
+        manifest = getattr(self.runtime, "_trace_export_manifest", None)
+        if manifest is not None and hasattr(manifest, "to_dict"):
+            export_manifest = {"available": True, **manifest.to_dict()}
+
+        return {
+            "available": True,
+            "status": _TRUTH_LABEL_LIVE,
+            "truth_label": _TRUTH_LABEL_LIVE,
+            "operator_only": True,
+            "persistence": verify,
+            "integrity": assessment.to_dict(),
+            "export_manifest": export_manifest,
+            "receipt_backlog": backlog,
+        }
+
+
+def _promotion_gates_view() -> dict[str, Any]:
+    """Read-only promotion gate evidence (never triggers promotion)."""
+    blocked = sorted({
+        "verify_capability", "commit_memory", "promote_skill", "create_skill",
+        "create_reflex", "mutate_policy", "change_policy", "rewrite_trace",
+        "canonize_roadmap", "override_verifier", "universalize_claim",
+        "erase_limitation", "demote_skill", "canon_memory", "skill_memory",
+    })
+    return {
+        "is_evidence_only": True,
+        "grants_authority": False,
+        "blocked_auto_actions": blocked,
+    }
+
+
+def _mask_secrets(value: Any) -> Any:
+    from ..secrets import SecretRedactor
+    redactor = SecretRedactor()
+
+    if isinstance(value, dict):
+        return {k: _mask_secrets(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_mask_secrets(v) for v in value]
+    if isinstance(value, str):
+        lowered = value.lower()
+        if any(token in lowered for token in ("secret", "password", "api_key", "token", "credential")):
+            fp = sha(value)[:8]
+            return f"<masked:{fp}>"
+        return redactor.redact(value)
+    return value
+
+
+def _receipt_backlog(trace: Any, verify: dict[str, Any]) -> dict[str, Any]:
+    items: list[dict[str, Any]] = []
+    receipt_path = getattr(trace, "receipt_path", None)
+    if receipt_path is not None and not receipt_path.exists():
+        items.append({
+            "kind": "run_receipt",
+            "run_id": getattr(trace, "run_id", ""),
+            "status": "missing",
+        })
+    if not verify.get("ok", False):
+        items.append({
+            "kind": "chain_verification",
+            "run_id": getattr(trace, "run_id", ""),
+            "status": "failed",
+            "reason": verify.get("reason", ""),
+        })
+    return {"count": len(items), "items": items}

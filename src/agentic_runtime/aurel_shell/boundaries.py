@@ -297,6 +297,9 @@ def build_system_read_model_projections() -> tuple[SystemReadModelProjection, ..
     specs = (
         ("system_audit", "/read/system/audit"),
         ("system_usage", "/read/system/usage"),
+        ("system_model_routing", "/read/system/model_routing"),
+        ("system_policies", "/read/system/policies"),
+        ("system_archive", "/read/system/archive"),
     )
     out: list[SystemReadModelProjection] = []
     for projection_id, read_path in specs:

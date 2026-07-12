@@ -130,7 +130,7 @@ def _system_audit(reads: "LiveReadModels", params: "dict[str, list[str]]") -> di
     until = float(_one(params, "until", "0") or "0")
     offset = int(_one(params, "offset", "0") or "0")
     limit = int(_one(params, "limit", "0") or "0")
-    return SystemReadModel.from_runtime(reads.runtime).audit_log(
+    return SystemReadModel.from_runtime(reads.runtime, router=reads.router).audit_log(
         kind=_one(params, "kind", ""),
         mandate_id=_one(params, "mandate", "") or _one(params, "mandate_id", ""),
         agent_id=_one(params, "agent", "") or _one(params, "agent_id", ""),
@@ -141,10 +141,28 @@ def _system_audit(reads: "LiveReadModels", params: "dict[str, list[str]]") -> di
     )
 
 
+def _system_model(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    if not system_flag_enabled():
+        return _system_unavailable()
+    return SystemReadModel.from_runtime(reads.runtime, router=reads.router).model_routing()
+
+
+def _system_policies(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    if not system_flag_enabled():
+        return _system_unavailable()
+    return SystemReadModel.from_runtime(reads.runtime, router=reads.router).policy_browser()
+
+
+def _system_archive(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    if not system_flag_enabled():
+        return _system_unavailable()
+    return SystemReadModel.from_runtime(reads.runtime, router=reads.router).archive_status()
+
+
 def _system_usage(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
     if not system_flag_enabled():
         return _system_unavailable()
-    return SystemReadModel.from_runtime(reads.runtime).usage()
+    return SystemReadModel.from_runtime(reads.runtime, router=reads.router).usage()
 
 
 # The complete live-read registry. Every entry is read-only.
@@ -165,6 +183,9 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "corp/kpi": _corp_kpi,
     "system/audit": _system_audit,
     "system/usage": _system_usage,
+    "system/model_routing": _system_model,
+    "system/policies": _system_policies,
+    "system/archive": _system_archive,
 }
 
 
@@ -175,7 +196,12 @@ class LiveReadModels:
         # Hold the runtime; the trace is resolved lazily per read (matching the
         # dispatcher's discipline — a runtime that is never read is never touched).
         # Each read calls replay() fresh, so newly appended events show up — live.
+        self._source = runtime
         self._runtime = getattr(runtime, "runtime", runtime)
+
+    @property
+    def router(self) -> Any:
+        return getattr(self._source, "router", None)
 
     @property
     def runtime(self) -> Any:
