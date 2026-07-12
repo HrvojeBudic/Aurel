@@ -30,7 +30,7 @@ reports/git_hygiene/
 *.tsbuildinfo
 
 # DSD migration ephemeral / out-of-repo-scope (DSD-PARK-01)
-/archives/
+.archives/
 /migration/quarantine/
 /scratch/
 /implementer/
