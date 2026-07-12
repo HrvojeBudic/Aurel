@@ -331,8 +331,50 @@ class AgenticRuntime:
                 sandbox_backend_gate=sandbox_backend_gate,
             )
 
-        # ---- 2. APPROVAL (HITL) ---------------------------------------- #
+        # ---- 1c. CHRONOS FORK GATE (F8.1) ------------------------------ #
+        # Between mandate and approval: irreversible actions fork+simulate
+        # as HITL evidence only (escalation-only, never authority). Flag OFF
+        # ⇒ this block is skipped entirely (byte-identical submit).
         tool_spec = self.tools.get(cmd.tool)
+        fork_gate_context = ""
+        from .chronos.fork_gate import flag_enabled as fork_gate_flag_enabled
+        if fork_gate_flag_enabled():
+            from .chronos.fork_gate import (
+                evaluate_fork_gate,
+                trace_fork_gate_evidence,
+                twin_available,
+            )
+            from .chronos.irreversibility import IrreversibilityClass, classify_irreversibility
+            irr = classify_irreversibility(cmd, tool_spec, decision)
+            if irr.klass is IrreversibilityClass.IRREVERSIBLE:
+                if not twin_available(self):
+                    return self._governance_enforcement_blocked(
+                        pre_policy_hash,
+                        cmd,
+                        card,
+                        reason=(
+                            "fork gate UNAVAILABLE for irreversible action: "
+                            "no filesystem sandbox twin"
+                        ),
+                        identity_submit=identity_submit,
+                        policy_submit_gate=policy_submit_gate,
+                        sandbox_backend_gate=sandbox_backend_gate,
+                    )
+                fork_evidence = evaluate_fork_gate(cmd, card, self, decision)
+                if not fork_evidence.available:
+                    return self._governance_enforcement_blocked(
+                        pre_policy_hash,
+                        cmd,
+                        card,
+                        reason=fork_evidence.reason,
+                        identity_submit=identity_submit,
+                        policy_submit_gate=policy_submit_gate,
+                        sandbox_backend_gate=sandbox_backend_gate,
+                    )
+                trace_fork_gate_evidence(self, cmd, fork_evidence)
+                fork_gate_context = fork_evidence.to_context_fragment()
+
+        # ---- 2. APPROVAL (HITL) ---------------------------------------- #
         requirement = self.approval_policy.resolve(cmd, decision, tool_spec)
         if requirement.auto_deny:
             return self._approval_blocked(
@@ -357,7 +399,7 @@ class AgenticRuntime:
                 risk_class=requirement.risk_class,
                 preview=preview,
                 tool_spec=tool_spec,
-                context=cmd.rationale,
+                context=_merge_approval_context(cmd.rationale, fork_gate_context),
             )
             approval_decision = ApprovalDecision(
                 request_id=approval_request.request_id,
@@ -381,7 +423,7 @@ class AgenticRuntime:
                 tool_spec=tool_spec,
                 confirmation_level=requirement.confirmation_level,
                 strong_warning=requirement.strong_warning,
-                context=cmd.rationale,
+                context=_merge_approval_context(cmd.rationale, fork_gate_context),
             )
             approval_decision = self.approval_gate.request(approval_request)
             trace_rec = self._trace_approval(cmd, approval_request, approval_decision)
@@ -1418,6 +1460,13 @@ def _policy_card_command_class(cmd: CommandEnvelope) -> str:
     if cmd.tool in {"read_file", "list_dir", "search_text", "git_status", "git_diff"}:
         return "read_only_command"
     return "unknown_command"
+
+def _merge_approval_context(rationale: str, fork_gate_context: str) -> str:
+    if not fork_gate_context:
+        return rationale or ""
+    base = rationale or ""
+    return f"{base}\n{fork_gate_context}".strip() if base else fork_gate_context
+
 
 def _short(args: dict) -> str:
     s = ", ".join(f"{k}={str(v)[:24]}" for k, v in list(args.items())[:3])

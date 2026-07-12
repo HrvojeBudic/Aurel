@@ -524,6 +524,11 @@ from .cli_modules.f7_commands import (
     cmd_corp_status,
     cmd_corp_vault,
 )
+from .cli_modules.chronos_commands import (
+    cmd_chronos_diff,
+    cmd_chronos_fork,
+    cmd_chronos_replay,
+)
 from .cli_modules.f5_commands import (
     cmd_aureleu_panic,
     cmd_aureleu_seal,
@@ -1019,6 +1024,26 @@ def main(argv: list[str] | None = None) -> int:
     p_corp_status = corp_sub.add_parser(
         "status", help="project the F7 north-star run from the trace (read-only)")
     p_corp_status.set_defaults(func=cmd_corp_status)
+
+    p_chronos = sub.add_parser("chronos", help="F8 Time Plane — read-only replay/fork/diff")
+    chronos_sub = p_chronos.add_subparsers(dest="chronos_command", required=True)
+    p_chronos_replay = chronos_sub.add_parser("replay", help="replay audit a persisted run")
+    p_chronos_replay.add_argument("run_id", help="run id to replay")
+    p_chronos_replay.add_argument("--trace-dir", default="", help="trace base directory")
+    p_chronos_replay.add_argument("--json", action="store_true", help="emit JSON")
+    p_chronos_replay.set_defaults(func=cmd_chronos_replay)
+    p_chronos_fork = chronos_sub.add_parser("fork", help="fork child run at transition index")
+    p_chronos_fork.add_argument("run_id", help="parent run id")
+    p_chronos_fork.add_argument("--at", type=int, required=True, help="state_transition index")
+    p_chronos_fork.add_argument("--trace-dir", default="", help="trace base directory")
+    p_chronos_fork.add_argument("--json", action="store_true", help="emit JSON")
+    p_chronos_fork.set_defaults(func=cmd_chronos_fork)
+    p_chronos_diff = chronos_sub.add_parser("diff", help="causal diff two runs")
+    p_chronos_diff.add_argument("run_a", help="first run id")
+    p_chronos_diff.add_argument("run_b", help="second run id")
+    p_chronos_diff.add_argument("--trace-dir", default="", help="trace base directory")
+    p_chronos_diff.add_argument("--json", action="store_true", help="emit JSON")
+    p_chronos_diff.set_defaults(func=cmd_chronos_diff)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)
