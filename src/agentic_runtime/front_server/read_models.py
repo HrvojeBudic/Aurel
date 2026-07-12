@@ -22,6 +22,7 @@ from .corp_read_model import CorpReadModel
 from .dn import DnStatusReadModel
 from .hq_command import HQCommandReadModel
 from .library import LibraryReadModel
+from .system_read_model import SystemReadModel, flag_enabled as system_flag_enabled
 from .workbench import ApprovalWorkbenchReadModel
 from .workops import WorkOpsChatReadModel, workops_room
 
@@ -117,6 +118,35 @@ def _corp_kpi(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
         ledger=getattr(inner, "budget", None)).to_dict()
 
 
+def _system_unavailable() -> dict:
+    from .system_read_model import unavailable_payload
+    return unavailable_payload()
+
+
+def _system_audit(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
+    if not system_flag_enabled():
+        return _system_unavailable()
+    since = float(_one(params, "since", "0") or "0")
+    until = float(_one(params, "until", "0") or "0")
+    offset = int(_one(params, "offset", "0") or "0")
+    limit = int(_one(params, "limit", "0") or "0")
+    return SystemReadModel.from_runtime(reads.runtime).audit_log(
+        kind=_one(params, "kind", ""),
+        mandate_id=_one(params, "mandate", "") or _one(params, "mandate_id", ""),
+        agent_id=_one(params, "agent", "") or _one(params, "agent_id", ""),
+        since=since,
+        until=until,
+        offset=offset,
+        limit=limit,
+    )
+
+
+def _system_usage(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
+    if not system_flag_enabled():
+        return _system_unavailable()
+    return SystemReadModel.from_runtime(reads.runtime).usage()
+
+
 # The complete live-read registry. Every entry is read-only.
 _REGISTRY: "dict[str, ReadBuilder]" = {
     "signal/history": _signal_history,
@@ -133,6 +163,8 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
     "corp/runtime": _corp_runtime,
     "corp/workbench": _corp_workbench,
     "corp/kpi": _corp_kpi,
+    "system/audit": _system_audit,
+    "system/usage": _system_usage,
 }
 
 

@@ -45,6 +45,7 @@ from .dn import DnStatusReadModel, evaluate_merge, graduated_autonomy
 from .hq_command import CLAIMS_WATCHTOWER_LIVE, HQCommandReadModel
 from .library import CLAIMS_LIBRARY_TIME_TRAVEL, LibraryReadModel
 from .read_models import LiveReadModels, ReadModelError
+from .system_read_model import SystemReadModel, flag_enabled as system_flag_enabled
 from .routes import ROUTES, Route, match_route, mutation_routes
 from .server import (
     FrontApp,
@@ -80,6 +81,8 @@ __all__ = [
     "ProposalRejected",
     "LiveReadModels",
     "ReadModelError",
+    "SystemReadModel",
+    "system_flag_enabled",
     "LibraryReadModel",
     "CLAIMS_LIBRARY_TIME_TRAVEL",
     "HQCommandReadModel",

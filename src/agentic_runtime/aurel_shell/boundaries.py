@@ -280,6 +280,37 @@ def build_system_no_agent_access_boundary() -> SystemNoAgentAccessBoundary:
     return SystemNoAgentAccessBoundary(**payload, boundary_hash=_hash_payload(payload))
 
 
+@dataclass(frozen=True)
+class SystemReadModelProjection(_CanonicalMixin):
+    """F8.2 — one operator-only System read projection (zero-write)."""
+
+    projection_id: str
+    read_path: str
+    truth_owner_relation: str
+    operator_only: bool
+    zero_write: bool
+    truth_label: BoundaryTruthLabel
+
+
+def build_system_read_model_projections() -> tuple[SystemReadModelProjection, ...]:
+    """SYSTEM surface read-model projections (governance state, operator-only)."""
+    specs = (
+        ("system_audit", "/read/system/audit"),
+        ("system_usage", "/read/system/usage"),
+    )
+    out: list[SystemReadModelProjection] = []
+    for projection_id, read_path in specs:
+        out.append(SystemReadModelProjection(
+            projection_id=projection_id,
+            read_path=read_path,
+            truth_owner_relation=_READ_MODEL_RELATIONS[AurelSurfaceKind.SYSTEM],
+            operator_only=True,
+            zero_write=True,
+            truth_label=BoundaryTruthLabel.SOURCE_OF_TRUTH_BOUNDARY_ONLY,
+        ))
+    return tuple(out)
+
+
 def build_settings_system_config_boundary() -> SettingsSystemConfigBoundary:
     settings_scope = SettingsConfigScope(
         is_system=False,
