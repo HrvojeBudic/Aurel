@@ -528,6 +528,8 @@ from .cli_modules.chronos_commands import (
     cmd_chronos_diff,
     cmd_chronos_fork,
     cmd_chronos_replay,
+    cmd_chronos_seal,
+    cmd_chronos_status,
 )
 from .cli_modules.f5_commands import (
     cmd_aureleu_panic,
@@ -1057,6 +1059,13 @@ def main(argv: list[str] | None = None) -> int:
     p_chronos_diff.add_argument("--trace-dir", default="", help="trace base directory")
     p_chronos_diff.add_argument("--json", action="store_true", help="emit JSON")
     p_chronos_diff.set_defaults(func=cmd_chronos_diff)
+    p_chronos_seal = chronos_sub.add_parser("seal", help="derived F8 exit seal (read-only)")
+    p_chronos_seal.add_argument("--json", action="store_true", help="emit JSON")
+    p_chronos_seal.set_defaults(func=cmd_chronos_seal)
+    p_chronos_status = chronos_sub.add_parser(
+        "status", help="F8 north-star Time Plane projection (read-only)",
+    )
+    p_chronos_status.set_defaults(func=cmd_chronos_status)
 
     p_dk = sub.add_parser("dual-kernel", help="inspect the dual-kernel surface")
     dk_sub = p_dk.add_subparsers(dest="dual_kernel_command", required=True)

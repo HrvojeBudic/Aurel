@@ -93,3 +93,37 @@ def cmd_chronos_diff(args: argparse.Namespace) -> int:
         print(f"  added={len(result.added)} removed={len(result.removed)} "
               f"changed={len(result.changed)}")
     return 0
+
+
+def cmd_chronos_seal(args: argparse.Namespace) -> int:
+    """``aurel chronos seal [--json]`` — derived F8 exit seal (read-only)."""
+    from ..f8_seal import build_f8_exit_seal
+
+    seal = build_f8_exit_seal()
+    if getattr(args, "json", False):
+        print(json.dumps(seal.to_dict(), indent=2))
+        return 0 if seal.sealed else 1
+    print(f"F8 Time Plane exit seal: {seal.status.value}")
+    for item in seal.items:
+        mark = "OK " if item.status.value == "PASSED" else "XX "
+        print(f"  {mark}{item.slice_id:6} {item.title}")
+        if item.status.value != "PASSED":
+            print(f"        module_present={item.module_present} "
+                  f"report_present={item.report_present}")
+    print("  flipped from F7 (now live):")
+    for seam, owner in seal.flipped_from_f7:
+        print(f"    + {seam} [{owner}]")
+    print("  UNAVAILABLE (declared, deferred):")
+    for u in seal.unavailable:
+        print(f"    - {u.surface_id}: {u.reason} [{u.future_owner}]")
+    return 0 if seal.sealed else 1
+
+
+def cmd_chronos_status(args: argparse.Namespace) -> int:
+    """``aurel chronos status`` — project the F8 north-star run (read-only)."""
+    from .. import build_runtime
+    from ..f8_projection import F8RunProjection
+
+    rt = build_runtime()
+    print(json.dumps(F8RunProjection(rt).to_dict(), indent=2))
+    return 0
