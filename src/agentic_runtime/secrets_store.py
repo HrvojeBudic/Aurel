@@ -33,7 +33,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from .secrets import register_secret_value
+from .secrets import (
+    EnvSecretProvider,
+    SecretReference,
+    SecretResolutionResult,
+    register_secret_value,
+)
 
 # Provider → canonical env var. Extensible via SecretStore(extra_providers=...).
 DEFAULT_PROVIDER_KEY_ENVS: dict[str, str] = {
@@ -225,8 +230,45 @@ class SecretStore:
         os.chmod(path, 0o600)
 
 
+class LayeredSecretProvider(EnvSecretProvider):
+    """An ``EnvSecretProvider`` that resolves through the whole backend chain.
+
+    The model layer asks for secrets *by environment-variable name*, while the
+    SecretStore is keyed *by provider*. This maps one to the other, so a key put
+    away with ``aurel secrets set anthropic`` is found by the router — without it
+    ``secrets status`` reports ``present=true backend=file-0600`` while
+    ``providers status`` reports ``secret=missing`` from the same process.
+
+    Substituting for ``EnvSecretProvider`` is safe: env is the first link of the
+    chain, so an env-configured key resolves identically.
+    """
+
+    def __init__(self, store: Optional[SecretStore] = None) -> None:
+        self._store = store if store is not None else SecretStore()
+
+    def _provider_for(self, env_var: str) -> Optional[str]:
+        for provider, var in self._store.providers.items():
+            if var == env_var:
+                return provider
+        return None
+
+    def resolve(self, ref: SecretReference) -> SecretResolutionResult:
+        provider = self._provider_for(ref.env_var)
+        # An env var the store does not know (a custom provider) still resolves
+        # from the environment via the base class — never a silent miss.
+        if provider is None:
+            return super().resolve(ref)
+        value, _backend = self._store.get(provider)   # registers for redaction
+        if not value:
+            return SecretResolutionResult(
+                env_var=ref.env_var, present=False,
+                error=f"{ref.env_var} not configured")
+        return SecretResolutionResult(env_var=ref.env_var, present=True, value=value)
+
+
 __all__ = [
     "DEFAULT_PROVIDER_KEY_ENVS",
+    "LayeredSecretProvider",
     "SecretStore",
     "SecretStoreError",
     "SecretStatus",

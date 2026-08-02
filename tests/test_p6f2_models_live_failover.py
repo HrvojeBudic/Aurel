@@ -160,9 +160,15 @@ def test_profiles_set_mock_fallback_posture():
 def test_shipped_live_bundle_parses():
     bundle = ProviderConfigLoader("config/live").load()
     planning = bundle.get_profile("planning")
-    assert planning.provider == "anthropic"
+    assert planning.provider == "deepseek"
     assert [(f.provider, f.model) for f in planning.failover] == [
-        ("deepseek", "deepseek-v4-pro"), ("qwen", "qwen-max")]
+        ("anthropic", "claude-3-5-haiku-latest"), ("qwen", "qwen-max")]
+    # `balanced` is the profile every unconfigured caller asks for; without it
+    # the conversation engine, demo, repo agent and entity loop all refuse with
+    # "no model registered for profile 'balanced'".
+    balanced = bundle.get_profile("balanced")
+    assert balanced.provider == "deepseek"
+    assert [f.provider for f in balanced.failover] == ["anthropic", "qwen"]
     assert bundle.get_profile("coding").failover[0].provider == "qwen"
     assert bundle.get_profile("challenger").failover[0].provider == "kimi"
     assert bundle.get_profile("summarization").failover[0].provider == "ollama"

@@ -3,16 +3,33 @@
 # edit to its failover list. In the standard profile there is NO silent mock
 # fallback — a chain whose every link lacks a key fails honestly.
 profiles:
+  # The default profile every unconfigured caller asks for (ConversationEngine,
+  # AgentCard.model_profile, demo, repo_agent, entity loop). Without it those
+  # callers get "no model registered for profile 'balanced'" and refuse.
+  balanced:
+    provider: deepseek
+    model: deepseek-v4-pro
+    purpose: general
+    allowed_tasks:
+      - balanced
+      - general
+      - planning
+    failover:
+      - provider: anthropic
+        model: claude-3-5-haiku-latest
+      - provider: qwen
+        model: qwen-max
+
   planning:
-    provider: anthropic
-    model: claude-3-5-haiku-latest
+    provider: deepseek
+    model: deepseek-v4-pro
     purpose: planning
     allowed_tasks:
       - planning
       - balanced
     failover:
-      - provider: deepseek
-        model: deepseek-v4-pro
+      - provider: anthropic
+        model: claude-3-5-haiku-latest
       - provider: qwen
         model: qwen-max
 

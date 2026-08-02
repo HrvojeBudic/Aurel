@@ -21,34 +21,65 @@ def _repo_root() -> Path:
 
 
 def cmd_status(args: argparse.Namespace) -> int:
-    from . import build_runtime
+    """Report the posture of the kernel this command actually builds.
+
+    Previously the profile was resolved for *display* and then a bare
+    ``build_runtime()`` was constructed, so the header could announce
+    ``enforcement=enforce_fail_closed`` above an UnsafeLocalSandbox. Now the same
+    resolved profile builds the kernel, and when no profile is active we say so
+    rather than printing the declared default as if it were in force.
+    """
+    from . import PROFILE_ENV, build_runtime
     from .governance.enforcement_profiles import profile_spec
     from .governance.profile import profile_for
     from .status import format_status, runtime_status
 
+    requested = getattr(args, "profile", None) or os.environ.get(PROFILE_ENV, "").strip()
     try:
-        spec = profile_spec()
+        spec = profile_spec(requested or None)
         gprofile = profile_for(spec.level)
         active_profile = {
-            "name": spec.name,
+            "name": spec.name if requested else "none",
+            "active": bool(requested),
             "level": spec.level.value,
             "enforcement_mode": gprofile.enforcement_mode.value,
+            "declared_default": profile_spec().name,
         }
     except Exception as exc:  # never let a config issue hide the rest of status
-        active_profile = {"name": "unavailable", "error": str(exc)}
+        active_profile = {"name": "unavailable", "active": False, "error": str(exc)}
 
-    kernel = build_runtime()
+    kernel = build_runtime(profile=requested or None)
     status = runtime_status(kernel)
     status["active_profile"] = active_profile
+    status["trace"] = {
+        "backend": type(kernel.trace).__name__,
+        "run_id": kernel.trace.run_id,
+        "durable": type(kernel.trace).__name__ != "InMemoryTraceLedger",
+    }
+    status["enforcement"] = {
+        "wired": bool(getattr(kernel.runtime, "_governance_enforcement_explicit", False)),
+        "mode": getattr(
+            getattr(kernel.runtime, "governance_enforcement_config", None),
+            "mode", None).value
+        if getattr(kernel.runtime, "governance_enforcement_config", None) else "",
+    }
     if args.json:
         print(json.dumps(status, indent=2))
     else:
         ap = active_profile
         if "error" in ap:
             print(f"active profile: unavailable ({ap['error']})")
+        elif not ap["active"]:
+            print(f"active profile: none (permissive build)  "
+                  f"declared default={ap['declared_default']} — activate with "
+                  f"{PROFILE_ENV}={ap['declared_default']}")
         else:
             print(f"active profile: {ap['name']}  level={ap['level']}  "
                   f"enforcement={ap['enforcement_mode']}")
+        tr, en = status["trace"], status["enforcement"]
+        print(f"trace: {tr['backend']} durable={tr['durable']} run={tr['run_id']}")
+        print(f"enforcement wired: {en['wired']}"
+              + (f"  mode={en['mode']}" if en["mode"] else ""))
         print(format_status(status))
     return 0
 
@@ -836,7 +867,31 @@ def cmd_flow(args: argparse.Namespace) -> int:
     return response.exit_code
 
 
+def _apply_profile_process_env() -> None:
+    """Make an explicitly-selected profile a bundle, not a label.
+
+    ``profile_process_env`` sets the flags a profile declares but that are read
+    from the environment rather than passed as kwargs (durable memory, dual
+    kernel, no silent mock fallback). It is documented as "applied at process
+    entry" and had no caller anywhere, so `standard` never actually delivered
+    them. Only an explicit AUREL_PROFILE triggers it — applying the yaml default
+    here would silently change the posture of every existing CLI invocation.
+    ``setdefault`` semantics mean an operator's own value always wins.
+    """
+    from . import PROFILE_ENV
+
+    if not os.environ.get(PROFILE_ENV, "").strip():
+        return
+    try:
+        from .governance.enforcement_profiles import profile_process_env, profile_spec
+
+        profile_process_env(profile_spec())
+    except Exception:  # a bad profile must not stop the CLI from reporting it
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _apply_profile_process_env()
     parser = argparse.ArgumentParser(
         prog="agentic-runtime",
         description="Governed agentic runtime — minimal CLI",
@@ -845,6 +900,10 @@ def main(argv: list[str] | None = None) -> int:
 
     p_status = sub.add_parser("status", help="show runtime wiring and sandbox mode")
     p_status.add_argument("--json", action="store_true", help="emit JSON")
+    p_status.add_argument(
+        "--profile", default="",
+        help="build and report under this enforcement profile "
+             "(dev/standard/hardened); default is AUREL_PROFILE, else none")
     p_status.set_defaults(func=cmd_status)
 
     p_demo = sub.add_parser("demo", help="run the end-to-end governed demo")
@@ -996,6 +1055,41 @@ def main(argv: list[str] | None = None) -> int:
     p_front_serve = front_sub.add_parser("serve", help="run the Front HTTP server")
     p_front_serve.add_argument("--host", default="127.0.0.1")
     p_front_serve.add_argument("--port", type=int, default=8765)
+    p_front_serve.add_argument(
+        "--config-dir", default=os.environ.get("AUREL_CONFIG_DIR", ""),
+        help="provider/model config dir for the conversation router "
+             "(e.g. config/live); default is the packaged offline config")
+    p_front_serve.add_argument(
+        "--model-profile", default="balanced",
+        help="model profile the conversation engine routes to")
+    p_front_serve.add_argument(
+        "--operator", default="operator", help="name on the operator AgentCard")
+    p_front_serve.add_argument(
+        "--profile", default=os.environ.get("AUREL_PROFILE", ""),
+        help="enforcement profile for the served kernel (dev/standard/hardened); "
+             "'standard' means hard sandbox + fail-closed governance")
+    p_front_serve.add_argument(
+        "--trace-backend", default=os.environ.get("AUREL_TRACE_BACKEND", ""),
+        choices=["", "persistent", "memory"],
+        help="'persistent' (default) survives restart; 'memory' discards "
+             "history, approvals and run status on exit")
+    p_front_serve.add_argument(
+        "--trace-dir", default=os.environ.get("AUREL_TRACE_DIR", ""),
+        help="where the trace lives (default ~/.aurel/traces). Keep it OUTSIDE "
+             "the workspace or retained states nest inside the tree they describe")
+    p_front_serve.add_argument(
+        "--run-id", default=os.environ.get("AUREL_RUN_ID", ""),
+        help="continue a specific run; default is this workspace's stable "
+             "identity from .aurel/identity")
+    p_front_serve.add_argument(
+        "--write-scope", default="*",
+        help="workspace-relative path prefix the operator card may read/write "
+             "('*' = the whole workspace; the sandbox root is still the jail)")
+    p_front_serve.add_argument(
+        "--max-risk", default="low",
+        choices=["trivial", "low", "medium", "high", "critical"],
+        help="risk ceiling of the operator card; anything above it becomes a "
+             "pending approval instead of an execution")
     p_front_serve.set_defaults(func=cmd_front_serve)
     p_front_seal = front_sub.add_parser("seal", help="derived F5 exit seal (read-only)")
     p_front_seal.add_argument("--json", action="store_true", help="emit JSON")

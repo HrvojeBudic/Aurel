@@ -68,6 +68,7 @@ class OllamaProvider:
         if error:
             return ModelResponse(self.name, self.config.model_name,
                                  error=error, latency_ms=latency)
+        raw = ""
         try:
             raw = ((data or {}).get("message") or {}).get("content", "")
             parsed = json.loads(raw) if raw else None
@@ -81,7 +82,46 @@ class OllamaProvider:
                 usage=_usage_from(data),
             )
         except (TypeError, json.JSONDecodeError) as e:
+            return ModelResponse(self.name, self.config.model_name, raw_text=raw,
+                                 error=f"malformed_provider_response:{type(e).__name__}",
+                                 latency_ms=latency)
+
+    def complete_text(self, request: ModelRequest) -> ModelResponse:
+        """Prose completion over /api/chat — no `format` schema, no parsing."""
+        payload = {
+            "model": self.config.model_name,
+            "stream": False,
+            "messages": [
+                {"role": "system", "content": request.system_prompt},
+                {"role": "user", "content": request.user_prompt},
+            ],
+            "options": {
+                "temperature": request.temperature,
+                "num_predict": request.max_tokens,
+            },
+        }
+        data, error, latency = post_json(
+            f"{self.config.base_url.rstrip('/')}/api/chat",
+            payload,
+            timeout=request.timeout_seconds,
+        )
+        if error:
             return ModelResponse(self.name, self.config.model_name,
+                                 error=error, latency_ms=latency)
+        raw = ""
+        try:
+            raw = ((data or {}).get("message") or {}).get("content", "")
+            return ModelResponse(
+                self.name,
+                self.config.model_name,
+                raw_text=raw,
+                parsed_json=None,
+                latency_ms=latency,
+                finish_reason=(data or {}).get("done_reason"),
+                usage=_usage_from(data),
+            )
+        except (AttributeError, TypeError) as e:
+            return ModelResponse(self.name, self.config.model_name, raw_text=raw,
                                  error=f"malformed_provider_response:{type(e).__name__}",
                                  latency_ms=latency)
 

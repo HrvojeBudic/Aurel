@@ -36,3 +36,24 @@ reports/git_hygiene/
 /implementer/
 /OS/
 /evidence/
+
+# WP4 — machine-local runtime identity (stable run id for this workspace)
+.aurel/
+
+# Local operator data — never published. These have never been tracked on the
+# remote and must stay that way: .sovereign is a personal SQLite vault, and the
+# rest are the operator's own working directories.
+.sovereign/
+.synapse/
+notes/
+daily/
+canvases/
+generated/
+sources/
+attachments/
+objects/
+types/
+*.synapse-tmp
+
+# Vite: machine-local overrides. The committed defaults live in .env.development.
+web/shell/.env.local

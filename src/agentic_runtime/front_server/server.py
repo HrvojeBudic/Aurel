@@ -37,10 +37,18 @@ class FrontServerDisabled(RuntimeError):
 class FrontApp:
     """The request handlers behind the routes. Read-only except the one door."""
 
-    def __init__(self, runtime: Any, *, conversation_engine: Any = None) -> None:
+    def __init__(self, runtime: Any, *, conversation_engine: Any = None,
+                 approval_inbox: Any = None, card: Any = None,
+                 aureleu: Any = None) -> None:
+        # Every binding is optional and defaults to None, so an unbound server is
+        # byte-identical to before: the dispatcher answers `wired: false` rather
+        # than pretending. `aurel front serve` supplies all four (F5.2/F5.C/F6.4).
         self._dispatcher = ProposalDispatcher(
-            runtime, conversation_engine=conversation_engine)
-        self._reads = LiveReadModels(runtime)
+            runtime, conversation_engine=conversation_engine,
+            approval_inbox=approval_inbox, card=card, aureleu=aureleu)
+        # The inbox rides along so HQ.Command and the approval workbench can list
+        # what is pending — the trace carries the audit, the inbox the live queue.
+        self._reads = LiveReadModels(runtime, inbox=approval_inbox)
 
     def handle_health(self, method: str, path: str, body: Any) -> tuple[int, dict]:
         return 200, {"status": "ok", "server": "aurel_front.v1"}
@@ -75,8 +83,11 @@ class FrontServer:
     """A running Front HTTP server bound to one runtime."""
 
     def __init__(self, runtime: Any, host: str = "127.0.0.1", port: int = 0,
-                 *, conversation_engine: Any = None) -> None:
-        self.app = FrontApp(runtime, conversation_engine=conversation_engine)
+                 *, conversation_engine: Any = None, approval_inbox: Any = None,
+                 card: Any = None, aureleu: Any = None) -> None:
+        self.app = FrontApp(runtime, conversation_engine=conversation_engine,
+                            approval_inbox=approval_inbox, card=card,
+                            aureleu=aureleu)
         self._httpd = ThreadingHTTPServer((host, port), _make_handler(self.app))
         self._thread: Optional[threading.Thread] = None
 
@@ -165,7 +176,8 @@ def _make_handler(app: FrontApp) -> type[BaseHTTPRequestHandler]:
 
 def create_front_server(
     runtime: Any, *, host: str = "127.0.0.1", port: int = 0,
-    conversation_engine: Any = None,
+    conversation_engine: Any = None, approval_inbox: Any = None,
+    card: Any = None, aureleu: Any = None,
 ) -> FrontServer:
     """Build the Front server — but only when the flag is ON (else fail-closed)."""
     if not flag_enabled():
@@ -173,4 +185,5 @@ def create_front_server(
             "AUREL_FRONT_SERVER is OFF; the Front server is not constructed"
         )
     return FrontServer(runtime, host=host, port=port,
-                       conversation_engine=conversation_engine)
+                       conversation_engine=conversation_engine,
+                       approval_inbox=approval_inbox, card=card, aureleu=aureleu)

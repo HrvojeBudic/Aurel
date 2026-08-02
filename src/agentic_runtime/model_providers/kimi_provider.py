@@ -17,6 +17,7 @@ import os
 
 from .base import (ModelProviderConfig, ModelRequest, ModelResponse,
                    ProviderHealth, ProviderStatus, TokenUsage)
+from .chat_common import openai_style_text
 from .http_utils import post_json
 
 KIMI_DEFAULT_MODEL = "kimi-k2"
@@ -54,7 +55,7 @@ class KimiProvider:
         )
 
     def generate_structured_plan(self, request: ModelRequest) -> ModelResponse:
-        key = os.environ.get(self.config.api_key_env)
+        key = self.config.resolve_api_key()
         if not key:
             return ModelResponse(
                 self.name, self.config.model_name,
@@ -79,6 +80,7 @@ class KimiProvider:
         if error:
             return ModelResponse(self.name, self.config.model_name,
                                  error=error, latency_ms=latency)
+        raw = ""
         try:
             choice = (data or {}).get("choices", [{}])[0]
             msg = choice.get("message", {})
@@ -95,12 +97,17 @@ class KimiProvider:
                 usage=_usage_from(data),
             )
         except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
-            return ModelResponse(self.name, self.config.model_name,
+            return ModelResponse(self.name, self.config.model_name, raw_text=raw,
                                  error=f"malformed_provider_response:{type(e).__name__}",
                                  latency_ms=latency)
 
+    def complete_text(self, request: ModelRequest) -> ModelResponse:
+        """Prose completion — no JSON mode, no parsing (see chat_common)."""
+        return openai_style_text(self.name, self.config, request,
+                                 usage_from=_usage_from)
+
     def healthcheck(self) -> ProviderHealth:
-        if not os.environ.get(self.config.api_key_env):
+        if not self.config.resolve_api_key():
             return ProviderHealth(self.name, ProviderStatus.UNCONFIGURED,
                                   self.config.model_name,
                                   f"{self.config.api_key_env} not configured")

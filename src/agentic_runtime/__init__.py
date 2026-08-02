@@ -348,7 +348,7 @@ __all__ = [
     "EntrypointSurface", "EntrypointKind", "EntrypointTruthLabel",
     "SideEffectVector", "P1ENFBResult", "P1ENFBSideEffectProof",
     "classify_entrypoint_with_audit_symbol",
-    "AgenticEntity", "AgenticRuntime", "build_runtime", "Kernel",
+    "AgenticEntity", "AgenticRuntime", "build_runtime", "workspace_run_id", "Kernel",
     "UnsafeLocalSandbox", "LocalSubprocessSandbox", "SafeSandbox",
     "DockerSandbox", "BubblewrapSandbox", "Sandbox", "SandboxBackend", "StateStore",
     "WorldLineForest", "CheckoutError", "ForkError", "ForkRef", "ForkResult", "verify_fork",
@@ -465,6 +465,51 @@ def _resolve_retain_states(retain_states: Optional[bool],
     return entity_class in RETAIN_STATES_GATED_CLASSES
 
 
+PROFILE_ENV = "AUREL_PROFILE"
+TRACE_BACKEND_ENV = "AUREL_TRACE_BACKEND"
+TRACE_DIR_ENV = "AUREL_TRACE_DIR"
+TRACE_ANCHOR_ENV = "AUREL_TRACE_ANCHOR"
+RUN_ID_ENV = "AUREL_RUN_ID"
+
+_TRUTHY = ("1", "true", "TRUE", "on")
+
+
+def workspace_run_id(workspace_root: Optional[str] = None) -> Optional[str]:
+    """A stable run id for this workspace, from ``<workspace>/.aurel/identity``.
+
+    Opt-in, for long-lived operator entrypoints only. Every process otherwise
+    opens a fresh uuid run, so a persistent trace still starts empty on each
+    restart and durable memory (keyed by run id) can never be rehydrated. This
+    file makes "the Aurel that works on this repo" one continuous run instead of
+    one per process.
+
+    Deliberately NOT the default inside ``build_runtime``: anything that needs
+    several distinct runs in one directory — Chronos diff, fork, succession —
+    would see them collapse into a single id. Created on first use; any I/O
+    failure returns None so the caller falls back to a fresh id, because
+    continuity is a convenience here and never a precondition.
+    """
+    import os
+
+    root = os.path.abspath(workspace_root or ".")
+    path = os.path.join(root, ".aurel", "identity")
+    try:
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as fh:
+                existing = fh.read().strip()
+            if existing:
+                return existing
+        from .core_types import new_id
+
+        run_id = new_id("run")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(run_id + "\n")
+        return run_id
+    except OSError:
+        return None
+
+
 def _build_memory_fabric(trace: Any, trace_dir: str, memory_backend: Any) -> MemoryFabric:
     """A8a — durable memory factory with a fail-closed fallback to in-RAM.
 
@@ -491,6 +536,11 @@ def _build_memory_fabric(trace: Any, trace_dir: str, memory_backend: Any) -> Mem
         if not getattr(backend, "available", False):
             raise RuntimeError("durable memory backend unavailable")
         memory = DurableMemoryFabric(backend)
+        # Rehydrate what previous runs wrote. Without this call the fabric writes
+        # durably and then starts every process empty — durable in name only.
+        loader = getattr(memory, "load", None)
+        if callable(loader):
+            loader()
     except Exception:  # noqa: BLE001 - fail closed to in-RAM, honestly non-durable
         memory = MemoryFabric()
     memory.bind_trace(trace)
@@ -507,8 +557,8 @@ def build_runtime(
     approval_policy: Optional[ApprovalPolicy] = None,
     model_clients: Optional[dict] = None,
     budget: Optional[BudgetLedger] = None,
-    trace_backend: str = "memory",
-    trace_dir: str = ".traces",
+    trace_backend: Optional[str] = None,
+    trace_dir: Optional[str] = None,
     trace_run_id: Optional[str] = None,
     trace_checkpoint_every: int = 5,
     trace_anchor: bool = False,
@@ -523,10 +573,18 @@ def build_runtime(
     profile: Optional[str] = None,
     mandate_registry: Any = None,
 ) -> Kernel:
-    # F1 — enforcement profiles. Opt-in: profile=None keeps today's behavior
-    # byte-identical (embedding + the test suite are unaffected). When set, the
-    # profile supplies coherent defaults for the submit-path enforcement bundle;
-    # any argument the caller passed explicitly always wins over the profile.
+    # F1 — enforcement profiles. Opt-in: with no profile argument and no
+    # AUREL_PROFILE in the environment, behavior stays byte-identical (embedding
+    # and the test suite are unaffected). AUREL_PROFILE is the operator's door to
+    # the enforcement bundle — before it was read only for display, so `status`
+    # could advertise a posture the kernel underneath did not have. The declared
+    # yaml default is deliberately NOT applied here: per the profiles document,
+    # the library entry point stays permissive and only profile-aware callers
+    # opt in. An explicit argument always wins over the environment.
+    import os as _os
+
+    if profile is None:
+        profile = _os.environ.get(PROFILE_ENV, "").strip() or None
     if profile is not None:
         from .governance.enforcement_profiles import profile_build_kwargs, profile_spec
 
@@ -551,6 +609,27 @@ def build_runtime(
                 sandbox_profile = p_kwargs["sandbox_profile"]
             if p_kwargs.get("allow_unsafe"):
                 allow_unsafe = True
+        # The G-scale requires a trace at every level, so the bundle supplies a
+        # durable ledger. Applied before the env resolution below so an explicit
+        # kwarg still wins and AUREL_TRACE_* can still redirect it.
+        if trace_backend is None and "trace_backend" in p_kwargs:
+            trace_backend = p_kwargs["trace_backend"]
+        if trace_dir is None and "trace_dir" in p_kwargs:
+            trace_dir = p_kwargs["trace_dir"]
+
+    # Durability resolution: an explicit kwarg always wins, then the environment,
+    # then the historical default. With none of these env vars set the resolved
+    # values are exactly the previous literals, so nothing changes by default.
+    trace_backend = trace_backend or _os.environ.get(TRACE_BACKEND_ENV, "") or "memory"
+    trace_dir = _os.path.expanduser(
+        trace_dir or _os.environ.get(TRACE_DIR_ENV, "") or ".traces")
+    trace_run_id = trace_run_id or _os.environ.get(RUN_ID_ENV, "") or None
+    trace_anchor = trace_anchor or _os.environ.get(TRACE_ANCHOR_ENV, "") in _TRUTHY
+    # NOTE: a fresh run id per process stays the default even for a persistent
+    # ledger. Deriving it from the workspace here would silently collapse every
+    # run in a directory into one, which breaks anything that needs distinct
+    # runs to compare — Chronos diff/fork above all. Long-lived operator
+    # entrypoints ask for continuity explicitly via `workspace_run_id()`.
 
     retain_states = _resolve_retain_states(retain_states, entity_class)
     sandbox_policy: Optional[SandboxPolicy] = None

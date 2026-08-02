@@ -52,7 +52,19 @@ export interface ProposalResult {
   reply?: ConversationReplyDTO;
   status?: string;
   request_id?: string;
+  /** Why a decide/act was blocked — e.g. the authority changed since it parked. */
+  reason?: string;
   error?: string;
+}
+
+/** One item parked in the approval inbox, as the operator needs to see it. */
+export interface PendingApprovalDTO {
+  request_id: string;
+  tool: string;
+  risk: string;
+  summary: string;
+  issuer: string;
+  mandate_id: string;
 }
 
 // -- read-model bodies ------------------------------------------------------- //
@@ -134,7 +146,7 @@ export interface HqCommandDTO {
   runs: HqRunDTO[];
   approvals: {
     audit: ApprovalsDTO["audit"];
-    pending: Array<Record<string, unknown>>;
+    pending: PendingApprovalDTO[];
     pending_source: string;
   };
   budget: SeamDTO & Record<string, unknown>;

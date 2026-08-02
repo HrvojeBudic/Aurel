@@ -240,6 +240,11 @@ class ConversationEngine:
         ))
 
     def _classify(self, raw: str) -> tuple[ReplyMode, str, Optional[dict]]:
+        # 0. Nothing came back. On the prose path an empty string would otherwise
+        #    render as a blank ANSWER — a fabricated reply with no content behind
+        #    it. An empty answer is not an answer.
+        if not (raw or "").strip():
+            return ReplyMode.UNAVAILABLE, "provider returned an empty completion", None
         # 1. Router refusal (no key / blocked / no model) ⇒ honest UNAVAILABLE.
         try:
             data = json.loads(raw)
@@ -277,9 +282,14 @@ class ConversationEngine:
         except BudgetExceeded as e:
             return self._unavailable(turn, ref, profile, f"budget: {e}")
 
+        # WP3: ask for prose. The model may still answer with a plan when the
+        # request needs tools — `_classify` detects that and routes to PROPOSE —
+        # but a conversational answer is no longer forced through a JSON schema
+        # that would reject it as `malformed_provider_response`.
+        complete = getattr(self._router, "complete_text", None) or \
+            self._router.complete_with_usage
         try:
-            raw, _model, usage = self._router.complete_with_usage(
-                profile, system_prompt, bundle.to_prompt())
+            raw, _model, usage = complete(profile, system_prompt, bundle.to_prompt())
         except Exception as e:  # provider failure ⇒ honest UNAVAILABLE, never fake
             return self._unavailable(turn, ref, profile, f"router: {e}")
         try:

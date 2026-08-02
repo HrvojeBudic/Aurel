@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Optional, Protocol
 
 from .model_config import (
+    CONFIG_DIR_ENV,
     SUPPORTED_PROVIDER_TYPES,
     ModelConfigBundle,
     ModelConfigError,
@@ -26,6 +27,7 @@ from .model_providers.mock_provider import MockProvider
 from .model_providers.schemas import (STRUCTURED_PLAN_SCHEMA, refusal_json,
                                       validate_structured_plan_text)
 from .secrets import EnvSecretProvider, SecretRedactor
+from .secrets_store import LayeredSecretProvider
 
 
 class ModelClient(Protocol):
@@ -80,8 +82,15 @@ class ModelRouter:
         self.default_provider = default_provider or os.environ.get(
             "AUREL_MODEL_PROVIDER", "mock")
         self._config = config
+        # Opt-in: with AUREL_CONFIG_DIR unset a router built without an explicit
+        # dir stays configless (the historical mock behavior). Setting it makes
+        # every router in the process load the operator's providers/profiles.
+        if config_dir is None and config is None:
+            config_dir = os.environ.get(CONFIG_DIR_ENV, "").strip() or None
         self._config_dir = Path(config_dir) if config_dir else None
-        self._secrets = secret_provider or EnvSecretProvider()
+        # The full env → OS keyring → file-0600 chain, so a key stored with
+        # `aurel secrets set` is visible to the model layer (not env-only).
+        self._secrets = secret_provider or LayeredSecretProvider()
         self._redactor = SecretRedactor()
         if self._config is None and self._config_dir is not None:
             self._config = ProviderConfigLoader(self._config_dir).load()
@@ -210,6 +219,45 @@ class ModelRouter:
                 last_refusal = (normalized, client.name)
                 continue
             return normalized, client.name, usage
+        if last_refusal is not None:
+            return last_refusal[0], last_refusal[1], None
+        return refusal_json(
+            self._redactor.redact(f"all providers failed for '{profile}': {last_err}")
+        ), "router", None
+
+    def complete_text(self, profile: str, system: str, user: str):
+        """Prose completion with the same ranked failover as
+        :meth:`complete_with_usage`. Returns ``(raw, provider_name, usage)``.
+
+        Crucially it does NOT run ``_normalize_or_refuse``: that helper validates
+        text against the structured-plan schema, which would turn every prose
+        answer — the whole point of this path — back into a refusal. Failover is
+        therefore driven by explicit refusal envelopes only.
+        """
+        self.configure_default()
+        block = self._check_profile_allowed(profile)
+        if block:
+            return refusal_json(block), "router", None
+        clients = self._clients_for(profile)
+        if not clients:
+            return refusal_json(f"no model registered for profile '{profile}'"), "router", None
+        last_err = ""
+        last_refusal: tuple[str, str] | None = None
+        for i, client in enumerate(clients):  # ranked; failover down the list
+            try:
+                if hasattr(client, "complete_text_with_usage"):
+                    raw, usage = client.complete_text_with_usage(system, user)
+                elif hasattr(client, "complete_with_usage"):
+                    raw, usage = client.complete_with_usage(system, user)
+                else:
+                    raw, usage = client.complete(system, user), None
+            except Exception as e:  # provider down -> try next
+                last_err = self._redactor.redact(f"{type(e).__name__}: {e}")
+                continue
+            if _is_provider_refusal(raw) and i < len(clients) - 1:
+                last_refusal = (raw, client.name)
+                continue
+            return raw, client.name, usage
         if last_refusal is not None:
             return last_refusal[0], last_refusal[1], None
         return refusal_json(
@@ -527,6 +575,30 @@ class ProviderModelClient:
             return refusal_json(self._redactor.redact(resp.refusal_reason)), None
         return resp.raw_text, resp.usage
 
+    def complete_text_with_usage(self, system: str, user: str):
+        """Prose completion. Returns ``(raw, usage)``; ``raw`` is a refusal
+        envelope on failure so the router's failover logic still applies.
+
+        Providers without ``complete_text`` fall back to the structured path —
+        an older/third-party adapter degrades to plan-only rather than breaking.
+        """
+        req = ModelRequest(
+            system_prompt=system,
+            user_prompt=user,
+            temperature=float(os.environ.get("AUREL_MODEL_TEMPERATURE", "0")),
+            max_tokens=int(os.environ.get("AUREL_MODEL_MAX_TOKENS", "2048")),
+            timeout_seconds=float(os.environ.get("AUREL_MODEL_TIMEOUT", "30")),
+        )
+        text_fn = getattr(self.provider, "complete_text", None)
+        if text_fn is None:
+            return self.complete_with_usage(system, user)
+        resp = text_fn(req)
+        if resp.error:
+            return refusal_json(self._redactor.redact(resp.error)), None
+        if resp.refusal_reason:
+            return refusal_json(self._redactor.redact(resp.refusal_reason)), None
+        return resp.raw_text, resp.usage
+
     def complete_structured(
         self,
         system: str,
@@ -586,7 +658,7 @@ def create_provider_from_profile(
     secrets: EnvSecretProvider | None = None,
 ) -> ModelProvider:
     """Instantiate a provider from centralized configuration."""
-    secrets = secrets or EnvSecretProvider()
+    secrets = secrets or LayeredSecretProvider()
     model = model_name or profile.default_model
     if profile.default_model_env:
         model = os.environ.get(profile.default_model_env, model)
@@ -594,16 +666,21 @@ def create_provider_from_profile(
     if profile.base_url_env:
         base_url = os.environ.get(profile.base_url_env, base_url)
     api_key_env = profile.api_key_env
+    api_key = ""
     if api_key_env:
         result = secrets.resolve_optional(api_key_env)
         if not result.ok and profile.is_remote:
             return _MissingSecretProvider(profile, result.error)
+        # Carry the RESOLVED value, not just the variable name: the key may live
+        # in the OS keyring or the 0600 file, where os.environ cannot see it.
+        api_key = result.value or "" if result.ok else ""
 
     config = ModelProviderConfig(
         provider_name=profile.type,
         model_name=model,
         api_key_env=api_key_env,
         base_url=base_url,
+        api_key=api_key,
     )
     if profile.type == "mock":
         return MockProvider(config)

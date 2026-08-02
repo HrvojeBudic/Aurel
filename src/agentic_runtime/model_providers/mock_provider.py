@@ -81,6 +81,32 @@ class MockProvider:
         ))
         return self._response(raw, t0)
 
+    def complete_text(self, request: ModelRequest) -> ModelResponse:
+        """Deterministic prose reply, so the offline default can hold a
+        conversation instead of only emitting plans.
+
+        Scripted entries and failure modes are honoured exactly as on the
+        structured path — a test that scripts a reply gets that reply verbatim,
+        and a test that asks for a timeout still gets one.
+        """
+        t0 = time.perf_counter()
+        if self.failure_mode == "provider_timeout":
+            return self._response("", t0, error="provider_timeout")
+        if self.failure_mode == "refusal":
+            return self._response("", t0, refusal_reason="mock refusal")
+
+        for key, response in self.scripted.items():
+            if key in request.user_prompt:
+                return self._response(response, t0)
+
+        return self._response(
+            "This is the deterministic offline mock provider. No real model is "
+            "configured, so this reply is canned rather than reasoned. Set a "
+            "provider key and point AUREL_CONFIG_DIR at a live config to get a "
+            "real answer.",
+            t0,
+        )
+
     def healthcheck(self) -> ProviderHealth:
         return ProviderHealth(
             provider_name=self.name,

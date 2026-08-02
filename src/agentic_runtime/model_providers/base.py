@@ -6,6 +6,7 @@ receive runtime authority to act.
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional, Protocol
@@ -49,6 +50,23 @@ class ModelProviderConfig:
     temperature: float = 0.0
     max_tokens: int = 2048
     extra_headers: dict[str, str] = field(default_factory=dict)
+    # The RESOLVED key, when the caller already went through the secret chain
+    # (env → OS keyring → file-0600). Empty means "read api_key_env yourself",
+    # which keeps every adapter constructed without a config working unchanged.
+    # Never serialize this field — `to_dict`-style helpers must skip it.
+    api_key: str = ""
+
+    def resolve_api_key(self) -> str:
+        """The key to authenticate with: the resolved value, else the env var.
+
+        Adapters must call this instead of reading ``os.environ`` directly, or a
+        key that lives only in the keyring/file backend is invisible to them.
+        """
+        if self.api_key:
+            return self.api_key
+        if not self.api_key_env:
+            return ""
+        return os.environ.get(self.api_key_env, "") or ""
 
 
 @dataclass
@@ -94,5 +112,14 @@ class ModelProvider(Protocol):
     name: str
 
     def generate_structured_plan(self, request: ModelRequest) -> ModelResponse: ...
+
+    def complete_text(self, request: ModelRequest) -> ModelResponse:
+        """Prose completion: no JSON mode, no parsing, raw_text is the answer.
+
+        Optional by design. Callers must probe with ``getattr`` and fall back to
+        ``generate_structured_plan`` so third-party and test-double providers
+        that predate this method keep working.
+        """
+        ...
 
     def healthcheck(self) -> ProviderHealth: ...

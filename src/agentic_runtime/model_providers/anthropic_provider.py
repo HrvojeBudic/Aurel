@@ -37,7 +37,7 @@ class AnthropicProvider:
         )
 
     def generate_structured_plan(self, request: ModelRequest) -> ModelResponse:
-        key = os.environ.get(self.config.api_key_env)
+        key = self.config.resolve_api_key()
         if not key:
             return ModelResponse(
                 self.name, self.config.model_name,
@@ -68,6 +68,7 @@ class AnthropicProvider:
         if error:
             return ModelResponse(self.name, self.config.model_name,
                                  error=error, latency_ms=latency)
+        raw = ""
         try:
             content = (data or {}).get("content", [])
             raw = "".join(block.get("text", "") for block in content
@@ -83,12 +84,57 @@ class AnthropicProvider:
                 finish_reason=(data or {}).get("stop_reason"),
             )
         except (TypeError, json.JSONDecodeError) as e:
+            # Non-lossy: hand back what the model actually wrote. A prose answer
+            # arriving on the structured path is a routing mistake, not garbage.
+            return ModelResponse(self.name, self.config.model_name, raw_text=raw,
+                                 error=f"malformed_provider_response:{type(e).__name__}",
+                                 latency_ms=latency)
+
+    def complete_text(self, request: ModelRequest) -> ModelResponse:
+        """Prose completion over /v1/messages — no schema hint, no parsing."""
+        key = self.config.resolve_api_key()
+        if not key:
+            return ModelResponse(
+                self.name, self.config.model_name,
+                error=f"{self.config.api_key_env} not configured")
+
+        payload = {
+            "model": self.config.model_name,
+            "max_tokens": request.max_tokens,
+            "temperature": request.temperature,
+            "system": request.system_prompt,
+            "messages": [{"role": "user", "content": request.user_prompt}],
+        }
+        data, error, latency = post_json(
+            f"{self.config.base_url.rstrip('/')}/v1/messages",
+            payload,
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01"},
+            timeout=request.timeout_seconds,
+        )
+        if error:
             return ModelResponse(self.name, self.config.model_name,
+                                 error=error, latency_ms=latency)
+        raw = ""
+        try:
+            content = (data or {}).get("content", [])
+            raw = "".join(block.get("text", "") for block in content
+                          if block.get("type") == "text")
+            return ModelResponse(
+                self.name,
+                self.config.model_name,
+                raw_text=raw,
+                parsed_json=None,
+                usage=_usage_from(data),
+                latency_ms=latency,
+                finish_reason=(data or {}).get("stop_reason"),
+            )
+        except (AttributeError, TypeError) as e:
+            return ModelResponse(self.name, self.config.model_name, raw_text=raw,
                                  error=f"malformed_provider_response:{type(e).__name__}",
                                  latency_ms=latency)
 
     def healthcheck(self) -> ProviderHealth:
-        if not os.environ.get(self.config.api_key_env):
+        if not self.config.resolve_api_key():
             return ProviderHealth(self.name, ProviderStatus.UNCONFIGURED,
                                   self.config.model_name,
                                   f"{self.config.api_key_env} not configured")

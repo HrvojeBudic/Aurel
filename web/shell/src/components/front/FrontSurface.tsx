@@ -26,6 +26,36 @@ interface SurfaceProps {
   mode: FrontMode;
 }
 
+/**
+ * Run an async read/propose and keep its failure visible.
+ *
+ * Every panel used to fire `void client.x().then(setY)`, so a rejected read left
+ * the panel showing stale or empty content with nothing to explain it — the same
+ * silence that made a dropped chat message look like a delivered one. `run`
+ * clears the message on success, so a recovered surface stops complaining.
+ */
+function useLastError(): [string, (fn: () => Promise<unknown>) => Promise<void>] {
+  const [error, setError] = useState("");
+  const run = useCallback(async (fn: () => Promise<unknown>) => {
+    try {
+      await fn();
+      setError("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }, []);
+  return [error, run];
+}
+
+function ErrorBanner({ message }: { message: string }) {
+  if (!message) return null;
+  return (
+    <p className="front-error" role="alert">
+      {message}
+    </p>
+  );
+}
+
 /** A chat panel shared by Signal and WorkOPS — same conversation engine, one door. */
 function ChatPanel({
   client,
@@ -41,6 +71,7 @@ function ChatPanel({
   const [entries, setEntries] = useState<RoomHistoryDTO["entries"]>([]);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, run] = useLastError();
   const live = mode === "live";
 
   const refresh = useCallback(async () => {
@@ -53,26 +84,34 @@ function ChatPanel({
   }, [client, live, room]);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    void run(refresh);
+  }, [refresh, run]);
 
   async function send() {
     if (!draft.trim() || busy) return;
     setBusy(true);
-    try {
-      await client.propose({
+    const text = draft;
+    await run(async () => {
+      const result = await client.propose({
         kind: "converse",
         room_id: room,
         operator_identity: "operator",
         role: "operator",
         mandate_id: "default",
-        text: draft,
+        text,
       });
+      // `wired: false` is a 200 for a proposal that was accepted and then
+      // dropped — the server has no conversation engine bound. Keep the draft so
+      // the message is not lost, and say why nothing happened.
+      if (result.wired === false) {
+        throw new Error(
+          "the Front server accepted this but has no conversation engine bound — nothing was sent",
+        );
+      }
       setDraft("");
       await refresh();
-    } finally {
-      setBusy(false);
-    }
+    });
+    setBusy(false);
   }
 
   return (
@@ -107,24 +146,38 @@ function ChatPanel({
           Send
         </button>
       </div>
+      <ErrorBanner message={error} />
     </section>
   );
 }
 
 function HqPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [hq, setHq] = useState<HqCommandDTO | null>(null);
+  const [error, run] = useLastError();
   const live = mode === "live";
 
   const refresh = useCallback(async () => {
     if (live) setHq(await client.hqCommand());
   }, [client, live]);
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    void run(refresh);
+  }, [refresh, run]);
 
   async function decide(requestId: string, approve: boolean) {
-    await client.decide(requestId, approve);
-    await refresh();
+    await run(async () => {
+      const result = await client.decide(requestId, approve);
+      // Refresh before reporting: a refused decision leaves the item parked, so
+      // the list must reflect the server either way rather than going stale
+      // behind an error message.
+      await refresh();
+      // A decision can be refused for a reason the operator must see — most
+      // often a parked item whose authority envelope changed across a restart.
+      if (result.status && result.status !== "executed" && result.status !== "denied") {
+        throw new Error(
+          `${result.status}${result.reason ? `: ${result.reason}` : ""}`,
+        );
+      }
+    });
   }
 
   if (!hq) return <section className="front-panel">HQ.Command — no live data.</section>;
@@ -141,27 +194,39 @@ function HqPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
         {hq.runs.length === 0 ? <li className="empty">No runs.</li> : null}
       </ul>
       <h4>Approval inbox</h4>
-      <ul>
-        {hq.approvals.pending.map((p, i) => {
-          const rid = String((p as { request_id?: string }).request_id ?? "");
-          return (
-            <li key={rid || i}>
-              <code>{rid}</code>
-              <button onClick={() => void decide(rid, true)} disabled={!live}>
+      <ul className="pending-list">
+        {hq.approvals.pending.map((p, i) => (
+          // Show WHAT is being approved. A bare request id asks the operator to
+          // authorise an action they cannot see; the tool, its risk class and
+          // the proposer's own expected effect are what the decision is about.
+          <li key={p.request_id || i} className="pending-item">
+            <div className="pending-what">
+              <span className={`risk risk-${p.risk}`}>{p.risk}</span>
+              <code>{p.tool}</code>
+              <span className="pending-summary">{p.summary}</span>
+            </div>
+            <div className="pending-meta">
+              <code title="request id">{p.request_id}</code>
+              <span title="issuing agent card">{p.issuer}</span>
+              {p.mandate_id ? <span title="mandate">{p.mandate_id}</span> : null}
+            </div>
+            <div className="pending-actions">
+              <button onClick={() => void decide(p.request_id, true)} disabled={!live}>
                 Approve
               </button>
-              <button onClick={() => void decide(rid, false)} disabled={!live}>
+              <button onClick={() => void decide(p.request_id, false)} disabled={!live}>
                 Deny
               </button>
-            </li>
-          );
-        })}
+            </div>
+          </li>
+        ))}
         {hq.approvals.pending.length === 0 ? (
           <li className="empty">
             No pending approvals ({hq.approvals.pending_source}).
           </li>
         ) : null}
       </ul>
+      <ErrorBanner message={error} />
       <p className="seam">
         Budget: {String(hq.budget.status)} · Watchtower: {hq.watchtower.status} (
         {hq.watchtower.owner})
@@ -172,9 +237,10 @@ function HqPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
 
 function LibraryPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [lib, setLib] = useState<LibraryDTO | null>(null);
+  const [error, run] = useLastError();
   useEffect(() => {
-    if (mode === "live") void client.library().then(setLib);
-  }, [client, mode]);
+    if (mode === "live") void run(async () => setLib(await client.library()));
+  }, [client, mode, run]);
   if (!lib) return <section className="front-panel">Library — no live data.</section>;
   return (
     <section className="front-panel library-panel">
@@ -191,15 +257,17 @@ function LibraryPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
           </li>
         ))}
       </ul>
+      <ErrorBanner message={error} />
     </section>
   );
 }
 
 function BoardPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [board, setBoard] = useState<BoardJournalDTO | null>(null);
+  const [error, run] = useLastError();
   useEffect(() => {
-    if (mode === "live") void client.board().then(setBoard);
-  }, [client, mode]);
+    if (mode === "live") void run(async () => setBoard(await client.board()));
+  }, [client, mode, run]);
   if (!board) return null;
   return (
     <section className="front-panel board-panel">
@@ -212,6 +280,7 @@ function BoardPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) 
         ))}
         {board.decisions.length === 0 ? <li className="empty">No decisions.</li> : null}
       </ul>
+      <ErrorBanner message={error} />
     </section>
   );
 }
@@ -219,15 +288,18 @@ function BoardPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) 
 function WorkOpsPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [tasks, setTasks] = useState<WorkOpsTasksDTO["tasks"]>([]);
   const [active, setActive] = useState<string>("task-1");
+  const [error, run] = useLastError();
   useEffect(() => {
     if (mode === "live")
-      void client.workopsTasks().then((t) => {
+      void run(async () => {
+        const t = await client.workopsTasks();
         setTasks(t.tasks);
         if (t.tasks[0]) setActive(t.tasks[0].task_id);
       });
-  }, [client, mode]);
+  }, [client, mode, run]);
   return (
     <div className="workops">
+      <ErrorBanner message={error} />
       <div className="task-list">
         <h4>Tasks</h4>
         <ul>
@@ -252,9 +324,10 @@ function WorkOpsPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
 
 function AurelEUPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [au, setAu] = useState<AurelEUDTO | null>(null);
+  const [error, run] = useLastError();
   useEffect(() => {
-    if (mode === "live") void client.aureleu().then(setAu);
-  }, [client, mode]);
+    if (mode === "live") void run(async () => setAu(await client.aureleu()));
+  }, [client, mode, run]);
   if (!au) return null;
   return (
     <section className="front-panel aureleu-panel">
@@ -281,6 +354,7 @@ function AurelEUPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
         ))}
         {au.delegations.length === 0 ? <li className="empty">No delegations.</li> : null}
       </ul>
+      <ErrorBanner message={error} />
       {au.persona_switches.length ? (
         <p className="seam">
           persona: {au.persona_switches[au.persona_switches.length - 1].to}
@@ -294,12 +368,14 @@ function AurelEUPanel({ client, mode }: { client: FrontClient; mode: FrontMode }
 function CorpPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
   const [pf, setPf] = useState<CorpPortfolioDTO | null>(null);
   const [kpi, setKpi] = useState<CorpKpiDTO | null>(null);
+  const [error, run] = useLastError();
   useEffect(() => {
-    if (mode === "live") {
-      void client.corpPortfolio().then(setPf);
-      void client.corpKpi().then(setKpi);
-    }
-  }, [client, mode]);
+    if (mode === "live")
+      void run(async () => {
+        setPf(await client.corpPortfolio());
+        setKpi(await client.corpKpi());
+      });
+  }, [client, mode, run]);
 
   if (!pf) return <section className="front-panel">Corp — no live data.</section>;
   return (
@@ -328,6 +404,7 @@ function CorpPanel({ client, mode }: { client: FrontClient; mode: FrontMode }) {
         ))}
         {pf.clients.length === 0 ? <li className="empty">No clients.</li> : null}
       </ul>
+      <ErrorBanner message={error} />
       {pf.unassigned.length ? (
         <p className="seam">unassigned runs: {pf.unassigned.length}</p>
       ) : null}

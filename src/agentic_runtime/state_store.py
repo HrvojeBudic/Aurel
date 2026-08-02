@@ -78,6 +78,21 @@ class StateStore:
     def _state_dir(self, state_hash: str) -> Path:
         return self._states_dir / state_hash
 
+    def _reject_nested(self, root: str) -> None:
+        """Raise when this store sits inside the tree being stored."""
+        try:
+            tree = Path(root).resolve()
+            store = self.base_dir.resolve()
+        except OSError:
+            return
+        if store == tree or store.is_relative_to(tree):
+            raise ValueError(
+                f"state store base_dir {store} is inside the workspace {tree}; "
+                "each retained state would copy every previous state into the "
+                "next one. Point the trace/state directory outside the "
+                "workspace (e.g. AUREL_TRACE_DIR=~/.aurel/traces)."
+            )
+
     def has(self, state_hash: str) -> bool:
         """True only for a fully materialized state (its ``tree/`` exists)."""
         return (self._state_dir(state_hash) / "tree").is_dir()
@@ -90,6 +105,16 @@ class StateStore:
         atomically renamed onto its final name so a crash can never leave a
         partial state visible via ``has()``.
         """
+        # Fail closed when the store lives inside the tree it is asked to store.
+        # Every put would then copy the accumulated states into the next state:
+        # the tree grows without bound and eventually dies deep in copytree with
+        # a bare "File name too long". The address is `_tree_hash`, which walks
+        # everything by design (it must match the sandbox's recorded
+        # before/after hashes), so this cannot be fixed by ignoring paths during
+        # the copy — that would store a tree whose content no longer matches its
+        # own address. The fix is a base_dir outside the workspace.
+        self._reject_nested(root)
+
         state_hash = _tree_hash(root)
         if self.has(state_hash):
             return state_hash

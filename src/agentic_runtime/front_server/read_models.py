@@ -110,7 +110,9 @@ def _library(reads: "LiveReadModels", params: "dict[str, list[str]]") -> dict:
 
 
 def _hq_command(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
-    return HQCommandReadModel.from_runtime(reads.runtime).to_dict()
+    # `inbox` is the live pending queue (None when the server is unbound, in which
+    # case the model honestly reports pending_source='unavailable').
+    return HQCommandReadModel.from_runtime(reads.runtime, inbox=reads.inbox).to_dict()
 
 
 def _board(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
@@ -136,9 +138,10 @@ def _corp_runtime(reads: "LiveReadModels", params: "dict[str, list[str]]") -> di
 
 
 def _corp_workbench(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
-    # No inbox via the pure read registry ⇒ pending is honestly unavailable; the
-    # trace-derived tool history is still live (F5.5 pending_source discipline).
-    return ApprovalWorkbenchReadModel.from_runtime(reads.runtime).to_dict()
+    # The bound inbox supplies the enriched pending items; without one the model
+    # returns [] and the trace-derived tool history stays live (F5.5 discipline).
+    return ApprovalWorkbenchReadModel.from_runtime(
+        reads.runtime, inbox=reads.inbox).to_dict()
 
 
 def _corp_kpi(reads: "LiveReadModels", _params: "dict[str, list[str]]") -> dict:
@@ -223,16 +226,23 @@ _REGISTRY: "dict[str, ReadBuilder]" = {
 class LiveReadModels:
     """Pure live read projections over one runtime's trace (zero writes)."""
 
-    def __init__(self, runtime: Any) -> None:
+    def __init__(self, runtime: Any, *, inbox: Any = None) -> None:
         # Hold the runtime; the trace is resolved lazily per read (matching the
         # dispatcher's discipline — a runtime that is never read is never touched).
         # Each read calls replay() fresh, so newly appended events show up — live.
         self._source = runtime
         self._runtime = getattr(runtime, "runtime", runtime)
+        # Operational, not a projection: the in-process pending queue. Reads stay
+        # read-only — they only ever call `inbox.pending()`.
+        self._inbox = inbox
 
     @property
     def router(self) -> Any:
         return getattr(self._source, "router", None)
+
+    @property
+    def inbox(self) -> Any:
+        return self._inbox
 
     @property
     def runtime(self) -> Any:

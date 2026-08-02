@@ -94,6 +94,19 @@ def cmd_profile_audit(args: argparse.Namespace) -> int:
 
     if not rt._governance_enforcement_explicit:
         drift.append("governance enforcement is not wired (shadow-only)")
+    # Trace is the declared floor at every G-level; an in-memory ledger under a
+    # profile means the posture is unauditable the moment the process exits.
+    trace_durable = type(rt.trace).__name__ != "InMemoryTraceLedger"
+    if gprofile.trace_required and not trace_durable:
+        drift.append(
+            f"profile declares trace_required but the built kernel uses "
+            f"{type(rt.trace).__name__} — the run is lost on exit")
+    if gprofile.anchor_required and getattr(rt.trace, "_anchor_sink", None) is None:
+        # Anchoring needs an external sink the host may not have, so this is a
+        # capability gap rather than a wiring bug.
+        host_limitations.append(
+            "profile declares anchor_required but no anchor sink is bound "
+            "(set AUREL_TRACE_ANCHOR=1 with a reachable AUREL_ANCHOR_ROOT)")
     if rt.governance_enforcement_config.mode is not expected_mode:
         drift.append(
             f"enforcement mode {rt.governance_enforcement_config.mode.value} "
@@ -118,6 +131,8 @@ def cmd_profile_audit(args: argparse.Namespace) -> int:
         "level": spec.level.value,
         "expected_mode": expected_mode.value,
         "enforcement_wired": rt._governance_enforcement_explicit,
+        "trace_backend": type(rt.trace).__name__,
+        "trace_durable": trace_durable,
         "host_limitations": host_limitations,
         "drift": drift,
         "drift_detected": bool(drift),

@@ -1,6 +1,7 @@
 """Centralized model/provider configuration (P1.1)."""
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -265,7 +266,21 @@ def default_config_dir() -> Path:
     return _default_config_dir()
 
 
+CONFIG_DIR_ENV = "AUREL_CONFIG_DIR"
+
+
 def _default_config_dir() -> Path:
+    # An explicit operator override wins over every packaged default. It is
+    # fail-closed on purpose: silently falling back to the all-mock packaged
+    # config when the operator named a directory would hide a live-model
+    # misconfiguration behind plausible-looking offline answers.
+    override = os.environ.get(CONFIG_DIR_ENV, "").strip()
+    if override:
+        chosen = Path(override).expanduser()
+        if not chosen.is_dir():
+            raise ModelConfigError(
+                f"{CONFIG_DIR_ENV}={override!r} is not a directory")
+        return chosen
     # src/agentic_runtime/model_config.py -> repo root is parents[2]
     repo_root = Path(__file__).resolve().parents[2]
     candidate = repo_root / "agent" / "config"

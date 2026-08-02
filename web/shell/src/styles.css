@@ -199,8 +199,48 @@ body {
   padding: 0.75rem 1rem;
   margin-top: 0.75rem;
   background: #fff;
+  /* The panel is light while `body` sets a light text colour for the dark shell.
+     Without this the inherited #e7ecf3 lands on #fff at ~1.06:1 and every panel
+     title is invisible. */
+  color: #1f2328;
 }
 .front-panel h3 { margin: 0 0 0.5rem; }
+
+/* A read or proposal that failed. Never silent — see useLastError. */
+.front-error {
+  margin: 0.5rem 0 0;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cf222e;
+  border-left-width: 3px;
+  border-radius: 4px;
+  background: #fff1f0;
+  color: #82071e;
+  font-size: 0.85rem;
+}
+
+/* The approval inbox: what is being approved must be legible at a glance. */
+.pending-list { list-style: none; padding: 0; margin: 0.5rem 0; }
+.pending-item {
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
+  background: #f6f8fa;
+}
+.pending-what { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.pending-summary { color: #1f2328; }
+.pending-meta {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  font-size: 0.72rem; color: #57606a; margin-top: 0.25rem;
+}
+.pending-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.risk {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem; border-radius: 3px; font-weight: 600;
+  background: #eaeef2; color: #57606a;
+}
+.risk-medium { background: #fff8c5; color: #7d4e00; }
+.risk-high, .risk-critical { background: #ffebe9; color: #82071e; }
 .front-panel .room-id, .front-panel .seam { font-size: 0.8rem; color: #57606a; }
 
 .chat-log { list-style: none; padding: 0; margin: 0.5rem 0; max-height: 320px; overflow-y: auto; }

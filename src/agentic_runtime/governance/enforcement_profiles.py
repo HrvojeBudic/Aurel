@@ -24,6 +24,7 @@ from ..yaml_minimal import load_yaml
 from .profile import GovernanceLevel, governed_approver, profile_for
 
 PROFILE_ENV = "AUREL_PROFILE"
+TRACE_DIR_ENV = "AUREL_TRACE_DIR"
 DURABLE_MEMORY_ENV = "AUREL_DURABLE_MEMORY"
 DUAL_KERNEL_ENV = "AUREL_DUAL_KERNEL"
 ALLOW_MOCK_FALLBACK_ENV = "AUREL_ALLOW_MOCK_FALLBACK"
@@ -154,6 +155,17 @@ def profile_build_kwargs(
         "policy_card_registry": PolicyCardRegistry(),
         "workspace_root": workspace_root,
     }
+
+    # Trace is the floor of the G-scale — `trace_required` is True at every level,
+    # G5 included. A profiled build that kept the in-memory ledger would claim a
+    # posture whose own first requirement it fails, so the bundle wires it. The
+    # directory stays OUTSIDE the workspace: retained states are addressed by a
+    # hash over the whole tree, so a store nested inside it would fold every
+    # previous state into the next (see StateStore._reject_nested).
+    if gprofile.trace_required:
+        kwargs["trace_backend"] = "persistent"
+        kwargs["trace_dir"] = os.environ.get(TRACE_DIR_ENV, "") or os.path.expanduser(
+            os.path.join("~", ".aurel", "traces"))
 
     if spec.require_hard_sandbox:
         from ..sandbox_policy import resolve_apply_sandbox_profile
